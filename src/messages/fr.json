@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "femme": "Parfums Femme",
+    "homme": "Parfums Homme",
+    "huiles": "Huile de Parfum",
+    "marques": "Marques",
+    "promo": "Promo Flash",
+    "blog": "Blog"
+  },
+  "topbar": {
+    "msg1": "Livraison offerte dès 60 €",
+    "msg2": "Paiement 4× sans frais",
+    "msg3": "10 ans d'expérience · 12 000+ commandes",
+    "msg4": "Cadeau surprise dans chaque commande",
+    "msg5": "Retours sous 14 jours"
+  },
+  "hero": {
+    "eyebrow": "Parfumerie Orientale Authentique · Depuis 2015",
+    "title": "Le parfum de Dubaï, tel qu'on le porte là-bas",
+    "subtitle": "Oud, musc, ambre, attar. 300+ références authentiques sourcées directement au Golfe — la parfumerie orientale dans toute sa profondeur.",
+    "cta_coffrets": "Découvrir les coffrets dès 9 €",
+    "cta_quiz": "Démarrer le quiz signature"
+  },
+  "common": {
+    "add_to_cart": "Ajouter au panier",
+    "view_all": "Voir tout",
+    "discover": "Découvrir",
+    "read_more": "Lire la suite",
+    "free_shipping_from": "Livraison offerte dès 60 €"
+  }
+}

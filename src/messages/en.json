@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "femme": "Women's Perfumes",
+    "homme": "Men's Perfumes",
+    "huiles": "Perfume Oil",
+    "marques": "Brands",
+    "promo": "Flash Deals",
+    "blog": "Blog"
+  },
+  "topbar": {
+    "msg1": "Free shipping from €60",
+    "msg2": "Pay in 4 instalments, interest-free",
+    "msg3": "10 years of experience · 12,000+ orders",
+    "msg4": "Surprise gift with every order",
+    "msg5": "Returns within 14 days"
+  },
+  "hero": {
+    "eyebrow": "Authentic Oriental Perfumery · Since 2015",
+    "title": "Dubai's finest fragrances, as worn there",
+    "subtitle": "Oud, musk, amber, attar. 300+ authentic references sourced directly from the Gulf.",
+    "cta_coffrets": "Discover discovery sets from €9",
+    "cta_quiz": "Start the signature quiz"
+  },
+  "common": {
+    "add_to_cart": "Add to cart",
+    "view_all": "View all",
+    "discover": "Discover",
+    "read_more": "Read more",
+    "free_shipping_from": "Free shipping from €60"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "femme": "Profumi Donna",
+    "homme": "Profumi Uomo",
+    "huiles": "Olio Profumato",
+    "marques": "Marchi",
+    "promo": "Offerte Flash",
+    "blog": "Blog"
+  },
+  "topbar": {
+    "msg1": "Spedizione gratuita da 60 €",
+    "msg2": "Pagamento in 4 rate senza interessi",
+    "msg3": "10 anni di esperienza · 12.000+ ordini",
+    "msg4": "Regalo a sorpresa in ogni ordine",
+    "msg5": "Resi entro 14 giorni"
+  },
+  "hero": {
+    "eyebrow": "Profumeria Orientale Autentica · Dal 2015",
+    "title": "Le migliori fragranze di Dubai, come vengono indossate lì",
+    "subtitle": "Oud, muschio, ambra, attar. 300+ referenze autentiche provenienti direttamente dal Golfo.",
+    "cta_coffrets": "Scopri i set di scoperta da 9 €",
+    "cta_quiz": "Inizia il quiz firma"
+  },
+  "common": {
+    "add_to_cart": "Aggiungi al carrello",
+    "view_all": "Vedi tutto",
+    "discover": "Scopri",
+    "read_more": "Leggi di più",
+    "free_shipping_from": "Spedizione gratuita da 60 €"
+  }
+}

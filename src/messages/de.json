@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "femme": "Damendüfte",
+    "homme": "Herrendüfte",
+    "huiles": "Parfümöl",
+    "marques": "Marken",
+    "promo": "Flash-Angebote",
+    "blog": "Blog"
+  },
+  "topbar": {
+    "msg1": "Kostenloser Versand ab 60 €",
+    "msg2": "Zahlung in 4 Raten, zinslos",
+    "msg3": "10 Jahre Erfahrung · 12.000+ Bestellungen",
+    "msg4": "Überraschungsgeschenk in jeder Bestellung",
+    "msg5": "Rückgabe innerhalb von 14 Tagen"
+  },
+  "hero": {
+    "eyebrow": "Authentische Orientalische Parfümerie · Seit 2015",
+    "title": "Dubais beste Düfte, so wie sie dort getragen werden",
+    "subtitle": "Oud, Moschus, Amber, Attar. 300+ authentische Referenzen direkt aus dem Golf.",
+    "cta_coffrets": "Entdeckungssets ab 9 € entdecken",
+    "cta_quiz": "Signatur-Quiz starten"
+  },
+  "common": {
+    "add_to_cart": "In den Warenkorb",
+    "view_all": "Alle anzeigen",
+    "discover": "Entdecken",
+    "read_more": "Mehr lesen",
+    "free_shipping_from": "Kostenloser Versand ab 60 €"
+  }
+}

@@ -1,0 +1,31 @@
+{
+  "nav": {
+    "femme": "Perfumes Mujer",
+    "homme": "Perfumes Hombre",
+    "huiles": "Aceite de Perfume",
+    "marques": "Marcas",
+    "promo": "Ofertas Flash",
+    "blog": "Blog"
+  },
+  "topbar": {
+    "msg1": "Envío gratuito desde 60 €",
+    "msg2": "Pago en 4 cuotas sin intereses",
+    "msg3": "10 años de experiencia · 12.000+ pedidos",
+    "msg4": "Regalo sorpresa en cada pedido",
+    "msg5": "Devoluciones en 14 días"
+  },
+  "hero": {
+    "eyebrow": "Perfumería Oriental Auténtica · Desde 2015",
+    "title": "Las mejores fragancias de Dubái, tal como se llevan allí",
+    "subtitle": "Oud, almizcle, ámbar, attar. Más de 300 referencias auténticas procedentes directamente del Golfo.",
+    "cta_coffrets": "Descubrir sets de descubrimiento desde 9 €",
+    "cta_quiz": "Empezar el quiz de firma"
+  },
+  "common": {
+    "add_to_cart": "Añadir al carrito",
+    "view_all": "Ver todo",
+    "discover": "Descubrir",
+    "read_more": "Leer más",
+    "free_shipping_from": "Envío gratuito desde 60 €"
+  }
+}
