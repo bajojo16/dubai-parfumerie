@@ -327,6 +327,10 @@ img, svg, video { max-width: 100%; }
 
   /* Table livraison en grille → garde lisible */
   .dp-table-row, .dp-table-head { grid-template-columns: 1fr 1fr !important; }
+
+  /* WelcomeModal mobile : une colonne, image cachée, × atteignable */
+  .dp-welcome-inner { grid-template-columns: 1fr !important; max-height: 88vh !important; }
+  .dp-welcome-left { display: none !important; }
 }
 
 /* ── Petit mobile ≤ 420px ───────────────────────────────── */

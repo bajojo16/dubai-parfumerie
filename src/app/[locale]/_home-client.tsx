@@ -264,16 +264,17 @@ function WelcomeModal() {
       }}
     >
       <div
+        className="dp-welcome-inner"
         onClick={e => e.stopPropagation()}
         style={{
           display: "grid", gridTemplateColumns: "1fr 1fr",
-          maxWidth: 820, width: "100%",
-          borderRadius: "var(--r-lg)", overflow: "hidden",
+          maxWidth: 820, width: "100%", maxHeight: "90vh",
+          borderRadius: "var(--r-lg)", overflow: "hidden auto",
           boxShadow: "0 40px 100px rgba(0,0,0,0.5)",
         }}
       >
         {/* Left panel — image + coffrets */}
-        <div style={{
+        <div className="dp-welcome-left" style={{
           position: "relative", background: "var(--espresso-900)",
           padding: "44px 36px 40px",
           display: "flex", flexDirection: "column", justifyContent: "flex-end",
