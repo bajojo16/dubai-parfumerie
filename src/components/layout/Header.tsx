@@ -265,113 +265,83 @@ interface AuthModalProps {
 }
 
 function AuthModal({ open, onClose }: AuthModalProps) {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [mode, setMode] = React.useState<"login" | "register">("login");
+
   return (
     <>
-      <div
-        onClick={onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(21,16,11,.55)",
-          zIndex: 1100,
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? "auto" : "none",
-          transition: "opacity .25s",
-        }}
-      />
-      <div
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: open ? "translate(-50%,-50%) scale(1)" : "translate(-50%,-50%) scale(.96)",
-          zIndex: 1101,
-          width: "min(440px,92vw)",
-          background: "var(--surface-white)",
-          borderRadius: "var(--r-lg)",
-          boxShadow: "0 24px 64px rgba(0,0,0,.2)",
-          padding: "36px 32px",
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? "auto" : "none",
-          transition: "opacity .25s, transform .25s",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28 }}>
-          <div>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "28px",
-                fontWeight: 700,
-                color: "var(--ink-900)",
-                margin: 0,
-              }}
-            >
-              Bienvenue
-            </h2>
-            <p
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "14px",
-                color: "var(--ink-500)",
-                margin: "6px 0 0",
-              }}
-            >
-              Connectez-vous ou créez un compte
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-500)", padding: 4 }}
-          >
-            <IconClose />
-          </button>
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(21,16,11,.55)", zIndex: 1100, opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity .25s" }} />
+      <div style={{
+        position: "fixed", top: "50%", left: "50%",
+        transform: open ? "translate(-50%,-50%) scale(1)" : "translate(-50%,-50%) scale(.96)",
+        zIndex: 1101, width: "min(440px,92vw)",
+        background: "var(--surface-white)", borderRadius: "var(--r-lg)",
+        boxShadow: "0 24px 64px rgba(0,0,0,.3)", padding: "36px 32px",
+        opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none",
+        transition: "opacity .25s, transform .25s",
+      }}>
+        {/* Close */}
+        <button onClick={onClose} style={{ position: "absolute", top: 14, right: 14, background: "rgba(0,0,0,.06)", border: "none", borderRadius: "50%", width: 30, height: 30, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ink-500)" }}>
+          <IconClose />
+        </button>
+
+        {/* Logo monogram */}
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "var(--gold-500)", fontWeight: 700, letterSpacing: "-0.02em" }}>DP</div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "var(--ink-900)", margin: "0 0 6px", textAlign: "center" }}>
+          {mode === "login" ? "Bon retour parmi nous" : "Créer un compte"}
+        </h2>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-500)", textAlign: "center", margin: "0 0 24px", lineHeight: 1.5 }}>
+          {mode === "login" ? "Connectez-vous à votre espace Dubaï Parfumerie." : "Rejoignez Le Cercle et profitez de -10% dès votre inscription."}
+        </p>
+
+        {/* OAuth */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
           {[
             { icon: <IconGoogle />, label: "Continuer avec Google", bg: "#fff", border: "#dadce0", color: "#3c4043" },
             { icon: <IconFacebook />, label: "Continuer avec Facebook", bg: "#1877F2", border: "#1877F2", color: "#fff" },
             { icon: <IconApple />, label: "Continuer avec Apple", bg: "#000", border: "#000", color: "#fff" },
           ].map(({ icon, label, bg, border, color }) => (
-            <button
-              key={label}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 12,
-                background: bg,
-                border: `1.5px solid ${border}`,
-                borderRadius: "var(--r-md)",
-                padding: "13px 16px",
-                fontFamily: "var(--font-sans)",
-                fontSize: "14px",
-                fontWeight: 600,
-                color,
-                cursor: "pointer",
-                transition: "opacity .15s",
-              }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.85")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
-            >
-              {icon}
-              {label}
-            </button>
+            <button key={label} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: bg, border: `1.5px solid ${border}`, borderRadius: "var(--r-md)", padding: "12px 16px", fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 600, color, cursor: "pointer" }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "0.85"}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
+            >{icon}{label}</button>
           ))}
         </div>
-        <p
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: "11px",
-            color: "var(--ink-500)",
-            textAlign: "center",
-            marginTop: 20,
-            lineHeight: 1.6,
-          }}
-        >
-          En continuant, vous acceptez nos{" "}
-          <a href="/cgv" style={{ color: "var(--gold-500)" }}>CGV</a> et{" "}
-          <a href="/confidentialite" style={{ color: "var(--gold-500)" }}>Politique de confidentialité</a>.
+
+        {/* Divider */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+          <div style={{ flex: 1, height: 1, background: "#e8e0d4" }} />
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-400)", letterSpacing: "0.06em" }}>OU</span>
+          <div style={{ flex: 1, height: 1, background: "#e8e0d4" }} />
+        </div>
+
+        {/* Email + password form */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 6 }}>
+          <input type="email" placeholder="Adresse email" value={email} onChange={e => setEmail(e.target.value)}
+            style={{ padding: "13px 14px", border: "1px solid #ddd", borderRadius: "var(--r-sm)", fontFamily: "var(--font-sans)", fontSize: "14px", color: "var(--ink-900)", outline: "none", background: "#fff" }} />
+          <input type="password" placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)}
+            style={{ padding: "13px 14px", border: "1px solid #ddd", borderRadius: "var(--r-sm)", fontFamily: "var(--font-sans)", fontSize: "14px", color: "var(--ink-900)", outline: "none", background: "#fff" }} />
+        </div>
+
+        {mode === "login" && (
+          <div style={{ textAlign: "right", marginBottom: 16 }}>
+            <button style={{ background: "none", border: "none", fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-500)", textDecoration: "underline", cursor: "pointer" }}>Mot de passe oublié ?</button>
+          </div>
+        )}
+
+        <button onClick={onClose} style={{ width: "100%", background: "var(--gold-500)", color: "#fff", border: "none", borderRadius: "var(--r-sm)", padding: "14px", fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", marginBottom: 16 }}>
+          {mode === "login" ? "Se connecter" : "Créer mon compte"}
+        </button>
+
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-500)", textAlign: "center", margin: 0 }}>
+          {mode === "login" ? "Pas encore de compte ? " : "Déjà un compte ? "}
+          <button onClick={() => setMode(mode === "login" ? "register" : "login")} style={{ background: "none", border: "none", color: "var(--gold-600)", textDecoration: "underline", cursor: "pointer", fontFamily: "inherit", fontSize: "inherit" }}>
+            {mode === "login" ? "Créer un compte" : "Se connecter"}
+          </button>
         </p>
       </div>
     </>
@@ -409,28 +379,30 @@ export function Header() {
           zIndex: 100,
         }}
       >
-        {/* Social icons */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--on-dark-muted)", flex: "0 0 auto" }}>
+        {/* Social icons — brand color animations */}
+        <style>{`
+          @keyframes dp-x-shake { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-12deg) scale(1.2)} 50%{transform:rotate(10deg) scale(1.15)} 75%{transform:rotate(-6deg)} }
+          @keyframes dp-ig-spin  { 0%{transform:rotate(0) scale(1)} 50%{transform:rotate(180deg) scale(1.25)} 100%{transform:rotate(360deg) scale(1)} }
+          @keyframes dp-tt-glitch{ 0%,100%{transform:translate(0)} 25%{transform:translate(-2px,1px)} 50%{transform:translate(2px,-1px)} 75%{transform:translate(-1px,2px)} }
+          @keyframes dp-yt-pop   { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 70%{transform:scale(.9)} 100%{transform:scale(1.1)} }
+          .dp-social { display:flex; align-items:center; color:rgba(253,251,246,.45); transition:color .2s; position:relative; }
+          .dp-social svg { transition:filter .2s; }
+          .dp-x:hover      { color:#fff !important; animation:dp-x-shake .45s ease; }
+          .dp-ig:hover     { animation:dp-ig-spin .6s cubic-bezier(.4,0,.2,1); }
+          .dp-ig:hover svg { filter:drop-shadow(0 0 6px #e1306c); color:#e1306c !important; }
+          .dp-tt:hover     { animation:dp-tt-glitch .4s steps(1) infinite; }
+          .dp-tt:hover svg { filter:drop-shadow(2px 0 0 #69c9d0) drop-shadow(-2px 0 0 #ee1d52); color:#fff !important; }
+          .dp-yt:hover     { color:#ff0000 !important; animation:dp-yt-pop .4s ease forwards; }
+          .dp-yt:hover svg { filter:drop-shadow(0 0 8px rgba(255,0,0,.6)); }
+        `}</style>
+        <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "0 0 auto" }}>
           {[
-            { Icon: IconX, href: "https://x.com" },
-            { Icon: IconInstagram, href: "https://instagram.com" },
-            { Icon: IconTikTok, href: "https://tiktok.com" },
-            { Icon: IconYouTube, href: "https://youtube.com" },
-          ].map(({ Icon, href }) => (
-            <a
-              key={href}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: "var(--on-dark-muted)",
-                display: "flex",
-                alignItems: "center",
-                transition: "color .15s",
-              }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-400)")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--on-dark-muted)")}
-            >
+            { Icon: IconX,         href: "https://x.com",        cls: "dp-x"  },
+            { Icon: IconInstagram, href: "https://instagram.com", cls: "dp-ig" },
+            { Icon: IconTikTok,    href: "https://tiktok.com",    cls: "dp-tt" },
+            { Icon: IconYouTube,   href: "https://youtube.com",   cls: "dp-yt" },
+          ].map(({ Icon, href, cls }) => (
+            <a key={href} href={href} target="_blank" rel="noopener noreferrer" className={`dp-social ${cls}`}>
               <Icon />
             </a>
           ))}
@@ -536,7 +508,7 @@ export function Header() {
         >
           {/* Logo */}
           <a href="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
-            <img src="/assets/logo.png" height={28} alt="Dubaï Parfumerie" />
+            <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 28, width: "auto", display: "block" }} />
           </a>
 
           {/* Nav */}

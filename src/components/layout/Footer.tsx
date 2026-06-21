@@ -146,7 +146,7 @@ export function Footer() {
         }}
       >
         <div style={{ maxWidth: 280 }}>
-          <img src="/assets/logo.png" height={32} alt="Dubaï Parfumerie" style={{ marginBottom: 14, filter: "brightness(0) invert(1)" }} />
+          <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 32, width: "auto", display: "block", marginBottom: 14, filter: "brightness(0) invert(1)" }} />
           <p
             style={{
               fontFamily: "var(--font-sans)",

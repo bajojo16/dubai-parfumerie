@@ -142,7 +142,7 @@ export default function PromoFlashPage() {
               letterSpacing: "0.04em",
             }}
           >
-            Des parfums de luxe à prix imbattables · Stocks limités
+            Des parfums de luxe à un prix séduisant · Stocks limités
           </p>
 
           {/* Countdown */}

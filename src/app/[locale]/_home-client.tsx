@@ -4,6 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { AnimatedHero } from "@/components/sections/AnimatedHero";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
+import { VideoPlaceholder } from "@/components/ui/VideoPlaceholder";
 
 // ─── Static data ─────────────────────────────────────────────────────────────
 
@@ -190,10 +191,15 @@ function CountdownTimer() {
 function WelcomeModal() {
   const [shown, setShown] = useState(false);
   const [email, setEmail] = useState("");
+  const [lang, setLang] = useState("Français");
+  const [cur, setCur] = useState("EUR");
 
   useEffect(() => {
     const seen = localStorage.getItem("dp_welcome_shown");
-    if (!seen) setShown(true);
+    if (!seen) {
+      const t = setTimeout(() => setShown(true), 1800);
+      return () => clearTimeout(t);
+    }
   }, []);
 
   const close = () => {
@@ -206,59 +212,120 @@ function WelcomeModal() {
   return (
     <div
       suppressHydrationWarning
+      onClick={close}
       style={{
-        position: "fixed", inset: 0, zIndex: 300,
-        background: "rgba(15,10,6,0.75)", backdropFilter: "blur(6px)",
+        position: "fixed", inset: 0, zIndex: 400,
+        background: "rgba(15,10,6,0.72)", backdropFilter: "blur(5px)",
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: "20px",
       }}
     >
-      <div style={{
-        background: "var(--surface-white)", borderRadius: "var(--r-lg)",
-        border: "1.5px solid var(--gold-500)", maxWidth: 480, width: "100%",
-        padding: "40px 36px", position: "relative", textAlign: "center",
-        boxShadow: "0 32px 80px rgba(0,0,0,0.35)",
-      }}>
-        <div style={{ color: "var(--gold-500)", fontSize: "1.2rem", marginBottom: 12, letterSpacing: "0.3em" }}>✦ ✦ ✦</div>
-        <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold-700)", marginBottom: 10 }}>Offre de bienvenue</div>
-        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.9rem", color: "var(--ink-900)", margin: "0 0 10px", lineHeight: 1.15 }}>
-          Bienvenue chez<br />Dubai Parfumerie
-        </h2>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "var(--ink-500)", marginBottom: 20, lineHeight: 1.65 }}>
-          Profitez de <strong>-10%</strong> sur votre première commande avec le code :
-        </p>
+      <div
+        onClick={e => e.stopPropagation()}
+        style={{
+          display: "grid", gridTemplateColumns: "1fr 1fr",
+          maxWidth: 820, width: "100%",
+          borderRadius: "var(--r-lg)", overflow: "hidden",
+          boxShadow: "0 40px 100px rgba(0,0,0,0.5)",
+        }}
+      >
+        {/* Left panel — image + coffrets */}
         <div style={{
-          background: "var(--surface-cream)", border: "1.5px dashed var(--gold-400)",
-          borderRadius: "var(--r-md)", padding: "14px 24px", marginBottom: 24,
+          position: "relative", background: "var(--espresso-900)",
+          padding: "44px 36px 40px",
+          display: "flex", flexDirection: "column", justifyContent: "flex-end",
+          minHeight: 460,
         }}>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "2rem", fontWeight: 700, color: "var(--gold-700)", letterSpacing: "0.08em" }}>BIENVENUE10</span>
+          <Image src="/assets/coffrets.jpg" alt="Coffrets découverte" fill sizes="400px" style={{ objectFit: "cover", opacity: 0.55 }} />
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.6rem, 2.5vw, 2rem)", color: "#fff", margin: "0 0 12px", lineHeight: 1.2 }}>
+              Nos Coffrets Découverte
+            </h2>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "rgba(255,255,255,0.75)", lineHeight: 1.65, marginBottom: 22 }}>
+              Explorez la richesse de la parfumerie orientale avec nos coffrets échantillons. Le meilleur moyen de trouver votre signature olfactive.
+            </p>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--gold-400)", marginBottom: 20 }}>
+              À partir de 9€
+            </div>
+            <a href="#coffrets" onClick={close} style={{
+              display: "inline-block", background: "var(--gold-500)", color: "#fff",
+              textDecoration: "none", padding: "11px 22px", borderRadius: "var(--r-sm)",
+              fontFamily: "var(--font-sans)", fontSize: "0.76rem", fontWeight: 700,
+              letterSpacing: "0.12em", textTransform: "uppercase",
+            }}>Découvrir les coffrets</a>
+            <p style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", color: "rgba(255,255,255,0.5)", marginTop: 24, fontStyle: "italic" }}>
+              «&nbsp;L&apos;Orient se respire,<br />il ne se raconte pas.&nbsp;»
+            </p>
+          </div>
         </div>
-        <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+
+        {/* Right panel — form */}
+        <div style={{ background: "var(--surface-white)", padding: "44px 36px 40px", position: "relative" }}>
+          {/* Close */}
+          <button onClick={close} style={{
+            position: "absolute", top: 16, right: 16,
+            background: "none", border: "none", cursor: "pointer",
+            color: "var(--ink-400)", fontSize: "1.1rem", lineHeight: 1, padding: 4,
+          }}>×</button>
+
+          <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 14 }}>Offre de bienvenue</div>
+          <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.5rem, 2.5vw, 2rem)", color: "var(--ink-900)", margin: "0 0 14px", lineHeight: 1.15 }}>
+            -10% &amp; un échantillon offert
+          </h3>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", color: "var(--ink-500)", lineHeight: 1.65, marginBottom: 24 }}>
+            Rejoignez Le Cercle et recevez votre code de bienvenue, plus un échantillon surprise glissé dans votre première commande.
+          </p>
+
           <input
             type="email"
-            placeholder="votre@email.fr"
+            placeholder="Votre adresse email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             style={{
-              flex: 1, padding: "12px 14px", border: "1px solid var(--line-200)",
-              borderRadius: "var(--r-sm)", fontFamily: "var(--font-sans)", fontSize: "0.88rem",
-              color: "var(--ink-900)", background: "var(--surface-page)", outline: "none",
+              width: "100%", padding: "13px 14px", marginBottom: 10,
+              border: "1px solid #ddd", borderRadius: "var(--r-sm)",
+              fontFamily: "var(--font-sans)", fontSize: "0.88rem",
+              color: "var(--ink-900)", background: "#fff", outline: "none",
+              boxSizing: "border-box",
             }}
           />
-          <button
-            onClick={close}
-            style={{
-              background: "var(--gold-500)", color: "#fff", border: "none",
-              borderRadius: "var(--r-sm)", padding: "12px 18px", cursor: "pointer",
-              fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700,
-              whiteSpace: "nowrap",
-            }}
-          >Profiter</button>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+            <select value={lang} onChange={e => setLang(e.target.value)} style={{
+              padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
+              fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
+              background: "#fff", outline: "none", cursor: "pointer",
+            }}>
+              {["Français","English","Español","Deutsch","Italiano","Русский","العربية"].map(l => <option key={l}>{l}</option>)}
+            </select>
+            <select value={cur} onChange={e => setCur(e.target.value)} style={{
+              padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
+              fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
+              background: "#fff", outline: "none", cursor: "pointer",
+            }}>
+              {["EUR","AED","SAR","USD","GBP","MAD"].map(c => <option key={c}>{c}</option>)}
+            </select>
+          </div>
+
+          <button onClick={close} style={{
+            width: "100%", background: "var(--gold-500)", color: "#fff", border: "none",
+            borderRadius: "var(--r-sm)", padding: "14px", cursor: "pointer",
+            fontFamily: "var(--font-sans)", fontSize: "0.9rem", fontWeight: 700,
+            letterSpacing: "0.04em", marginBottom: 16,
+          }}>J&apos;EN PROFITE</button>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--ink-400)" }}>
+              Déjà membre ?&nbsp;
+              <button onClick={close} style={{ background: "none", border: "none", color: "var(--gold-600)", textDecoration: "underline", cursor: "pointer", fontFamily: "inherit", fontSize: "inherit" }}>
+                Se connecter
+              </button>
+            </span>
+            <button onClick={close} style={{ background: "none", border: "none", color: "var(--ink-300)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.78rem" }}>
+              Non merci
+            </button>
+          </div>
         </div>
-        <button
-          onClick={close}
-          style={{ background: "none", border: "none", color: "var(--ink-400)", fontSize: "0.78rem", cursor: "pointer", fontFamily: "var(--font-sans)", textDecoration: "underline" }}
-        >Non merci, je préfère payer plein tarif</button>
       </div>
     </div>
   );
@@ -763,17 +830,11 @@ export default function HomePageClient() {
       <section id="marque" style={{ background: "var(--espresso-900)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
-            <div style={{ position: "relative", paddingBottom: "75%", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
-              <Image src="/assets/prod-1.jpg" alt="Lattafa" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(21,16,11,0.5) 0%, transparent 60%)" }} />
-              <div style={{
-                position: "absolute", top: 20, left: 20,
-                background: "var(--gold-500)", color: "#fff",
-                padding: "6px 14px", borderRadius: "var(--r-sm)",
-                fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700,
-                letterSpacing: "0.1em", textTransform: "uppercase",
-              }}>Marque du mois</div>
-            </div>
+            <VideoPlaceholder
+              label="Brand story Lattafa — vidéo institutionnelle"
+              aspectRatio="4/3"
+              duration="2:30"
+            />
             <div>
               <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 12 }}>Sharjah, fondée en 1980</div>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", color: "var(--on-dark-strong)", margin: "0 0 18px", lineHeight: 1.1 }}>Lattafa Perfumes</h2>
@@ -902,17 +963,18 @@ export default function HomePageClient() {
             subtitle="Ils partagent leur expérience, sans filtre."
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-            {products.slice(0, 4).map((p, i) => (
-              <div key={p.id} style={{ position: "relative", paddingBottom: "133%", borderRadius: "var(--r-lg)", overflow: "hidden", cursor: "pointer" }}>
-                <Image src={p.image} alt={p.name} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-                <div style={{ position: "absolute", inset: 0, background: "rgba(21,16,11,0.38)" }} />
-                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", paddingLeft: 4 }}>▶</div>
-                </div>
-                <div style={{ position: "absolute", bottom: 14, left: 14, right: 14 }}>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--on-dark-muted)", marginBottom: 2 }}>{["Yasmine B.", "Karim M.", "Sophie L.", "Aicha D."][i]}</div>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", color: "#fff" }}>{p.name}</div>
-                </div>
+            {[
+              { name: "Yasmine B.", desc: "Avis Oud Pour Elle" },
+              { name: "Karim M.", desc: "Avis Amber Oud" },
+              { name: "Sophie L.", desc: "Avis Coffret découverte" },
+              { name: "Aicha D.", desc: "Avis Shaghaf Oud" },
+            ].map((v, i) => (
+              <div key={i}>
+                <VideoPlaceholder
+                  label={`${v.name} — ${v.desc}`}
+                  aspectRatio="9/16"
+                  duration="0:45 – 1:20"
+                />
               </div>
             ))}
           </div>
