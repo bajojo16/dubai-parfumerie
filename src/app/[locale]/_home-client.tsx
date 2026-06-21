@@ -66,6 +66,49 @@ const blogPosts = [
 
 const scentFamilies = ["Oud", "Musc", "Ambre", "Rose", "Santal", "Épices", "Vanille", "Bakhour"];
 
+const scentProducts: Record<string, { brand: string; name: string; price: number; oldPrice: number; img: string }[]> = {
+  Oud: [
+    { brand: "Lattafa", name: "Oud Mood", price: 32.9, oldPrice: 54.9, img: "/assets/prod-1.jpg" },
+    { brand: "Swiss Arabian", name: "Shaghaf Oud", price: 39.9, oldPrice: 74.9, img: "/assets/prod-2.jpg" },
+    { brand: "Al Haramain", name: "Oudh 36", price: 44.9, oldPrice: 79.9, img: "/assets/prod-3.jpg" },
+  ],
+  Ambre: [
+    { brand: "Al Haramain", name: "Amber Oud", price: 34.9, oldPrice: 59.9, img: "/assets/prod-2.jpg" },
+    { brand: "Lattafa", name: " Amber Elixir", price: 29.9, oldPrice: 49.9, img: "/assets/prod-4.jpg" },
+    { brand: "Rasasi", name: "Ambar Gold", price: 37.9, oldPrice: 64.9, img: "/assets/prod-5.jpg" },
+  ],
+  Musc: [
+    { brand: "Lattafa", name: "Musk Mood", price: 24.9, oldPrice: 42.9, img: "/assets/prod-3.jpg" },
+    { brand: "Swiss Arabian", name: "White Musk", price: 28.9, oldPrice: 49.9, img: "/assets/prod-6.jpg" },
+    { brand: "Ard Al Zaafaran", name: "Musk Pour Elle", price: 22.9, oldPrice: 39.9, img: "/assets/prod-1.jpg" },
+  ],
+  Rose: [
+    { brand: "Lattafa", name: "Rose pour Elle", price: 28.9, oldPrice: 49.9, img: "/assets/prod-4.jpg" },
+    { brand: "Swiss Arabian", name: "Rose de Taïf", price: 42.9, oldPrice: 72.9, img: "/assets/prod-5.jpg" },
+    { brand: "Rasasi", name: "Bloom Rose", price: 31.9, oldPrice: 54.9, img: "/assets/prod-2.jpg" },
+  ],
+  Santal: [
+    { brand: "Al Haramain", name: "Sandal Wood", price: 36.9, oldPrice: 62.9, img: "/assets/prod-6.jpg" },
+    { brand: "Lattafa", name: "Santal Royal", price: 33.9, oldPrice: 57.9, img: "/assets/prod-3.jpg" },
+    { brand: "Swiss Arabian", name: "Sandalia", price: 38.9, oldPrice: 66.9, img: "/assets/prod-1.jpg" },
+  ],
+  Safran: [
+    { brand: "Lattafa", name: "Saffron Mood", price: 30.9, oldPrice: 52.9, img: "/assets/prod-5.jpg" },
+    { brand: "Rasasi", name: "Saffron Oud", price: 41.9, oldPrice: 71.9, img: "/assets/prod-2.jpg" },
+    { brand: "Al Haramain", name: "Safran Élixir", price: 35.9, oldPrice: 61.9, img: "/assets/prod-4.jpg" },
+  ],
+  Vanille: [
+    { brand: "Lattafa", name: "Vanilla Mood", price: 26.9, oldPrice: 44.9, img: "/assets/prod-6.jpg" },
+    { brand: "Swiss Arabian", name: "Vanilla Oud", price: 39.9, oldPrice: 68.9, img: "/assets/prod-3.jpg" },
+    { brand: "Rasasi", name: "Vanille Noire", price: 32.9, oldPrice: 56.9, img: "/assets/prod-1.jpg" },
+  ],
+  Encens: [
+    { brand: "Al Haramain", name: "Encens Mystique", price: 37.9, oldPrice: 64.9, img: "/assets/prod-4.jpg" },
+    { brand: "Lattafa", name: "Bakhour Mood", price: 29.9, oldPrice: 49.9, img: "/assets/prod-5.jpg" },
+    { brand: "Swiss Arabian", name: "Incense Oud", price: 43.9, oldPrice: 76.9, img: "/assets/prod-2.jpg" },
+  ],
+};
+
 const editorialBlocks = [
   { name: "Oud", desc: "L'oud (ou agarwood) est l'essence la plus précieuse au monde. Issu du bois d'aquilaria infecté par un champignon, il dévoile des facettes boisées, fumées et animales d'une profondeur incomparable.", symbol: "Ω" },
   { name: "Musc", desc: "Pilier de la parfumerie orientale, le musc confère chaleur et sensualité à chaque composition. Il fixe les autres matières et leur offre une longévité remarquable sur la peau.", symbol: "µ" },
@@ -771,6 +814,39 @@ export default function HomePageClient() {
             })()}
           </div>
         </div>
+
+        {/* Suggestions: 3 parfums de la senteur sélectionnée */}
+        {selectedScent && scentProducts[selectedScent] && (
+          <div style={{ maxWidth: 1240, margin: "48px auto 0", animation: "fadeSlideIn .35s ease" }}>
+            <div style={{ fontFamily: "var(--font-sans)", fontSize: "11px", letterSpacing: ".18em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 18, textAlign: "center" }}>
+              3 parfums {selectedScent} à découvrir
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+              {scentProducts[selectedScent].map(p => (
+                <a key={p.name} href={`/produit/${p.name.trim().toLowerCase().replace(/\s+/g, "-")}`} style={{
+                  textDecoration: "none", display: "block",
+                  background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,144,30,0.18)",
+                  borderRadius: "var(--r-lg)", overflow: "hidden", transition: "border-color .25s, transform .25s",
+                }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--gold-400)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(200,144,30,0.18)"; (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
+                >
+                  <div style={{ position: "relative", paddingBottom: "100%" }}>
+                    <Image src={p.img} alt={p.name} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: "cover" }} />
+                  </div>
+                  <div style={{ padding: "16px 18px 20px" }}>
+                    <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.66rem", letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 5 }}>{p.brand}</div>
+                    <div style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", color: "var(--on-dark-strong)", marginBottom: 10 }}>{p.name.trim()}</div>
+                    <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
+                      <span style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 600, color: "var(--gold-400)" }}>{p.price.toFixed(2).replace(".", ",")} €</span>
+                      <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--on-dark-muted)", textDecoration: "line-through" }}>{p.oldPrice.toFixed(2).replace(".", ",")} €</span>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* ── 11. FAMILLES OLFACTIVES ───────────────────────────────── */}
