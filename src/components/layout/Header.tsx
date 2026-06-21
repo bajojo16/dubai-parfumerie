@@ -430,6 +430,7 @@ export function Header() {
   const [authOpen, setAuthOpen] = useState(false);
   const [cartCount] = useState(2);
   const [wishCount] = useState(1);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topMsgIndex, setTopMsgIndex] = useState(0);
 
   useEffect(() => {
@@ -470,7 +471,7 @@ export function Header() {
           .dp-yt:hover     { color:#ff0000 !important; animation:dp-yt-pop .4s ease forwards; }
           .dp-yt:hover svg { filter:drop-shadow(0 0 8px rgba(255,0,0,.6)); }
         `}</style>
-        <div style={{ display: "flex", alignItems: "center", gap: 12, flex: "0 0 auto" }}>
+        <div className="dp-topbar-social" style={{ display: "flex", alignItems: "center", gap: 12, flex: "0 0 auto" }}>
           {[
             { Icon: IconX,         href: "https://x.com",        cls: "dp-x"  },
             { Icon: IconInstagram, href: "https://instagram.com", cls: "dp-ig" },
@@ -485,6 +486,7 @@ export function Header() {
 
         {/* Rotating message */}
         <div
+          className="dp-topbar-msg"
           style={{
             flex: 1,
             textAlign: "center",
@@ -511,7 +513,7 @@ export function Header() {
         </div>
 
         {/* Language & currency */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto" }}>
+        <div className="dp-topbar-selectors" style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto" }}>
           <select
             value={activeLang}
             onChange={(e) => setActiveLang(e.target.value)}
@@ -581,13 +583,28 @@ export function Header() {
             width: "100%",
           }}
         >
+          {/* Burger (mobile) */}
+          <button
+            className="dp-burger"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Menu"
+            style={{
+              display: "none", flexDirection: "column", justifyContent: "center", gap: 4,
+              background: "none", border: "none", cursor: "pointer", padding: 6, flexShrink: 0,
+            }}
+          >
+            <span style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
+            <span style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
+            <span style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
+          </button>
+
           {/* Logo */}
           <a href="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
             <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 28, width: "auto", display: "block" }} />
           </a>
 
           {/* Nav */}
-          <nav style={{ display: "flex", alignItems: "center", gap: 2, flex: "0 0 auto" }}>
+          <nav className="dp-nav" style={{ display: "flex", alignItems: "center", gap: 2, flex: "0 0 auto" }}>
             {NAV_LINKS.map(({ label, href, highlight }) => (
               <a
                 key={href}
@@ -620,6 +637,7 @@ export function Header() {
 
           {/* Search */}
           <div
+            className="dp-search"
             style={{
               flex: 1,
               maxWidth: 380,
@@ -685,7 +703,7 @@ export function Header() {
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
             >
               <IconUser />
-              <span style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 600, letterSpacing: ".06em", color: "var(--ink-500)" }}>COMPTE</span>
+              <span className="dp-account-label" style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 600, letterSpacing: ".06em", color: "var(--ink-500)" }}>COMPTE</span>
             </button>
 
             <button
@@ -732,7 +750,7 @@ export function Header() {
                   </span>
                 )}
               </span>
-              <span style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 600, letterSpacing: ".06em", color: "var(--ink-500)" }}>FAVORIS</span>
+              <span className="dp-account-label" style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 600, letterSpacing: ".06em", color: "var(--ink-500)" }}>FAVORIS</span>
             </button>
 
             <button
@@ -787,6 +805,7 @@ export function Header() {
 
         {/* Free shipping bar */}
         <div
+          className="dp-shipbar"
           style={{
             background: "var(--espresso-800)",
             height: 32,
@@ -809,6 +828,7 @@ export function Header() {
             Livraison offerte dès 60 €
           </span>
           <div
+            className="dp-shipbar-progress"
             style={{
               width: 180,
               height: 4,
@@ -838,6 +858,57 @@ export function Header() {
           </span>
         </div>
       </header>
+
+      {/* Mobile menu drawer */}
+      <div
+        onClick={() => setMobileMenuOpen(false)}
+        style={{
+          position: "fixed", inset: 0, background: "rgba(21,16,11,.5)", zIndex: 1100,
+          opacity: mobileMenuOpen ? 1 : 0, pointerEvents: mobileMenuOpen ? "auto" : "none",
+          transition: "opacity .25s",
+        }}
+      />
+      <aside
+        style={{
+          position: "fixed", top: 0, left: 0, bottom: 0, width: "min(300px, 84vw)",
+          background: "var(--surface-page)", zIndex: 1101,
+          transform: mobileMenuOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform .3s cubic-bezier(.4,0,.2,1)",
+          boxShadow: "4px 0 32px rgba(0,0,0,.15)", display: "flex", flexDirection: "column",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px", borderBottom: "1px solid rgba(0,0,0,.08)" }}>
+          <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 24, width: "auto" }} />
+          <button onClick={() => setMobileMenuOpen(false)} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-500)", display: "flex" }}>
+            <IconClose />
+          </button>
+        </div>
+        {/* Mobile search */}
+        <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(0,0,0,.06)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--surface-cream)", border: "1px solid rgba(200,144,30,.2)", borderRadius: "var(--r-md)", padding: "0 12px", height: 40 }}>
+            <span style={{ color: "var(--ink-500)", display: "flex" }}><IconSearch /></span>
+            <input type="text" placeholder="Rechercher…" style={{ flex: 1, background: "none", border: "none", outline: "none", fontFamily: "var(--font-sans)", fontSize: "14px", color: "var(--ink-900)" }} />
+          </div>
+        </div>
+        <nav style={{ display: "flex", flexDirection: "column", padding: "8px 0" }}>
+          {NAV_LINKS.map(({ label, href, highlight }) => (
+            <a
+              key={href}
+              href={href}
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                fontFamily: "var(--font-sans)", fontSize: "15px",
+                fontWeight: highlight ? 700 : 500,
+                color: highlight ? "var(--gold-500)" : "var(--ink-900)",
+                textDecoration: "none", padding: "14px 22px",
+                borderBottom: "1px solid rgba(0,0,0,.04)",
+              }}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      </aside>
 
       <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} cartCount={cartCount} />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />

@@ -22,11 +22,11 @@ const bestSellers = products.slice(2, 6);
 const oilItems = products.slice(0, 3);
 
 const olfactoryFamilies = [
-  { id: 1, name: "Boisé · Oud", count: 82, color: "#6B3A2A", emoji: "🌳" },
-  { id: 2, name: "Floral · Musc", count: 67, color: "#C8607A", emoji: "🌸" },
-  { id: 3, name: "Gourmand · Vanille", count: 45, color: "#C8901E", emoji: "🍬" },
-  { id: 4, name: "Épicé · Encens", count: 38, color: "#8B1A1A", emoji: "🌶" },
-  { id: 5, name: "Fruité · Floral", count: 51, color: "#7B3FA0", emoji: "🍊" },
+  { id: 1, name: "Boisé · Oud", count: 82, color: "#6B3A2A", img: "/assets/prod-1.jpg" },
+  { id: 2, name: "Floral · Musc", count: 67, color: "#C8607A", img: "/assets/prod-4.jpg" },
+  { id: 3, name: "Gourmand · Vanille", count: 45, color: "#C8901E", img: "/assets/prod-6.jpg" },
+  { id: 4, name: "Épicé · Encens", count: 38, color: "#8B1A1A", img: "/assets/prod-5.jpg" },
+  { id: 5, name: "Fruité · Floral", count: 51, color: "#7B3FA0", img: "/assets/prod-2.jpg" },
 ];
 
 const brands = [
@@ -715,7 +715,7 @@ export default function HomePageClient() {
 
       {/* ── 10. ROUE DES SENTEURS ─────────────────────────────────── */}
       <section id="roue" style={{ background: "#1a1208", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+        <div className="dp-roue-grid" style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
           {/* Left: title + result */}
           <div>
             <div style={{ fontFamily: "var(--font-sans)", fontSize: "11px", letterSpacing: ".22em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 20 }}>Recherche par notes</div>
@@ -864,7 +864,9 @@ export default function HomePageClient() {
                 background: "var(--surface-white)", border: "1px solid var(--line-200)",
                 borderRadius: "var(--r-lg)", padding: "18px 24px", cursor: "pointer",
               }}>
-                <div style={{ fontSize: "1.5rem", width: 44, textAlign: "center", flexShrink: 0 }}>{f.emoji}</div>
+                <div style={{ position: "relative", width: 56, height: 56, borderRadius: "var(--r-md)", overflow: "hidden", flexShrink: 0 }}>
+                  <Image src={f.img} alt={f.name} fill sizes="56px" style={{ objectFit: "cover" }} />
+                </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--ink-900)", marginBottom: 6 }}>{f.name}</div>
                   <div style={{ height: 4, background: "var(--line-100)", borderRadius: 2, overflow: "hidden" }}>

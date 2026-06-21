@@ -267,3 +267,69 @@ body {
   font-family: var(--font-sans);
   margin: 0;
 }
+
+/* ════════════════════════════════════════════════════════════
+   RESPONSIVE — overrides inline styles via !important
+   Le site utilise des styles inline ; les media queries CSS
+   externes avec !important priment sur les styles inline.
+   ════════════════════════════════════════════════════════════ */
+
+/* Empêche tout débordement horizontal */
+html, body { max-width: 100%; overflow-x: hidden; }
+img, svg, video { max-width: 100%; }
+
+/* Header — burger caché desktop, nav visible */
+.dp-burger { display: none !important; }
+
+/* ── Tablette ≤ 980px ───────────────────────────────────── */
+@media (max-width: 980px) {
+  [style*="repeat(4,"], [style*="repeat(4 ,"],
+  [style*="repeat(4,1fr)"], [style*="repeat(4, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  [style*="repeat(3,"], [style*="repeat(3, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+
+/* ── Mobile ≤ 760px ─────────────────────────────────────── */
+@media (max-width: 760px) {
+  /* Toutes grilles multi-colonnes → 1 colonne */
+  [style*="repeat(4,"], [style*="repeat(4, 1fr)"],
+  [style*="repeat(3,"], [style*="repeat(3, 1fr)"],
+  [style*="repeat(2,"], [style*="repeat(2, 1fr)"],
+  [style*="1fr 1fr"], [style*="1.3fr 1fr 1fr"],
+  [style*="1.3fr"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Header */
+  .dp-nav { display: none !important; }
+  .dp-burger { display: flex !important; }
+  .dp-search { display: none !important; }
+  .dp-topbar-social { display: none !important; }
+  .dp-account-label { display: none !important; }
+  .dp-topbar-msg { font-size: 10.5px !important; }
+  .dp-topbar-selectors { gap: 4px !important; }
+
+  /* Header free-shipping progress bar → empilé */
+  .dp-shipbar { flex-wrap: wrap !important; height: auto !important; padding: 8px 16px !important; gap: 6px !important; }
+  .dp-shipbar-progress { width: 100% !important; max-width: 220px !important; }
+
+  /* Sections : padding réduit */
+  section { padding-left: 16px !important; padding-right: 16px !important; }
+
+  /* Hero / titres énormes → réduits */
+  h1 { font-size: clamp(2rem, 9vw, 2.8rem) !important; }
+
+  /* Roue : empile + recentre */
+  .dp-roue-grid { gap: 24px !important; }
+
+  /* Table livraison en grille → garde lisible */
+  .dp-table-row, .dp-table-head { grid-template-columns: 1fr 1fr !important; }
+}
+
+/* ── Petit mobile ≤ 420px ───────────────────────────────── */
+@media (max-width: 420px) {
+  .dp-cta-row { flex-direction: column !important; align-items: stretch !important; }
+}
