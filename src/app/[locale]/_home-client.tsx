@@ -815,31 +815,31 @@ export default function HomePageClient() {
           </div>
         </div>
 
-        {/* Suggestions: 3 parfums de la senteur sélectionnée */}
+        {/* Suggestions: 3 parfums de la senteur sélectionnée (miniatures) */}
         {selectedScent && scentProducts[selectedScent] && (
-          <div style={{ maxWidth: 1240, margin: "48px auto 0", animation: "fadeSlideIn .35s ease" }}>
-            <div style={{ fontFamily: "var(--font-sans)", fontSize: "11px", letterSpacing: ".18em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 18, textAlign: "center" }}>
+          <div style={{ maxWidth: 1240, margin: "32px auto 0", animation: "fadeSlideIn .35s ease" }}>
+            <div style={{ fontFamily: "var(--font-sans)", fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 12, textAlign: "center" }}>
               3 parfums {selectedScent} à découvrir
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
               {scentProducts[selectedScent].map(p => (
                 <a key={p.name} href={`/produit/${p.name.trim().toLowerCase().replace(/\s+/g, "-")}`} style={{
-                  textDecoration: "none", display: "block",
+                  textDecoration: "none", display: "flex", alignItems: "center", gap: 12,
                   background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,144,30,0.18)",
-                  borderRadius: "var(--r-lg)", overflow: "hidden", transition: "border-color .25s, transform .25s",
+                  borderRadius: "var(--r-md)", padding: 8, transition: "border-color .25s",
                 }}
-                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--gold-400)"; (e.currentTarget as HTMLElement).style.transform = "translateY(-4px)"; }}
-                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(200,144,30,0.18)"; (e.currentTarget as HTMLElement).style.transform = "translateY(0)"; }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--gold-400)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(200,144,30,0.18)"; }}
                 >
-                  <div style={{ position: "relative", paddingBottom: "100%" }}>
-                    <Image src={p.img} alt={p.name} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: "cover" }} />
+                  <div style={{ position: "relative", width: 52, height: 52, flexShrink: 0, borderRadius: "var(--r-sm)", overflow: "hidden" }}>
+                    <Image src={p.img} alt={p.name} fill sizes="52px" style={{ objectFit: "cover" }} />
                   </div>
-                  <div style={{ padding: "16px 18px 20px" }}>
-                    <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.66rem", letterSpacing: ".12em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 5 }}>{p.brand}</div>
-                    <div style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", color: "var(--on-dark-strong)", marginBottom: 10 }}>{p.name.trim()}</div>
-                    <div style={{ display: "flex", gap: 8, alignItems: "baseline" }}>
-                      <span style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 600, color: "var(--gold-400)" }}>{p.price.toFixed(2).replace(".", ",")} €</span>
-                      <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--on-dark-muted)", textDecoration: "line-through" }}>{p.oldPrice.toFixed(2).replace(".", ",")} €</span>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 2 }}>{p.brand}</div>
+                    <div style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", color: "var(--on-dark-strong)", marginBottom: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name.trim()}</div>
+                    <div style={{ display: "flex", gap: 6, alignItems: "baseline" }}>
+                      <span style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", fontWeight: 600, color: "var(--gold-400)" }}>{p.price.toFixed(2).replace(".", ",")} €</span>
+                      <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--on-dark-muted)", textDecoration: "line-through" }}>{p.oldPrice.toFixed(2).replace(".", ",")} €</span>
                     </div>
                   </div>
                 </a>
