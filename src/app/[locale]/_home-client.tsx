@@ -5,6 +5,7 @@ import Image from "next/image";
 import { AnimatedHero } from "@/components/sections/AnimatedHero";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { VideoPlaceholder } from "@/components/ui/VideoPlaceholder";
+import { QuizSignature } from "@/components/sections/QuizSignature";
 
 // ─── Static data ─────────────────────────────────────────────────────────────
 
@@ -691,26 +692,9 @@ export default function HomePageClient() {
           <SectionHeader
             eyebrow="Notre expertise"
             title="Trouvez votre parfum idéal"
-            subtitle="Quatre façons d'explorer notre univers selon votre sensibilité olfactive."
+            subtitle="5 questions pour révéler votre signature olfactive et recevoir des recommandations sur mesure."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {[
-              { icon: "🌹", title: "Par famille", desc: "Boisé, floral, oriental, gourmand… identifiez votre famille de cœur et explorez ses déclinaisons." },
-              { icon: "✨", title: "Par occasion", desc: "Séduction, travail, soirée, cérémonie… chaque moment mérite sa fragrance." },
-              { icon: "🎁", title: "Par budget", desc: "Des offres dès 19 € jusqu'aux collections de prestige. La qualité orientale, pour tous." },
-              { icon: "🧪", title: "Le quiz olfactif", desc: "6 questions pour découvrir votre profil olfactif et recevoir des recommandations personnalisées." },
-            ].map(card => (
-              <div key={card.title} style={{
-                background: "var(--surface-white)", border: "1px solid var(--line-200)",
-                borderRadius: "var(--r-lg)", padding: "32px 22px", textAlign: "center",
-                cursor: "pointer",
-              }}>
-                <div style={{ fontSize: "2.2rem", marginBottom: 16 }}>{card.icon}</div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", color: "var(--ink-900)", marginBottom: 10 }}>{card.title}</div>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-500)", lineHeight: 1.65, margin: 0 }}>{card.desc}</p>
-              </div>
-            ))}
-          </div>
+          <QuizSignature />
         </div>
       </section>
 
