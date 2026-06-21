@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 const TOP_MESSAGES = [
   "Livraison offerte dès 60 €",
   "Paiement 4× sans frais",
-  "10 ans d'expérience · 12 000+ commandes",
+  "10 ans d'expérience · plus de 10 000 produits vendus",
   "Cadeau surprise dans chaque commande",
   "Retours sous 14 jours",
 ];
@@ -145,13 +145,73 @@ function IconApple() {
   );
 }
 
+const GIFT_THRESHOLDS = [
+  { amount: 40,  gift: "Échantillon surprise 2ml",  icon: "✦" },
+  { amount: 60,  gift: "Livraison offerte",          icon: "◈" },
+  { amount: 90,  gift: "Miniature exclusive 5ml",   icon: "◎" },
+  { amount: 120, gift: "Coffret découverte 3×2ml",  icon: "❋" },
+];
+
+function GiftProgressBar({ total }: { total: number }) {
+  const reached = GIFT_THRESHOLDS.filter(t => total >= t.amount);
+  const next = GIFT_THRESHOLDS.find(t => total < t.amount);
+  const prev = reached[reached.length - 1];
+  const prevAmount = prev ? prev.amount : 0;
+  const nextAmount = next ? next.amount : GIFT_THRESHOLDS[GIFT_THRESHOLDS.length - 1].amount;
+  const pct = next
+    ? Math.min(100, ((total - prevAmount) / (nextAmount - prevAmount)) * 100)
+    : 100;
+  const allUnlocked = !next;
+
+  return (
+    <div style={{ padding: "14px 24px 10px", borderBottom: "1px solid rgba(0,0,0,.07)", background: allUnlocked ? "rgba(200,144,30,.06)" : "var(--surface-cream)" }}>
+      {/* Message */}
+      <div style={{ fontFamily: "var(--font-sans)", fontSize: "12.5px", color: allUnlocked ? "var(--gold-700)" : "var(--ink-700)", marginBottom: 8, lineHeight: 1.4 }}>
+        {allUnlocked
+          ? <><strong>🎁 Tous vos cadeaux sont débloqués !</strong></>
+          : <>Plus que <strong style={{ color: "var(--gold-700)" }}>{(nextAmount - total).toFixed(2).replace(".", ",")} €</strong> pour obtenir : <strong>{next!.icon} {next!.gift}</strong></>}
+      </div>
+      {/* Bar */}
+      <div style={{ height: 5, borderRadius: 999, background: "var(--line-200)", overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${pct}%`, background: "linear-gradient(90deg, #9C6A1A, #D8A63A)", borderRadius: 999, transition: "width .5s cubic-bezier(.4,0,.2,1)" }} />
+      </div>
+      {/* Milestones */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+        {GIFT_THRESHOLDS.map(t => (
+          <div key={t.amount} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+            <span style={{ fontSize: 10, color: total >= t.amount ? "var(--gold-600)" : "var(--ink-400)", transition: "color .3s", filter: total >= t.amount ? "none" : "grayscale(1) opacity(.5)" }}>{t.icon}</span>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, color: total >= t.amount ? "var(--gold-600)" : "var(--ink-400)" }}>{t.amount} €</span>
+          </div>
+        ))}
+      </div>
+      {/* Unlocked gifts list */}
+      {reached.length > 0 && (
+        <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 4 }}>
+          {reached.map(t => (
+            <span key={t.amount} style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "var(--gold-700)", background: "rgba(200,144,30,.1)", border: "1px solid rgba(200,144,30,.25)", borderRadius: 999, padding: "3px 9px" }}>
+              {t.icon} {t.gift}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface CartSidebarProps {
   open: boolean;
   onClose: () => void;
   cartCount: number;
 }
 
+const DEMO_CART_ITEMS = [
+  { name: "Oud pour Elle", brand: "Lattafa", price: 28.90, qty: 1 },
+  { name: "Amber Oud",     brand: "Al Haramain", price: 34.90, qty: 1 },
+];
+
 function CartSidebar({ open, onClose, cartCount }: CartSidebarProps) {
+  const cartTotal = DEMO_CART_ITEMS.reduce((s, i) => s + i.price * i.qty, 0);
+
   return (
     <>
       <div
@@ -182,6 +242,7 @@ function CartSidebar({ open, onClose, cartCount }: CartSidebarProps) {
           flexDirection: "column",
         }}
       >
+        {/* Header */}
         <div
           style={{
             display: "flex",
@@ -216,30 +277,44 @@ function CartSidebar({ open, onClose, cartCount }: CartSidebarProps) {
             <IconClose />
           </button>
         </div>
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "var(--ink-500)",
-            fontFamily: "var(--font-sans)",
-            fontSize: "14px",
-          }}
-        >
-          Votre panier est vide pour l'instant.
+
+        {/* Gift progress */}
+        <GiftProgressBar total={cartTotal} />
+
+        {/* Items */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "16px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
+          {cartCount === 0 ? (
+            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ink-500)", fontFamily: "var(--font-sans)", fontSize: "14px" }}>
+              Votre panier est vide pour l&apos;instant.
+            </div>
+          ) : DEMO_CART_ITEMS.map(item => (
+            <div key={item.name} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: "1px solid var(--line-100)" }}>
+              <div style={{ width: 56, height: 56, borderRadius: "var(--r-sm)", background: "var(--surface-cream)", flexShrink: 0 }} />
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--gold-600)" }}>{item.brand}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1rem", color: "var(--ink-900)", lineHeight: 1.2, marginTop: 2 }}>{item.name}</div>
+              </div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 600, color: "var(--ink-900)", flexShrink: 0 }}>{item.price.toFixed(2).replace(".", ",")} €</div>
+            </div>
+          ))}
         </div>
+
+        {/* Footer */}
         <div
           style={{
-            padding: "20px 24px",
+            padding: "16px 24px 20px",
             borderTop: "1px solid rgba(0,0,0,.08)",
           }}
         >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-500)" }}>Total</span>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 600, color: "var(--ink-900)" }}>{cartTotal.toFixed(2).replace(".", ",")} €</span>
+          </div>
           <button
             style={{
               width: "100%",
               background: "var(--gold-500)",
-              color: "#fff",
+              color: "var(--espresso-900)",
               border: "none",
               borderRadius: "var(--r-md)",
               padding: "14px",

@@ -152,7 +152,7 @@ export function AnimatedHero() {
         >
           {[
             { k: "10", v: "Ans d'expérience" },
-            { k: "12 000+", v: "Commandes livrées" },
+            { k: "10 000+", v: "Produits vendus" },
             { k: "4,8/5", v: "Note Trustpilot" },
           ].map((s) => (
             <div key={s.k}>

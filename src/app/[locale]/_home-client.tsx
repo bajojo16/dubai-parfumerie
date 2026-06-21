@@ -499,14 +499,14 @@ export default function HomePageClient() {
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
             {[
-              { img: "/assets/prod-1.jpg", label: "Oud Fumé", sub: "Profond · Mystérieux" },
-              { img: "/assets/prod-2.jpg", label: "Ambre Doré", sub: "Chaud · Enveloppant" },
-              { img: "/assets/cat-femme.jpg", label: "Floral Féminin", sub: "Rose · Jasmin" },
-              { img: "/assets/cat-homme.jpg", label: "Boisé Masculin", sub: "Cèdre · Vétiver" },
-              { img: "/assets/prod-3.jpg", label: "Musc Blanc", sub: "Délicat · Poudreux" },
-              { img: "/assets/prod-4.jpg", label: "Rose de Taïf", sub: "Royal · Envoûtant" },
-              { img: "/assets/prod-5.jpg", label: "Épicé Intense", sub: "Safran · Cardamome" },
-              { img: "/assets/cat-mixte.jpg", label: "Mixte Contemporain", sub: "Universel · Moderne" },
+              { img: "/assets/prod-1.jpg", label: "Oud", sub: "Profond · Mystérieux" },
+              { img: "/assets/prod-2.jpg", label: "Ambre", sub: "Chaud · Enveloppant" },
+              { img: "/assets/cat-femme.jpg", label: "Floral", sub: "Rose · Jasmin" },
+              { img: "/assets/cat-homme.jpg", label: "Boisé", sub: "Cèdre · Vétiver" },
+              { img: "/assets/prod-3.jpg", label: "Musc", sub: "Délicat · Poudreux" },
+              { img: "/assets/prod-4.jpg", label: "Rose", sub: "Royal · Envoûtant" },
+              { img: "/assets/prod-5.jpg", label: "Épicé", sub: "Safran · Cardamome" },
+              { img: "/assets/cat-mixte.jpg", label: "Mixte", sub: "Universel · Moderne" },
             ].map((card, i) => (
               <div
                 key={i}
@@ -671,47 +671,105 @@ export default function HomePageClient() {
       </section>
 
       {/* ── 10. ROUE DES SENTEURS ─────────────────────────────────── */}
-      <section id="roue" style={{ background: "var(--espresso-800)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            dark
-            eyebrow="Exploration"
-            title="Roue des Senteurs"
-            subtitle="Sélectionnez une note pour découvrir les parfums correspondants."
-          />
-          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 12, marginBottom: 32 }}>
-            {scentFamilies.map(s => (
-              <button
-                key={s}
-                onClick={() => setSelectedScent(selectedScent === s ? null : s)}
-                onMouseEnter={() => setHoveredScent(s)}
-                onMouseLeave={() => setHoveredScent(null)}
-                style={{
-                  padding: "10px 24px", borderRadius: "var(--r-pill)",
-                  border: `1.5px solid ${selectedScent === s ? "var(--gold-400)" : hoveredScent === s ? "rgba(200,144,30,0.5)" : "rgba(255,255,255,0.15)"}`,
-                  background: selectedScent === s ? "var(--gold-500)" : "transparent",
-                  color: selectedScent === s ? "#fff" : "var(--on-dark)",
-                  fontFamily: "var(--font-display)", fontSize: "1.05rem",
-                  cursor: "pointer", transition: "all 0.25s",
-                }}
-              >{s}</button>
-            ))}
-          </div>
-          {selectedScent && (
-            <div style={{
-              textAlign: "center", animation: "slideDown 0.3s ease",
-              padding: "22px", background: "rgba(200,144,30,0.08)",
-              borderRadius: "var(--r-md)", border: "1px solid rgba(200,144,30,0.2)",
-            }}>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: "var(--gold-300)", marginBottom: 8 }}>{selectedScent}</div>
-              <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--on-dark-muted)" }}>
-                Parfums avec la note <strong style={{ color: "var(--gold-400)" }}>{selectedScent}</strong> dans notre catalogue
+      <section id="roue" style={{ background: "#1a1208", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+          {/* Left: title + result */}
+          <div>
+            <div style={{ fontFamily: "var(--font-sans)", fontSize: "11px", letterSpacing: ".22em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 20 }}>Recherche par notes</div>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "clamp(2.8rem,4vw,4rem)", color: "var(--on-dark-strong)", lineHeight: 1.05, margin: "0 0 32px" }}>La Roue des <em>Senteurs</em></h2>
+            {selectedScent ? (
+              <div style={{ animation: "fadeSlideIn .3s ease" }}>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "var(--gold-400)", marginBottom: 10 }}>{selectedScent}</div>
+                <div style={{ fontFamily: "var(--font-sans)", fontWeight: 300, fontSize: ".9375rem", color: "var(--on-dark-muted)", lineHeight: 1.7, marginBottom: 20 }}>
+                  Découvrez tous les parfums à dominante <strong style={{ color: "var(--on-dark)" }}>{selectedScent}</strong> de notre catalogue — des créations orientales rares sourcées directement au Golfe.
+                </div>
+                <a href="#" style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--gold-400)", textDecoration: "none" }}>
+                  Voir les parfums {selectedScent} →
+                </a>
               </div>
-              <a href="#" style={{ display: "inline-block", marginTop: 14, color: "var(--gold-400)", fontFamily: "var(--font-sans)", fontSize: "0.84rem", fontWeight: 600, textDecoration: "none" }}>
-                Voir tous les résultats →
-              </a>
-            </div>
-          )}
+            ) : (
+              <p style={{ fontFamily: "var(--font-sans)", fontWeight: 300, fontSize: "1rem", color: "var(--on-dark-muted)", lineHeight: 1.8, margin: 0 }}>
+                Cliquez sur une note olfactive pour explorer les parfums qui la composent. De l&apos;oud mystérieux au musc délicat, chaque cercle ouvre un univers.
+              </p>
+            )}
+          </div>
+
+          {/* Right: SVG wheel */}
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {(() => {
+              const CX = 250, CY = 250, R = 170, RC = 68, RN = 54;
+              const nodes = [
+                { label: "Oud",     a: 0   },
+                { label: "Ambre",   a: 45  },
+                { label: "Musc",    a: 90  },
+                { label: "Rose",    a: 135 },
+                { label: "Santal",  a: 180 },
+                { label: "Safran",  a: 225 },
+                { label: "Vanille", a: 270 },
+                { label: "Encens",  a: 315 },
+              ];
+              const toRad = (deg: number) => (deg * Math.PI) / 180;
+              const pos = (a: number) => ({
+                x: CX + R * Math.sin(toRad(a)),
+                y: CY - R * Math.cos(toRad(a)),
+              });
+              return (
+                <svg viewBox="0 0 500 500" width="100%" style={{ maxWidth: 480, overflow: "visible" }}>
+                  {/* Dashed lines center → nodes */}
+                  {nodes.map(n => {
+                    const p = pos(n.a);
+                    const dx = p.x - CX, dy = p.y - CY;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    const ux = dx/dist, uy = dy/dist;
+                    return (
+                      <line
+                        key={n.label}
+                        x1={CX + ux * RC} y1={CY + uy * RC}
+                        x2={p.x - ux * RN} y2={p.y - uy * RN}
+                        stroke="rgba(200,144,30,0.3)"
+                        strokeWidth="1.2"
+                        strokeDasharray="5 4"
+                      />
+                    );
+                  })}
+                  {/* Center circle */}
+                  <circle cx={CX} cy={CY} r={RC} fill="#15100b" stroke="#C8901E" strokeWidth="1.5" strokeDasharray="6 4" />
+                  <text x={CX} y={CY - 8} textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="17" fill={selectedScent ? "#D8A63A" : "#e8dfc8"} fontStyle="italic">
+                    {selectedScent || "La Roue"}
+                  </text>
+                  <text x={CX} y={CY + 12} textAnchor="middle" fontFamily="Jost, sans-serif" fontSize="8.5" fill="rgba(220,200,160,.55)" letterSpacing="2">
+                    {selectedScent ? "SÉLECTIONNÉ" : "CLIQUEZ UNE NOTE"}
+                  </text>
+                  {/* Outer nodes */}
+                  {nodes.map(n => {
+                    const p = pos(n.a);
+                    const active = selectedScent === n.label;
+                    const hovered = hoveredScent === n.label;
+                    return (
+                      <g
+                        key={n.label}
+                        onClick={() => setSelectedScent(selectedScent === n.label ? null : n.label)}
+                        onMouseEnter={() => setHoveredScent(n.label)}
+                        onMouseLeave={() => setHoveredScent(null)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <circle
+                          cx={p.x} cy={p.y} r={RN}
+                          fill={active ? "rgba(200,144,30,0.22)" : hovered ? "rgba(200,144,30,0.12)" : "rgba(90,72,48,0.55)"}
+                          stroke={active ? "#C8901E" : hovered ? "rgba(200,144,30,0.5)" : "rgba(120,96,60,0.35)"}
+                          strokeWidth="1.2"
+                          style={{ transition: "fill .2s, stroke .2s" }}
+                        />
+                        <text x={p.x} y={p.y + 6} textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="15" fill={active ? "#D8A63A" : "#e8dfc8"} style={{ pointerEvents: "none", transition: "fill .2s" }}>
+                          {n.label}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+              );
+            })()}
+          </div>
         </div>
       </section>
 

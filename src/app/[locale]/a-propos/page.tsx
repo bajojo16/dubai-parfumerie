@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 const stats = [
   { k: "10 ans", v: "d'expérience" },
-  { k: "12 000+", v: "commandes" },
+  { k: "10 000+", v: "produits vendus" },
   { k: "300+", v: "références" },
   { k: "4,8/5", v: "Trustpilot" },
 ];
@@ -45,7 +45,7 @@ export default function AProposPage() {
       <section style={{ maxWidth: 880, margin: "0 auto", padding: "72px 24px" }}>
         <div style={{ fontFamily: "var(--font-sans)", fontWeight: 300, fontSize: "1.0625rem", lineHeight: 1.85, color: "var(--ink-700)" }}>
           <p style={{ margin: "0 0 22px" }}>Tout a commencé par une frustration : impossible de retrouver, en France, les parfums envoûtants rapportés de Dubaï. Trop de contrefaçons, trop d&apos;intermédiaires, trop de promesses non tenues. Nous avons décidé de créer le pont qui manquait entre les maisons du Golfe et les amateurs européens.</p>
-          <p style={{ margin: 0 }}>Dix ans plus tard, Dubaï Parfumerie c&apos;est 300+ références authentiques, 15 maisons partenaires, 12 000 commandes livrées et une note de 4,8/5 sur Trustpilot. Mais surtout, une promesse intacte : chaque parfum est vrai, sourcé directement, et accompagné de son certificat manuscrit.</p>
+          <p style={{ margin: 0 }}>Dix ans plus tard, Dubaï Parfumerie c&apos;est 300+ références authentiques, 15 maisons partenaires, plus de 10 000 produits vendus et une note de 4,8/5 sur Trustpilot. Mais surtout, une promesse intacte : chaque parfum est vrai, sourcé directement, et accompagné de son certificat manuscrit.</p>
         </div>
       </section>
 
