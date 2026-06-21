@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cormorant_Garamond, Jost } from "next/font/google";
 import "./globals.css";
 
@@ -21,6 +21,12 @@ export const metadata: Metadata = {
   title: { template: "%s | Dubaï Parfumerie", default: "Dubaï Parfumerie — Parfums Orientaux Authentiques" },
   description: "Spécialiste des parfums orientaux de Dubaï et du Golfe. Oud, musc, ambre, attar — 300+ références authentiques.",
   metadataBase: new URL('https://www.dubaiparfumerie.com'),
+};
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
