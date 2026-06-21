@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from "react";
 const TOP_MESSAGES = [
   "Livraison offerte dès 60 €",
   "Paiement 4× sans frais",
-  "10 ans d'expérience · plus de 10 000 produits vendus",
+  "10 ans d'expérience · plus de 7000 produits vendus",
   "Cadeau surprise dans chaque commande",
   "Retours sous 14 jours",
 ];

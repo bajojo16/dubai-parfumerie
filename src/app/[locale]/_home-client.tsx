@@ -1139,7 +1139,7 @@ export default function HomePageClient() {
       <section id="journal" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
-            eyebrow="Savoir & culture"
+            eyebrow="Blog"
             title="Le Journal du Parfum"
             subtitle="Histoires, guides et conseils par nos experts en parfumerie orientale."
           />

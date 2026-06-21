@@ -123,9 +123,9 @@ export function AnimatedHero() {
             maxWidth: "16ch",
           }}
         >
-          Le parfum de Dubaï,{" "}
+          L&apos;authentique,{" "}
           <em style={{ fontStyle: "italic", color: "var(--gold-400)" }}>
-            tel qu&apos;on le porte là-bas
+            pas l&apos;imitation
           </em>
         </motion.h1>
 
@@ -152,7 +152,7 @@ export function AnimatedHero() {
         >
           {[
             { k: "10", v: "Ans d'expérience" },
-            { k: "10 000+", v: "Produits vendus" },
+            { k: "7000+", v: "Produits vendus" },
             { k: "4,8/5", v: "Note Trustpilot" },
           ].map((s) => (
             <div key={s.k}>
