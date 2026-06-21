@@ -78,10 +78,10 @@ export function AnimatedHero() {
         />
       ))}
 
-      {/* Content */}
+      {/* Content — initial=false : SSR rend l'état visible (robuste si JS/framer bloqué) */}
       <motion.div
         variants={container}
-        initial="hidden"
+        initial={false}
         animate="visible"
         style={{
           position: "relative",
