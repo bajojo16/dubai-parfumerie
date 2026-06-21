@@ -3,7 +3,7 @@ import Image from "next/image";
 
 export const metadata: Metadata = {
   title: "À propos",
-  description: "Depuis 2015, Dubaï Parfumerie source directement au Golfe 300+ parfums orientaux authentiques. Notre histoire, nos valeurs.",
+  description: "Depuis 2016, Dubaï Parfumerie source directement au Golfe 300+ parfums orientaux authentiques. Notre histoire, nos valeurs.",
 };
 
 const stats = [
@@ -36,7 +36,7 @@ export default function AProposPage() {
           <div style={{ fontFamily: "var(--font-sans)", fontSize: "11px", letterSpacing: ".24em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 16 }}>Notre histoire</div>
           <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(2.6rem,4.6vw,4.2rem)", lineHeight: 1.05, color: "var(--on-dark-strong)", margin: 0 }}>Rapporter l&apos;Orient, flacon après flacon</h1>
           <p style={{ fontFamily: "var(--font-sans)", fontWeight: 300, fontSize: "1.125rem", lineHeight: 1.7, color: "var(--on-dark)", margin: "20px auto 0", maxWidth: "54ch" }}>
-            Depuis 2015, nous parcourons les souks du Golfe pour vous offrir la vraie parfumerie orientale, sans intermédiaire ni compromis sur l&apos;authenticité.
+            Depuis 2016, nous parcourons les souks du Golfe pour vous offrir la vraie parfumerie orientale, sans intermédiaire ni compromis sur l&apos;authenticité.
           </p>
         </div>
       </section>

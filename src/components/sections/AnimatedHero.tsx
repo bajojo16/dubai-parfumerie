@@ -107,7 +107,7 @@ export function AnimatedHero() {
             marginBottom: 20,
           }}
         >
-          Parfumerie Orientale Authentique · Depuis 2015
+          Parfumerie Orientale Authentique · Depuis 2016
         </motion.div>
 
         <motion.h1

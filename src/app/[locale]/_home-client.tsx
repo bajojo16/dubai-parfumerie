@@ -544,14 +544,14 @@ export default function HomePageClient() {
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
             {[
-              { img: "/assets/prod-1.jpg", label: "Oud", sub: "Profond · Mystérieux" },
-              { img: "/assets/prod-2.jpg", label: "Ambre", sub: "Chaud · Enveloppant" },
-              { img: "/assets/cat-femme.jpg", label: "Floral", sub: "Rose · Jasmin" },
-              { img: "/assets/cat-homme.jpg", label: "Boisé", sub: "Cèdre · Vétiver" },
-              { img: "/assets/prod-3.jpg", label: "Musc", sub: "Délicat · Poudreux" },
-              { img: "/assets/prod-4.jpg", label: "Rose", sub: "Royal · Envoûtant" },
-              { img: "/assets/prod-5.jpg", label: "Épicé", sub: "Safran · Cardamome" },
-              { img: "/assets/cat-mixte.jpg", label: "Mixte", sub: "Universel · Moderne" },
+              { img: "/assets/scents/oud.png", label: "Oud", sub: "Profond · Mystérieux" },
+              { img: "/assets/scents/ambre.png", label: "Ambre", sub: "Chaud · Enveloppant" },
+              { img: "/assets/scents/floral.png", label: "Floral", sub: "Rose · Jasmin" },
+              { img: "/assets/scents/boise.png", label: "Boisé", sub: "Cèdre · Vétiver" },
+              { img: "/assets/scents/musc.png", label: "Musc", sub: "Délicat · Poudreux" },
+              { img: "/assets/scents/rose.png", label: "Rose", sub: "Royal · Envoûtant" },
+              { img: "/assets/scents/epice.png", label: "Épicé", sub: "Safran · Cardamome" },
+              { img: "/assets/scents/mixte.png", label: "Mixte", sub: "Universel · Moderne" },
             ].map((card, i) => (
               <div
                 key={i}

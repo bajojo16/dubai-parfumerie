@@ -236,7 +236,7 @@ export function Footer() {
               margin: 0,
             }}
           >
-            Parfumerie orientale authentique depuis 2015
+            Parfumerie orientale authentique depuis 2016
           </p>
         </div>
 
