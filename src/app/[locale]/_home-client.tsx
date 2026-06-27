@@ -3,7 +3,10 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { AnimatedHero } from "@/components/sections/AnimatedHero";
+import { BestSellers } from "@/components/sections/BestSellers";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
+import { VideoPlaceholder } from "@/components/ui/VideoPlaceholder";
+import { QuizSignature } from "@/components/sections/QuizSignature";
 
 // ─── Static data ─────────────────────────────────────────────────────────────
 
@@ -16,16 +19,15 @@ const products = [
   { id: 6, image: "/assets/prod-6.jpg", brand: "Ahmed Al Maghribi", name: "L'Or Intense", price: 36.90, oldPrice: 64.90, rating: 4.8, reviews: 134, badge: "-43%", notes: "Épices · Ambre · Encens" },
 ];
 
-const flashItems = products.slice(0, 4);
 const bestSellers = products.slice(2, 6);
 const oilItems = products.slice(0, 3);
 
 const olfactoryFamilies = [
-  { id: 1, name: "Boisé · Oud", count: 82, color: "#6B3A2A", emoji: "🌳" },
-  { id: 2, name: "Floral · Musc", count: 67, color: "#C8607A", emoji: "🌸" },
-  { id: 3, name: "Gourmand · Vanille", count: 45, color: "#C8901E", emoji: "🍬" },
-  { id: 4, name: "Épicé · Encens", count: 38, color: "#8B1A1A", emoji: "🌶" },
-  { id: 5, name: "Fruité · Floral", count: 51, color: "#7B3FA0", emoji: "🍊" },
+  { id: 1, name: "Boisé · Oud", count: 82, color: "#6B3A2A", img: "/assets/prod-1.jpg" },
+  { id: 2, name: "Floral · Musc", count: 67, color: "#C8607A", img: "/assets/prod-4.jpg" },
+  { id: 3, name: "Gourmand · Vanille", count: 45, color: "#C8901E", img: "/assets/prod-6.jpg" },
+  { id: 4, name: "Épicé · Encens", count: 38, color: "#8B1A1A", img: "/assets/prod-5.jpg" },
+  { id: 5, name: "Fruité · Floral", count: 51, color: "#7B3FA0", img: "/assets/prod-2.jpg" },
 ];
 
 const brands = [
@@ -64,6 +66,49 @@ const blogPosts = [
 ];
 
 const scentFamilies = ["Oud", "Musc", "Ambre", "Rose", "Santal", "Épices", "Vanille", "Bakhour"];
+
+const scentProducts: Record<string, { brand: string; name: string; price: number; oldPrice: number; img: string }[]> = {
+  Oud: [
+    { brand: "Lattafa", name: "Oud Mood", price: 32.9, oldPrice: 54.9, img: "/assets/prod-1.jpg" },
+    { brand: "Swiss Arabian", name: "Shaghaf Oud", price: 39.9, oldPrice: 74.9, img: "/assets/prod-2.jpg" },
+    { brand: "Al Haramain", name: "Oudh 36", price: 44.9, oldPrice: 79.9, img: "/assets/prod-3.jpg" },
+  ],
+  Ambre: [
+    { brand: "Al Haramain", name: "Amber Oud", price: 34.9, oldPrice: 59.9, img: "/assets/prod-2.jpg" },
+    { brand: "Lattafa", name: " Amber Elixir", price: 29.9, oldPrice: 49.9, img: "/assets/prod-4.jpg" },
+    { brand: "Rasasi", name: "Ambar Gold", price: 37.9, oldPrice: 64.9, img: "/assets/prod-5.jpg" },
+  ],
+  Musc: [
+    { brand: "Lattafa", name: "Musk Mood", price: 24.9, oldPrice: 42.9, img: "/assets/prod-3.jpg" },
+    { brand: "Swiss Arabian", name: "White Musk", price: 28.9, oldPrice: 49.9, img: "/assets/prod-6.jpg" },
+    { brand: "Ard Al Zaafaran", name: "Musk Pour Elle", price: 22.9, oldPrice: 39.9, img: "/assets/prod-1.jpg" },
+  ],
+  Rose: [
+    { brand: "Lattafa", name: "Rose pour Elle", price: 28.9, oldPrice: 49.9, img: "/assets/prod-4.jpg" },
+    { brand: "Swiss Arabian", name: "Rose de Taïf", price: 42.9, oldPrice: 72.9, img: "/assets/prod-5.jpg" },
+    { brand: "Rasasi", name: "Bloom Rose", price: 31.9, oldPrice: 54.9, img: "/assets/prod-2.jpg" },
+  ],
+  Santal: [
+    { brand: "Al Haramain", name: "Sandal Wood", price: 36.9, oldPrice: 62.9, img: "/assets/prod-6.jpg" },
+    { brand: "Lattafa", name: "Santal Royal", price: 33.9, oldPrice: 57.9, img: "/assets/prod-3.jpg" },
+    { brand: "Swiss Arabian", name: "Sandalia", price: 38.9, oldPrice: 66.9, img: "/assets/prod-1.jpg" },
+  ],
+  Safran: [
+    { brand: "Lattafa", name: "Saffron Mood", price: 30.9, oldPrice: 52.9, img: "/assets/prod-5.jpg" },
+    { brand: "Rasasi", name: "Saffron Oud", price: 41.9, oldPrice: 71.9, img: "/assets/prod-2.jpg" },
+    { brand: "Al Haramain", name: "Safran Élixir", price: 35.9, oldPrice: 61.9, img: "/assets/prod-4.jpg" },
+  ],
+  Vanille: [
+    { brand: "Lattafa", name: "Vanilla Mood", price: 26.9, oldPrice: 44.9, img: "/assets/prod-6.jpg" },
+    { brand: "Swiss Arabian", name: "Vanilla Oud", price: 39.9, oldPrice: 68.9, img: "/assets/prod-3.jpg" },
+    { brand: "Rasasi", name: "Vanille Noire", price: 32.9, oldPrice: 56.9, img: "/assets/prod-1.jpg" },
+  ],
+  Encens: [
+    { brand: "Al Haramain", name: "Encens Mystique", price: 37.9, oldPrice: 64.9, img: "/assets/prod-4.jpg" },
+    { brand: "Lattafa", name: "Bakhour Mood", price: 29.9, oldPrice: 49.9, img: "/assets/prod-5.jpg" },
+    { brand: "Swiss Arabian", name: "Incense Oud", price: 43.9, oldPrice: 76.9, img: "/assets/prod-2.jpg" },
+  ],
+};
 
 const editorialBlocks = [
   { name: "Oud", desc: "L'oud (ou agarwood) est l'essence la plus précieuse au monde. Issu du bois d'aquilaria infecté par un champignon, il dévoile des facettes boisées, fumées et animales d'une profondeur incomparable.", symbol: "Ω" },
@@ -185,15 +230,78 @@ function CountdownTimer() {
   );
 }
 
+// ─── ReassuranceIcon — icônes ligne fines (or) ───────────────────────────────
+function ReassuranceIcon({ name }: { name: string }) {
+  const common = {
+    width: 26,
+    height: 26,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "var(--gold-400)",
+    strokeWidth: 1.4,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+  switch (name) {
+    case "shipping":
+      return (
+        <svg {...common}>
+          <path d="M3 7h11v8H3z" />
+          <path d="M14 10h4l3 3v2h-7z" />
+          <circle cx="7" cy="18" r="1.6" />
+          <circle cx="17.5" cy="18" r="1.6" />
+        </svg>
+      );
+    case "secure":
+      return (
+        <svg {...common}>
+          <rect x="5" y="11" width="14" height="9" rx="2" />
+          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          <circle cx="12" cy="15.5" r="1" />
+        </svg>
+      );
+    case "authentic":
+      return (
+        <svg {...common}>
+          <path d="M12 3l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L3.2 8.7l5.4-.8z" />
+        </svg>
+      );
+    case "returns":
+      return (
+        <svg {...common}>
+          <path d="M4 12a8 8 0 0 1 14-5.3L21 9" />
+          <path d="M21 4v5h-5" />
+          <path d="M20 12a8 8 0 0 1-14 5.3L3 15" />
+          <path d="M3 20v-5h5" />
+        </svg>
+      );
+    case "installments":
+      return (
+        <svg {...common}>
+          <rect x="3" y="6" width="18" height="12" rx="2" />
+          <path d="M3 10h18" />
+          <path d="M7 14h3" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
 // ─── WelcomeModal ─────────────────────────────────────────────────────────────
 
 function WelcomeModal() {
   const [shown, setShown] = useState(false);
   const [email, setEmail] = useState("");
+  const [lang, setLang] = useState("Français");
+  const [cur, setCur] = useState("EUR");
 
   useEffect(() => {
     const seen = localStorage.getItem("dp_welcome_shown");
-    if (!seen) setShown(true);
+    if (!seen) {
+      const t = setTimeout(() => setShown(true), 1800);
+      return () => clearTimeout(t);
+    }
   }, []);
 
   const close = () => {
@@ -206,59 +314,122 @@ function WelcomeModal() {
   return (
     <div
       suppressHydrationWarning
+      onClick={close}
       style={{
-        position: "fixed", inset: 0, zIndex: 300,
-        background: "rgba(15,10,6,0.75)", backdropFilter: "blur(6px)",
+        position: "fixed", inset: 0, zIndex: 400,
+        background: "rgba(15,10,6,0.72)", backdropFilter: "blur(5px)",
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: "20px",
       }}
     >
-      <div style={{
-        background: "var(--surface-white)", borderRadius: "var(--r-lg)",
-        border: "1.5px solid var(--gold-500)", maxWidth: 480, width: "100%",
-        padding: "40px 36px", position: "relative", textAlign: "center",
-        boxShadow: "0 32px 80px rgba(0,0,0,0.35)",
-      }}>
-        <div style={{ color: "var(--gold-500)", fontSize: "1.2rem", marginBottom: 12, letterSpacing: "0.3em" }}>✦ ✦ ✦</div>
-        <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold-700)", marginBottom: 10 }}>Offre de bienvenue</div>
-        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.9rem", color: "var(--ink-900)", margin: "0 0 10px", lineHeight: 1.15 }}>
-          Bienvenue chez<br />Dubai Parfumerie
-        </h2>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.9rem", color: "var(--ink-500)", marginBottom: 20, lineHeight: 1.65 }}>
-          Profitez de <strong>-10%</strong> sur votre première commande avec le code :
-        </p>
-        <div style={{
-          background: "var(--surface-cream)", border: "1.5px dashed var(--gold-400)",
-          borderRadius: "var(--r-md)", padding: "14px 24px", marginBottom: 24,
+      <div
+        className="dp-welcome-inner"
+        onClick={e => e.stopPropagation()}
+        style={{
+          display: "grid", gridTemplateColumns: "1fr 1fr",
+          maxWidth: 820, width: "100%", maxHeight: "90vh",
+          borderRadius: "var(--r-lg)", overflow: "hidden auto",
+          boxShadow: "0 40px 100px rgba(0,0,0,0.5)",
+        }}
+      >
+        {/* Left panel — image + coffrets */}
+        <div className="dp-welcome-left" style={{
+          position: "relative", background: "var(--espresso-900)",
+          padding: "44px 36px 40px",
+          display: "flex", flexDirection: "column", justifyContent: "flex-end",
+          minHeight: 460,
         }}>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: "2rem", fontWeight: 700, color: "var(--gold-700)", letterSpacing: "0.08em" }}>BIENVENUE10</span>
+          <Image src="/assets/popup-oud-roses.jpg" alt="Oud & Roses — parfums orientaux" fill sizes="400px" style={{ objectFit: "cover", opacity: 0.85 }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(21,16,11,.15) 0%, rgba(21,16,11,.45) 55%, rgba(21,16,11,.88) 100%)" }} />
+          <div style={{ position: "relative", zIndex: 1 }}>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.6rem, 2.5vw, 2rem)", color: "#fff", margin: "0 0 12px", lineHeight: 1.2 }}>
+              Nos Coffrets Découverte
+            </h2>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "rgba(255,255,255,0.75)", lineHeight: 1.65, marginBottom: 22 }}>
+              Explorez la richesse de la parfumerie orientale avec nos coffrets échantillons. Le meilleur moyen de trouver votre signature olfactive.
+            </p>
+            <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--gold-400)", marginBottom: 20 }}>
+              À partir de 9€
+            </div>
+            <a href="#coffrets" onClick={close} style={{
+              display: "inline-block", background: "var(--gold-500)", color: "#fff",
+              textDecoration: "none", padding: "11px 22px", borderRadius: "var(--r-sm)",
+              fontFamily: "var(--font-sans)", fontSize: "0.76rem", fontWeight: 700,
+              letterSpacing: "0.12em", textTransform: "uppercase",
+            }}>Découvrir les coffrets</a>
+            <p style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", color: "rgba(255,255,255,0.5)", marginTop: 24, fontStyle: "italic" }}>
+              «&nbsp;L&apos;Orient se respire,<br />il ne se raconte pas.&nbsp;»
+            </p>
+          </div>
         </div>
-        <div style={{ display: "flex", gap: 10, marginBottom: 16 }}>
+
+        {/* Right panel — form */}
+        <div style={{ background: "var(--surface-white)", padding: "44px 36px 40px", position: "relative" }}>
+          {/* Close */}
+          <button onClick={close} style={{
+            position: "absolute", top: 16, right: 16,
+            background: "none", border: "none", cursor: "pointer",
+            color: "var(--ink-400)", fontSize: "1.1rem", lineHeight: 1, padding: 4,
+          }}>×</button>
+
+          <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 14 }}>Offre de bienvenue</div>
+          <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.5rem, 2.5vw, 2rem)", color: "var(--ink-900)", margin: "0 0 14px", lineHeight: 1.15 }}>
+            -10% &amp; un échantillon offert
+          </h3>
+          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", color: "var(--ink-500)", lineHeight: 1.65, marginBottom: 24 }}>
+            Rejoignez Le Cercle et recevez votre code de bienvenue, plus un échantillon surprise glissé dans votre première commande.
+          </p>
+
           <input
             type="email"
-            placeholder="votre@email.fr"
+            placeholder="Votre adresse email"
             value={email}
             onChange={e => setEmail(e.target.value)}
             style={{
-              flex: 1, padding: "12px 14px", border: "1px solid var(--line-200)",
-              borderRadius: "var(--r-sm)", fontFamily: "var(--font-sans)", fontSize: "0.88rem",
-              color: "var(--ink-900)", background: "var(--surface-page)", outline: "none",
+              width: "100%", padding: "13px 14px", marginBottom: 10,
+              border: "1px solid #ddd", borderRadius: "var(--r-sm)",
+              fontFamily: "var(--font-sans)", fontSize: "0.88rem",
+              color: "var(--ink-900)", background: "#fff", outline: "none",
+              boxSizing: "border-box",
             }}
           />
-          <button
-            onClick={close}
-            style={{
-              background: "var(--gold-500)", color: "#fff", border: "none",
-              borderRadius: "var(--r-sm)", padding: "12px 18px", cursor: "pointer",
-              fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 700,
-              whiteSpace: "nowrap",
-            }}
-          >Profiter</button>
+
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+            <select value={lang} onChange={e => setLang(e.target.value)} style={{
+              padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
+              fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
+              background: "#fff", outline: "none", cursor: "pointer",
+            }}>
+              {["Français","English","Español","Deutsch","Italiano","Русский","العربية"].map(l => <option key={l}>{l}</option>)}
+            </select>
+            <select value={cur} onChange={e => setCur(e.target.value)} style={{
+              padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
+              fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
+              background: "#fff", outline: "none", cursor: "pointer",
+            }}>
+              {["EUR","AED","SAR","USD","GBP","MAD"].map(c => <option key={c}>{c}</option>)}
+            </select>
+          </div>
+
+          <button onClick={close} style={{
+            width: "100%", background: "var(--gold-500)", color: "#fff", border: "none",
+            borderRadius: "var(--r-sm)", padding: "14px", cursor: "pointer",
+            fontFamily: "var(--font-sans)", fontSize: "0.9rem", fontWeight: 700,
+            letterSpacing: "0.04em", marginBottom: 16,
+          }}>J&apos;EN PROFITE</button>
+
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--ink-400)" }}>
+              Déjà membre ?&nbsp;
+              <button onClick={close} style={{ background: "none", border: "none", color: "var(--gold-600)", textDecoration: "underline", cursor: "pointer", fontFamily: "inherit", fontSize: "inherit" }}>
+                Se connecter
+              </button>
+            </span>
+            <button onClick={close} style={{ background: "none", border: "none", color: "var(--ink-300)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.78rem" }}>
+              Non merci
+            </button>
+          </div>
         </div>
-        <button
-          onClick={close}
-          style={{ background: "none", border: "none", color: "var(--ink-400)", fontSize: "0.78rem", cursor: "pointer", fontFamily: "var(--font-sans)", textDecoration: "underline" }}
-        >Non merci, je préfère payer plein tarif</button>
       </div>
     </div>
   );
@@ -382,18 +553,10 @@ export default function HomePageClient() {
       {/* ── 2. HERO ───────────────────────────────────────────────── */}
       <AnimatedHero />
 
-      {/* Promo strip */}
-      <div style={{ background: "var(--espresso-900)", borderTop: "1px solid rgba(200,144,30,0.2)", padding: "14px 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--on-dark)" }}>
-            ⚡ <strong style={{ color: "var(--gold-400)" }}>VENTES FLASH</strong> — Jusqu&apos;à -43% sur une sélection
-          </span>
-          <CountdownTimer />
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--on-dark-muted)" }}>
-            Code : <strong style={{ color: "var(--gold-400)", letterSpacing: "0.1em" }}>FLASH43</strong>
-          </span>
-        </div>
-      </div>
+      {/* Promo strip — VENTES FLASH retiré pour le moment */}
+
+      {/* ── BEST SELLERS (slide) ──────────────────────────────────── */}
+      <BestSellers />
 
       {/* ── 3. TRUST MARQUEE ──────────────────────────────────────── */}
       <section style={{ background: "var(--espresso-900)", padding: "11px 0", overflow: "hidden", borderBottom: "1px solid rgba(200,144,30,0.15)" }}>
@@ -432,14 +595,14 @@ export default function HomePageClient() {
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
             {[
-              { img: "/assets/prod-1.jpg", label: "Oud Fumé", sub: "Profond · Mystérieux" },
-              { img: "/assets/prod-2.jpg", label: "Ambre Doré", sub: "Chaud · Enveloppant" },
-              { img: "/assets/cat-femme.jpg", label: "Floral Féminin", sub: "Rose · Jasmin" },
-              { img: "/assets/cat-homme.jpg", label: "Boisé Masculin", sub: "Cèdre · Vétiver" },
-              { img: "/assets/prod-3.jpg", label: "Musc Blanc", sub: "Délicat · Poudreux" },
-              { img: "/assets/prod-4.jpg", label: "Rose de Taïf", sub: "Royal · Envoûtant" },
-              { img: "/assets/prod-5.jpg", label: "Épicé Intense", sub: "Safran · Cardamome" },
-              { img: "/assets/cat-mixte.jpg", label: "Mixte Contemporain", sub: "Universel · Moderne" },
+              { img: "/assets/scents/oud.png", label: "Oud", sub: "Profond · Mystérieux" },
+              { img: "/assets/scents/ambre.png", label: "Ambre", sub: "Chaud · Enveloppant" },
+              { img: "/assets/scents/floral.png", label: "Floral", sub: "Rose · Jasmin" },
+              { img: "/assets/scents/boise.png", label: "Boisé", sub: "Cèdre · Vétiver" },
+              { img: "/assets/scents/musc.png", label: "Musc", sub: "Délicat · Poudreux" },
+              { img: "/assets/scents/rose.png", label: "Rose", sub: "Royal · Envoûtant" },
+              { img: "/assets/scents/epice.png", label: "Épicé", sub: "Safran · Cardamome" },
+              { img: "/assets/scents/mixte.png", label: "Mixte", sub: "Universel · Moderne" },
             ].map((card, i) => (
               <div
                 key={i}
@@ -503,30 +666,7 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 6. VENTES FLASH ───────────────────────────────────────── */}
-      <section id="flash" style={{ background: "var(--espresso-900)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 10 }}>Offres limitées</div>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.5rem)", color: "var(--on-dark-strong)", margin: "0 0 18px" }}>Ventes Flash ⚡</h2>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14 }}>
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--on-dark-muted)" }}>L'offre expire dans :</span>
-              <CountdownTimer />
-            </div>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {flashItems.map(p => <ProductCard key={p.id} {...p} fourxLabel />)}
-          </div>
-          <div style={{ textAlign: "center", marginTop: 36 }}>
-            <a href="#" style={{
-              display: "inline-block", border: "1.5px solid var(--gold-500)",
-              color: "var(--gold-400)", textDecoration: "none",
-              padding: "12px 32px", borderRadius: "var(--r-pill)",
-              fontFamily: "var(--font-sans)", fontSize: "0.84rem", fontWeight: 600,
-            }}>Voir toutes les promotions →</a>
-          </div>
-        </div>
-      </section>
+      {/* ── 6. VENTES FLASH — retirée pour le moment ──────────────── */}
 
       {/* ── 7. BEST SELLERS ───────────────────────────────────────── */}
       <section id="bestsellers" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
@@ -580,72 +720,146 @@ export default function HomePageClient() {
           <SectionHeader
             eyebrow="Notre expertise"
             title="Trouvez votre parfum idéal"
-            subtitle="Quatre façons d'explorer notre univers selon votre sensibilité olfactive."
+            subtitle="5 questions pour révéler votre signature olfactive et recevoir des recommandations sur mesure."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {[
-              { icon: "🌹", title: "Par famille", desc: "Boisé, floral, oriental, gourmand… identifiez votre famille de cœur et explorez ses déclinaisons." },
-              { icon: "✨", title: "Par occasion", desc: "Séduction, travail, soirée, cérémonie… chaque moment mérite sa fragrance." },
-              { icon: "🎁", title: "Par budget", desc: "Des offres dès 19 € jusqu'aux collections de prestige. La qualité orientale, pour tous." },
-              { icon: "🧪", title: "Le quiz olfactif", desc: "6 questions pour découvrir votre profil olfactif et recevoir des recommandations personnalisées." },
-            ].map(card => (
-              <div key={card.title} style={{
-                background: "var(--surface-white)", border: "1px solid var(--line-200)",
-                borderRadius: "var(--r-lg)", padding: "32px 22px", textAlign: "center",
-                cursor: "pointer",
-              }}>
-                <div style={{ fontSize: "2.2rem", marginBottom: 16 }}>{card.icon}</div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", color: "var(--ink-900)", marginBottom: 10 }}>{card.title}</div>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-500)", lineHeight: 1.65, margin: 0 }}>{card.desc}</p>
-              </div>
-            ))}
-          </div>
+          <QuizSignature />
         </div>
       </section>
 
       {/* ── 10. ROUE DES SENTEURS ─────────────────────────────────── */}
-      <section id="roue" style={{ background: "var(--espresso-800)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            dark
-            eyebrow="Exploration"
-            title="Roue des Senteurs"
-            subtitle="Sélectionnez une note pour découvrir les parfums correspondants."
-          />
-          <div style={{ display: "flex", justifyContent: "center", flexWrap: "wrap", gap: 12, marginBottom: 32 }}>
-            {scentFamilies.map(s => (
-              <button
-                key={s}
-                onClick={() => setSelectedScent(selectedScent === s ? null : s)}
-                onMouseEnter={() => setHoveredScent(s)}
-                onMouseLeave={() => setHoveredScent(null)}
-                style={{
-                  padding: "10px 24px", borderRadius: "var(--r-pill)",
-                  border: `1.5px solid ${selectedScent === s ? "var(--gold-400)" : hoveredScent === s ? "rgba(200,144,30,0.5)" : "rgba(255,255,255,0.15)"}`,
-                  background: selectedScent === s ? "var(--gold-500)" : "transparent",
-                  color: selectedScent === s ? "#fff" : "var(--on-dark)",
-                  fontFamily: "var(--font-display)", fontSize: "1.05rem",
-                  cursor: "pointer", transition: "all 0.25s",
-                }}
-              >{s}</button>
-            ))}
-          </div>
-          {selectedScent && (
-            <div style={{
-              textAlign: "center", animation: "slideDown 0.3s ease",
-              padding: "22px", background: "rgba(200,144,30,0.08)",
-              borderRadius: "var(--r-md)", border: "1px solid rgba(200,144,30,0.2)",
-            }}>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: "var(--gold-300)", marginBottom: 8 }}>{selectedScent}</div>
-              <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--on-dark-muted)" }}>
-                Parfums avec la note <strong style={{ color: "var(--gold-400)" }}>{selectedScent}</strong> dans notre catalogue
+      <section id="roue" style={{ background: "#1a1208", padding: "80px 20px" }}>
+        <div className="dp-roue-grid" style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
+          {/* Left: title + result */}
+          <div>
+            <div style={{ fontFamily: "var(--font-sans)", fontSize: "11px", letterSpacing: ".22em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 20 }}>Recherche par notes</div>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 400, fontSize: "clamp(2.8rem,4vw,4rem)", color: "var(--on-dark-strong)", lineHeight: 1.05, margin: "0 0 32px" }}>La Roue des <em>Senteurs</em></h2>
+            {selectedScent ? (
+              <div style={{ animation: "fadeSlideIn .3s ease" }}>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "var(--gold-400)", marginBottom: 10 }}>{selectedScent}</div>
+                <div style={{ fontFamily: "var(--font-sans)", fontWeight: 300, fontSize: ".9375rem", color: "var(--on-dark-muted)", lineHeight: 1.7, marginBottom: 20 }}>
+                  Découvrez tous les parfums à dominante <strong style={{ color: "var(--on-dark)" }}>{selectedScent}</strong> de notre catalogue — des créations orientales rares sourcées directement au Golfe.
+                </div>
+                <a href="#" style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: "var(--font-sans)", fontSize: "13px", fontWeight: 600, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--gold-400)", textDecoration: "none" }}>
+                  Voir les parfums {selectedScent} →
+                </a>
               </div>
-              <a href="#" style={{ display: "inline-block", marginTop: 14, color: "var(--gold-400)", fontFamily: "var(--font-sans)", fontSize: "0.84rem", fontWeight: 600, textDecoration: "none" }}>
-                Voir tous les résultats →
-              </a>
-            </div>
-          )}
+            ) : (
+              <p style={{ fontFamily: "var(--font-sans)", fontWeight: 300, fontSize: "1rem", color: "var(--on-dark-muted)", lineHeight: 1.8, margin: 0 }}>
+                Cliquez sur une note olfactive pour explorer les parfums qui la composent. De l&apos;oud mystérieux au musc délicat, chaque cercle ouvre un univers.
+              </p>
+            )}
+          </div>
+
+          {/* Right: SVG wheel */}
+          <div style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+            {(() => {
+              const CX = 250, CY = 250, R = 170, RC = 68, RN = 54;
+              const nodes = [
+                { label: "Oud",     a: 0   },
+                { label: "Ambre",   a: 45  },
+                { label: "Musc",    a: 90  },
+                { label: "Rose",    a: 135 },
+                { label: "Santal",  a: 180 },
+                { label: "Safran",  a: 225 },
+                { label: "Vanille", a: 270 },
+                { label: "Encens",  a: 315 },
+              ];
+              const toRad = (deg: number) => (deg * Math.PI) / 180;
+              const pos = (a: number) => ({
+                x: CX + R * Math.sin(toRad(a)),
+                y: CY - R * Math.cos(toRad(a)),
+              });
+              return (
+                <svg viewBox="0 0 500 500" width="100%" style={{ maxWidth: 480, overflow: "visible" }}>
+                  {/* Dashed lines center → nodes */}
+                  {nodes.map(n => {
+                    const p = pos(n.a);
+                    const dx = p.x - CX, dy = p.y - CY;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    const ux = dx/dist, uy = dy/dist;
+                    return (
+                      <line
+                        key={n.label}
+                        x1={CX + ux * RC} y1={CY + uy * RC}
+                        x2={p.x - ux * RN} y2={p.y - uy * RN}
+                        stroke="rgba(200,144,30,0.3)"
+                        strokeWidth="1.2"
+                        strokeDasharray="5 4"
+                      />
+                    );
+                  })}
+                  {/* Center circle */}
+                  <circle cx={CX} cy={CY} r={RC} fill="#15100b" stroke="#C8901E" strokeWidth="1.5" strokeDasharray="6 4" />
+                  <text x={CX} y={CY - 8} textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="17" fill={selectedScent ? "#D8A63A" : "#e8dfc8"} fontStyle="italic">
+                    {selectedScent || "La Roue"}
+                  </text>
+                  <text x={CX} y={CY + 12} textAnchor="middle" fontFamily="Jost, sans-serif" fontSize="8.5" fill="rgba(220,200,160,.55)" letterSpacing="2">
+                    {selectedScent ? "SÉLECTIONNÉ" : "CLIQUEZ UNE NOTE"}
+                  </text>
+                  {/* Outer nodes */}
+                  {nodes.map(n => {
+                    const p = pos(n.a);
+                    const active = selectedScent === n.label;
+                    const hovered = hoveredScent === n.label;
+                    return (
+                      <g
+                        key={n.label}
+                        onClick={() => setSelectedScent(selectedScent === n.label ? null : n.label)}
+                        onMouseEnter={() => setHoveredScent(n.label)}
+                        onMouseLeave={() => setHoveredScent(null)}
+                        style={{ cursor: "pointer" }}
+                      >
+                        <circle
+                          cx={p.x} cy={p.y} r={RN}
+                          fill={active ? "rgba(200,144,30,0.22)" : hovered ? "rgba(200,144,30,0.12)" : "rgba(90,72,48,0.55)"}
+                          stroke={active ? "#C8901E" : hovered ? "rgba(200,144,30,0.5)" : "rgba(120,96,60,0.35)"}
+                          strokeWidth="1.2"
+                          style={{ transition: "fill .2s, stroke .2s" }}
+                        />
+                        <text x={p.x} y={p.y + 6} textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="15" fill={active ? "#D8A63A" : "#e8dfc8"} style={{ pointerEvents: "none", transition: "fill .2s" }}>
+                          {n.label}
+                        </text>
+                      </g>
+                    );
+                  })}
+                </svg>
+              );
+            })()}
+          </div>
         </div>
+
+        {/* Suggestions: 3 parfums de la senteur sélectionnée (miniatures) */}
+        {selectedScent && scentProducts[selectedScent] && (
+          <div style={{ maxWidth: 1240, margin: "32px auto 0", animation: "fadeSlideIn .35s ease" }}>
+            <div style={{ fontFamily: "var(--font-sans)", fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 12, textAlign: "center" }}>
+              3 parfums {selectedScent} à découvrir
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+              {scentProducts[selectedScent].map(p => (
+                <a key={p.name} href={`/produit/${p.name.trim().toLowerCase().replace(/\s+/g, "-")}`} style={{
+                  textDecoration: "none", display: "flex", alignItems: "center", gap: 12,
+                  background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,144,30,0.18)",
+                  borderRadius: "var(--r-md)", padding: 8, transition: "border-color .25s",
+                }}
+                  onMouseEnter={e => { (e.currentTarget as HTMLElement).style.borderColor = "var(--gold-400)"; }}
+                  onMouseLeave={e => { (e.currentTarget as HTMLElement).style.borderColor = "rgba(200,144,30,0.18)"; }}
+                >
+                  <div style={{ position: "relative", width: 52, height: 52, flexShrink: 0, borderRadius: "var(--r-sm)", overflow: "hidden" }}>
+                    <Image src={p.img} alt={p.name} fill sizes="52px" style={{ objectFit: "cover" }} />
+                  </div>
+                  <div style={{ minWidth: 0, flex: 1 }}>
+                    <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 2 }}>{p.brand}</div>
+                    <div style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", color: "var(--on-dark-strong)", marginBottom: 3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{p.name.trim()}</div>
+                    <div style={{ display: "flex", gap: 6, alignItems: "baseline" }}>
+                      <span style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", fontWeight: 600, color: "var(--gold-400)" }}>{p.price.toFixed(2).replace(".", ",")} €</span>
+                      <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--on-dark-muted)", textDecoration: "line-through" }}>{p.oldPrice.toFixed(2).replace(".", ",")} €</span>
+                    </div>
+                  </div>
+                </a>
+              ))}
+            </div>
+          </div>
+        )}
       </section>
 
       {/* ── 11. FAMILLES OLFACTIVES ───────────────────────────────── */}
@@ -663,7 +877,9 @@ export default function HomePageClient() {
                 background: "var(--surface-white)", border: "1px solid var(--line-200)",
                 borderRadius: "var(--r-lg)", padding: "18px 24px", cursor: "pointer",
               }}>
-                <div style={{ fontSize: "1.5rem", width: 44, textAlign: "center", flexShrink: 0 }}>{f.emoji}</div>
+                <div style={{ position: "relative", width: 56, height: 56, borderRadius: "var(--r-md)", overflow: "hidden", flexShrink: 0 }}>
+                  <Image src={f.img} alt={f.name} fill sizes="56px" style={{ objectFit: "cover" }} />
+                </div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--ink-900)", marginBottom: 6 }}>{f.name}</div>
                   <div style={{ height: 4, background: "var(--line-100)", borderRadius: 2, overflow: "hidden" }}>
@@ -763,17 +979,11 @@ export default function HomePageClient() {
       <section id="marque" style={{ background: "var(--espresso-900)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
-            <div style={{ position: "relative", paddingBottom: "75%", borderRadius: "var(--r-lg)", overflow: "hidden" }}>
-              <Image src="/assets/prod-1.jpg" alt="Lattafa" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-              <div style={{ position: "absolute", inset: 0, background: "linear-gradient(135deg, rgba(21,16,11,0.5) 0%, transparent 60%)" }} />
-              <div style={{
-                position: "absolute", top: 20, left: 20,
-                background: "var(--gold-500)", color: "#fff",
-                padding: "6px 14px", borderRadius: "var(--r-sm)",
-                fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 700,
-                letterSpacing: "0.1em", textTransform: "uppercase",
-              }}>Marque du mois</div>
-            </div>
+            <VideoPlaceholder
+              label="Brand story Lattafa — vidéo institutionnelle"
+              aspectRatio="4/3"
+              duration="2:30"
+            />
             <div>
               <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 12 }}>Sharjah, fondée en 1980</div>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", color: "var(--on-dark-strong)", margin: "0 0 18px", lineHeight: 1.1 }}>Lattafa Perfumes</h2>
@@ -902,17 +1112,18 @@ export default function HomePageClient() {
             subtitle="Ils partagent leur expérience, sans filtre."
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-            {products.slice(0, 4).map((p, i) => (
-              <div key={p.id} style={{ position: "relative", paddingBottom: "133%", borderRadius: "var(--r-lg)", overflow: "hidden", cursor: "pointer" }}>
-                <Image src={p.image} alt={p.name} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-                <div style={{ position: "absolute", inset: 0, background: "rgba(21,16,11,0.38)" }} />
-                <div style={{ position: "absolute", inset: 0, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                  <div style={{ width: 52, height: 52, borderRadius: "50%", background: "rgba(255,255,255,0.92)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "1.2rem", paddingLeft: 4 }}>▶</div>
-                </div>
-                <div style={{ position: "absolute", bottom: 14, left: 14, right: 14 }}>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--on-dark-muted)", marginBottom: 2 }}>{["Yasmine B.", "Karim M.", "Sophie L.", "Aicha D."][i]}</div>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", color: "#fff" }}>{p.name}</div>
-                </div>
+            {[
+              { name: "Yasmine B.", desc: "Avis Oud Pour Elle" },
+              { name: "Karim M.", desc: "Avis Amber Oud" },
+              { name: "Sophie L.", desc: "Avis Coffret découverte" },
+              { name: "Aicha D.", desc: "Avis Shaghaf Oud" },
+            ].map((v, i) => (
+              <div key={i}>
+                <VideoPlaceholder
+                  label={`${v.name} — ${v.desc}`}
+                  aspectRatio="9/16"
+                  duration="0:45 – 1:20"
+                />
               </div>
             ))}
           </div>
@@ -940,7 +1151,7 @@ export default function HomePageClient() {
       <section id="journal" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
-            eyebrow="Savoir & culture"
+            eyebrow="Blog"
             title="Le Journal du Parfum"
             subtitle="Histoires, guides et conseils par nos experts en parfumerie orientale."
           />
@@ -991,16 +1202,23 @@ export default function HomePageClient() {
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16, textAlign: "center" }}>
             {[
-              { icon: "✈️", title: "Livraison offerte", sub: "Dès 60 € d'achat" },
-              { icon: "🔒", title: "Paiement sécurisé", sub: "SSL · 3D Secure" },
-              { icon: "💎", title: "100% Authentique", sub: "Certifié origines" },
-              { icon: "🔄", title: "Retours 14 jours", sub: "Sans question" },
-              { icon: "💳", title: "Paiement 4×", sub: "Sans frais dès 60 €" },
-            ].map(p => (
-              <div key={p.title} style={{ padding: "22px 12px", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
-                <div style={{ fontSize: "2rem", marginBottom: 12 }}>{p.icon}</div>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 600, color: "var(--on-dark-strong)", marginBottom: 4 }}>{p.title}</div>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.74rem", color: "var(--on-dark-muted)" }}>{p.sub}</div>
+              { icon: "shipping", title: "Livraison offerte", sub: "Dès 60 € d'achat" },
+              { icon: "secure", title: "Paiement sécurisé", sub: "SSL · 3D Secure" },
+              { icon: "authentic", title: "100% Authentique", sub: "Certifié origines" },
+              { icon: "returns", title: "Retours 14 jours", sub: "Sans question" },
+              { icon: "installments", title: "Paiement 4×", sub: "Sans frais dès 60 €" },
+            ].map((p, idx, arr) => (
+              <div key={p.title} style={{ padding: "8px 12px", borderRight: idx < arr.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+                <div style={{
+                  width: 58, height: 58, margin: "0 auto 16px", borderRadius: "50%",
+                  border: "1px solid rgba(200,144,30,0.45)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "radial-gradient(circle at 50% 35%, rgba(200,144,30,0.12), transparent 70%)",
+                }}>
+                  <ReassuranceIcon name={p.icon} />
+                </div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.02rem", fontWeight: 600, color: "var(--on-dark-strong)", marginBottom: 5, letterSpacing: "0.01em" }}>{p.title}</div>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--on-dark-muted)" }}>{p.sub}</div>
               </div>
             ))}
           </div>
@@ -1070,52 +1288,7 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── FOOTER ────────────────────────────────────────────────── */}
-      <footer style={{ background: "var(--espresso-900)", borderTop: "1px solid rgba(200,144,30,0.15)", padding: "60px 20px 28px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 40, marginBottom: 48 }}>
-            <div>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: "1.55rem", color: "var(--gold-400)", marginBottom: 14 }}>
-                Dubai<span style={{ color: "var(--on-dark)" }}> Parfumerie</span>
-              </div>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--on-dark-muted)", lineHeight: 1.72, marginBottom: 20 }}>
-                L'authenticité des parfums orientaux, directement depuis Dubaï. Certifiés, sourcés, livrés en France.
-              </p>
-              <div style={{ display: "flex", gap: 10 }}>
-                {["Instagram", "TikTok", "YouTube"].map(s => (
-                  <a key={s} href="#" style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--on-dark-muted)", textDecoration: "none", border: "1px solid rgba(255,255,255,0.14)", borderRadius: "var(--r-sm)", padding: "5px 11px" }}>{s}</a>
-                ))}
-              </div>
-            </div>
-            {[
-              { title: "Explorer", links: ["Tous les parfums", "Parfums femme", "Parfums homme", "Huiles de parfum", "Coffrets & Cadeaux"] },
-              { title: "Marques", links: ["Lattafa", "Al Haramain", "Swiss Arabian", "Armaf", "Reef", "Ahmed Al Maghribi"] },
-              { title: "Aide", links: ["Mon compte", "Suivre ma commande", "Livraison", "Retours", "Contact", "FAQ"] },
-            ].map(col => (
-              <div key={col.title}>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 16, fontWeight: 600 }}>{col.title}</div>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
-                  {col.links.map(l => (
-                    <li key={l}>
-                      <a href="#" style={{ fontFamily: "var(--font-sans)", fontSize: "0.83rem", color: "var(--on-dark-muted)", textDecoration: "none" }}>{l}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 22, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.76rem", color: "var(--on-dark-muted)", margin: 0 }}>
-              © 2025 Dubai Parfumerie SAS · Tous droits réservés · TVA FR12345678901
-            </p>
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-              {["CGV", "Mentions légales", "Politique de confidentialité", "Cookies"].map(l => (
-                <a key={l} href="#" style={{ fontFamily: "var(--font-sans)", fontSize: "0.73rem", color: "var(--on-dark-muted)", textDecoration: "none" }}>{l}</a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Footer doublon retiré — le footer global <Footer/> (layout) fait foi */}
     </>
   );
 }

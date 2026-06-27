@@ -58,7 +58,87 @@ const COLUMNS = [
   },
 ];
 
-const PAYMENT_METHODS = ["Visa", "Mastercard", "Amex", "Apple Pay", "PayPal", "4× sans frais"];
+// Logos de paiement — SVG inline sur cartes blanches (inspiré du visuel fourni)
+const CARD_W = 44, CARD_H = 28;
+const PaymentLogos: { name: string; svg: React.ReactNode }[] = [
+  {
+    name: "Mastercard",
+    svg: (
+      <svg viewBox="0 0 40 25" width="30" height="19" role="img" aria-label="Mastercard">
+        <circle cx="16" cy="12.5" r="9" fill="#EB001B" />
+        <circle cx="24" cy="12.5" r="9" fill="#F79E1B" />
+        <path d="M20 5.5a9 9 0 0 1 0 14 9 9 0 0 1 0-14z" fill="#FF5F00" />
+      </svg>
+    ),
+  },
+  {
+    name: "PayPal",
+    svg: (
+      <svg viewBox="0 0 26 26" width="20" height="20" role="img" aria-label="PayPal">
+        <path d="M7 22 8.6 3.5h7.2c3.2 0 5.2 1.7 4.8 4.8-.5 3.6-3 5.2-6.4 5.2h-2.8L10.6 22z" fill="#003087"/>
+        <path d="M9.8 24 11.4 5.5h6.4c2.9 0 4.7 1.5 4.3 4.4-.5 3.4-2.9 4.9-6 4.9h-2.6L12.6 24z" fill="#009CDE" opacity="0.85"/>
+      </svg>
+    ),
+  },
+  {
+    name: "Visa",
+    svg: (
+      <svg viewBox="0 0 48 16" width="36" height="12" role="img" aria-label="Visa">
+        <text x="0" y="13" fontFamily="Arial, sans-serif" fontStyle="italic" fontWeight="800" fontSize="15" fill="#1A1F71" letterSpacing="0.5">VISA</text>
+      </svg>
+    ),
+  },
+  {
+    name: "American Express",
+    svg: (
+      <svg viewBox="0 0 44 28" width="34" height="22" role="img" aria-label="American Express">
+        <rect width="44" height="28" rx="3" fill="#2671B9" />
+        <text x="22" y="11.5" textAnchor="middle" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="5.5" fill="#fff">AMERICAN</text>
+        <text x="22" y="20" textAnchor="middle" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="5.5" fill="#fff">EXPRESS</text>
+      </svg>
+    ),
+  },
+  {
+    name: "Discover",
+    svg: (
+      <svg viewBox="0 0 76 16" width="48" height="11" role="img" aria-label="Discover">
+        <text x="0" y="13" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="13" fill="#231F20">DISC</text>
+        <circle cx="48" cy="8" r="6" fill="#F58220" />
+        <text x="55" y="13" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="13" fill="#231F20">VER</text>
+      </svg>
+    ),
+  },
+  {
+    name: "iDEAL",
+    svg: (
+      <svg viewBox="0 0 44 28" width="32" height="20" role="img" aria-label="iDEAL">
+        <rect width="44" height="28" rx="3" fill="#fff" />
+        <text x="6" y="20" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="13" fill="#CC0066">i</text>
+        <text x="13" y="20" fontFamily="Arial, sans-serif" fontWeight="800" fontSize="13" fill="#000">DEAL</text>
+      </svg>
+    ),
+  },
+  {
+    name: "SOFORT",
+    svg: (
+      <svg viewBox="0 0 70 24" width="48" height="16" role="img" aria-label="SOFORT Überweisung">
+        <text x="0" y="13" fontFamily="Arial, sans-serif" fontStyle="italic" fontWeight="800" fontSize="12" fill="#EE7F00">SOFORT</text>
+        <text x="0" y="21" fontFamily="Arial, sans-serif" fontWeight="500" fontSize="5" fill="#666" letterSpacing="0.5">ÜBERWEISUNG</text>
+      </svg>
+    ),
+  },
+  {
+    name: "Bancontact",
+    svg: (
+      <svg viewBox="0 0 70 24" width="48" height="16" role="img" aria-label="Bancontact">
+        <path d="M0 22 L22 22 L34 8 L12 8 Z" fill="#005498" />
+        <path d="M36 2 L58 2 L46 16 L24 16 Z" fill="#FFD800" />
+        <text x="2" y="14" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="5.5" fill="#fff">Banc</text>
+        <text x="40" y="13" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="5.5" fill="#005498">ontact</text>
+      </svg>
+    ),
+  },
+];
 
 function IconX() {
   return (
@@ -146,18 +226,56 @@ export function Footer() {
         }}
       >
         <div style={{ maxWidth: 280 }}>
-          <img src="/assets/logo.png" height={32} alt="Dubaï Parfumerie" style={{ marginBottom: 14, filter: "brightness(0) invert(1)" }} />
+          <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 32, width: "auto", display: "block", marginBottom: 14, filter: "brightness(0) invert(1)" }} />
           <p
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: "13px",
               color: "var(--on-dark-muted)",
               lineHeight: 1.7,
-              margin: 0,
+              margin: "0 0 18px",
             }}
           >
-            Parfumerie orientale authentique depuis 2015
+            Parfumerie orientale authentique depuis 2016
           </p>
+          {/* Mini stats de confiance */}
+          <div style={{ display: "flex", gap: 22 }}>
+            {[
+              { k: "10 ans", v: "d'expertise" },
+              { k: "7000+", v: "clients" },
+              { k: "4,8/5", v: "Trustpilot" },
+            ].map((s) => (
+              <div key={s.k}>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.2rem", color: "var(--gold-400)", lineHeight: 1 }}>{s.k}</div>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--on-dark-muted)", marginTop: 3 }}>{s.v}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Bloc milieu — Service client (comble l'espace vide) */}
+        <div style={{ maxWidth: 280, flex: "0 1 auto" }}>
+          <p style={{ fontFamily: "var(--font-display)", fontSize: "18px", fontWeight: 600, color: "var(--on-dark-strong)", margin: "0 0 14px" }}>
+            Service client
+          </p>
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            <a href="https://wa.me/33600000000" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px", transition: "color .15s" }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-400)")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--on-dark-muted)")}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-400)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.38 8.38 0 0 1-4-1L3 20l1-5.5a8.38 8.38 0 0 1-1-4A8.5 8.5 0 0 1 12.5 2 8.5 8.5 0 0 1 21 11.5z"/></svg>
+              WhatsApp · réponse sous 1 h
+            </a>
+            <a href="mailto:contact@dubai-parfumerie.fr" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px", transition: "color .15s" }}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-400)")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--on-dark-muted)")}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-400)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+              contact@dubai-parfumerie.fr
+            </a>
+            <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px" }}>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-400)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+              Lun–Sam · 9 h – 19 h
+            </div>
+          </div>
         </div>
 
         <div style={{ maxWidth: 380, flex: "1 1 280px" }}>
@@ -301,28 +419,25 @@ export function Footer() {
         </span>
 
         {/* Payment logos */}
-        <div style={{ display: "flex", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
-          {PAYMENT_METHODS.map((method, i) => (
-            <React.Fragment key={method}>
-              <span
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "11px",
-                  fontWeight: 600,
-                  color: "var(--on-dark-muted)",
-                  background: "rgba(255,255,255,.06)",
-                  border: "1px solid rgba(255,255,255,.1)",
-                  borderRadius: "var(--r-xs)",
-                  padding: "3px 8px",
-                  letterSpacing: ".03em",
-                }}
-              >
-                {method}
-              </span>
-              {i < PAYMENT_METHODS.length - 1 && (
-                <span style={{ color: "rgba(255,255,255,.15)", fontSize: 11 }}>·</span>
-              )}
-            </React.Fragment>
+        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+          {PaymentLogos.map(({ name, svg }) => (
+            <span
+              key={name}
+              title={name}
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                justifyContent: "center",
+                width: CARD_W,
+                height: CARD_H,
+                background: "#fff",
+                borderRadius: 5,
+                boxShadow: "0 1px 3px rgba(0,0,0,.25)",
+                flexShrink: 0,
+              }}
+            >
+              {svg}
+            </span>
           ))}
         </div>
 

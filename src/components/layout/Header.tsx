@@ -1,10 +1,12 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { getCart, cartCount as getCartCount, removeItem, setQty, subscribe, type CartItem } from "@/lib/cart";
 
 const TOP_MESSAGES = [
   "Livraison offerte dès 60 €",
   "Paiement 4× sans frais",
-  "10 ans d'expérience · 12 000+ commandes",
+  "10 ans d'expérience · plus de 7000 produits vendus",
   "Cadeau surprise dans chaque commande",
   "Retours sous 14 jours",
 ];
@@ -20,6 +22,92 @@ const NAV_LINKS = [
   { label: "Promo Flash", href: "/promo-flash", highlight: true },
   { label: "Blog", href: "/blog" },
 ];
+
+interface MegaData {
+  columns: { title: string; links: { label: string; href: string }[] }[];
+  features: { img: string; label: string; sub: string; href: string }[];
+}
+
+const MEGA: Record<string, MegaData> = {
+  "/parfums-femme": {
+    columns: [
+      {
+        title: "Types de produit",
+        links: [
+          { label: "Eau de Parfum", href: "/parfums-femme" },
+          { label: "Huile de Parfum", href: "/huile-de-parfum" },
+          { label: "Coffrets découverte", href: "/promo-flash" },
+          { label: "Nouveautés", href: "/parfums-femme" },
+        ],
+      },
+      {
+        title: "Familles olfactives",
+        links: [
+          { label: "Floral · Rose", href: "/parfums-femme" },
+          { label: "Oud · Boisé", href: "/parfums-femme" },
+          { label: "Ambré · Gourmand", href: "/parfums-femme" },
+          { label: "Musc · Poudré", href: "/parfums-femme" },
+        ],
+      },
+    ],
+    features: [
+      { img: "/assets/cat-femme.jpg", label: "Collection Femme", sub: "Sillages floraux & orientaux", href: "/parfums-femme" },
+      { img: "/assets/scents/rose.png", label: "Rose de Taïf", sub: "L'élégance florale du Golfe", href: "/parfums-femme" },
+    ],
+  },
+  "/parfums-homme": {
+    columns: [
+      {
+        title: "Types de produit",
+        links: [
+          { label: "Eau de Parfum", href: "/parfums-homme" },
+          { label: "Huile de Parfum", href: "/huile-de-parfum" },
+          { label: "Coffrets prestige", href: "/promo-flash" },
+          { label: "Nouveautés", href: "/parfums-homme" },
+        ],
+      },
+      {
+        title: "Familles olfactives",
+        links: [
+          { label: "Oud · Cuir", href: "/parfums-homme" },
+          { label: "Boisé · Épicé", href: "/parfums-homme" },
+          { label: "Ambré · Tabac", href: "/parfums-homme" },
+          { label: "Aromatique · Frais", href: "/parfums-homme" },
+        ],
+      },
+    ],
+    features: [
+      { img: "/assets/cat-homme.jpg", label: "Collection Homme", sub: "Boisés intenses & oud noble", href: "/parfums-homme" },
+      { img: "/assets/scents/oud.png", label: "Oud Royal", sub: "La profondeur d'un bois précieux", href: "/parfums-homme" },
+    ],
+  },
+  "/marques": {
+    columns: [
+      {
+        title: "Maisons phares",
+        links: [
+          { label: "Lattafa", href: "/marques" },
+          { label: "Al Haramain", href: "/marques" },
+          { label: "Swiss Arabian", href: "/marques" },
+          { label: "Ahmed Al Maghribi", href: "/marques" },
+        ],
+      },
+      {
+        title: "Découvrir",
+        links: [
+          { label: "Toutes les marques", href: "/marques" },
+          { label: "Best-sellers", href: "/promo-flash" },
+          { label: "Éditions limitées", href: "/marques" },
+          { label: "Mixte · Unisexe", href: "/marques" },
+        ],
+      },
+    ],
+    features: [
+      { img: "/assets/coffrets.jpg", label: "Coffrets Prestige", sub: "L'art du cadeau oriental", href: "/promo-flash" },
+      { img: "/assets/cat-mixte.jpg", label: "Sélection Mixte", sub: "Des signatures qui rassemblent", href: "/marques" },
+    ],
+  },
+};
 
 function IconX() {
   return (
@@ -145,13 +233,69 @@ function IconApple() {
   );
 }
 
+const GIFT_THRESHOLDS = [
+  { amount: 40,  gift: "Échantillon surprise 2ml",  icon: "✦" },
+  { amount: 60,  gift: "Livraison offerte",          icon: "◈" },
+  { amount: 90,  gift: "Miniature exclusive 5ml",   icon: "◎" },
+  { amount: 120, gift: "Coffret découverte 3×2ml",  icon: "❋" },
+];
+
+function GiftProgressBar({ total }: { total: number }) {
+  const reached = GIFT_THRESHOLDS.filter(t => total >= t.amount);
+  const next = GIFT_THRESHOLDS.find(t => total < t.amount);
+  const prev = reached[reached.length - 1];
+  const prevAmount = prev ? prev.amount : 0;
+  const nextAmount = next ? next.amount : GIFT_THRESHOLDS[GIFT_THRESHOLDS.length - 1].amount;
+  const pct = next
+    ? Math.min(100, ((total - prevAmount) / (nextAmount - prevAmount)) * 100)
+    : 100;
+  const allUnlocked = !next;
+
+  return (
+    <div style={{ padding: "14px 24px 10px", borderBottom: "1px solid rgba(0,0,0,.07)", background: allUnlocked ? "rgba(200,144,30,.06)" : "var(--surface-cream)" }}>
+      {/* Message */}
+      <div style={{ fontFamily: "var(--font-sans)", fontSize: "12.5px", color: allUnlocked ? "var(--gold-700)" : "var(--ink-700)", marginBottom: 8, lineHeight: 1.4 }}>
+        {allUnlocked
+          ? <><strong>🎁 Tous vos cadeaux sont débloqués !</strong></>
+          : <>Plus que <strong style={{ color: "var(--gold-700)" }}>{(nextAmount - total).toFixed(2).replace(".", ",")} €</strong> pour obtenir : <strong>{next!.icon} {next!.gift}</strong></>}
+      </div>
+      {/* Bar */}
+      <div style={{ height: 5, borderRadius: 999, background: "var(--line-200)", overflow: "hidden" }}>
+        <div style={{ height: "100%", width: `${pct}%`, background: "linear-gradient(90deg, #9C6A1A, #D8A63A)", borderRadius: 999, transition: "width .5s cubic-bezier(.4,0,.2,1)" }} />
+      </div>
+      {/* Milestones */}
+      <div style={{ display: "flex", justifyContent: "space-between", marginTop: 6 }}>
+        {GIFT_THRESHOLDS.map(t => (
+          <div key={t.amount} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 2 }}>
+            <span style={{ fontSize: 10, color: total >= t.amount ? "var(--gold-600)" : "var(--ink-400)", transition: "color .3s", filter: total >= t.amount ? "none" : "grayscale(1) opacity(.5)" }}>{t.icon}</span>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: 10, color: total >= t.amount ? "var(--gold-600)" : "var(--ink-400)" }}>{t.amount} €</span>
+          </div>
+        ))}
+      </div>
+      {/* Unlocked gifts list */}
+      {reached.length > 0 && (
+        <div style={{ marginTop: 8, display: "flex", flexWrap: "wrap", gap: 4 }}>
+          {reached.map(t => (
+            <span key={t.amount} style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: "var(--gold-700)", background: "rgba(200,144,30,.1)", border: "1px solid rgba(200,144,30,.25)", borderRadius: 999, padding: "3px 9px" }}>
+              {t.icon} {t.gift}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 interface CartSidebarProps {
   open: boolean;
   onClose: () => void;
   cartCount: number;
+  items: CartItem[];
 }
 
-function CartSidebar({ open, onClose, cartCount }: CartSidebarProps) {
+function CartSidebar({ open, onClose, cartCount, items }: CartSidebarProps) {
+  const cartTotal = items.reduce((s, i) => s + i.price * i.qty, 0);
+
   return (
     <>
       <div
@@ -182,6 +326,7 @@ function CartSidebar({ open, onClose, cartCount }: CartSidebarProps) {
           flexDirection: "column",
         }}
       >
+        {/* Header */}
         <div
           style={{
             display: "flex",
@@ -216,30 +361,55 @@ function CartSidebar({ open, onClose, cartCount }: CartSidebarProps) {
             <IconClose />
           </button>
         </div>
-        <div
-          style={{
-            flex: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            color: "var(--ink-500)",
-            fontFamily: "var(--font-sans)",
-            fontSize: "14px",
-          }}
-        >
-          Votre panier est vide pour l'instant.
+
+        {/* Gift progress */}
+        <GiftProgressBar total={cartTotal} />
+
+        {/* Items */}
+        <div style={{ flex: 1, overflowY: "auto", padding: "16px 24px", display: "flex", flexDirection: "column", gap: 14 }}>
+          {cartCount === 0 ? (
+            <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ink-500)", fontFamily: "var(--font-sans)", fontSize: "14px" }}>
+              Votre panier est vide pour l&apos;instant.
+            </div>
+          ) : items.map(item => (
+            <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: "1px solid var(--line-100)" }}>
+              <div style={{ position: "relative", width: 56, height: 56, borderRadius: "var(--r-sm)", background: "var(--surface-cream)", flexShrink: 0, overflow: "hidden" }}>
+                <Image src={item.image} alt={item.name} fill style={{ objectFit: "cover" }} sizes="56px" />
+              </div>
+              <div style={{ flex: 1, minWidth: 0 }}>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--gold-600)" }}>{item.brand}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1rem", color: "var(--ink-900)", lineHeight: 1.2, marginTop: 2 }}>{item.name}</div>
+                {/* Qty stepper */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6 }}>
+                  <div style={{ display: "flex", alignItems: "center", border: "1px solid var(--line-200)", borderRadius: "var(--r-xs)", overflow: "hidden" }}>
+                    <button onClick={() => setQty(item.id, item.qty - 1)} aria-label="Diminuer" style={{ width: 24, height: 24, border: "none", background: "transparent", cursor: "pointer", color: "var(--ink-700)", fontSize: 14, lineHeight: 1 }}>−</button>
+                    <span style={{ width: 24, textAlign: "center", fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--ink-900)" }}>{item.qty}</span>
+                    <button onClick={() => setQty(item.id, item.qty + 1)} aria-label="Augmenter" style={{ width: 24, height: 24, border: "none", background: "transparent", cursor: "pointer", color: "var(--ink-700)", fontSize: 14, lineHeight: 1 }}>+</button>
+                  </div>
+                  <button onClick={() => removeItem(item.id)} aria-label="Retirer" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-400)", fontSize: 11, fontFamily: "var(--font-sans)", textDecoration: "underline" }}>Retirer</button>
+                </div>
+              </div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 600, color: "var(--ink-900)", flexShrink: 0 }}>{(item.price * item.qty).toFixed(2).replace(".", ",")} €</div>
+            </div>
+          ))}
         </div>
+
+        {/* Footer */}
         <div
           style={{
-            padding: "20px 24px",
+            padding: "16px 24px 20px",
             borderTop: "1px solid rgba(0,0,0,.08)",
           }}
         >
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", marginBottom: 14 }}>
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-500)" }}>Total</span>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.4rem", fontWeight: 600, color: "var(--ink-900)" }}>{cartTotal.toFixed(2).replace(".", ",")} €</span>
+          </div>
           <button
             style={{
               width: "100%",
               background: "var(--gold-500)",
-              color: "#fff",
+              color: "var(--espresso-900)",
               border: "none",
               borderRadius: "var(--r-md)",
               padding: "14px",
@@ -265,116 +435,193 @@ interface AuthModalProps {
 }
 
 function AuthModal({ open, onClose }: AuthModalProps) {
+  const [email, setEmail] = React.useState("");
+  const [password, setPassword] = React.useState("");
+  const [mode, setMode] = React.useState<"login" | "register">("login");
+
   return (
     <>
-      <div
-        onClick={onClose}
-        style={{
-          position: "fixed",
-          inset: 0,
-          background: "rgba(21,16,11,.55)",
-          zIndex: 1100,
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? "auto" : "none",
-          transition: "opacity .25s",
-        }}
-      />
-      <div
-        style={{
-          position: "fixed",
-          top: "50%",
-          left: "50%",
-          transform: open ? "translate(-50%,-50%) scale(1)" : "translate(-50%,-50%) scale(.96)",
-          zIndex: 1101,
-          width: "min(440px,92vw)",
-          background: "var(--surface-white)",
-          borderRadius: "var(--r-lg)",
-          boxShadow: "0 24px 64px rgba(0,0,0,.2)",
-          padding: "36px 32px",
-          opacity: open ? 1 : 0,
-          pointerEvents: open ? "auto" : "none",
-          transition: "opacity .25s, transform .25s",
-        }}
-      >
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 28 }}>
-          <div>
-            <h2
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "28px",
-                fontWeight: 700,
-                color: "var(--ink-900)",
-                margin: 0,
-              }}
-            >
-              Bienvenue
-            </h2>
-            <p
-              style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: "14px",
-                color: "var(--ink-500)",
-                margin: "6px 0 0",
-              }}
-            >
-              Connectez-vous ou créez un compte
-            </p>
-          </div>
-          <button
-            onClick={onClose}
-            style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-500)", padding: 4 }}
-          >
-            <IconClose />
-          </button>
+      <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(21,16,11,.55)", zIndex: 1100, opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity .25s" }} />
+      <div style={{
+        position: "fixed", top: "50%", left: "50%",
+        transform: open ? "translate(-50%,-50%) scale(1)" : "translate(-50%,-50%) scale(.96)",
+        zIndex: 1101, width: "min(440px,92vw)",
+        background: "var(--surface-white)", borderRadius: "var(--r-lg)",
+        boxShadow: "0 24px 64px rgba(0,0,0,.3)", padding: "36px 32px",
+        opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none",
+        transition: "opacity .25s, transform .25s",
+      }}>
+        {/* Close */}
+        <button onClick={onClose} style={{ position: "absolute", top: 14, right: 14, background: "rgba(0,0,0,.06)", border: "none", borderRadius: "50%", width: 30, height: 30, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ink-500)" }}>
+          <IconClose />
+        </button>
+
+        {/* Logo monogram */}
+        <div style={{ textAlign: "center", marginBottom: 20 }}>
+          <div style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "var(--gold-500)", fontWeight: 700, letterSpacing: "-0.02em" }}>DP</div>
         </div>
-        <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+        <h2 style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", color: "var(--ink-900)", margin: "0 0 6px", textAlign: "center" }}>
+          {mode === "login" ? "Bon retour parmi nous" : "Créer un compte"}
+        </h2>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-500)", textAlign: "center", margin: "0 0 24px", lineHeight: 1.5 }}>
+          {mode === "login" ? "Connectez-vous à votre espace Dubaï Parfumerie." : "Rejoignez Le Cercle et profitez de -10% dès votre inscription."}
+        </p>
+
+        {/* OAuth */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 20 }}>
           {[
             { icon: <IconGoogle />, label: "Continuer avec Google", bg: "#fff", border: "#dadce0", color: "#3c4043" },
             { icon: <IconFacebook />, label: "Continuer avec Facebook", bg: "#1877F2", border: "#1877F2", color: "#fff" },
             { icon: <IconApple />, label: "Continuer avec Apple", bg: "#000", border: "#000", color: "#fff" },
           ].map(({ icon, label, bg, border, color }) => (
-            <button
-              key={label}
-              style={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: 12,
-                background: bg,
-                border: `1.5px solid ${border}`,
-                borderRadius: "var(--r-md)",
-                padding: "13px 16px",
-                fontFamily: "var(--font-sans)",
-                fontSize: "14px",
-                fontWeight: 600,
-                color,
-                cursor: "pointer",
-                transition: "opacity .15s",
-              }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.opacity = "0.85")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.opacity = "1")}
-            >
-              {icon}
-              {label}
-            </button>
+            <button key={label} style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 10, background: bg, border: `1.5px solid ${border}`, borderRadius: "var(--r-md)", padding: "12px 16px", fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 600, color, cursor: "pointer" }}
+              onMouseEnter={e => (e.currentTarget as HTMLElement).style.opacity = "0.85"}
+              onMouseLeave={e => (e.currentTarget as HTMLElement).style.opacity = "1"}
+            >{icon}{label}</button>
           ))}
         </div>
-        <p
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: "11px",
-            color: "var(--ink-500)",
-            textAlign: "center",
-            marginTop: 20,
-            lineHeight: 1.6,
-          }}
-        >
-          En continuant, vous acceptez nos{" "}
-          <a href="/cgv" style={{ color: "var(--gold-500)" }}>CGV</a> et{" "}
-          <a href="/confidentialite" style={{ color: "var(--gold-500)" }}>Politique de confidentialité</a>.
+
+        {/* Divider */}
+        <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+          <div style={{ flex: 1, height: 1, background: "#e8e0d4" }} />
+          <span style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-400)", letterSpacing: "0.06em" }}>OU</span>
+          <div style={{ flex: 1, height: 1, background: "#e8e0d4" }} />
+        </div>
+
+        {/* Email + password form */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 10, marginBottom: 6 }}>
+          <input type="email" placeholder="Adresse email" value={email} onChange={e => setEmail(e.target.value)}
+            style={{ padding: "13px 14px", border: "1px solid #ddd", borderRadius: "var(--r-sm)", fontFamily: "var(--font-sans)", fontSize: "14px", color: "var(--ink-900)", outline: "none", background: "#fff" }} />
+          <input type="password" placeholder="Mot de passe" value={password} onChange={e => setPassword(e.target.value)}
+            style={{ padding: "13px 14px", border: "1px solid #ddd", borderRadius: "var(--r-sm)", fontFamily: "var(--font-sans)", fontSize: "14px", color: "var(--ink-900)", outline: "none", background: "#fff" }} />
+        </div>
+
+        {mode === "login" && (
+          <div style={{ textAlign: "right", marginBottom: 16 }}>
+            <button style={{ background: "none", border: "none", fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-500)", textDecoration: "underline", cursor: "pointer" }}>Mot de passe oublié ?</button>
+          </div>
+        )}
+
+        <button onClick={onClose} style={{ width: "100%", background: "var(--gold-500)", color: "#fff", border: "none", borderRadius: "var(--r-sm)", padding: "14px", fontFamily: "var(--font-sans)", fontSize: "14px", fontWeight: 700, letterSpacing: "0.06em", textTransform: "uppercase", cursor: "pointer", marginBottom: 16 }}>
+          {mode === "login" ? "Se connecter" : "Créer mon compte"}
+        </button>
+
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-500)", textAlign: "center", margin: 0 }}>
+          {mode === "login" ? "Pas encore de compte ? " : "Déjà un compte ? "}
+          <button onClick={() => setMode(mode === "login" ? "register" : "login")} style={{ background: "none", border: "none", color: "var(--gold-600)", textDecoration: "underline", cursor: "pointer", fontFamily: "inherit", fontSize: "inherit" }}>
+            {mode === "login" ? "Créer un compte" : "Se connecter"}
+          </button>
         </p>
       </div>
     </>
+  );
+}
+
+function MegaMenu({ data, onClose }: { data: MegaData; onClose: () => void }) {
+  return (
+    <div
+      onMouseLeave={onClose}
+      style={{
+        position: "absolute",
+        top: "100%",
+        left: 0,
+        right: 0,
+        background: "var(--surface-page)",
+        borderTop: "1px solid rgba(200,144,30,.15)",
+        boxShadow: "0 24px 48px rgba(21,16,11,.18)",
+        zIndex: 98,
+        animation: "megaDrop .2s ease",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1400,
+          margin: "0 auto",
+          padding: "28px 24px 32px",
+          display: "flex",
+          gap: 40,
+        }}
+      >
+        {/* Colonnes de liens */}
+        <div style={{ display: "flex", gap: 48, flex: "0 0 auto", minWidth: 280 }}>
+          {data.columns.map((col) => (
+            <div key={col.title}>
+              <div
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "11px",
+                  letterSpacing: ".16em",
+                  textTransform: "uppercase",
+                  color: "var(--gold-700)",
+                  fontWeight: 700,
+                  marginBottom: 14,
+                  paddingBottom: 8,
+                  borderBottom: "1px solid rgba(200,144,30,.2)",
+                }}
+              >
+                {col.title}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+                {col.links.map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    onClick={onClose}
+                    style={{
+                      fontFamily: "var(--font-sans)",
+                      fontSize: "14px",
+                      color: "var(--ink-700)",
+                      textDecoration: "none",
+                      transition: "color .15s",
+                    }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-600)")}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--ink-700)")}
+                  >
+                    {l.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Images produit */}
+        <div style={{ display: "flex", gap: 18, flex: 1, justifyContent: "flex-end" }}>
+          {data.features.map((f) => (
+            <a
+              key={f.label}
+              href={f.href}
+              onClick={onClose}
+              className="dp-mega-feature"
+              style={{
+                position: "relative",
+                flex: "1 1 0",
+                maxWidth: 340,
+                aspectRatio: "16 / 10",
+                borderRadius: "var(--r-md)",
+                overflow: "hidden",
+                textDecoration: "none",
+                boxShadow: "0 8px 24px rgba(21,16,11,.16)",
+              }}
+            >
+              <Image src={f.img} alt={f.label} fill style={{ objectFit: "cover" }} sizes="340px" />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(180deg, rgba(21,16,11,0) 35%, rgba(21,16,11,.78) 100%)",
+                }}
+              />
+              <div style={{ position: "absolute", left: 16, bottom: 14 }}>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 600, color: "#fff", lineHeight: 1.1 }}>{f.label}</div>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "rgba(255,255,255,.8)", marginTop: 2 }}>{f.sub}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
 
@@ -383,15 +630,30 @@ export function Header() {
   const [currency, setCurrency] = useState("EUR");
   const [cartOpen, setCartOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
-  const [cartCount] = useState(2);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
   const [wishCount] = useState(1);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topMsgIndex, setTopMsgIndex] = useState(0);
+  const [mega, setMega] = useState<string | null>(null);
 
   useEffect(() => {
     const id = setInterval(() => {
       setTopMsgIndex((i) => (i + 1) % TOP_MESSAGES.length);
     }, 3000);
     return () => clearInterval(id);
+  }, []);
+
+  // Panier live — hydrate + s'abonne aux changements, ouvre le tiroir à l'ajout
+  useEffect(() => {
+    setCartItems(getCart());
+    let prev = getCartCount();
+    return subscribe(() => {
+      const next = getCartCount();
+      setCartItems(getCart());
+      if (next > prev) setCartOpen(true);
+      prev = next;
+    });
   }, []);
 
   return (
@@ -409,28 +671,30 @@ export function Header() {
           zIndex: 100,
         }}
       >
-        {/* Social icons */}
-        <div style={{ display: "flex", alignItems: "center", gap: 12, color: "var(--on-dark-muted)", flex: "0 0 auto" }}>
+        {/* Social icons — brand color animations */}
+        <style>{`
+          @keyframes dp-x-shake { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-12deg) scale(1.2)} 50%{transform:rotate(10deg) scale(1.15)} 75%{transform:rotate(-6deg)} }
+          @keyframes dp-ig-spin  { 0%{transform:rotate(0) scale(1)} 50%{transform:rotate(180deg) scale(1.25)} 100%{transform:rotate(360deg) scale(1)} }
+          @keyframes dp-tt-glitch{ 0%,100%{transform:translate(0)} 25%{transform:translate(-2px,1px)} 50%{transform:translate(2px,-1px)} 75%{transform:translate(-1px,2px)} }
+          @keyframes dp-yt-pop   { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 70%{transform:scale(.9)} 100%{transform:scale(1.1)} }
+          .dp-social { display:flex; align-items:center; color:rgba(253,251,246,.45); transition:color .2s; position:relative; }
+          .dp-social svg { transition:filter .2s; }
+          .dp-x:hover      { color:#fff !important; animation:dp-x-shake .45s ease; }
+          .dp-ig:hover     { animation:dp-ig-spin .6s cubic-bezier(.4,0,.2,1); }
+          .dp-ig:hover svg { filter:drop-shadow(0 0 6px #e1306c); color:#e1306c !important; }
+          .dp-tt:hover     { animation:dp-tt-glitch .4s steps(1) infinite; }
+          .dp-tt:hover svg { filter:drop-shadow(2px 0 0 #69c9d0) drop-shadow(-2px 0 0 #ee1d52); color:#fff !important; }
+          .dp-yt:hover     { color:#ff0000 !important; animation:dp-yt-pop .4s ease forwards; }
+          .dp-yt:hover svg { filter:drop-shadow(0 0 8px rgba(255,0,0,.6)); }
+        `}</style>
+        <div className="dp-topbar-social" style={{ display: "flex", alignItems: "center", gap: 12, flex: "0 0 auto" }}>
           {[
-            { Icon: IconX, href: "https://x.com" },
-            { Icon: IconInstagram, href: "https://instagram.com" },
-            { Icon: IconTikTok, href: "https://tiktok.com" },
-            { Icon: IconYouTube, href: "https://youtube.com" },
-          ].map(({ Icon, href }) => (
-            <a
-              key={href}
-              href={href}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{
-                color: "var(--on-dark-muted)",
-                display: "flex",
-                alignItems: "center",
-                transition: "color .15s",
-              }}
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-400)")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--on-dark-muted)")}
-            >
+            { Icon: IconX,         href: "https://x.com",        cls: "dp-x"  },
+            { Icon: IconInstagram, href: "https://instagram.com", cls: "dp-ig" },
+            { Icon: IconTikTok,    href: "https://tiktok.com",    cls: "dp-tt" },
+            { Icon: IconYouTube,   href: "https://youtube.com",   cls: "dp-yt" },
+          ].map(({ Icon, href, cls }) => (
+            <a key={href} href={href} target="_blank" rel="noopener noreferrer" className={`dp-social ${cls}`}>
               <Icon />
             </a>
           ))}
@@ -438,6 +702,7 @@ export function Header() {
 
         {/* Rotating message */}
         <div
+          className="dp-topbar-msg"
           style={{
             flex: 1,
             textAlign: "center",
@@ -464,7 +729,7 @@ export function Header() {
         </div>
 
         {/* Language & currency */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto" }}>
+        <div className="dp-topbar-selectors" style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto" }}>
           <select
             value={activeLang}
             onChange={(e) => setActiveLang(e.target.value)}
@@ -513,6 +778,7 @@ export function Header() {
 
       {/* Main header */}
       <header
+        onMouseLeave={() => setMega(null)}
         style={{
           position: "sticky",
           top: 0,
@@ -534,45 +800,67 @@ export function Header() {
             width: "100%",
           }}
         >
+          {/* Burger (mobile) */}
+          <button
+            className="dp-burger"
+            onClick={() => setMobileMenuOpen(true)}
+            aria-label="Menu"
+            style={{
+              display: "none", flexDirection: "column", justifyContent: "center", gap: 4,
+              background: "none", border: "none", cursor: "pointer", padding: 6, flexShrink: 0,
+            }}
+          >
+            <span style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
+            <span style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
+            <span style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
+          </button>
+
           {/* Logo */}
           <a href="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
-            <img src="/assets/logo.png" height={28} alt="Dubaï Parfumerie" />
+            <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 28, width: "auto", display: "block" }} />
           </a>
 
           {/* Nav */}
-          <nav style={{ display: "flex", alignItems: "center", gap: 2, flex: "0 0 auto" }}>
-            {NAV_LINKS.map(({ label, href, highlight }) => (
-              <a
-                key={href}
-                href={href}
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "13px",
-                  fontWeight: highlight ? 700 : 500,
-                  color: highlight ? "var(--gold-500)" : "var(--ink-900)",
-                  textDecoration: "none",
-                  padding: "6px 10px",
-                  borderRadius: "var(--r-sm)",
-                  whiteSpace: "nowrap",
-                  transition: "color .15s, background .15s",
-                  letterSpacing: ".02em",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "rgba(200,144,30,.08)";
-                  if (!highlight) (e.currentTarget as HTMLElement).style.color = "var(--gold-500)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "transparent";
-                  if (!highlight) (e.currentTarget as HTMLElement).style.color = "var(--ink-900)";
-                }}
-              >
-                {label}
-              </a>
-            ))}
+          <nav className="dp-nav" style={{ display: "flex", alignItems: "center", gap: 2, flex: "0 0 auto" }}>
+            {NAV_LINKS.map(({ label, href, highlight }) => {
+              const hasMega = !!MEGA[href];
+              const isActive = mega === href;
+              return (
+                <a
+                  key={href}
+                  href={href}
+                  onMouseEnter={(e) => {
+                    setMega(hasMega ? href : null);
+                    (e.currentTarget as HTMLElement).style.background = "rgba(200,144,30,.08)";
+                    if (!highlight) (e.currentTarget as HTMLElement).style.color = "var(--gold-500)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "transparent";
+                    if (!highlight) (e.currentTarget as HTMLElement).style.color = "var(--ink-900)";
+                  }}
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "13px",
+                    fontWeight: highlight ? 700 : 500,
+                    color: highlight ? "var(--gold-500)" : isActive ? "var(--gold-500)" : "var(--ink-900)",
+                    textDecoration: "none",
+                    padding: "6px 10px",
+                    borderRadius: "var(--r-sm)",
+                    whiteSpace: "nowrap",
+                    background: isActive ? "rgba(200,144,30,.08)" : "transparent",
+                    transition: "color .15s, background .15s",
+                    letterSpacing: ".02em",
+                  }}
+                >
+                  {label}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Search */}
           <div
+            className="dp-search"
             style={{
               flex: 1,
               maxWidth: 380,
@@ -638,7 +926,7 @@ export function Header() {
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
             >
               <IconUser />
-              <span style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 600, letterSpacing: ".06em", color: "var(--ink-500)" }}>COMPTE</span>
+              <span className="dp-account-label" style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 600, letterSpacing: ".06em", color: "var(--ink-500)" }}>COMPTE</span>
             </button>
 
             <button
@@ -685,7 +973,7 @@ export function Header() {
                   </span>
                 )}
               </span>
-              <span style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 600, letterSpacing: ".06em", color: "var(--ink-500)" }}>FAVORIS</span>
+              <span className="dp-account-label" style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 600, letterSpacing: ".06em", color: "var(--ink-500)" }}>FAVORIS</span>
             </button>
 
             <button
@@ -740,6 +1028,7 @@ export function Header() {
 
         {/* Free shipping bar */}
         <div
+          className="dp-shipbar"
           style={{
             background: "var(--espresso-800)",
             height: 32,
@@ -762,6 +1051,7 @@ export function Header() {
             Livraison offerte dès 60 €
           </span>
           <div
+            className="dp-shipbar-progress"
             style={{
               width: 180,
               height: 4,
@@ -790,9 +1080,63 @@ export function Header() {
             Il vous manque <strong style={{ color: "var(--gold-400)" }}>42 €</strong> pour en bénéficier
           </span>
         </div>
+
+        {/* Mega-menu */}
+        {mega && MEGA[mega] && <MegaMenu data={MEGA[mega]} onClose={() => setMega(null)} />}
       </header>
 
-      <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} cartCount={cartCount} />
+      {/* Mobile menu drawer */}
+      <div
+        onClick={() => setMobileMenuOpen(false)}
+        style={{
+          position: "fixed", inset: 0, background: "rgba(21,16,11,.5)", zIndex: 1100,
+          opacity: mobileMenuOpen ? 1 : 0, pointerEvents: mobileMenuOpen ? "auto" : "none",
+          transition: "opacity .25s",
+        }}
+      />
+      <aside
+        style={{
+          position: "fixed", top: 0, left: 0, bottom: 0, width: "min(300px, 84vw)",
+          background: "var(--surface-page)", zIndex: 1101,
+          transform: mobileMenuOpen ? "translateX(0)" : "translateX(-100%)",
+          transition: "transform .3s cubic-bezier(.4,0,.2,1)",
+          boxShadow: "4px 0 32px rgba(0,0,0,.15)", display: "flex", flexDirection: "column",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px", borderBottom: "1px solid rgba(0,0,0,.08)" }}>
+          <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 24, width: "auto" }} />
+          <button onClick={() => setMobileMenuOpen(false)} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-500)", display: "flex" }}>
+            <IconClose />
+          </button>
+        </div>
+        {/* Mobile search */}
+        <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(0,0,0,.06)" }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--surface-cream)", border: "1px solid rgba(200,144,30,.2)", borderRadius: "var(--r-md)", padding: "0 12px", height: 40 }}>
+            <span style={{ color: "var(--ink-500)", display: "flex" }}><IconSearch /></span>
+            <input type="text" placeholder="Rechercher…" style={{ flex: 1, background: "none", border: "none", outline: "none", fontFamily: "var(--font-sans)", fontSize: "14px", color: "var(--ink-900)" }} />
+          </div>
+        </div>
+        <nav style={{ display: "flex", flexDirection: "column", padding: "8px 0" }}>
+          {NAV_LINKS.map(({ label, href, highlight }) => (
+            <a
+              key={href}
+              href={href}
+              onClick={() => setMobileMenuOpen(false)}
+              style={{
+                fontFamily: "var(--font-sans)", fontSize: "15px",
+                fontWeight: highlight ? 700 : 500,
+                color: highlight ? "var(--gold-500)" : "var(--ink-900)",
+                textDecoration: "none", padding: "14px 22px",
+                borderBottom: "1px solid rgba(0,0,0,.04)",
+              }}
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+      </aside>
+
+      <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} cartCount={cartCount} items={cartItems} />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
 
       <style>{`

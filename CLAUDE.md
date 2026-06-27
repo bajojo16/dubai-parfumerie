@@ -8,17 +8,25 @@
 3. Vérifier que le remote GitHub existe : `git remote -v`
 4. Si pas de remote : demander à l'utilisateur de créer le repo GitHub et fournir l'URL, puis `git remote add origin <url>`
 
-## Auto-save GitHub — toutes les 10 minutes
+## Auto-save GitHub — toutes les 10 minutes en branches
 
 **À chaque session** : lancer une boucle auto-save avec `/loop 10m` et la commande suivante :
 
 ```bash
-git add -A && git commit -m "auto-save $(date '+%Y-%m-%d %H:%M')" && git push origin main
+BRANCH="auto/$(date '+%Y-%m-%d-%H%M')" && \
+git diff --quiet HEAD || ( \
+  git checkout -b "$BRANCH" 2>/dev/null || git checkout "$BRANCH" && \
+  git add -A -- ':!.env*' ':!.env.local' && \
+  git commit -m "auto-save $(date '+%Y-%m-%d %H:%M')" && \
+  git push origin "$BRANCH" \
+)
 ```
 
-Si pas de remote GitHub configuré → demander l'URL du repo à l'utilisateur avant de lancer la boucle.
-
-Ne jamais committer : `.env*`, `node_modules/`, fichiers secrets.
+- Chaque push part sur une branche `auto/YYYY-MM-DD-HHMM`
+- Ne commit que si changements détectés (`git diff --quiet` guard)
+- Ne jamais committer : `.env*`, `node_modules/`, fichiers secrets
+- Repo : `https://github.com/bajojo16/dubai-parfumerie`
+- Branch principale : `main`
 
 ## Stack
 - Next.js 16 App Router + TypeScript

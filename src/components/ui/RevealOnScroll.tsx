@@ -1,6 +1,6 @@
 "use client";
 import { motion } from "framer-motion";
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 
 interface RevealProps {
   children: ReactNode;
@@ -10,6 +10,14 @@ interface RevealProps {
 }
 
 export function RevealOnScroll({ children, delay = 0, direction = "up", className }: RevealProps) {
+  // Fallback : si framer/IntersectionObserver ne déclenche pas (Brave, JS bloqué),
+  // forcer l'état visible après montage pour ne jamais laisser le contenu invisible.
+  const [forced, setForced] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setForced(true), 1200);
+    return () => clearTimeout(t);
+  }, []);
+
   const variants = {
     hidden: {
       opacity: 0,
@@ -32,6 +40,7 @@ export function RevealOnScroll({ children, delay = 0, direction = "up", classNam
     <motion.div
       initial="hidden"
       whileInView="visible"
+      animate={forced ? "visible" : undefined}
       viewport={{ once: true, margin: "-80px" }}
       variants={variants}
       className={className}
