@@ -1,5 +1,7 @@
 "use client";
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
+import Image from "next/image";
+import { getCart, cartCount as getCartCount, removeItem, setQty, subscribe, type CartItem } from "@/lib/cart";
 
 const TOP_MESSAGES = [
   "Livraison offerte dès 60 €",
@@ -20,6 +22,92 @@ const NAV_LINKS = [
   { label: "Promo Flash", href: "/promo-flash", highlight: true },
   { label: "Blog", href: "/blog" },
 ];
+
+interface MegaData {
+  columns: { title: string; links: { label: string; href: string }[] }[];
+  features: { img: string; label: string; sub: string; href: string }[];
+}
+
+const MEGA: Record<string, MegaData> = {
+  "/parfums-femme": {
+    columns: [
+      {
+        title: "Types de produit",
+        links: [
+          { label: "Eau de Parfum", href: "/parfums-femme" },
+          { label: "Huile de Parfum", href: "/huile-de-parfum" },
+          { label: "Coffrets découverte", href: "/promo-flash" },
+          { label: "Nouveautés", href: "/parfums-femme" },
+        ],
+      },
+      {
+        title: "Familles olfactives",
+        links: [
+          { label: "Floral · Rose", href: "/parfums-femme" },
+          { label: "Oud · Boisé", href: "/parfums-femme" },
+          { label: "Ambré · Gourmand", href: "/parfums-femme" },
+          { label: "Musc · Poudré", href: "/parfums-femme" },
+        ],
+      },
+    ],
+    features: [
+      { img: "/assets/cat-femme.jpg", label: "Collection Femme", sub: "Sillages floraux & orientaux", href: "/parfums-femme" },
+      { img: "/assets/scents/rose.png", label: "Rose de Taïf", sub: "L'élégance florale du Golfe", href: "/parfums-femme" },
+    ],
+  },
+  "/parfums-homme": {
+    columns: [
+      {
+        title: "Types de produit",
+        links: [
+          { label: "Eau de Parfum", href: "/parfums-homme" },
+          { label: "Huile de Parfum", href: "/huile-de-parfum" },
+          { label: "Coffrets prestige", href: "/promo-flash" },
+          { label: "Nouveautés", href: "/parfums-homme" },
+        ],
+      },
+      {
+        title: "Familles olfactives",
+        links: [
+          { label: "Oud · Cuir", href: "/parfums-homme" },
+          { label: "Boisé · Épicé", href: "/parfums-homme" },
+          { label: "Ambré · Tabac", href: "/parfums-homme" },
+          { label: "Aromatique · Frais", href: "/parfums-homme" },
+        ],
+      },
+    ],
+    features: [
+      { img: "/assets/cat-homme.jpg", label: "Collection Homme", sub: "Boisés intenses & oud noble", href: "/parfums-homme" },
+      { img: "/assets/scents/oud.png", label: "Oud Royal", sub: "La profondeur d'un bois précieux", href: "/parfums-homme" },
+    ],
+  },
+  "/marques": {
+    columns: [
+      {
+        title: "Maisons phares",
+        links: [
+          { label: "Lattafa", href: "/marques" },
+          { label: "Al Haramain", href: "/marques" },
+          { label: "Swiss Arabian", href: "/marques" },
+          { label: "Ahmed Al Maghribi", href: "/marques" },
+        ],
+      },
+      {
+        title: "Découvrir",
+        links: [
+          { label: "Toutes les marques", href: "/marques" },
+          { label: "Best-sellers", href: "/promo-flash" },
+          { label: "Éditions limitées", href: "/marques" },
+          { label: "Mixte · Unisexe", href: "/marques" },
+        ],
+      },
+    ],
+    features: [
+      { img: "/assets/coffrets.jpg", label: "Coffrets Prestige", sub: "L'art du cadeau oriental", href: "/promo-flash" },
+      { img: "/assets/cat-mixte.jpg", label: "Sélection Mixte", sub: "Des signatures qui rassemblent", href: "/marques" },
+    ],
+  },
+};
 
 function IconX() {
   return (
@@ -202,15 +290,11 @@ interface CartSidebarProps {
   open: boolean;
   onClose: () => void;
   cartCount: number;
+  items: CartItem[];
 }
 
-const DEMO_CART_ITEMS = [
-  { name: "Oud pour Elle", brand: "Lattafa", price: 28.90, qty: 1 },
-  { name: "Amber Oud",     brand: "Al Haramain", price: 34.90, qty: 1 },
-];
-
-function CartSidebar({ open, onClose, cartCount }: CartSidebarProps) {
-  const cartTotal = DEMO_CART_ITEMS.reduce((s, i) => s + i.price * i.qty, 0);
+function CartSidebar({ open, onClose, cartCount, items }: CartSidebarProps) {
+  const cartTotal = items.reduce((s, i) => s + i.price * i.qty, 0);
 
   return (
     <>
@@ -287,14 +371,25 @@ function CartSidebar({ open, onClose, cartCount }: CartSidebarProps) {
             <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ink-500)", fontFamily: "var(--font-sans)", fontSize: "14px" }}>
               Votre panier est vide pour l&apos;instant.
             </div>
-          ) : DEMO_CART_ITEMS.map(item => (
-            <div key={item.name} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: "1px solid var(--line-100)" }}>
-              <div style={{ width: 56, height: 56, borderRadius: "var(--r-sm)", background: "var(--surface-cream)", flexShrink: 0 }} />
+          ) : items.map(item => (
+            <div key={item.id} style={{ display: "flex", alignItems: "center", gap: 14, padding: "12px 0", borderBottom: "1px solid var(--line-100)" }}>
+              <div style={{ position: "relative", width: 56, height: 56, borderRadius: "var(--r-sm)", background: "var(--surface-cream)", flexShrink: 0, overflow: "hidden" }}>
+                <Image src={item.image} alt={item.name} fill style={{ objectFit: "cover" }} sizes="56px" />
+              </div>
               <div style={{ flex: 1, minWidth: 0 }}>
                 <div style={{ fontFamily: "var(--font-sans)", fontSize: "10px", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--gold-600)" }}>{item.brand}</div>
                 <div style={{ fontFamily: "var(--font-display)", fontSize: "1rem", color: "var(--ink-900)", lineHeight: 1.2, marginTop: 2 }}>{item.name}</div>
+                {/* Qty stepper */}
+                <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 6 }}>
+                  <div style={{ display: "flex", alignItems: "center", border: "1px solid var(--line-200)", borderRadius: "var(--r-xs)", overflow: "hidden" }}>
+                    <button onClick={() => setQty(item.id, item.qty - 1)} aria-label="Diminuer" style={{ width: 24, height: 24, border: "none", background: "transparent", cursor: "pointer", color: "var(--ink-700)", fontSize: 14, lineHeight: 1 }}>−</button>
+                    <span style={{ width: 24, textAlign: "center", fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--ink-900)" }}>{item.qty}</span>
+                    <button onClick={() => setQty(item.id, item.qty + 1)} aria-label="Augmenter" style={{ width: 24, height: 24, border: "none", background: "transparent", cursor: "pointer", color: "var(--ink-700)", fontSize: 14, lineHeight: 1 }}>+</button>
+                  </div>
+                  <button onClick={() => removeItem(item.id)} aria-label="Retirer" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-400)", fontSize: 11, fontFamily: "var(--font-sans)", textDecoration: "underline" }}>Retirer</button>
+                </div>
               </div>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 600, color: "var(--ink-900)", flexShrink: 0 }}>{item.price.toFixed(2).replace(".", ",")} €</div>
+              <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 600, color: "var(--ink-900)", flexShrink: 0 }}>{(item.price * item.qty).toFixed(2).replace(".", ",")} €</div>
             </div>
           ))}
         </div>
@@ -423,21 +518,142 @@ function AuthModal({ open, onClose }: AuthModalProps) {
   );
 }
 
+function MegaMenu({ data, onClose }: { data: MegaData; onClose: () => void }) {
+  return (
+    <div
+      onMouseLeave={onClose}
+      style={{
+        position: "absolute",
+        top: "100%",
+        left: 0,
+        right: 0,
+        background: "var(--surface-page)",
+        borderTop: "1px solid rgba(200,144,30,.15)",
+        boxShadow: "0 24px 48px rgba(21,16,11,.18)",
+        zIndex: 98,
+        animation: "megaDrop .2s ease",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 1400,
+          margin: "0 auto",
+          padding: "28px 24px 32px",
+          display: "flex",
+          gap: 40,
+        }}
+      >
+        {/* Colonnes de liens */}
+        <div style={{ display: "flex", gap: 48, flex: "0 0 auto", minWidth: 280 }}>
+          {data.columns.map((col) => (
+            <div key={col.title}>
+              <div
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "11px",
+                  letterSpacing: ".16em",
+                  textTransform: "uppercase",
+                  color: "var(--gold-700)",
+                  fontWeight: 700,
+                  marginBottom: 14,
+                  paddingBottom: 8,
+                  borderBottom: "1px solid rgba(200,144,30,.2)",
+                }}
+              >
+                {col.title}
+              </div>
+              <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
+                {col.links.map((l) => (
+                  <a
+                    key={l.label}
+                    href={l.href}
+                    onClick={onClose}
+                    style={{
+                      fontFamily: "var(--font-sans)",
+                      fontSize: "14px",
+                      color: "var(--ink-700)",
+                      textDecoration: "none",
+                      transition: "color .15s",
+                    }}
+                    onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-600)")}
+                    onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--ink-700)")}
+                  >
+                    {l.label}
+                  </a>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Images produit */}
+        <div style={{ display: "flex", gap: 18, flex: 1, justifyContent: "flex-end" }}>
+          {data.features.map((f) => (
+            <a
+              key={f.label}
+              href={f.href}
+              onClick={onClose}
+              className="dp-mega-feature"
+              style={{
+                position: "relative",
+                flex: "1 1 0",
+                maxWidth: 340,
+                aspectRatio: "16 / 10",
+                borderRadius: "var(--r-md)",
+                overflow: "hidden",
+                textDecoration: "none",
+                boxShadow: "0 8px 24px rgba(21,16,11,.16)",
+              }}
+            >
+              <Image src={f.img} alt={f.label} fill style={{ objectFit: "cover" }} sizes="340px" />
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  background: "linear-gradient(180deg, rgba(21,16,11,0) 35%, rgba(21,16,11,.78) 100%)",
+                }}
+              />
+              <div style={{ position: "absolute", left: 16, bottom: 14 }}>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 600, color: "#fff", lineHeight: 1.1 }}>{f.label}</div>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "rgba(255,255,255,.8)", marginTop: 2 }}>{f.sub}</div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function Header() {
   const [activeLang, setActiveLang] = useState("FR");
   const [currency, setCurrency] = useState("EUR");
   const [cartOpen, setCartOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
-  const [cartCount] = useState(2);
+  const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
   const [wishCount] = useState(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [topMsgIndex, setTopMsgIndex] = useState(0);
+  const [mega, setMega] = useState<string | null>(null);
 
   useEffect(() => {
     const id = setInterval(() => {
       setTopMsgIndex((i) => (i + 1) % TOP_MESSAGES.length);
     }, 3000);
     return () => clearInterval(id);
+  }, []);
+
+  // Panier live — hydrate + s'abonne aux changements, ouvre le tiroir à l'ajout
+  useEffect(() => {
+    setCartItems(getCart());
+    let prev = getCartCount();
+    return subscribe(() => {
+      const next = getCartCount();
+      setCartItems(getCart());
+      if (next > prev) setCartOpen(true);
+      prev = next;
+    });
   }, []);
 
   return (
@@ -562,6 +778,7 @@ export function Header() {
 
       {/* Main header */}
       <header
+        onMouseLeave={() => setMega(null)}
         style={{
           position: "sticky",
           top: 0,
@@ -605,34 +822,40 @@ export function Header() {
 
           {/* Nav */}
           <nav className="dp-nav" style={{ display: "flex", alignItems: "center", gap: 2, flex: "0 0 auto" }}>
-            {NAV_LINKS.map(({ label, href, highlight }) => (
-              <a
-                key={href}
-                href={href}
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "13px",
-                  fontWeight: highlight ? 700 : 500,
-                  color: highlight ? "var(--gold-500)" : "var(--ink-900)",
-                  textDecoration: "none",
-                  padding: "6px 10px",
-                  borderRadius: "var(--r-sm)",
-                  whiteSpace: "nowrap",
-                  transition: "color .15s, background .15s",
-                  letterSpacing: ".02em",
-                }}
-                onMouseEnter={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "rgba(200,144,30,.08)";
-                  if (!highlight) (e.currentTarget as HTMLElement).style.color = "var(--gold-500)";
-                }}
-                onMouseLeave={(e) => {
-                  (e.currentTarget as HTMLElement).style.background = "transparent";
-                  if (!highlight) (e.currentTarget as HTMLElement).style.color = "var(--ink-900)";
-                }}
-              >
-                {label}
-              </a>
-            ))}
+            {NAV_LINKS.map(({ label, href, highlight }) => {
+              const hasMega = !!MEGA[href];
+              const isActive = mega === href;
+              return (
+                <a
+                  key={href}
+                  href={href}
+                  onMouseEnter={(e) => {
+                    setMega(hasMega ? href : null);
+                    (e.currentTarget as HTMLElement).style.background = "rgba(200,144,30,.08)";
+                    if (!highlight) (e.currentTarget as HTMLElement).style.color = "var(--gold-500)";
+                  }}
+                  onMouseLeave={(e) => {
+                    (e.currentTarget as HTMLElement).style.background = "transparent";
+                    if (!highlight) (e.currentTarget as HTMLElement).style.color = "var(--ink-900)";
+                  }}
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: "13px",
+                    fontWeight: highlight ? 700 : 500,
+                    color: highlight ? "var(--gold-500)" : isActive ? "var(--gold-500)" : "var(--ink-900)",
+                    textDecoration: "none",
+                    padding: "6px 10px",
+                    borderRadius: "var(--r-sm)",
+                    whiteSpace: "nowrap",
+                    background: isActive ? "rgba(200,144,30,.08)" : "transparent",
+                    transition: "color .15s, background .15s",
+                    letterSpacing: ".02em",
+                  }}
+                >
+                  {label}
+                </a>
+              );
+            })}
           </nav>
 
           {/* Search */}
@@ -857,6 +1080,9 @@ export function Header() {
             Il vous manque <strong style={{ color: "var(--gold-400)" }}>42 €</strong> pour en bénéficier
           </span>
         </div>
+
+        {/* Mega-menu */}
+        {mega && MEGA[mega] && <MegaMenu data={MEGA[mega]} onClose={() => setMega(null)} />}
       </header>
 
       {/* Mobile menu drawer */}
@@ -910,7 +1136,7 @@ export function Header() {
         </nav>
       </aside>
 
-      <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} cartCount={cartCount} />
+      <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} cartCount={cartCount} items={cartItems} />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
 
       <style>{`

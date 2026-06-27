@@ -3,6 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { AnimatedHero } from "@/components/sections/AnimatedHero";
+import { BestSellers } from "@/components/sections/BestSellers";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { VideoPlaceholder } from "@/components/ui/VideoPlaceholder";
 import { QuizSignature } from "@/components/sections/QuizSignature";
@@ -18,7 +19,6 @@ const products = [
   { id: 6, image: "/assets/prod-6.jpg", brand: "Ahmed Al Maghribi", name: "L'Or Intense", price: 36.90, oldPrice: 64.90, rating: 4.8, reviews: 134, badge: "-43%", notes: "Épices · Ambre · Encens" },
 ];
 
-const flashItems = products.slice(0, 4);
 const bestSellers = products.slice(2, 6);
 const oilItems = products.slice(0, 3);
 
@@ -230,6 +230,64 @@ function CountdownTimer() {
   );
 }
 
+// ─── ReassuranceIcon — icônes ligne fines (or) ───────────────────────────────
+function ReassuranceIcon({ name }: { name: string }) {
+  const common = {
+    width: 26,
+    height: 26,
+    viewBox: "0 0 24 24",
+    fill: "none",
+    stroke: "var(--gold-400)",
+    strokeWidth: 1.4,
+    strokeLinecap: "round" as const,
+    strokeLinejoin: "round" as const,
+  };
+  switch (name) {
+    case "shipping":
+      return (
+        <svg {...common}>
+          <path d="M3 7h11v8H3z" />
+          <path d="M14 10h4l3 3v2h-7z" />
+          <circle cx="7" cy="18" r="1.6" />
+          <circle cx="17.5" cy="18" r="1.6" />
+        </svg>
+      );
+    case "secure":
+      return (
+        <svg {...common}>
+          <rect x="5" y="11" width="14" height="9" rx="2" />
+          <path d="M8 11V8a4 4 0 0 1 8 0v3" />
+          <circle cx="12" cy="15.5" r="1" />
+        </svg>
+      );
+    case "authentic":
+      return (
+        <svg {...common}>
+          <path d="M12 3l2.4 4.9 5.4.8-3.9 3.8.9 5.4-4.8-2.5-4.8 2.5.9-5.4L3.2 8.7l5.4-.8z" />
+        </svg>
+      );
+    case "returns":
+      return (
+        <svg {...common}>
+          <path d="M4 12a8 8 0 0 1 14-5.3L21 9" />
+          <path d="M21 4v5h-5" />
+          <path d="M20 12a8 8 0 0 1-14 5.3L3 15" />
+          <path d="M3 20v-5h5" />
+        </svg>
+      );
+    case "installments":
+      return (
+        <svg {...common}>
+          <rect x="3" y="6" width="18" height="12" rx="2" />
+          <path d="M3 10h18" />
+          <path d="M7 14h3" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
 // ─── WelcomeModal ─────────────────────────────────────────────────────────────
 
 function WelcomeModal() {
@@ -281,7 +339,8 @@ function WelcomeModal() {
           display: "flex", flexDirection: "column", justifyContent: "flex-end",
           minHeight: 460,
         }}>
-          <Image src="/assets/coffrets.jpg" alt="Coffrets découverte" fill sizes="400px" style={{ objectFit: "cover", opacity: 0.55 }} />
+          <Image src="/assets/popup-oud-roses.jpg" alt="Oud & Roses — parfums orientaux" fill sizes="400px" style={{ objectFit: "cover", opacity: 0.85 }} />
+          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(21,16,11,.15) 0%, rgba(21,16,11,.45) 55%, rgba(21,16,11,.88) 100%)" }} />
           <div style={{ position: "relative", zIndex: 1 }}>
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.6rem, 2.5vw, 2rem)", color: "#fff", margin: "0 0 12px", lineHeight: 1.2 }}>
               Nos Coffrets Découverte
@@ -494,18 +553,10 @@ export default function HomePageClient() {
       {/* ── 2. HERO ───────────────────────────────────────────────── */}
       <AnimatedHero />
 
-      {/* Promo strip */}
-      <div style={{ background: "var(--espresso-900)", borderTop: "1px solid rgba(200,144,30,0.2)", padding: "14px 24px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto", display: "flex", alignItems: "center", justifyContent: "center", gap: 24, flexWrap: "wrap" }}>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--on-dark)" }}>
-            ⚡ <strong style={{ color: "var(--gold-400)" }}>VENTES FLASH</strong> — Jusqu&apos;à -43% sur une sélection
-          </span>
-          <CountdownTimer />
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--on-dark-muted)" }}>
-            Code : <strong style={{ color: "var(--gold-400)", letterSpacing: "0.1em" }}>FLASH43</strong>
-          </span>
-        </div>
-      </div>
+      {/* Promo strip — VENTES FLASH retiré pour le moment */}
+
+      {/* ── BEST SELLERS (slide) ──────────────────────────────────── */}
+      <BestSellers />
 
       {/* ── 3. TRUST MARQUEE ──────────────────────────────────────── */}
       <section style={{ background: "var(--espresso-900)", padding: "11px 0", overflow: "hidden", borderBottom: "1px solid rgba(200,144,30,0.15)" }}>
@@ -615,30 +666,7 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 6. VENTES FLASH ───────────────────────────────────────── */}
-      <section id="flash" style={{ background: "var(--espresso-900)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ textAlign: "center", marginBottom: 48 }}>
-            <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 10 }}>Offres limitées</div>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.5rem)", color: "var(--on-dark-strong)", margin: "0 0 18px" }}>Ventes Flash ⚡</h2>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 14 }}>
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--on-dark-muted)" }}>L'offre expire dans :</span>
-              <CountdownTimer />
-            </div>
-          </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {flashItems.map(p => <ProductCard key={p.id} {...p} fourxLabel />)}
-          </div>
-          <div style={{ textAlign: "center", marginTop: 36 }}>
-            <a href="#" style={{
-              display: "inline-block", border: "1.5px solid var(--gold-500)",
-              color: "var(--gold-400)", textDecoration: "none",
-              padding: "12px 32px", borderRadius: "var(--r-pill)",
-              fontFamily: "var(--font-sans)", fontSize: "0.84rem", fontWeight: 600,
-            }}>Voir toutes les promotions →</a>
-          </div>
-        </div>
-      </section>
+      {/* ── 6. VENTES FLASH — retirée pour le moment ──────────────── */}
 
       {/* ── 7. BEST SELLERS ───────────────────────────────────────── */}
       <section id="bestsellers" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
@@ -1174,16 +1202,23 @@ export default function HomePageClient() {
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16, textAlign: "center" }}>
             {[
-              { icon: "✈️", title: "Livraison offerte", sub: "Dès 60 € d'achat" },
-              { icon: "🔒", title: "Paiement sécurisé", sub: "SSL · 3D Secure" },
-              { icon: "💎", title: "100% Authentique", sub: "Certifié origines" },
-              { icon: "🔄", title: "Retours 14 jours", sub: "Sans question" },
-              { icon: "💳", title: "Paiement 4×", sub: "Sans frais dès 60 €" },
-            ].map(p => (
-              <div key={p.title} style={{ padding: "22px 12px", borderRight: "1px solid rgba(255,255,255,0.06)" }}>
-                <div style={{ fontSize: "2rem", marginBottom: 12 }}>{p.icon}</div>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 600, color: "var(--on-dark-strong)", marginBottom: 4 }}>{p.title}</div>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.74rem", color: "var(--on-dark-muted)" }}>{p.sub}</div>
+              { icon: "shipping", title: "Livraison offerte", sub: "Dès 60 € d'achat" },
+              { icon: "secure", title: "Paiement sécurisé", sub: "SSL · 3D Secure" },
+              { icon: "authentic", title: "100% Authentique", sub: "Certifié origines" },
+              { icon: "returns", title: "Retours 14 jours", sub: "Sans question" },
+              { icon: "installments", title: "Paiement 4×", sub: "Sans frais dès 60 €" },
+            ].map((p, idx, arr) => (
+              <div key={p.title} style={{ padding: "8px 12px", borderRight: idx < arr.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
+                <div style={{
+                  width: 58, height: 58, margin: "0 auto 16px", borderRadius: "50%",
+                  border: "1px solid rgba(200,144,30,0.45)",
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  background: "radial-gradient(circle at 50% 35%, rgba(200,144,30,0.12), transparent 70%)",
+                }}>
+                  <ReassuranceIcon name={p.icon} />
+                </div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.02rem", fontWeight: 600, color: "var(--on-dark-strong)", marginBottom: 5, letterSpacing: "0.01em" }}>{p.title}</div>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--on-dark-muted)" }}>{p.sub}</div>
               </div>
             ))}
           </div>
@@ -1253,52 +1288,7 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── FOOTER ────────────────────────────────────────────────── */}
-      <footer style={{ background: "var(--espresso-900)", borderTop: "1px solid rgba(200,144,30,0.15)", padding: "60px 20px 28px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "2fr 1fr 1fr 1fr", gap: 40, marginBottom: 48 }}>
-            <div>
-              <div style={{ fontFamily: "var(--font-display)", fontSize: "1.55rem", color: "var(--gold-400)", marginBottom: 14 }}>
-                Dubai<span style={{ color: "var(--on-dark)" }}> Parfumerie</span>
-              </div>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--on-dark-muted)", lineHeight: 1.72, marginBottom: 20 }}>
-                L'authenticité des parfums orientaux, directement depuis Dubaï. Certifiés, sourcés, livrés en France.
-              </p>
-              <div style={{ display: "flex", gap: 10 }}>
-                {["Instagram", "TikTok", "YouTube"].map(s => (
-                  <a key={s} href="#" style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--on-dark-muted)", textDecoration: "none", border: "1px solid rgba(255,255,255,0.14)", borderRadius: "var(--r-sm)", padding: "5px 11px" }}>{s}</a>
-                ))}
-              </div>
-            </div>
-            {[
-              { title: "Explorer", links: ["Tous les parfums", "Parfums femme", "Parfums homme", "Huiles de parfum", "Coffrets & Cadeaux"] },
-              { title: "Marques", links: ["Lattafa", "Al Haramain", "Swiss Arabian", "Armaf", "Reef", "Ahmed Al Maghribi"] },
-              { title: "Aide", links: ["Mon compte", "Suivre ma commande", "Livraison", "Retours", "Contact", "FAQ"] },
-            ].map(col => (
-              <div key={col.title}>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", letterSpacing: "0.18em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 16, fontWeight: 600 }}>{col.title}</div>
-                <ul style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexDirection: "column", gap: 10 }}>
-                  {col.links.map(l => (
-                    <li key={l}>
-                      <a href="#" style={{ fontFamily: "var(--font-sans)", fontSize: "0.83rem", color: "var(--on-dark-muted)", textDecoration: "none" }}>{l}</a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
-          <div style={{ borderTop: "1px solid rgba(255,255,255,0.07)", paddingTop: 22, display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.76rem", color: "var(--on-dark-muted)", margin: 0 }}>
-              © 2025 Dubai Parfumerie SAS · Tous droits réservés · TVA FR12345678901
-            </p>
-            <div style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-              {["CGV", "Mentions légales", "Politique de confidentialité", "Cookies"].map(l => (
-                <a key={l} href="#" style={{ fontFamily: "var(--font-sans)", fontSize: "0.73rem", color: "var(--on-dark-muted)", textDecoration: "none" }}>{l}</a>
-              ))}
-            </div>
-          </div>
-        </div>
-      </footer>
+      {/* Footer doublon retiré — le footer global <Footer/> (layout) fait foi */}
     </>
   );
 }
