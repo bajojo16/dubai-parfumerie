@@ -26,6 +26,7 @@ export function OilCardCarousel({
   const L = { ...DEFAULT_LABELS, ...labels };
   const isRTL = locale === "ar";
   const trackRef = useRef<HTMLDivElement>(null);
+  const few = products.length <= 3; // peu de produits → remplir la largeur, pas de scroll
 
   const scrollByCards = useCallback(
     (dir: "prev" | "next") => {
@@ -41,27 +42,30 @@ export function OilCardCarousel({
 
   return (
     <div data-dp-oils dir={isRTL ? "rtl" : "ltr"} style={{ position: "relative", width: "100%" }}>
-      {/* Flèche précédent (desktop) */}
-      <button
-        type="button"
-        onClick={() => scrollByCards("prev")}
-        aria-label={L.prev}
-        className="dp-oils-arrow"
-        style={{ ...arrowBase, insetInlineStart: -16 }}
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C2620" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
-          <path d="M15 18l-6-6 6-6" />
-        </svg>
-      </button>
+      {/* Flèche précédent (desktop, seulement si scroll nécessaire) */}
+      {!few && (
+        <button
+          type="button"
+          onClick={() => scrollByCards("prev")}
+          aria-label={L.prev}
+          className="dp-oils-arrow"
+          style={{ ...arrowBase, insetInlineStart: -16 }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C2620" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+      )}
 
-      {/* Piste scroll-snap — padding-top pour ne pas rogner le flacon débordant */}
+      {/* Piste — padding-top pour ne pas rogner le flacon débordant. Peu de produits → remplit la largeur */}
       <div
         ref={trackRef}
         style={{
           display: "flex",
           gap: 16,
-          overflowX: "auto",
-          scrollSnapType: "x mandatory",
+          overflowX: few ? "visible" : "auto",
+          justifyContent: few ? "center" : "flex-start",
+          scrollSnapType: few ? "none" : "x mandatory",
           scrollbarWidth: "none",
           paddingTop: 64,
           paddingBottom: 8,
@@ -72,29 +76,31 @@ export function OilCardCarousel({
         {products.map((p) => (
           <div
             key={p.slug}
-            style={{
-              flex: "0 0 auto",
-              scrollSnapAlign: "start",
-              width: "var(--dp-oils-card-w, 200px)",
-            }}
+            style={
+              few
+                ? { flex: "1 1 0", minWidth: 0, maxWidth: 300 }
+                : { flex: "0 0 auto", scrollSnapAlign: "start", width: "var(--dp-oils-card-w, 200px)" }
+            }
           >
             <OilProductCard product={p} locale={locale} labels={labels} />
           </div>
         ))}
       </div>
 
-      {/* Flèche suivant (desktop) */}
-      <button
-        type="button"
-        onClick={() => scrollByCards("next")}
-        aria-label={L.next}
-        className="dp-oils-arrow"
-        style={{ ...arrowBase, insetInlineEnd: -16 }}
-      >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C2620" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
-          <path d="M9 18l6-6-6-6" />
-        </svg>
-      </button>
+      {/* Flèche suivant (desktop, seulement si scroll nécessaire) */}
+      {!few && (
+        <button
+          type="button"
+          onClick={() => scrollByCards("next")}
+          aria-label={L.next}
+          className="dp-oils-arrow"
+          style={{ ...arrowBase, insetInlineEnd: -16 }}
+        >
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C2620" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+      )}
 
       <style>{`
         .dp-oils-arrow { display: none; }

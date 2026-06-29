@@ -49,4 +49,32 @@ export const DEMO: ShoppableVideo[] = [
       variantId: "oud-roses-100ml",
     },
   },
+  {
+    id: "aurum",
+    videoUrl: "/assets/videos/aurum.mp4",
+    posterUrl: "/assets/prod-4.jpg",
+    productHandle: "aurum",
+    product: {
+      name: "Aurum",
+      price: 49,
+      thumbnailUrl: "/assets/prod-4.jpg",
+      available: true,
+      href: "/produit/aurum",
+      variantId: "aurum-100ml",
+    },
+  },
+  {
+    id: "reef-33",
+    videoUrl: "/assets/videos/reef33.mp4",
+    posterUrl: "/assets/prod-3.jpg",
+    productHandle: "reef-33",
+    product: {
+      name: "Reef 33",
+      price: 39,
+      thumbnailUrl: "/assets/prod-3.jpg",
+      available: true,
+      href: "/produit/reef-33",
+      variantId: "reef-33-100ml",
+    },
+  },
 ];

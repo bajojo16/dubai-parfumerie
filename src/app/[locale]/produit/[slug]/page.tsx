@@ -3,6 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import VolumeSelector from "./VolumeSelector";
 import AddToCart from "./AddToCart";
+import { StoryBubbles } from "@/components/sections/StoryBubbles";
+import { DEMO_STORIES } from "@/data/product-stories";
 
 // ─── Static params ────────────────────────────────────────────────────────────
 
@@ -225,7 +227,7 @@ interface PageProps {
 }
 
 export default async function ProductPage({ params }: PageProps) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const product = PRODUCTS[slug] ?? PRODUCTS["lattafa-oud-pour-elle"];
 
   const discountPct = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
@@ -515,6 +517,10 @@ export default async function ProductPage({ params }: PageProps) {
 
             {/* Add to cart (client) */}
             <AddToCart productName={product.name} price={product.price} />
+
+            {/* Stories produit (bulles → lecteur plein écran) */}
+            <StoryBubbles stories={DEMO_STORIES} locale={locale} />
+
 
             {/* Delivery estimate */}
             <div

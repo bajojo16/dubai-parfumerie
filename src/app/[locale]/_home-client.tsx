@@ -14,6 +14,8 @@ import { OlfactiveTwin } from "@/components/sections/OlfactiveTwin";
 import { OLFACTIVE_TWINS } from "@/data/olfactive-twins";
 import { ShoppableVideoCarousel } from "@/components/sections/ShoppableVideoCarousel";
 import { DEMO as SHOPPABLE_VIDEOS } from "@/data/shoppable-videos";
+import { JournalSection } from "@/components/sections/JournalSection";
+import { DEMO as JOURNAL_ARTICLES } from "@/data/journal-articles";
 import { useLocale, useTranslations } from "next-intl";
 
 const COFFRETS_HOME: LuxeProduct[] = [
@@ -82,6 +84,12 @@ const brands: BrandCardData[] = [
   { name: "Swiss Arabian", founded: 1974, origin: "Dubaï", count: "70+", logo: "/brands/swissarabian.jpg", logoHover: "/brands/swissarabian-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
   { name: "Paris Corner", founded: 2010, origin: "France/UAE", count: "35+", logo: "/brands/pariscorner.jpg", logoHover: "/brands/pariscorner-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
   { name: "Maison Asrar", origin: "Dubaï", count: "25+", logo: "/brands/asrar.jpg", logoHover: "/brands/asrar-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
+  { name: "Rasasi", founded: 1979, origin: "Dubaï", count: "50+" },
+  { name: "Afnan", founded: 1997, origin: "Sharjah", count: "45+" },
+  { name: "Maison Alhambra", origin: "UAE", count: "60+" },
+  { name: "Ard Al Zaafaran", founded: 2007, origin: "Dubaï", count: "40+" },
+  { name: "Armaf", founded: 2013, origin: "UAE", count: "50+" },
+  { name: "Khadlaj", founded: 2003, origin: "Sharjah", count: "35+" },
 ];
 
 const faqItems = [
@@ -534,6 +542,28 @@ export default function HomePageClient() {
 
       {/* Promo strip — VENTES FLASH retiré pour le moment */}
 
+      {/* ── LES PARFUMS DE L'ÉTÉ (sous le slider) ─────────────────── */}
+      <section
+        id="nouveautes"
+        style={{
+          backgroundImage: "linear-gradient(rgba(253,251,246,.34), rgba(253,251,246,.52)), url('/assets/saison-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          padding: "80px 20px",
+        }}
+      >
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow="Dernières arrivées"
+            title={<>Les parfums <em>de l&apos;été</em></>}
+            subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
+          />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+            {products.slice(0, 4).map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
+          </div>
+        </div>
+      </section>
+
       {/* ── COFFRETS & LOTS (sous bannière) ───────────────────────── */}
       <section id="coffrets-lots" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
@@ -688,7 +718,8 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── VIDÉO PRODUITS (après Mur) ────────────────────────────── */}
+      {/* ── VIDÉO PRODUITS — désactivée (doublon avec shoppable) ──── */}
+      {false && (
       <section id="video-avis" style={{ background: "var(--espresso-800)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
@@ -716,6 +747,7 @@ export default function HomePageClient() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── VIDÉOS SHOPPABLES ─────────────────────────────────────── */}
       <section id="shoppable" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
@@ -764,6 +796,38 @@ export default function HomePageClient() {
       </section>
       )}
 
+      {/* ── HUILES DE PARFUM (sous Jumeau) ────────────────────────── */}
+      <section id="huiles" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+            <div>
+              <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-700)", marginBottom: 12 }}>Exclusif</div>
+              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", color: "var(--ink-900)", margin: "0 0 18px", lineHeight: 1.1 }}>
+                Huiles de parfum<br /><em>concentrées</em>
+              </h2>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.92rem", color: "var(--ink-500)", lineHeight: 1.78, marginBottom: 24 }}>
+                Les huiles de parfum orientales sont la quintessence de la tradition olfactive arabe. Sans alcool, ultra-concentrées, elles tiennent 12 à 24 heures et créent une signature olfactive unique à chaque individu.
+              </p>
+              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px", display: "flex", flexDirection: "column", gap: 10 }}>
+                {["Sans alcool — idéal peaux sensibles", "Concentration supérieure à 30%", "Longévité 12–24h", "Voyage autorisé en cabine"].map(item => (
+                  <li key={item} style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", color: "var(--ink-700)", display: "flex", alignItems: "center", gap: 10 }}>
+                    <span style={{ color: "var(--gold-500)", fontSize: "1rem", flexShrink: 0 }}>✓</span> {item}
+                  </li>
+                ))}
+              </ul>
+              <a href="#" style={{
+                display: "inline-block", background: "var(--ink-900)", color: "var(--on-dark-strong)",
+                textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)",
+                fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 600,
+              }}>Découvrir les huiles →</a>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+              {oilItems.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* ── 5. AUTHENTICITÉ ───────────────────────────────────────── */}
       <section id="authenticite" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
@@ -795,38 +859,6 @@ export default function HomePageClient() {
       </section>
 
       {/* ── 6. VENTES FLASH — retirée pour le moment ──────────────── */}
-
-      {/* ── 8. HUILES DE PARFUM ───────────────────────────────────── */}
-      <section id="huiles" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
-            <div>
-              <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-700)", marginBottom: 12 }}>Exclusif</div>
-              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", color: "var(--ink-900)", margin: "0 0 18px", lineHeight: 1.1 }}>
-                Huiles de parfum<br /><em>concentrées</em>
-              </h2>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.92rem", color: "var(--ink-500)", lineHeight: 1.78, marginBottom: 24 }}>
-                Les huiles de parfum orientales sont la quintessence de la tradition olfactive arabe. Sans alcool, ultra-concentrées, elles tiennent 12 à 24 heures et créent une signature olfactive unique à chaque individu.
-              </p>
-              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px", display: "flex", flexDirection: "column", gap: 10 }}>
-                {["Sans alcool — idéal peaux sensibles", "Concentration supérieure à 30%", "Longévité 12–24h", "Voyage autorisé en cabine"].map(item => (
-                  <li key={item} style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", color: "var(--ink-700)", display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ color: "var(--gold-500)", fontSize: "1rem", flexShrink: 0 }}>✓</span> {item}
-                  </li>
-                ))}
-              </ul>
-              <a href="#" style={{
-                display: "inline-block", background: "var(--ink-900)", color: "var(--on-dark-strong)",
-                textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)",
-                fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 600,
-              }}>Découvrir les huiles →</a>
-            </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-              {oilItems.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── 9. TROUVEZ VOTRE PARFUM ───────────────────────────────── */}
       <section id="guide" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
@@ -1047,28 +1079,6 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 14. NOUVEAUTÉS ────────────────────────────────────────── */}
-      <section
-        id="nouveautes"
-        style={{
-          backgroundImage: "linear-gradient(rgba(253,251,246,.34), rgba(253,251,246,.52)), url('/assets/saison-bg.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          padding: "80px 20px",
-        }}
-      >
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow="Dernières arrivées"
-            title={<>Les parfums <em>de l&apos;été</em></>}
-            subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
-          />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {products.slice(0, 4).map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
-          </div>
-        </div>
-      </section>
-
       {/* ── 15. FOCUS MARQUE ──────────────────────────────────────── */}
       <section id="marque" style={{ background: "var(--espresso-900)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
@@ -1113,7 +1123,7 @@ export default function HomePageClient() {
             title="Les grandes maisons orientales"
             subtitle="Parmi les plus belles maisons de parfumerie orientale et du Golfe. Des flacons 100 % authentiques, sans contrefaçon et au juste prix, donc sans compromis."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14 }}>
             {brands.map((b) => (
               <BrandCard key={b.name} brand={{ ...b, href: "#" }} locale={locale} />
             ))}
@@ -1186,7 +1196,8 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 20. GARANTIE PRIX ─────────────────────────────────────── */}
+      {/* ── 20. GARANTIE PRIX — désactivée ────────────────────────── */}
+      {false && (
       <section id="garantie" style={{ background: "var(--espresso-900)", padding: "60px 20px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", border: "1.5px solid var(--gold-500)", borderRadius: "var(--r-lg)", padding: "48px 40px", textAlign: "center" }}>
           <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
@@ -1208,35 +1219,10 @@ export default function HomePageClient() {
           </div>
         </div>
       </section>
+      )}
 
-      {/* ── 21. LE JOURNAL ────────────────────────────────────────── */}
-      <section id="journal" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow="Blog"
-            title="Le Journal du Parfum"
-            subtitle="Histoires, guides et conseils par nos experts en parfumerie orientale."
-          />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {blogPosts.map((post, i) => (
-              <a key={i} href="#" style={{ textDecoration: "none", background: "var(--surface-white)", border: "1px solid var(--line-200)", borderRadius: "var(--r-lg)", overflow: "hidden", display: "block" }}>
-                <div style={{ position: "relative", paddingBottom: "62%", background: "var(--surface-cream-2)" }}>
-                  <Image src={products[i % products.length].image} alt={post.title} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-                  <div style={{ position: "absolute", top: 12, left: 12, background: "var(--espresso-800)", color: "var(--gold-300)", fontSize: "0.62rem", padding: "3px 10px", borderRadius: "var(--r-sm)", fontFamily: "var(--font-sans)", letterSpacing: "0.08em", textTransform: "uppercase" }}>{post.category}</div>
-                </div>
-                <div style={{ padding: "18px 18px 20px" }}>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--ink-400)", marginBottom: 8 }}>Lecture · {post.readTime}</div>
-                  <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.08rem", color: "var(--ink-900)", margin: "0 0 10px", lineHeight: 1.3 }}>{post.title}</h3>
-                  <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--ink-500)", lineHeight: 1.65, margin: 0 }}>{post.excerpt}</p>
-                </div>
-              </a>
-            ))}
-          </div>
-          <div style={{ textAlign: "center", marginTop: 36 }}>
-            <a href="#" style={{ display: "inline-block", border: "1.5px solid var(--ink-900)", color: "var(--ink-900)", textDecoration: "none", padding: "12px 32px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.84rem", fontWeight: 600 }}>Voir tous les articles →</a>
-          </div>
-        </div>
-      </section>
+      {/* ── 21. LE JOURNAL (JournalSection bento) ─────────────────── */}
+      <JournalSection articles={JOURNAL_ARTICLES} locale={locale} />
 
       {/* ── 22. ENCYCLOPÉDIE ──────────────────────────────────────── */}
       <section id="encyclopedie" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
@@ -1260,31 +1246,41 @@ export default function HomePageClient() {
       </section>
 
       {/* ── 23. RÉASSURANCE 5 PILIERS ─────────────────────────────── */}
-      <section id="reassurance" style={{ background: "var(--espresso-900)", padding: "56px 20px", borderTop: "1px solid rgba(200,144,30,0.15)" }}>
+      <section id="reassurance" style={{ background: "linear-gradient(180deg, var(--espresso-900), #120d08)", padding: "60px 20px", borderTop: "1px solid rgba(200,144,30,0.18)" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 16, textAlign: "center" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, textAlign: "center" }}>
             {[
               { icon: "shipping", title: "Livraison offerte", sub: "Dès 60 € d'achat" },
               { icon: "secure", title: "Paiement sécurisé", sub: "SSL · 3D Secure" },
               { icon: "authentic", title: "100% Authentique", sub: "Certifié origines" },
               { icon: "returns", title: "Retours 14 jours", sub: "Sans question" },
               { icon: "installments", title: "Paiement 4×", sub: "Sans frais dès 60 €" },
-            ].map((p, idx, arr) => (
-              <div key={p.title} style={{ padding: "8px 12px", borderRight: idx < arr.length - 1 ? "1px solid rgba(255,255,255,0.06)" : "none" }}>
-                <div style={{
-                  width: 58, height: 58, margin: "0 auto 16px", borderRadius: "50%",
+            ].map((p) => (
+              <div key={p.title} className="dp-pillar" style={{
+                padding: "26px 14px 22px", borderRadius: 16,
+                border: "1px solid rgba(200,144,30,0.10)",
+                background: "rgba(255,255,255,0.018)",
+                transition: "transform .3s ease, border-color .3s ease, background .3s ease",
+              }}>
+                <div className="dp-pillar-ic" style={{
+                  width: 60, height: 60, margin: "0 auto 16px", borderRadius: "50%",
                   border: "1px solid rgba(200,144,30,0.45)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  background: "radial-gradient(circle at 50% 35%, rgba(200,144,30,0.12), transparent 70%)",
+                  background: "radial-gradient(circle at 50% 35%, rgba(200,144,30,0.16), transparent 70%)",
+                  transition: "border-color .3s ease, box-shadow .3s ease",
                 }}>
                   <ReassuranceIcon name={p.icon} />
                 </div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.02rem", fontWeight: 600, color: "var(--on-dark-strong)", marginBottom: 5, letterSpacing: "0.01em" }}>{p.title}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 600, color: "var(--on-dark-strong)", marginBottom: 5, letterSpacing: "0.01em" }}>{p.title}</div>
                 <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--on-dark-muted)" }}>{p.sub}</div>
               </div>
             ))}
           </div>
         </div>
+        <style>{`
+          .dp-pillar:hover { transform: translateY(-5px); border-color: rgba(200,144,30,0.35) !important; background: rgba(200,144,30,0.05) !important; }
+          .dp-pillar:hover .dp-pillar-ic { border-color: rgba(200,144,30,0.9) !important; box-shadow: 0 0 0 4px rgba(200,144,30,0.08), 0 8px 22px -8px rgba(200,144,30,0.5); }
+        `}</style>
       </section>
 
       {/* ── 24. NEWSLETTER ────────────────────────────────────────── */}
