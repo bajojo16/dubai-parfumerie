@@ -12,6 +12,8 @@ import { ProductCardLuxe, type LuxeProduct } from "@/components/ui/ProductCardLu
 import { BrandCard, type BrandCardData } from "@/components/ui/BrandCard";
 import { OlfactiveTwin } from "@/components/sections/OlfactiveTwin";
 import { OLFACTIVE_TWINS } from "@/data/olfactive-twins";
+import { ShoppableVideoCarousel } from "@/components/sections/ShoppableVideoCarousel";
+import { DEMO as SHOPPABLE_VIDEOS } from "@/data/shoppable-videos";
 import { useLocale, useTranslations } from "next-intl";
 
 const COFFRETS_HOME: LuxeProduct[] = [
@@ -548,8 +550,8 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── BEST SELLERS (slide) ──────────────────────────────────── */}
-      <BestSellers />
+      {/* ── BEST SELLERS « Premium Collections » — désactivée ─────── */}
+      {false && <BestSellers />}
 
       {/* ── BANNIÈRE PROMO YARA (roll-on) ─────────────────────────── */}
       <section style={{ position: "relative", width: "100%", overflow: "hidden", height: "clamp(220px, 25vw, 360px)" }}>
@@ -618,16 +620,32 @@ export default function HomePageClient() {
         `}</style>
       </section>
 
-      {/* ── LE MUR DES SENTEURS (3e) ──────────────────────────────── */}
-      <section id="senteurs" style={{ background: "var(--espresso-800)", padding: "80px 20px" }}>
+      {/* ── TOUS NOS INCONTOURNABLES (avant Mur) ──────────────────── */}
+      <section id="catalogue" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
-            dark
-            eyebrow="Univers olfactifs"
-            title={<>Le Mur des <em>Senteurs</em></>}
-            subtitle="Explorez nos 8 univers, des oud profonds aux muscs enveloppants."
+            eyebrow="Le catalogue"
+            title={<>Tous nos <em>incontournables</em></>}
+            subtitle="Les parfums les plus appréciés de notre clientèle, semaine après semaine."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+            {bestSellers.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* ── LE MUR DES SENTEURS ───────────────────────────────────── */}
+      <section id="senteurs" style={{ background: "var(--espresso-800)", padding: "52px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <div style={{ marginBottom: -16 }}>
+            <SectionHeader
+              dark
+              eyebrow="Univers olfactifs"
+              title={<>Le Mur des <em>Senteurs</em></>}
+              subtitle="Explorez nos 8 univers, des oud profonds aux muscs enveloppants."
+            />
+          </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
             {[
               { img: "/assets/scents/oud.png", label: "Oud", sub: "Profond · Mystérieux" },
               { img: "/assets/scents/ambre.png", label: "Ambre", sub: "Chaud · Enveloppant" },
@@ -643,7 +661,7 @@ export default function HomePageClient() {
                 onMouseEnter={() => setHoveredScentCard(i)}
                 onMouseLeave={() => setHoveredScentCard(null)}
                 style={{
-                  position: "relative", paddingBottom: "92%", overflow: "hidden",
+                  position: "relative", paddingBottom: "70%", overflow: "hidden",
                   borderRadius: "var(--r-lg)", cursor: "pointer",
                   border: hoveredScentCard === i ? "1.5px solid var(--gold-400)" : "1.5px solid transparent",
                   transition: "border-color 0.3s",
@@ -660,9 +678,9 @@ export default function HomePageClient() {
                   }}
                 />
                 <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(21,16,11,0.85) 0%, transparent 55%)" }} />
-                <div style={{ position: "absolute", bottom: 16, left: 16, right: 16 }}>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", color: "#fff", marginBottom: 2 }}>{card.label}</div>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--on-dark-muted)", letterSpacing: "0.08em" }}>{card.sub}</div>
+                <div style={{ position: "absolute", bottom: 10, insetInline: 12 }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", color: "#fff", marginBottom: 1 }}>{card.label}</div>
+                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", color: "var(--on-dark-muted)", letterSpacing: "0.06em", opacity: 0.85 }}>{card.sub}</div>
                 </div>
               </div>
             ))}
@@ -670,17 +688,44 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── TOUS NOS INCONTOURNABLES (sous Mur) ───────────────────── */}
-      <section id="catalogue" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+      {/* ── VIDÉO PRODUITS (après Mur) ────────────────────────────── */}
+      <section id="video-avis" style={{ background: "var(--espresso-800)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
-            eyebrow="Le catalogue"
-            title={<>Tous nos <em>incontournables</em></>}
-            subtitle="Les parfums les plus appréciés de notre clientèle, semaine après semaine."
+            dark
+            eyebrow="Communauté"
+            title={<>Vidéo <em>produits</em></>}
+            subtitle="Ils partagent leur expérience, sans filtre."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {bestSellers.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+            {[
+              { name: "Vanilla Voyage", desc: "Démonstration produit", src: "/assets/videos/vanilla-voyage.mp4" },
+              { name: "Reef 33", desc: "Démonstration produit", src: "/assets/videos/reef33.mp4" },
+              { name: "Aurum", desc: "Présentation produit", src: "/assets/videos/aurum-v4.mp4" },
+              { name: "Oud & Roses", desc: "Démonstration produit", src: "/assets/videos/oud-roses.mp4" },
+            ].map((v, i) => (
+              <div key={i}>
+                <VideoPlaceholder
+                  label={`${v.name} — ${v.desc}`}
+                  aspectRatio="9/16"
+                  duration={v.src ? undefined : "0:45 – 1:20"}
+                  src={v.src}
+                />
+              </div>
+            ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── VIDÉOS SHOPPABLES ─────────────────────────────────────── */}
+      <section id="shoppable" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow="Shopping vidéo"
+            title={<>Vu en <em>vidéo</em>, ajouté au panier</>}
+            subtitle="Découvrez nos parfums en mouvement et commandez en un clic."
+          />
+          <ShoppableVideoCarousel videos={SHOPPABLE_VIDEOS} locale={locale} />
         </div>
       </section>
 
@@ -696,7 +741,8 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── TRUST MARQUEE ─────────────────────────────────────────── */}
+      {/* ── TRUST MARQUEE — bande déroulante désactivée ───────────── */}
+      {false && (
       <section style={{ background: "var(--espresso-900)", padding: "11px 0", overflow: "hidden", borderBottom: "1px solid rgba(200,144,30,0.15)" }}>
         <div style={{ display: "flex", width: "max-content", animation: "marqueeScroll 30s linear infinite" }}>
           {[0, 1].map(rep => (
@@ -716,6 +762,7 @@ export default function HomePageClient() {
           ))}
         </div>
       </section>
+      )}
 
       {/* ── 5. AUTHENTICITÉ ───────────────────────────────────────── */}
       <section id="authenticite" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
@@ -1013,7 +1060,7 @@ export default function HomePageClient() {
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
             eyebrow="Dernières arrivées"
-            title={<>Les parfums <em>de saisons</em></>}
+            title={<>Les parfums <em>de l&apos;été</em></>}
             subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
@@ -1139,39 +1186,16 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 19. AVIS VIDÉO ────────────────────────────────────────── */}
-      <section id="video-avis" style={{ background: "var(--espresso-800)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            dark
-            eyebrow="Communauté"
-            title={<>Vidéo <em>produits</em></>}
-            subtitle="Ils partagent leur expérience, sans filtre."
-          />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-            {[
-              { name: "Vanilla Voyage", desc: "Démonstration produit", src: "/assets/videos/vanilla-voyage.mp4" },
-              { name: "Reef 33", desc: "Démonstration produit", src: "/assets/videos/reef33.mp4" },
-              { name: "Aurum", desc: "Présentation produit", src: "/assets/videos/aurum-v4.mp4" },
-              { name: "Oud & Roses", desc: "Démonstration produit", src: "/assets/videos/oud-roses.mp4" },
-            ].map((v, i) => (
-              <div key={i}>
-                <VideoPlaceholder
-                  label={`${v.name} — ${v.desc}`}
-                  aspectRatio="9/16"
-                  duration={v.src ? undefined : "0:45 – 1:20"}
-                  src={v.src}
-                />
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
       {/* ── 20. GARANTIE PRIX ─────────────────────────────────────── */}
       <section id="garantie" style={{ background: "var(--espresso-900)", padding: "60px 20px" }}>
         <div style={{ maxWidth: 900, margin: "0 auto", border: "1.5px solid var(--gold-500)", borderRadius: "var(--r-lg)", padding: "48px 40px", textAlign: "center" }}>
-          <div style={{ fontSize: "2.5rem", marginBottom: 16 }}>🏅</div>
+          <div style={{ display: "flex", justifyContent: "center", marginBottom: 18 }}>
+            <svg width="46" height="46" viewBox="0 0 48 48" fill="none" stroke="var(--gold-400)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <circle cx="24" cy="20" r="11" />
+              <path d="M24 14.5l1.8 3.6 4 .6-2.9 2.8.7 4-3.6-1.9-3.6 1.9.7-4-2.9-2.8 4-.6z" fill="var(--gold-500)" stroke="var(--gold-500)" strokeWidth="0.6" />
+              <path d="M18 30l-3 12 9-5 9 5-3-12" />
+            </svg>
+          </div>
           <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 12 }}>Engagement</div>
           <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.8rem, 3vw, 2.4rem)", color: "var(--on-dark-strong)", margin: "0 0 16px" }}>Garantie Meilleur Prix</h2>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.93rem", color: "var(--on-dark-muted)", lineHeight: 1.78, maxWidth: 560, margin: "0 auto 28px" }}>

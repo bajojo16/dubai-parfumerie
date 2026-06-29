@@ -179,8 +179,10 @@ export function ProductCardLuxe({
             letterSpacing: "1px",
             textTransform: "uppercase",
             color: "#fff",
-            background: hover ? `linear-gradient(135deg, ${T.goldSoft}, ${T.goldDeep})` : T.gold,
-            transition: "background 200ms ease",
+            background: `linear-gradient(135deg, ${T.goldSoft}, ${T.goldDeep})`,
+            filter: hover ? "brightness(1.06) saturate(1.04)" : "none",
+            transition: "filter 200ms ease, transform 200ms ease",
+            transform: hover ? "translateY(-1px)" : "none",
           }}
         >
           {t("add_to_cart")}

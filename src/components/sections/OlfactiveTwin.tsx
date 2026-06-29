@@ -155,7 +155,7 @@ export function OlfactiveTwin({
       <div aria-live="polite">
         {selected && (
           <div style={{ background: "#fff", border: `0.5px solid ${C.border}`, borderRadius: 14, padding: 18 }}>
-            <div style={{ display: "flex", alignItems: "center", gap: 18, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 18, flexWrap: "wrap" }}>
               {/* Vous aimez */}
               <div style={{ minWidth: 140 }}>
                 <div style={{ fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "1px", textTransform: "uppercase", color: C.muted, marginBottom: 4 }}>
@@ -171,7 +171,7 @@ export function OlfactiveTwin({
               </svg>
 
               {/* Le jumeau oriental */}
-              <div style={{ display: "flex", alignItems: "center", gap: 14, flex: 1, minWidth: 200 }}>
+              <div style={{ display: "flex", alignItems: "center", gap: 14, flex: "0 1 auto", minWidth: 200 }}>
                 <div style={{ position: "relative", width: 64, height: 64, borderRadius: 10, overflow: "hidden", background: "#F7F3EE", flexShrink: 0 }}>
                   <Image src={selected.product.image} alt={selected.product.name} fill sizes="64px" style={{ objectFit: "cover" }} />
                 </div>

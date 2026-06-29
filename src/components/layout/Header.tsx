@@ -10,10 +10,10 @@ const ICON = (paths: React.ReactNode) => (
 );
 
 const TOP_TRUST: { label: string; icon: React.ReactNode }[] = [
-  { label: "Expédition sous 24h", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
-  { label: "Parfums rares introuvables en France", icon: ICON(<><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 21l-4.9-2.8.9-5.5-4-3.9 5.5-.8z" /></>) },
+  { label: "Expédition sous 48h", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
+  { label: "Livraison dans le monde, DOM-TOM compris", icon: ICON(<><circle cx="12" cy="12" r="9" /><path d="M3 12h18" /><path d="M12 3c2.5 2.5 3.8 5.6 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z" /></>) },
   { label: "Paiement en 4× sans frais", icon: ICON(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
-  { label: "8 400+ avis vérifiés", icon: ICON(<><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.1 1-5.8L3.5 9.2l5.9-.9z" /></>) },
+  { label: "Échantillon offert dès 80 € d'achat", icon: ICON(<><rect x="3" y="8" width="18" height="13" rx="1" /><path d="M3 12h18M12 8v13M12 8S10 3 7.5 4 9 8 12 8zM12 8s2-5 4.5-4S15 8 12 8z" /></>) },
   { label: "Livraison offerte dès 60 €", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
   { label: "Paiement 100% sécurisé", icon: ICON(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>) },
   { label: "Authenticité certifiée", icon: ICON(<><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" /><path d="M9 12l2 2 4-4" /></>) },
@@ -1041,12 +1041,15 @@ export function Header() {
           </div>
         </div>
 
-        {/* Free shipping bar */}
+        {/* Free shipping bar — crème & or */}
         <div
           className="dp-shipbar"
           style={{
-            background: "var(--espresso-800)",
-            height: 32,
+            position: "relative",
+            overflow: "hidden",
+            background: "linear-gradient(180deg, #FBF7EF, #F3E9D4)",
+            borderBottom: "1px solid #E7DBBF",
+            height: 36,
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
@@ -1054,23 +1057,33 @@ export function Header() {
             padding: "0 24px",
           }}
         >
+          {/* shimmer doré */}
+          <span aria-hidden style={{ position: "absolute", inset: 0, background: "linear-gradient(110deg, transparent 38%, rgba(201,162,74,.18) 50%, transparent 62%)", backgroundSize: "220% 100%", animation: "dpShipShimmer 3.4s ease-in-out infinite", pointerEvents: "none" }} />
           <span
             style={{
+              position: "relative",
               fontFamily: "var(--font-sans)",
               fontSize: "11.5px",
-              fontWeight: 500,
-              color: "var(--on-dark)",
+              fontWeight: 600,
+              color: "#3A2C14",
               letterSpacing: ".04em",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
             }}
           >
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8A6A1E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+              <path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.8" /><circle cx="17" cy="18" r="1.8" />
+            </svg>
             Livraison offerte dès 60 €
           </span>
           <div
             className="dp-shipbar-progress"
             style={{
+              position: "relative",
               width: 180,
-              height: 4,
-              background: "rgba(255,255,255,.12)",
+              height: 6,
+              background: "#EDE3CC",
               borderRadius: 99,
               overflow: "hidden",
             }}
@@ -1079,7 +1092,7 @@ export function Header() {
               style={{
                 width: "30%",
                 height: "100%",
-                background: "linear-gradient(90deg, var(--gold-500), var(--gold-400))",
+                background: "linear-gradient(90deg, #C9A24A, #8A6A1E)",
                 borderRadius: 99,
                 transition: "width 1s ease",
               }}
@@ -1087,14 +1100,16 @@ export function Header() {
           </div>
           <span
             style={{
+              position: "relative",
               fontFamily: "var(--font-sans)",
               fontSize: "11px",
-              color: "var(--on-dark-muted)",
+              color: "#6B5A38",
             }}
           >
-            Il vous manque <strong style={{ color: "var(--gold-400)" }}>42 €</strong> pour en bénéficier
+            Il vous manque <strong style={{ color: "#A8801F" }}>42 €</strong> pour en bénéficier
           </span>
         </div>
+        <style>{`@keyframes dpShipShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }`}</style>
 
         {/* Mega-menu */}
         {mega && MEGA[mega] && <MegaMenu data={MEGA[mega]} onClose={() => setMega(null)} />}
