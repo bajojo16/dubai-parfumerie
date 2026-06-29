@@ -26,6 +26,36 @@
     "view_all": "View all",
     "discover": "Discover",
     "read_more": "Read more",
-    "free_shipping_from": "Free shipping from €60"
+    "free_shipping_from": "Free shipping from €60",
+    "stock_limited": "Limited stock",
+    "reviews": "reviews"
+  },
+  "reefBanner": {
+    "line1": "ON ALL",
+    "line2": "REEF PERFUMES",
+    "discount": "-15%",
+    "condition": "WHEN YOU BUY 3 PERFUMES",
+    "cta": "SHOP NOW"
+  },
+  "sampleBanner": {
+    "line1": "ORDER YOUR",
+    "line2": "SAMPLES",
+    "focal": "1 ML",
+    "condition": "SPRAY OR PERFUME OIL",
+    "cta": "TRY IT",
+    "tagline": "Smell before you commit — Our spray & oil samples, from €9"
+  },
+  "olfactiveTwin": {
+    "eyebrow": "Olfactive twin",
+    "title": "Find your olfactive twin",
+    "subtitle": "The oriental fragrance closest to the one you love.",
+    "intro": "Love a designer fragrance? Discover its oriental twin, at a fraction of the price.",
+    "search_placeholder": "Search a fragrance you love…",
+    "you_like": "You love",
+    "the_twin": "The oriental twin",
+    "from_price": "from {price}",
+    "see_product": "View this fragrance",
+    "legal": "Suggestions based on olfactive family proximity. Inspired fragrances, never copies: no affiliation with the brands mentioned.",
+    "no_result": "No match for this search."
   }
 }

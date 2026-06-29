@@ -26,6 +26,36 @@
     "view_all": "Ver todo",
     "discover": "Descubrir",
     "read_more": "Leer más",
-    "free_shipping_from": "Envío gratuito desde 60 €"
+    "free_shipping_from": "Envío gratuito desde 60 €",
+    "stock_limited": "Stock limitado",
+    "reviews": "opiniones"
+  },
+  "reefBanner": {
+    "line1": "EN TODOS LOS",
+    "line2": "PERFUMES REEF",
+    "discount": "-15%",
+    "condition": "POR LA COMPRA DE 3 PERFUMES",
+    "cta": "LO QUIERO"
+  },
+  "sampleBanner": {
+    "line1": "PIDE TUS",
+    "line2": "MUESTRAS",
+    "focal": "1 ML",
+    "condition": "EN SPRAY O EN ACEITE DE PERFUME",
+    "cta": "LO PRUEBO",
+    "tagline": "Huele antes de adoptar — Muestras spray y aceite, desde 9€"
+  },
+  "olfactiveTwin": {
+    "eyebrow": "Gemelo olfativo",
+    "title": "Encuentra tu gemelo olfativo",
+    "subtitle": "El perfume oriental con el perfil más cercano al que te gusta.",
+    "intro": "¿Te gusta un gran perfume? Descubre su gemelo oriental, a una fracción del precio.",
+    "search_placeholder": "Busca un perfume que te guste…",
+    "you_like": "Te gusta",
+    "the_twin": "El gemelo oriental",
+    "from_price": "desde {price}",
+    "see_product": "Ver este perfume",
+    "legal": "Sugerencias basadas en la proximidad de familia olfativa. Perfumes inspirados, nunca copias: sin afiliación con las marcas citadas.",
+    "no_result": "Sin coincidencias para esta búsqueda."
   }
 }

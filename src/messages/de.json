@@ -26,6 +26,36 @@
     "view_all": "Alle anzeigen",
     "discover": "Entdecken",
     "read_more": "Mehr lesen",
-    "free_shipping_from": "Kostenloser Versand ab 60 €"
+    "free_shipping_from": "Kostenloser Versand ab 60 €",
+    "stock_limited": "Begrenzter Vorrat",
+    "reviews": "Bewertungen"
+  },
+  "reefBanner": {
+    "line1": "AUF ALLE",
+    "line2": "REEF PARFÜMS",
+    "discount": "-15%",
+    "condition": "BEIM KAUF VON 3 PARFÜMS",
+    "cta": "JETZT SICHERN"
+  },
+  "sampleBanner": {
+    "line1": "BESTELLE DEINE",
+    "line2": "PROBEN",
+    "focal": "1 ML",
+    "condition": "ALS SPRAY ODER PARFÜMÖL",
+    "cta": "TESTEN",
+    "tagline": "Riechen vor dem Kauf — Spray- & Ölproben, ab 9€"
+  },
+  "olfactiveTwin": {
+    "eyebrow": "Duftzwilling",
+    "title": "Finde deinen Duftzwilling",
+    "subtitle": "Der orientalische Duft mit dem ähnlichsten Profil zu deinem Favoriten.",
+    "intro": "Du liebst einen großen Duft? Entdecke seinen orientalischen Zwilling, zum Bruchteil des Preises.",
+    "search_placeholder": "Suche einen Duft, den du liebst…",
+    "you_like": "Du liebst",
+    "the_twin": "Der orientalische Zwilling",
+    "from_price": "ab {price}",
+    "see_product": "Diesen Duft ansehen",
+    "legal": "Vorschläge basierend auf der Nähe der Duftfamilie. Inspirierte Düfte, niemals Kopien: keine Verbindung zu den genannten Marken.",
+    "no_result": "Keine Übereinstimmung für diese Suche."
   }
 }

@@ -12,7 +12,7 @@ const COLUMNS = [
       { label: "Parfums Homme", href: "/parfums-homme" },
       { label: "Huile de Parfum", href: "/huile-de-parfum" },
       { label: "Marques", href: "/marques" },
-      { label: "Promo Flash", href: "/promo-flash" },
+      { label: "Bons Plans", href: "/promo-flash" },
       { label: "Nouveautés", href: "/nouveautes" },
     ],
   },
@@ -491,26 +491,35 @@ export function Footer() {
             ))}
           </select>
 
+          {/* Social icons — mêmes animations brand que le header */}
+          <style>{`
+            @keyframes dp-x-shake { 0%,100%{transform:rotate(0)} 20%{transform:rotate(-12deg) scale(1.2)} 50%{transform:rotate(10deg) scale(1.15)} 75%{transform:rotate(-6deg)} }
+            @keyframes dp-ig-spin  { 0%{transform:rotate(0) scale(1)} 50%{transform:rotate(180deg) scale(1.25)} 100%{transform:rotate(360deg) scale(1)} }
+            @keyframes dp-tt-glitch{ 0%,100%{transform:translate(0)} 25%{transform:translate(-2px,1px)} 50%{transform:translate(2px,-1px)} 75%{transform:translate(-1px,2px)} }
+            @keyframes dp-yt-pop   { 0%{transform:scale(1)} 40%{transform:scale(1.35)} 70%{transform:scale(.9)} 100%{transform:scale(1.1)} }
+            .dp-fsocial { display:flex; align-items:center; color:var(--on-dark-muted); transition:color .2s; position:relative; }
+            .dp-fsocial svg { transition:filter .2s; }
+            .dp-fx:hover      { color:#fff !important; animation:dp-x-shake .45s ease; }
+            .dp-fig:hover     { animation:dp-ig-spin .6s cubic-bezier(.4,0,.2,1); }
+            .dp-fig:hover svg { filter:drop-shadow(0 0 6px #e1306c); color:#e1306c !important; }
+            .dp-ftt:hover     { animation:dp-tt-glitch .4s steps(1) infinite; }
+            .dp-ftt:hover svg { filter:drop-shadow(2px 0 0 #69c9d0) drop-shadow(-2px 0 0 #ee1d52); color:#fff !important; }
+            .dp-fyt:hover     { color:#ff0000 !important; animation:dp-yt-pop .4s ease forwards; }
+            .dp-fyt:hover svg { filter:drop-shadow(0 0 8px rgba(255,0,0,.6)); }
+          `}</style>
           <div style={{ display: "flex", alignItems: "center", gap: 10, marginLeft: 4 }}>
             {[
-              { Icon: IconX, href: "https://x.com" },
-              { Icon: IconInstagram, href: "https://instagram.com" },
-              { Icon: IconTikTok, href: "https://tiktok.com" },
-              { Icon: IconYouTube, href: "https://youtube.com" },
-            ].map(({ Icon, href }) => (
+              { Icon: IconX, href: "https://x.com", cls: "dp-fx" },
+              { Icon: IconInstagram, href: "https://instagram.com", cls: "dp-fig" },
+              { Icon: IconTikTok, href: "https://tiktok.com", cls: "dp-ftt" },
+              { Icon: IconYouTube, href: "https://youtube.com", cls: "dp-fyt" },
+            ].map(({ Icon, href, cls }) => (
               <a
                 key={href}
                 href={href}
                 target="_blank"
                 rel="noopener noreferrer"
-                style={{
-                  color: "var(--on-dark-muted)",
-                  display: "flex",
-                  alignItems: "center",
-                  transition: "color .15s",
-                }}
-                onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-400)")}
-                onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--on-dark-muted)")}
+                className={`dp-fsocial ${cls}`}
               >
                 <Icon />
               </a>

@@ -4,7 +4,7 @@
     "homme": "Parfums Homme",
     "huiles": "Huile de Parfum",
     "marques": "Marques",
-    "promo": "Promo Flash",
+    "promo": "Bons Plans",
     "blog": "Blog"
   },
   "topbar": {
@@ -26,6 +26,36 @@
     "view_all": "Voir tout",
     "discover": "Découvrir",
     "read_more": "Lire la suite",
-    "free_shipping_from": "Livraison offerte dès 60 €"
+    "free_shipping_from": "Livraison offerte dès 60 €",
+    "stock_limited": "Stock limité",
+    "reviews": "avis"
+  },
+  "reefBanner": {
+    "line1": "SUR TOUS LES",
+    "line2": "PARFUMS REEF",
+    "discount": "-15%",
+    "condition": "POUR L'ACHAT DE 3 PARFUMS",
+    "cta": "J'EN PROFITE"
+  },
+  "sampleBanner": {
+    "line1": "COMMANDEZ VOS",
+    "line2": "ÉCHANTILLONS",
+    "focal": "1 ML",
+    "condition": "EN SPRAY OU EN HUILE DE PARFUM",
+    "cta": "JE TESTE",
+    "tagline": "Sentez avant d'adopter — Nos échantillons spray & huile, dès 9€"
+  },
+  "olfactiveTwin": {
+    "eyebrow": "Jumeau olfactif",
+    "title": "Trouvez votre jumeau olfactif",
+    "subtitle": "Le parfum oriental au profil le plus proche de celui que vous aimez.",
+    "intro": "Vous aimez un grand parfum ? Découvrez son jumeau oriental, à une fraction du prix.",
+    "search_placeholder": "Cherchez un parfum que vous aimez…",
+    "you_like": "Vous aimez",
+    "the_twin": "Le jumeau oriental",
+    "from_price": "dès {price}",
+    "see_product": "Voir ce parfum",
+    "legal": "Suggestions basées sur la proximité de famille olfactive. Parfums inspirés, jamais des copies : aucune affiliation avec les marques citées.",
+    "no_result": "Aucune correspondance pour cette recherche."
   }
 }

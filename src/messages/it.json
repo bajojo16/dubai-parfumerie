@@ -26,6 +26,36 @@
     "view_all": "Vedi tutto",
     "discover": "Scopri",
     "read_more": "Leggi di più",
-    "free_shipping_from": "Spedizione gratuita da 60 €"
+    "free_shipping_from": "Spedizione gratuita da 60 €",
+    "stock_limited": "Scorte limitate",
+    "reviews": "recensioni"
+  },
+  "reefBanner": {
+    "line1": "SU TUTTI I",
+    "line2": "PROFUMI REEF",
+    "discount": "-15%",
+    "condition": "PER L'ACQUISTO DI 3 PROFUMI",
+    "cta": "NE APPROFITTO"
+  },
+  "sampleBanner": {
+    "line1": "ORDINA I TUOI",
+    "line2": "CAMPIONI",
+    "focal": "1 ML",
+    "condition": "IN SPRAY O IN OLIO PROFUMATO",
+    "cta": "PROVA ORA",
+    "tagline": "Annusa prima di scegliere — Campioni spray e olio, da 9€"
+  },
+  "olfactiveTwin": {
+    "eyebrow": "Gemello olfattivo",
+    "title": "Trova il tuo gemello olfattivo",
+    "subtitle": "Il profumo orientale dal profilo più vicino a quello che ami.",
+    "intro": "Ami un grande profumo? Scopri il suo gemello orientale, a una frazione del prezzo.",
+    "search_placeholder": "Cerca un profumo che ami…",
+    "you_like": "Ami",
+    "the_twin": "Il gemello orientale",
+    "from_price": "da {price}",
+    "see_product": "Vedi questo profumo",
+    "legal": "Suggerimenti basati sulla vicinanza della famiglia olfattiva. Profumi ispirati, mai copie: nessuna affiliazione con i marchi citati.",
+    "no_result": "Nessuna corrispondenza per questa ricerca."
   }
 }

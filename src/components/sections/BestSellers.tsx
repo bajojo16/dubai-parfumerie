@@ -180,8 +180,8 @@ export function BestSellers() {
               <div
                 style={{
                   position: "relative",
-                  width: "min(560px, 92vw)",
-                  height: "clamp(380px, 52vw, 460px)",
+                  width: "min(440px, 88vw)",
+                  height: "clamp(300px, 40vw, 380px)",
                   marginBottom: 36,
                 }}
               >

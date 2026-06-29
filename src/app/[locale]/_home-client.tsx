@@ -7,6 +7,32 @@ import { BestSellers } from "@/components/sections/BestSellers";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { VideoPlaceholder } from "@/components/ui/VideoPlaceholder";
 import { QuizSignature } from "@/components/sections/QuizSignature";
+import { BackToTop } from "@/components/ui/BackToTop";
+import { ProductCardLuxe, type LuxeProduct } from "@/components/ui/ProductCardLuxe";
+import { BrandCard, type BrandCardData } from "@/components/ui/BrandCard";
+import { OlfactiveTwin } from "@/components/sections/OlfactiveTwin";
+import { OLFACTIVE_TWINS } from "@/data/olfactive-twins";
+import { useLocale, useTranslations } from "next-intl";
+
+const COFFRETS_HOME: LuxeProduct[] = [
+  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Coffret Découverte Oud", price: 39.9, oldPrice: 79.9, limitedStock: true, href: "/promo-flash", rating: 4.5, reviewCount: 97 },
+  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Lot 3 Parfums Best-Of", price: 49.9, oldPrice: 109.9, href: "/promo-flash", rating: 5, reviewCount: 64 },
+  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Coffret Miniatures Floral", price: 29.9, oldPrice: 64.9, href: "/promo-flash", rating: 4, reviewCount: 38 },
+  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Lot Découverte Huiles 6×3ml", price: 24.9, oldPrice: 54.9, limitedStock: true, href: "/promo-flash", rating: 4.5, reviewCount: 51 },
+];
+
+// ─── Trust marquee (icônes ligne, fini les emojis) ───────────────────────────
+const ic = { width: 15, height: 15, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 1.7, strokeLinecap: "round" as const, strokeLinejoin: "round" as const };
+const TRUST_ITEMS: { icon: React.ReactNode; label: string }[] = [
+  { icon: <svg {...ic} fill="currentColor" stroke="none"><path d="M12 2l2.9 6.3 6.9.7-5.1 4.6 1.4 6.8L12 17.6 5.9 20.4l1.4-6.8L2.2 9l6.9-.7z"/></svg>, label: "8 400+ avis vérifiés" },
+  { icon: <svg {...ic}><path d="M3 7h11v8H3z"/><path d="M14 10h4l3 3v2h-7z"/><circle cx="7" cy="17" r="1.6"/><circle cx="17.5" cy="17" r="1.6"/></svg>, label: "Livraison offerte dès 60 €" },
+  { icon: <svg {...ic}><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>, label: "Paiement 100% sécurisé" },
+  { icon: <svg {...ic}><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>, label: "Authenticité certifiée" },
+  { icon: <svg {...ic}><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>, label: "Retours 14 jours offerts" },
+  { icon: <svg {...ic}><path d="M21 16V8l-9-5-9 5v8l9 5z"/><path d="M3.3 7L12 12l8.7-5"/><path d="M12 22V12"/></svg>, label: "Expédition sous 24h" },
+  { icon: <svg {...ic}><path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18"/><path d="M9 3l3 6 3-6"/></svg>, label: "Parfums rares introuvables en France" },
+  { icon: <svg {...ic}><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>, label: "Paiement en 4× sans frais" },
+];
 
 // ─── Static data ─────────────────────────────────────────────────────────────
 
@@ -22,6 +48,21 @@ const products = [
 const bestSellers = products.slice(2, 6);
 const oilItems = products.slice(0, 3);
 
+// Adapte un produit catalogue (name/reviews) vers le format ProductCardLuxe (title/reviewCount)
+type CatalogProduct = (typeof products)[number];
+function toLuxe(p: CatalogProduct): LuxeProduct {
+  return {
+    image: p.image,
+    brand: p.brand,
+    title: p.name,
+    price: p.price,
+    oldPrice: p.oldPrice,
+    rating: p.rating,
+    reviewCount: p.reviews,
+    href: "/promo-flash",
+  };
+}
+
 const olfactoryFamilies = [
   { id: 1, name: "Boisé · Oud", count: 82, color: "#6B3A2A", img: "/assets/prod-1.jpg" },
   { id: 2, name: "Floral · Musc", count: 67, color: "#C8607A", img: "/assets/prod-4.jpg" },
@@ -30,15 +71,15 @@ const olfactoryFamilies = [
   { id: 5, name: "Fruité · Floral", count: 51, color: "#7B3FA0", img: "/assets/prod-2.jpg" },
 ];
 
-const brands = [
-  { name: "Lattafa", founded: 1980, origin: "Sharjah", count: "80+" },
-  { name: "Reef", founded: 1995, origin: "UAE", count: "40+" },
-  { name: "Al Haramain", founded: 1970, origin: "Dubaï", count: "60+" },
-  { name: "Ahmed Al Maghribi", founded: 2005, origin: "Dubaï", count: "30+" },
-  { name: "Armaf", founded: 2013, origin: "UAE", count: "50+" },
-  { name: "Swiss Arabian", founded: 1974, origin: "Dubaï", count: "70+" },
-  { name: "Paris Corner", founded: 2010, origin: "France/UAE", count: "35+" },
-  { name: "Gulf Orchid", founded: 1992, origin: "Bahreïn", count: "45+" },
+const brands: BrandCardData[] = [
+  { name: "Lattafa", founded: 1980, origin: "Sharjah", count: "80+", logo: "/brands/lattafa.jpg", logoHover: "/brands/lattafa-hover.jpg", cover: true, coverBg: "#262626", coverBgHover: "#0A0A0A" },
+  { name: "Reef", founded: 1995, origin: "UAE", count: "40+", logo: "/brands/reef.jpg", logoHover: "/brands/reef-hover.jpg", cover: true },
+  { name: "Al Haramain", founded: 1970, origin: "Dubaï", count: "60+", logo: "/brands/alharamain.jpg", logoHover: "/brands/alharamain-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#FCFBF9" },
+  { name: "Ahmed Al Maghribi", founded: 2005, origin: "Dubaï", count: "30+", logo: "/brands/ahmed.jpg", logoHover: "/brands/ahmed-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
+  { name: "Oud Elite", origin: "UAE", count: "40+", logo: "/brands/oudelite.jpg", logoHover: "/brands/oudelite-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
+  { name: "Swiss Arabian", founded: 1974, origin: "Dubaï", count: "70+", logo: "/brands/swissarabian.jpg", logoHover: "/brands/swissarabian-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
+  { name: "Paris Corner", founded: 2010, origin: "France/UAE", count: "35+", logo: "/brands/pariscorner.jpg", logoHover: "/brands/pariscorner-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
+  { name: "Maison Asrar", origin: "Dubaï", count: "25+", logo: "/brands/asrar.jpg", logoHover: "/brands/asrar-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
 ];
 
 const faqItems = [
@@ -116,73 +157,6 @@ const editorialBlocks = [
   { name: "Vanille", desc: "La vanille orientale est plus gourmande, plus intensément crémeuse que ses cousines occidentales. Elle enrobe les compositions d'une douceur addictive qui dure des heures.", symbol: "V" },
   { name: "Bakhour", desc: "Le bakhour est un encens traditionnel arabe composé de copeaux d'oud, de musc et d'huiles essentielles. Son rituel olfactif imprègne la maison et les vêtements d'un souvenir inoubliable.", symbol: "B" },
 ];
-
-// ─── ProductCard ──────────────────────────────────────────────────────────────
-
-type ProductCardProps = {
-  image: string;
-  brand: string;
-  name: string;
-  price: number;
-  oldPrice?: number;
-  rating: number;
-  reviews: number;
-  badge?: string;
-  fourxLabel?: boolean;
-};
-
-function ProductCard({ image, brand, name, price, oldPrice, rating, reviews, badge, fourxLabel }: ProductCardProps) {
-  const [hovered, setHovered] = useState(false);
-  return (
-    <div
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      style={{
-        background: "var(--surface-white)",
-        border: `1px solid ${hovered ? "var(--gold-500)" : "#e8dfd0"}`,
-        borderRadius: "var(--r-lg)",
-        overflow: "hidden",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
-        transition: "all 0.3s ease",
-        boxShadow: hovered ? "0 8px 24px rgba(200,144,30,0.15)" : "0 2px 8px rgba(0,0,0,0.06)",
-        cursor: "pointer",
-      }}
-    >
-      <div style={{ position: "relative", paddingBottom: "100%", overflow: "hidden" }}>
-        <Image src={image} alt={name} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-        {badge && (
-          <span style={{
-            position: "absolute", top: 10, left: 10,
-            background: badge === "Nouveau" ? "var(--espresso-800)" : "#E63946",
-            color: "#fff",
-            fontSize: "0.75rem", fontWeight: 700, padding: "2px 8px",
-            borderRadius: "var(--r-sm)",
-          }}>{badge}</span>
-        )}
-      </div>
-      <div style={{ padding: "14px 16px", textAlign: "center" }}>
-        <div style={{ fontSize: "0.65rem", letterSpacing: "0.12em", color: "var(--ink-500)", textTransform: "uppercase", fontFamily: "var(--font-sans)", marginBottom: 4 }}>{brand}</div>
-        <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", color: "var(--ink-900)", marginBottom: 8 }}>{name}</div>
-        <div style={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 8, marginBottom: 6 }}>
-          <span style={{ color: "var(--gold-500)", fontWeight: 700, fontSize: "1.1rem" }}>{price.toFixed(2)} €</span>
-          {oldPrice && <span style={{ color: "var(--ink-500)", textDecoration: "line-through", fontSize: "0.85rem" }}>{oldPrice.toFixed(2)} €</span>}
-        </div>
-        <div style={{ fontSize: "0.75rem", color: "var(--star)" }}>
-          {"★".repeat(Math.floor(rating))}
-          <span style={{ color: "var(--ink-500)", marginLeft: 4 }}>({reviews} avis)</span>
-        </div>
-        {fourxLabel && <div style={{ fontSize: "0.7rem", color: "var(--ink-500)", marginTop: 4 }}>ou 4× {(price / 4).toFixed(2)} € sans frais</div>}
-        <button style={{
-          marginTop: 10, width: "100%",
-          background: "var(--gold-500)", color: "#fff",
-          border: "none", borderRadius: "var(--r-sm)", padding: "8px",
-          fontFamily: "var(--font-sans)", fontSize: "0.8rem", cursor: "pointer",
-          fontWeight: 600,
-        }}>Ajouter au panier</button>
-      </div>
-    </div>
-  );
-}
 
 // ─── CountdownTimer ───────────────────────────────────────────────────────────
 
@@ -490,23 +464,23 @@ function SectionHeader({
   return (
     <div style={{ textAlign: "center", marginBottom: 48 }}>
       <div style={{
-        fontFamily: "var(--font-sans)", fontSize: "0.62rem",
+        fontFamily: "var(--font-sans)", fontSize: "0.78rem",
         letterSpacing: "0.22em", textTransform: "uppercase",
         color: dark ? "var(--gold-400)" : "var(--gold-700)",
-        marginBottom: 10, fontWeight: 500,
+        marginBottom: 12, fontWeight: 500,
       }}>{eyebrow}</div>
       <h2 style={{
         fontFamily: "var(--font-display)",
-        fontSize: "clamp(1.8rem, 3vw, 2.5rem)",
+        fontSize: "clamp(2.2rem, 3.8vw, 3.2rem)",
         color: dark ? "var(--on-dark-strong)" : "var(--ink-900)",
-        margin: 0, lineHeight: 1.1,
+        margin: 0, lineHeight: 1.12,
       }}>{title}</h2>
       {subtitle && (
         <p style={{
-          fontFamily: "var(--font-sans)", fontSize: "0.95rem",
+          fontFamily: "var(--font-sans)", fontSize: "1.1rem",
           color: dark ? "var(--on-dark-muted)" : "var(--ink-500)",
-          marginTop: 14, lineHeight: 1.7,
-          maxWidth: 520, marginInline: "auto",
+          marginTop: 16, lineHeight: 1.7,
+          maxWidth: 640, marginInline: "auto",
         }}>{subtitle}</p>
       )}
     </div>
@@ -516,6 +490,8 @@ function SectionHeader({
 // ─── Main page ────────────────────────────────────────────────────────────────
 
 export default function HomePageClient() {
+  const locale = useLocale();
+  const tTwin = useTranslations("olfactiveTwin");
   const [selectedScent, setSelectedScent] = useState<string | null>(null);
   const [hoveredScent, setHoveredScent] = useState<string | null>(null);
   const [hoveredScentCard, setHoveredScentCard] = useState<number | null>(null);
@@ -523,6 +499,7 @@ export default function HomePageClient() {
 
   return (
     <>
+      <BackToTop />
       {/* Keyframe styles */}
       <style>{`
         @keyframes kenBurns {
@@ -555,36 +532,93 @@ export default function HomePageClient() {
 
       {/* Promo strip — VENTES FLASH retiré pour le moment */}
 
-      {/* ── BEST SELLERS (slide) ──────────────────────────────────── */}
-      <BestSellers />
-
-      {/* ── 3. TRUST MARQUEE ──────────────────────────────────────── */}
-      <section style={{ background: "var(--espresso-900)", padding: "11px 0", overflow: "hidden", borderBottom: "1px solid rgba(200,144,30,0.15)" }}>
-        <div style={{ display: "flex", width: "max-content", animation: "marqueeScroll 30s linear infinite" }}>
-          {[0, 1].map(rep => (
-            <div key={rep} style={{ display: "flex" }}>
-              {[
-                "⭐⭐⭐⭐⭐  8 400+ avis vérifiés",
-                "✈️  Livraison offerte dès 60 €",
-                "🔒  Paiement 100% sécurisé",
-                "💎  Authenticité certifiée",
-                "🔄  Retours 14 jours offerts",
-                "📦  Expédition sous 24h",
-                "🌹  Parfums rares introuvables en France",
-                "💳  Paiement en 4× sans frais",
-              ].map((item, i) => (
-                <span key={i} style={{
-                  fontFamily: "var(--font-sans)", fontSize: "0.78rem",
-                  color: "var(--on-dark)", whiteSpace: "nowrap",
-                  padding: "0 28px", borderRight: "1px solid rgba(200,144,30,0.12)",
-                }}>{item}</span>
-              ))}
-            </div>
-          ))}
+      {/* ── COFFRETS & LOTS (sous bannière) ───────────────────────── */}
+      <section id="coffrets-lots" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow="Coffrets & Lots"
+            title={<>Plus de senteurs, <em>meilleur prix</em></>}
+            subtitle="Découvrez plusieurs fragrances en un seul achat, à prix réduit."
+          />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
+            {COFFRETS_HOME.map((p, i) => (
+              <ProductCardLuxe key={i} product={p} locale={locale} />
+            ))}
+          </div>
         </div>
       </section>
 
-      {/* ── 4. LE MUR DES SENTEURS ────────────────────────────────── */}
+      {/* ── BEST SELLERS (slide) ──────────────────────────────────── */}
+      <BestSellers />
+
+      {/* ── BANNIÈRE PROMO YARA (roll-on) ─────────────────────────── */}
+      <section style={{ position: "relative", width: "100%", overflow: "hidden", height: "clamp(220px, 25vw, 360px)" }}>
+        <Image
+          src="/assets/banner-yara.jpg"
+          alt="Yara & Mousuf Wardi — roll-on de voyage"
+          fill
+          sizes="100vw"
+          style={{ objectFit: "cover", objectPosition: "center" }}
+          priority={false}
+        />
+        {/* Voile léger pour lisibilité texte (côté droit) */}
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(255,245,247,0) 45%, rgba(255,240,243,0.35) 100%)", pointerEvents: "none" }} />
+        <div
+          style={{
+            position: "absolute", inset: 0, zIndex: 2,
+            display: "flex", alignItems: "center", justifyContent: "space-between",
+            gap: 24, padding: "0 clamp(24px, 6vw, 96px)",
+          }}
+        >
+          {/* Bouton (gauche) */}
+          <a
+            href="/promo-flash"
+            className="dp-yara-cta"
+            style={{
+              flexShrink: 0, position: "relative", overflow: "hidden",
+              display: "inline-flex", alignItems: "center", gap: 10,
+              background: "#FBF6EC", color: "#3A2418", textDecoration: "none",
+              fontFamily: "var(--font-sans)", fontSize: "clamp(.78rem, 1.3vw, .95rem)",
+              fontWeight: 700, letterSpacing: ".06em", textTransform: "uppercase",
+              padding: "clamp(12px,1.4vw,17px) clamp(20px,2.6vw,34px)", borderRadius: 999,
+              boxShadow: "0 10px 28px -10px rgba(120,40,60,.45)",
+            }}
+          >
+            <span style={{ position: "relative", zIndex: 1 }}>Découvrir →</span>
+          </a>
+
+          {/* Texte (droite) */}
+          <div style={{ textAlign: "right", maxWidth: "min(56%, 620px)" }}>
+            <h2
+              style={{
+                fontFamily: "var(--font-display)", margin: 0,
+                fontSize: "clamp(1.6rem, 3.6vw, 3rem)", lineHeight: 1.1,
+                color: "#4A2230", textShadow: "0 1px 14px rgba(255,250,250,.6)",
+              }}
+            >
+              Vous aimez <em>Yara</em> ?<br />Emportez-le partout.
+            </h2>
+            <p
+              style={{
+                fontFamily: "var(--font-sans)", marginTop: 12, marginBottom: 0,
+                fontSize: "clamp(.85rem, 1.5vw, 1.1rem)", color: "#6B3A48",
+                textShadow: "0 1px 10px rgba(255,250,250,.6)",
+              }}
+            >
+              Yara &amp; Mousuf Wardi, en roll-on de voyage
+            </p>
+          </div>
+        </div>
+        <style>{`
+          @keyframes dpYaraPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+          .dp-yara-cta{animation:dpYaraPulse 2.4s ease-in-out infinite}
+          .dp-yara-cta::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 50%,transparent 70%);transform:translateX(-130%)}
+          .dp-yara-cta:hover::after{transform:translateX(130%);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
+          .dp-yara-cta:hover{background:#fff;animation-play-state:paused}
+        `}</style>
+      </section>
+
+      {/* ── LE MUR DES SENTEURS (3e) ──────────────────────────────── */}
       <section id="senteurs" style={{ background: "var(--espresso-800)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
@@ -609,7 +643,7 @@ export default function HomePageClient() {
                 onMouseEnter={() => setHoveredScentCard(i)}
                 onMouseLeave={() => setHoveredScentCard(null)}
                 style={{
-                  position: "relative", paddingBottom: "133%", overflow: "hidden",
+                  position: "relative", paddingBottom: "92%", overflow: "hidden",
                   borderRadius: "var(--r-lg)", cursor: "pointer",
                   border: hoveredScentCard === i ? "1.5px solid var(--gold-400)" : "1.5px solid transparent",
                   transition: "border-color 0.3s",
@@ -633,6 +667,53 @@ export default function HomePageClient() {
               </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── TOUS NOS INCONTOURNABLES (sous Mur) ───────────────────── */}
+      <section id="catalogue" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow="Le catalogue"
+            title={<>Tous nos <em>incontournables</em></>}
+            subtitle="Les parfums les plus appréciés de notre clientèle, semaine après semaine."
+          />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+            {bestSellers.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
+          </div>
+        </div>
+      </section>
+
+      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
+      <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 920, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow={tTwin("eyebrow")}
+            title={tTwin("title")}
+            subtitle={tTwin("subtitle")}
+          />
+          <OlfactiveTwin matches={OLFACTIVE_TWINS} locale={locale} />
+        </div>
+      </section>
+
+      {/* ── TRUST MARQUEE ─────────────────────────────────────────── */}
+      <section style={{ background: "var(--espresso-900)", padding: "11px 0", overflow: "hidden", borderBottom: "1px solid rgba(200,144,30,0.15)" }}>
+        <div style={{ display: "flex", width: "max-content", animation: "marqueeScroll 30s linear infinite" }}>
+          {[0, 1].map(rep => (
+            <div key={rep} style={{ display: "flex" }}>
+              {TRUST_ITEMS.map((item, i) => (
+                <span key={i} style={{
+                  display: "inline-flex", alignItems: "center", gap: 9,
+                  fontFamily: "var(--font-sans)", fontSize: "0.78rem",
+                  color: "var(--on-dark)", whiteSpace: "nowrap",
+                  padding: "0 28px", borderRight: "1px solid rgba(200,144,30,0.12)",
+                }}>
+                  <span style={{ color: "var(--gold-400)", display: "inline-flex" }} aria-hidden>{item.icon}</span>
+                  {item.label}
+                </span>
+              ))}
+            </div>
+          ))}
         </div>
       </section>
 
@@ -668,20 +749,6 @@ export default function HomePageClient() {
 
       {/* ── 6. VENTES FLASH — retirée pour le moment ──────────────── */}
 
-      {/* ── 7. BEST SELLERS ───────────────────────────────────────── */}
-      <section id="bestsellers" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow="Les incontournables"
-            title={<>Best<em>-Sellers</em></>}
-            subtitle="Les parfums les plus appréciés de notre clientèle, semaine après semaine."
-          />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {bestSellers.map(p => <ProductCard key={p.id} {...p} fourxLabel />)}
-          </div>
-        </div>
-      </section>
-
       {/* ── 8. HUILES DE PARFUM ───────────────────────────────────── */}
       <section id="huiles" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
@@ -708,7 +775,7 @@ export default function HomePageClient() {
               }}>Découvrir les huiles →</a>
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
-              {oilItems.map(p => <ProductCard key={p.id} {...p} />)}
+              {oilItems.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
             </div>
           </div>
         </div>
@@ -726,7 +793,8 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 10. ROUE DES SENTEURS ─────────────────────────────────── */}
+      {/* ── 10. ROUE DES SENTEURS — retirée ───────────────────────── */}
+      {false && (
       <section id="roue" style={{ background: "#1a1208", padding: "80px 20px" }}>
         <div className="dp-roue-grid" style={{ maxWidth: 1240, margin: "0 auto", display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "center" }}>
           {/* Left: title + result */}
@@ -861,38 +929,9 @@ export default function HomePageClient() {
           </div>
         )}
       </section>
+      )}
 
-      {/* ── 11. FAMILLES OLFACTIVES ───────────────────────────────── */}
-      <section id="familles" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow="Classification"
-            title="Familles olfactives"
-            subtitle="Chaque grande famille possède ses codes, ses saisons, ses émotions."
-          />
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            {olfactoryFamilies.map(f => (
-              <div key={f.id} style={{
-                display: "flex", alignItems: "center", gap: 20,
-                background: "var(--surface-white)", border: "1px solid var(--line-200)",
-                borderRadius: "var(--r-lg)", padding: "18px 24px", cursor: "pointer",
-              }}>
-                <div style={{ position: "relative", width: 56, height: 56, borderRadius: "var(--r-md)", overflow: "hidden", flexShrink: 0 }}>
-                  <Image src={f.img} alt={f.name} fill sizes="56px" style={{ objectFit: "cover" }} />
-                </div>
-                <div style={{ flex: 1 }}>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--ink-900)", marginBottom: 6 }}>{f.name}</div>
-                  <div style={{ height: 4, background: "var(--line-100)", borderRadius: 2, overflow: "hidden" }}>
-                    <div style={{ height: "100%", width: `${f.count}%`, background: f.color, borderRadius: 2 }} />
-                  </div>
-                </div>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.76rem", color: "var(--ink-500)", minWidth: 68, textAlign: "right" }}>{f.count} parfums</div>
-                <span style={{ color: "var(--gold-500)", fontSize: "1rem" }}>→</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      {/* ── 11. FAMILLES OLFACTIVES — retirée ─────────────────────── */}
 
       {/* ── 12. CATÉGORIES ────────────────────────────────────────── */}
       <section id="categories" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
@@ -962,15 +1001,23 @@ export default function HomePageClient() {
       </section>
 
       {/* ── 14. NOUVEAUTÉS ────────────────────────────────────────── */}
-      <section id="nouveautes" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+      <section
+        id="nouveautes"
+        style={{
+          backgroundImage: "linear-gradient(rgba(253,251,246,.34), rgba(253,251,246,.52)), url('/assets/saison-bg.jpg')",
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          padding: "80px 20px",
+        }}
+      >
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
             eyebrow="Dernières arrivées"
-            title={<>Nouveautés <em>de la saison</em></>}
+            title={<>Les parfums <em>de saisons</em></>}
             subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {products.slice(0, 4).map(p => <ProductCard key={p.id} {...p} badge="Nouveau" />)}
+            {products.slice(0, 4).map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
           </div>
         </div>
       </section>
@@ -1015,23 +1062,13 @@ export default function HomePageClient() {
       <section id="maisons" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
-            eyebrow="Maisons partenaires"
+            eyebrow="Nos marques"
             title="Les grandes maisons orientales"
-            subtitle="Partenaires officiels. Stocks garantis. Prix sans intermédiaire."
+            subtitle="Parmi les plus belles maisons de parfumerie orientale et du Golfe. Des flacons 100 % authentiques, sans contrefaçon et au juste prix, donc sans compromis."
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
-            {brands.map((b, i) => (
-              <a key={b.name} href="#" style={{
-                textDecoration: "none", background: "var(--surface-white)",
-                border: "1px solid var(--line-200)", borderRadius: "var(--r-lg)",
-                padding: "20px 18px", display: "flex", alignItems: "center", gap: 14,
-              }}>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", color: "var(--gold-200)", fontWeight: 700, minWidth: 32 }}>{String(i + 1).padStart(2, "0")}</div>
-                <div>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "1rem", color: "var(--ink-900)", marginBottom: 2 }}>{b.name}</div>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--ink-400)" }}>{b.origin} · {b.count} refs</div>
-                </div>
-              </a>
+            {brands.map((b) => (
+              <BrandCard key={b.name} brand={{ ...b, href: "#" }} locale={locale} />
             ))}
           </div>
         </div>
@@ -1108,21 +1145,22 @@ export default function HomePageClient() {
           <SectionHeader
             dark
             eyebrow="Communauté"
-            title={<>Avis clients <em>en vidéo</em></>}
+            title={<>Vidéo <em>produits</em></>}
             subtitle="Ils partagent leur expérience, sans filtre."
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
             {[
-              { name: "Yasmine B.", desc: "Avis Oud Pour Elle" },
-              { name: "Karim M.", desc: "Avis Amber Oud" },
-              { name: "Sophie L.", desc: "Avis Coffret découverte" },
-              { name: "Aicha D.", desc: "Avis Shaghaf Oud" },
+              { name: "Vanilla Voyage", desc: "Démonstration produit", src: "/assets/videos/vanilla-voyage.mp4" },
+              { name: "Reef 33", desc: "Démonstration produit", src: "/assets/videos/reef33.mp4" },
+              { name: "Aurum", desc: "Présentation produit", src: "/assets/videos/aurum-v4.mp4" },
+              { name: "Oud & Roses", desc: "Démonstration produit", src: "/assets/videos/oud-roses.mp4" },
             ].map((v, i) => (
               <div key={i}>
                 <VideoPlaceholder
                   label={`${v.name} — ${v.desc}`}
                   aspectRatio="9/16"
-                  duration="0:45 – 1:20"
+                  duration={v.src ? undefined : "0:45 – 1:20"}
+                  src={v.src}
                 />
               </div>
             ))}

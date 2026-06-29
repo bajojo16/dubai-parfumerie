@@ -1,5 +1,6 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
@@ -17,8 +18,8 @@ type Slide = {
 
 const SLIDES: Slide[] = [
   {
-    img: "/assets/hero.jpg",
-    thumb: "/assets/hero.jpg",
+    img: "/assets/slider-1.jpg",
+    thumb: "/assets/slider-1.jpg",
     eyebrow: "Parfumerie Orientale Authentique · Depuis 2016",
     title: "L'authentique,",
     em: "pas l'imitation",
@@ -26,8 +27,8 @@ const SLIDES: Slide[] = [
     cta: { label: "Découvrir les coffrets dès 9 €", href: "#coffrets" },
   },
   {
-    img: "/assets/coffrets.jpg",
-    thumb: "/assets/coffrets.jpg",
+    img: "/assets/slider-2-reef-v2.jpg",
+    thumb: "/assets/slider-2-reef-v2.jpg",
     eyebrow: "Coffrets Prestige · Édition Cabinet",
     title: "L'art du",
     em: "cadeau oriental",
@@ -35,8 +36,8 @@ const SLIDES: Slide[] = [
     cta: { label: "Voir les coffrets prestige", href: "#coffrets" },
   },
   {
-    img: "/assets/cat-mixte.jpg",
-    thumb: "/assets/cat-mixte.jpg",
+    img: "/assets/slider-3-oud.jpg",
+    thumb: "/assets/slider-3-oud.jpg",
     eyebrow: "Oud & Boisés Rares · Sourcés au Golfe",
     title: "La profondeur",
     em: "d'un oud véritable",
@@ -48,9 +49,181 @@ const SLIDES: Slide[] = [
 const AUTO_MS = 8000;
 const ZOOM_S = 12;
 
+/* Overlay promo aligné à droite, police Cormorant — partagé par les bannières 1 & 2 */
+function PromoOverlay({
+  line1,
+  line2,
+  focal,
+  condition,
+  cta,
+  href,
+  tagline,
+}: {
+  line1: string;
+  line2: string;
+  focal: string;
+  condition: string;
+  cta: string;
+  href: string;
+  tagline?: string;
+}) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -12 }}
+      transition={{ duration: 0.7, ease: EASE }}
+      style={{
+        position: "absolute",
+        zIndex: 4,
+        top: "clamp(70px, 13%, 130px)",
+        right: "clamp(110px, 10vw, 210px)",
+        transform: "none",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-end",
+        textAlign: "right",
+        color: "#ffffff",
+        fontFamily: "var(--font-display)",
+        fontVariantNumeric: "lining-nums",
+        fontFeatureSettings: '"lnum" 1, "tnum" 0',
+        textShadow: "0 2px 22px rgba(0,0,0,.35)",
+        maxWidth: "min(42vw, 560px)",
+      }}
+    >
+      {/* Titre 2 lignes */}
+      <div
+        style={{
+          fontWeight: 600,
+          textTransform: "uppercase",
+          fontSize: "clamp(1.7rem, 3vw, 2.8rem)",
+          lineHeight: 1.04,
+          letterSpacing: "0.04em",
+        }}
+      >
+        <div>{line1}</div>
+        <div>{line2}</div>
+      </div>
+
+      {/* Élément focal (ex. -15% / 1 ML) */}
+      <div
+        style={{
+          fontWeight: 600,
+          fontSize: "clamp(3.6rem, 7.5vw, 6.6rem)",
+          lineHeight: 0.84,
+          letterSpacing: "-0.01em",
+          margin: "0.04em 0 0.08em",
+        }}
+      >
+        {focal}
+      </div>
+
+      {/* Condition avec filets latéraux */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 12,
+          width: "100%",
+          justifyContent: "flex-end",
+          fontFamily: "var(--font-sans)",
+          fontWeight: 400,
+          fontSize: "clamp(0.6rem, 1vw, 0.8rem)",
+          letterSpacing: "0.18em",
+          textTransform: "uppercase",
+          marginBottom: 20,
+        }}
+      >
+        <span style={{ flex: 1, height: 1, maxWidth: 40, background: "rgba(255,255,255,.6)" }} />
+        <span style={{ whiteSpace: "nowrap" }}>{condition}</span>
+        <span style={{ flex: 1, height: 1, maxWidth: 40, background: "rgba(255,255,255,.6)" }} />
+      </div>
+
+      {/* Tagline optionnelle (bannière 1) */}
+      {tagline && (
+        <div
+          style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 500,
+            fontSize: "clamp(0.95rem, 1.3vw, 1.25rem)",
+            lineHeight: 1.35,
+            color: "rgba(255,255,255,.95)",
+            maxWidth: "30ch",
+            marginBottom: 22,
+          }}
+        >
+          {tagline}
+        </div>
+      )}
+
+      {/* CTA pilule — apparition dynamique + effet brillant incitatif */}
+      <motion.a
+        href={href}
+        initial={{ opacity: 0, y: 14, scale: 0.9 }}
+        animate={{
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          boxShadow: [
+            "0 8px 28px rgba(0,0,0,.22)",
+            "0 8px 38px rgba(200,144,30,.55)",
+            "0 8px 28px rgba(0,0,0,.22)",
+          ],
+        }}
+        transition={{
+          opacity: { duration: 0.5, delay: 0.7, ease: EASE },
+          y: { duration: 0.5, delay: 0.7, ease: EASE },
+          scale: { duration: 0.5, delay: 0.7, ease: EASE },
+          boxShadow: { duration: 2.4, repeat: Infinity, ease: "easeInOut", delay: 1.2 },
+        }}
+        whileHover={{ scale: 1.05 }}
+        whileTap={{ scale: 0.97 }}
+        style={{
+          position: "relative",
+          overflow: "hidden",
+          display: "inline-flex",
+          alignSelf: "center",
+          marginTop: 18,
+          alignItems: "center",
+          fontFamily: "var(--font-display)",
+          fontWeight: 600,
+          fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)",
+          letterSpacing: "0.08em",
+          textTransform: "uppercase",
+          color: "var(--espresso-900)",
+          background: "#ffffff",
+          borderRadius: 999,
+          padding: "0.7em 2.2em",
+          textDecoration: "none",
+        }}
+      >
+        <span style={{ position: "relative", zIndex: 1 }}>{cta}</span>
+        <motion.span
+          aria-hidden
+          initial={{ x: "-130%" }}
+          animate={{ x: "130%" }}
+          transition={{ duration: 1.1, repeat: Infinity, repeatDelay: 2, ease: "easeInOut", delay: 1.4 }}
+          style={{
+            position: "absolute",
+            top: 0,
+            left: 0,
+            width: "60%",
+            height: "100%",
+            transform: "skewX(-20deg)",
+            background: "linear-gradient(90deg, transparent, rgba(255,255,255,.85), transparent)",
+            zIndex: 0,
+          }}
+        />
+      </motion.a>
+    </motion.div>
+  );
+}
+
 export function AnimatedHero() {
   const [i, setI] = useState(0);
   const slide = SLIDES[i];
+  const tReef = useTranslations("reefBanner");
+  const tSample = useTranslations("sampleBanner");
 
   const go = useCallback((n: number) => setI(((n % SLIDES.length) + SLIDES.length) % SLIDES.length), []);
 
@@ -64,7 +237,7 @@ export function AnimatedHero() {
       style={{
         position: "relative",
         background: "var(--espresso-900)",
-        minHeight: "92vh",
+        minHeight: "70vh",
         overflow: "hidden",
       }}
     >
@@ -79,9 +252,9 @@ export function AnimatedHero() {
           style={{ position: "absolute", inset: 0 }}
         >
           <motion.div
-            initial={{ scale: 1.22 }}
+            initial={{ scale: 1.0 }}
             animate={{ scale: 1.0 }}
-            transition={{ duration: ZOOM_S, ease: "linear" }}
+            transition={{ duration: 0, ease: "linear" }}
             style={{ position: "absolute", inset: 0 }}
           >
             <Image
@@ -89,21 +262,13 @@ export function AnimatedHero() {
               alt={slide.title}
               fill
               priority={i === 0}
-              style={{ objectFit: "cover", opacity: 0.55 }}
+              style={{ objectFit: "cover", opacity: 1 }}
             />
           </motion.div>
         </motion.div>
       </AnimatePresence>
 
-      {/* Gradient overlay */}
-      <div
-        style={{
-          position: "absolute",
-          inset: 0,
-          background:
-            "linear-gradient(105deg, rgba(13,13,13,.92) 0%, rgba(20,16,11,.72) 42%, rgba(20,16,11,.25) 100%)",
-        }}
-      />
+      {/* Voile sombre retiré sur toutes les bannières (visuels autonomes) */}
 
       {/* Particles */}
       {[...Array(8)].map((_, p) => (
@@ -130,8 +295,8 @@ export function AnimatedHero() {
           zIndex: 2,
           maxWidth: 1240,
           margin: "0 auto",
-          padding: "clamp(140px, 14vw, 180px) 24px 80px",
-          minHeight: "92vh",
+          padding: "clamp(100px, 10vw, 130px) 24px 60px",
+          minHeight: "70vh",
           display: "flex",
           flexDirection: "column",
           alignItems: "flex-start",
@@ -147,6 +312,8 @@ export function AnimatedHero() {
             transition={{ duration: 0.7, ease: EASE }}
             style={{ display: "flex", flexDirection: "column", alignItems: "flex-start", width: "100%" }}
           >
+            {/* Overlay texte gauche — slide 3 uniquement (slides 1 & 2 utilisent PromoOverlay) */}
+            {false && (
             <div
               style={{
                 fontFamily: "var(--font-sans)",
@@ -159,7 +326,9 @@ export function AnimatedHero() {
             >
               {slide.eyebrow}
             </div>
+            )}
 
+            {false && (<>
             <h1
               style={{
                 fontFamily: "var(--font-display)",
@@ -189,9 +358,10 @@ export function AnimatedHero() {
             >
               {slide.desc}
             </p>
+            </>)}
 
-            {/* Stats — slide 1 seulement */}
-            {i === 0 && (
+            {/* Stats — désactivées (slide 1 utilise désormais PromoOverlay échantillons) */}
+            {false && (
               <div style={{ display: "flex", gap: 30, margin: "34px 0 36px", flexWrap: "wrap" }}>
                 {[
                   { k: "10", v: "Ans d'expérience" },
@@ -226,7 +396,8 @@ export function AnimatedHero() {
               </div>
             )}
 
-            {/* CTAs */}
+            {/* CTAs — slide 3 uniquement */}
+            {false && (
             <div
               style={{
                 display: "flex",
@@ -284,9 +455,37 @@ export function AnimatedHero() {
                 </motion.button>
               )}
             </div>
+            )}
           </motion.div>
         </AnimatePresence>
       </div>
+
+      {/* Overlays promo droite (Cormorant) — bannière 1 (échantillons) & bannière 2 (REEF) */}
+      <AnimatePresence mode="wait">
+        {i === 0 && (
+          <PromoOverlay
+            key="sample-overlay"
+            line1={tSample("line1")}
+            line2={tSample("line2")}
+            focal={tSample("focal")}
+            condition={tSample("condition")}
+            cta={tSample("cta")}
+            tagline={tSample("tagline")}
+            href="#echantillons"
+          />
+        )}
+        {i === 1 && (
+          <PromoOverlay
+            key="reef-overlay"
+            line1={tReef("line1")}
+            line2={tReef("line2")}
+            focal={tReef("discount")}
+            condition={tReef("condition")}
+            cta={tReef("cta")}
+            href="#promo"
+          />
+        )}
+      </AnimatePresence>
 
       {/* Vignettes verticales (style image #2) */}
       <div

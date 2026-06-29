@@ -6,6 +6,8 @@ interface VideoPlaceholderProps {
   duration?: string;
   className?: string;
   style?: React.CSSProperties;
+  src?: string; // si fourni → vraie vidéo (lazy), sinon placeholder
+  poster?: string;
 }
 
 export function VideoPlaceholder({
@@ -14,6 +16,8 @@ export function VideoPlaceholder({
   duration,
   className,
   style,
+  src,
+  poster,
 }: VideoPlaceholderProps) {
   const paddingMap: Record<string, string> = {
     "9/16": "177.78%",
@@ -21,6 +25,35 @@ export function VideoPlaceholder({
     "1/1": "100%",
     "4/3": "75%",
   };
+
+  // ── Vraie vidéo (lazy : preload=none, muted/loop/inline) ──
+  if (src) {
+    return (
+      <div
+        className={className}
+        style={{
+          position: "relative",
+          paddingBottom: paddingMap[aspectRatio],
+          background: "#15100B",
+          borderRadius: "var(--r-lg)",
+          overflow: "hidden",
+          ...style,
+        }}
+      >
+        <video
+          src={src}
+          poster={poster}
+          preload="metadata"
+          autoPlay
+          muted
+          loop
+          playsInline
+          aria-label={label}
+          style={{ position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", pointerEvents: "none" }}
+        />
+      </div>
+    );
+  }
 
   return (
     <div

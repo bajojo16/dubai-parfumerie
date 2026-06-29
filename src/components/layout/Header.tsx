@@ -3,12 +3,20 @@ import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { getCart, cartCount as getCartCount, removeItem, setQty, subscribe, type CartItem } from "@/lib/cart";
 
-const TOP_MESSAGES = [
-  "Livraison offerte dès 60 €",
-  "Paiement 4× sans frais",
-  "10 ans d'expérience · plus de 7000 produits vendus",
-  "Cadeau surprise dans chaque commande",
-  "Retours sous 14 jours",
+const ICON = (paths: React.ReactNode) => (
+  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ flexShrink: 0 }}>
+    {paths}
+  </svg>
+);
+
+const TOP_TRUST: { label: string; icon: React.ReactNode }[] = [
+  { label: "Expédition sous 24h", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
+  { label: "Parfums rares introuvables en France", icon: ICON(<><path d="M12 3l2.5 5 5.5.8-4 3.9.9 5.5L12 21l-4.9-2.8.9-5.5-4-3.9 5.5-.8z" /></>) },
+  { label: "Paiement en 4× sans frais", icon: ICON(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
+  { label: "8 400+ avis vérifiés", icon: ICON(<><path d="M12 3l2.6 5.3 5.9.9-4.3 4.1 1 5.8L12 17l-5.2 2.1 1-5.8L3.5 9.2l5.9-.9z" /></>) },
+  { label: "Livraison offerte dès 60 €", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
+  { label: "Paiement 100% sécurisé", icon: ICON(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>) },
+  { label: "Authenticité certifiée", icon: ICON(<><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" /><path d="M9 12l2 2 4-4" /></>) },
 ];
 
 const LANGUAGES = ["FR", "EN", "ES", "DE", "IT", "RU", "AR"];
@@ -19,7 +27,8 @@ const NAV_LINKS = [
   { label: "Parfums Homme", href: "/parfums-homme" },
   { label: "Huile de Parfum", href: "/huile-de-parfum" },
   { label: "Marques", href: "/marques" },
-  { label: "Promo Flash", href: "/promo-flash", highlight: true },
+  { label: "Bons Plans", href: "/promo-flash", highlight: true },
+  { label: "Coffrets & Lots", href: "/promo-flash" },
   { label: "Blog", href: "/blog" },
 ];
 
@@ -634,15 +643,7 @@ export function Header() {
   const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
   const [wishCount] = useState(1);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [topMsgIndex, setTopMsgIndex] = useState(0);
   const [mega, setMega] = useState<string | null>(null);
-
-  useEffect(() => {
-    const id = setInterval(() => {
-      setTopMsgIndex((i) => (i + 1) % TOP_MESSAGES.length);
-    }, 3000);
-    return () => clearInterval(id);
-  }, []);
 
   // Panier live — hydrate + s'abonne aux changements, ouvre le tiroir à l'ajout
   useEffect(() => {
@@ -686,6 +687,7 @@ export function Header() {
           .dp-tt:hover svg { filter:drop-shadow(2px 0 0 #69c9d0) drop-shadow(-2px 0 0 #ee1d52); color:#fff !important; }
           .dp-yt:hover     { color:#ff0000 !important; animation:dp-yt-pop .4s ease forwards; }
           .dp-yt:hover svg { filter:drop-shadow(0 0 8px rgba(255,0,0,.6)); }
+          @keyframes marqueeScroll { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
         `}</style>
         <div className="dp-topbar-social" style={{ display: "flex", alignItems: "center", gap: 12, flex: "0 0 auto" }}>
           {[
@@ -700,32 +702,46 @@ export function Header() {
           ))}
         </div>
 
-        {/* Rotating message */}
+        {/* Marquee confiance — icônes défilantes */}
         <div
           className="dp-topbar-msg"
           style={{
             flex: 1,
-            textAlign: "center",
-            fontFamily: "var(--font-sans)",
-            fontSize: "11.5px",
-            fontWeight: 500,
-            letterSpacing: ".05em",
-            color: "var(--on-dark)",
             overflow: "hidden",
             height: 38,
             display: "flex",
             alignItems: "center",
-            justifyContent: "center",
+            position: "relative",
+            maskImage: "linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)",
+            WebkitMaskImage: "linear-gradient(90deg, transparent, #000 6%, #000 94%, transparent)",
           }}
         >
-          <span
-            key={topMsgIndex}
-            style={{
-              animation: "fadeSlideIn .35s ease",
-            }}
-          >
-            {TOP_MESSAGES[topMsgIndex]}
-          </span>
+          <div style={{ display: "flex", width: "max-content", animation: "marqueeScroll 32s linear infinite" }}>
+            {[0, 1].map((rep) => (
+              <div key={rep} style={{ display: "flex" }}>
+                {TOP_TRUST.map((item, i) => (
+                  <span
+                    key={`${rep}-${i}`}
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 7,
+                      padding: "0 22px",
+                      fontFamily: "var(--font-sans)",
+                      fontSize: "11.5px",
+                      fontWeight: 500,
+                      letterSpacing: ".04em",
+                      color: "var(--on-dark)",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    <span style={{ color: "var(--gold-400)", display: "inline-flex" }}>{item.icon}</span>
+                    {item.label}
+                  </span>
+                ))}
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* Language & currency */}
@@ -785,7 +801,6 @@ export function Header() {
           zIndex: 99,
           background: "rgba(253,251,246,.95)",
           backdropFilter: "blur(12px)",
-          borderBottom: "1px solid rgba(200,144,30,.12)",
         }}
       >
         <div
@@ -979,22 +994,22 @@ export function Header() {
             <button
               onClick={() => setCartOpen(true)}
               style={{
-                background: "var(--gold-500)",
+                background: "transparent",
                 border: "none",
                 cursor: "pointer",
-                color: "#fff",
+                color: "inherit",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
                 gap: 2,
-                padding: "7px 12px",
-                borderRadius: "var(--r-md)",
+                padding: "6px 8px",
+                borderRadius: "var(--r-sm)",
                 position: "relative",
                 transition: "background .15s",
               }}
               title="Mon panier"
-              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--gold-700)")}
-              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "var(--gold-500)")}
+              onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.background = "rgba(200,144,30,.08)")}
+              onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.background = "transparent")}
             >
               <span style={{ position: "relative" }}>
                 <IconBag />
@@ -1004,7 +1019,7 @@ export function Header() {
                       position: "absolute",
                       top: -6,
                       right: -8,
-                      background: "var(--espresso-900)",
+                      background: "var(--gold-500)",
                       color: "#fff",
                       fontSize: 9,
                       fontWeight: 700,
@@ -1021,7 +1036,7 @@ export function Header() {
                   </span>
                 )}
               </span>
-              <span style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 700, letterSpacing: ".06em" }}>PANIER</span>
+              <span className="dp-account-label" style={{ fontSize: 9, fontFamily: "var(--font-sans)", fontWeight: 600, letterSpacing: ".06em", color: "var(--ink-500)" }}>PANIER</span>
             </button>
           </div>
         </div>
