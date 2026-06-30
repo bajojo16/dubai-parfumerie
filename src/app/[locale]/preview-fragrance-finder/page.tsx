@@ -54,7 +54,7 @@ export default function PreviewFragranceFinderPage() {
             maxWidth: 620,
           }}
         >
-          Cliquez sur la fiole dorée en bas {isRTL ? "à gauche" : "à droite"} pour lancer le
+          Cliquez sur la fiole dorée en bas {isRTL ? "à droite" : "à gauche"} pour lancer le
           quiz en 9 questions. À la fin, 3 parfums sur mesure sont recommandés depuis le
           catalogue local, avec opt-in WhatsApp / e-mail (démo). Aperçu isolé — le bouton
           n'est pas encore monté dans le layout global.

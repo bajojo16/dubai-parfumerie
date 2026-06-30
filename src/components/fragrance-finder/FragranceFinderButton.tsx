@@ -56,8 +56,10 @@ export function FragranceFinderButton({
         aria-haspopup="dialog"
         style={{
           position: "fixed",
-          insetBlockEnd: 24,
-          insetInlineEnd: 24,
+          // Remonté + côté début de lecture pour ne pas chevaucher le bouton
+          // back-to-top (insetInlineEnd / bottom:24, zIndex 1200).
+          insetBlockEnd: 96,
+          insetInlineStart: 24,
           zIndex: 900,
           width: 62,
           height: 62,

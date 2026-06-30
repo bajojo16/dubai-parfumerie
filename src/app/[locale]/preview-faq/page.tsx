@@ -12,6 +12,8 @@ export default async function PreviewFaqPage({
       {/* Schéma FAQPage (rendu serveur) pour les rich results */}
       <FaqJsonLd />
       <Faq locale={locale} />
+      {/* Démo de la variante compacte (usage home) */}
+      <Faq locale={locale} variant="compact" />
     </main>
   );
 }

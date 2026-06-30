@@ -1352,10 +1352,10 @@ export default function HomePageClient() {
         `}</style>
       </section>
 
-      {/* ── 25. FAQ (centre d'aide 2 colonnes) ────────────────────── */}
+      {/* ── 25. FAQ (liste compacte centrée + lien vers /faq) ─────── */}
       <section id="faq" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1100, margin: "0 auto" }}>
-          <Faq locale={locale} />
+          <Faq variant="compact" locale={locale} />
         </div>
       </section>
 

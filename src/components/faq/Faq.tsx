@@ -15,6 +15,7 @@ import { FaqCategoryNav } from "./FaqCategoryNav";
 import { FaqHero } from "./FaqHero";
 import { FaqItem } from "./FaqItem";
 import { FaqHelpCard, type FaqHelpLabels } from "./FaqHelpCard";
+import { CtaLink } from "./answers/CtaLink";
 import type { PromoResult } from "./answers/PromoChecker";
 
 export type FaqLabels = {
@@ -25,6 +26,12 @@ export type FaqLabels = {
   countMany: string;
   /** État vide */
   empty: string;
+  /** Variante compacte (home) : sur-titre doré */
+  compactEyebrow: string;
+  /** Variante compacte (home) : titre serif */
+  compactTitle: string;
+  /** Variante compacte (home) : libellé du bouton vers la FAQ complète */
+  seeAll: string;
   search?: Partial<FaqSearchLabels>;
   help?: Partial<FaqHelpLabels>;
 };
@@ -34,6 +41,9 @@ const DEFAULT_LABELS: FaqLabels = {
   countOne: "{n} question",
   countMany: "{n} questions",
   empty: "Aucune question ne correspond à votre recherche.",
+  compactEyebrow: "Questions fréquentes",
+  compactTitle: "Tout savoir avant de commander",
+  seeAll: "Voir toute la FAQ",
 };
 
 function prefersReducedMotion() {
@@ -43,6 +53,8 @@ function prefersReducedMotion() {
 
 export function Faq({
   locale = "fr",
+  variant = "full",
+  faqHref = "/faq",
   categories = FAQ_CATEGORIES,
   questions = FAQ_QUESTIONS,
   labels,
@@ -52,6 +64,10 @@ export function Faq({
   email,
 }: {
   locale?: string;
+  /** "full" : page /faq (2 colonnes) · "compact" : home (liste seule centrée) */
+  variant?: "full" | "compact";
+  /** Cible du bouton « Voir toute la FAQ » (variant compact). Le préfixe locale est géré par le middleware. */
+  faqHref?: string;
   categories?: FaqCategory[];
   questions?: FaqQuestion[];
   labels?: Partial<FaqLabels>;
@@ -137,6 +153,99 @@ export function Faq({
     "{n}",
     String(count),
   );
+
+  // ── Variante compacte (home) : en-tête simple + liste complète + carte d'aide ──
+  if (variant === "compact") {
+    return (
+      <section
+        dir={isRTL ? "rtl" : "ltr"}
+        style={{
+          background: T.cream2,
+          padding: "56px 24px",
+          fontFamily: "var(--font-sans)",
+        }}
+      >
+        <div style={{ maxWidth: 820, margin: "0 auto" }}>
+          {/* En-tête centré */}
+          <div style={{ textAlign: "center", marginBottom: 28 }}>
+            <div
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: 11,
+                letterSpacing: "3px",
+                textTransform: "uppercase",
+                color: T.gold,
+                fontWeight: 600,
+                marginBottom: 10,
+              }}
+            >
+              {L.compactEyebrow}
+            </div>
+            <h2
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(28px, 4.4vw, 40px)",
+                lineHeight: 1.12,
+                fontWeight: 500,
+                color: T.inkWarm,
+                margin: 0,
+              }}
+            >
+              {L.compactTitle}
+            </h2>
+          </div>
+
+          {/* Liste complète (toutes catégories), accordéon exclusif */}
+          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+            {questions.map((item, i) => (
+              <FaqItem
+                key={item.id}
+                item={item}
+                index={i}
+                open={openId === item.id}
+                onToggle={() => toggle(item.id)}
+                query=""
+                onCheckPromo={onCheckPromo}
+                onSubmitB2B={onSubmitB2B}
+              />
+            ))}
+          </div>
+
+          {/* Bouton vers la FAQ complète */}
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: 24,
+            }}
+          >
+            <CtaLink href={faqHref} label={L.seeAll} variant="line" />
+          </div>
+
+          <FaqHelpCard
+            labels={L.help}
+            whatsappNumber={whatsappNumber}
+            email={email}
+          />
+        </div>
+
+        {/* Styles scoped (animation de cascade / reduced-motion) */}
+        <style>{`
+          @keyframes dpFaqIn {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: none; }
+          }
+          .dp-faq-reveal {
+            animation: dpFaqIn .4s ease both;
+            animation-delay: calc(var(--dp-faq-i, 0) * 45ms);
+          }
+          @media (prefers-reduced-motion: reduce) {
+            .dp-faq-reveal { animation: none !important; }
+          }
+        `}</style>
+      </section>
+    );
+  }
 
   return (
     <section
