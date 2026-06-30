@@ -159,14 +159,14 @@ export function RailProductCard({
           : "transform 240ms ease, box-shadow 240ms ease",
       }}
     >
-      {/* Média (ratio réduit pour resserrer la hauteur de la carte) avec badges */}
+      {/* Média (ratio portrait — carte volontairement plus haute) avec badges */}
       <Link
         href={productHref}
         aria-label={`${L.viewProduct} — ${product.name}`}
         style={{
           position: "relative",
           display: "block",
-          aspectRatio: "1 / 0.72",
+          aspectRatio: "1 / 1.15",
           background: C.imageBg,
           overflow: "hidden",
           textDecoration: "none",

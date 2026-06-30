@@ -147,13 +147,12 @@ export function ScentWheelInteractive({
               style={{ objectFit: "cover" }}
             />
           )}
-          {/* Voile crème pour garder le texte lisible */}
+          {/* Très léger voile pour homogénéiser sans masquer (fond quasi pleine opacité) */}
           <div
             style={{
               position: "absolute",
               inset: 0,
-              background:
-                "linear-gradient(180deg, rgba(250,246,238,.86), rgba(250,246,238,.82))",
+              background: "rgba(250,246,238,.05)",
             }}
           />
         </div>
@@ -385,6 +384,21 @@ export function ScentWheelInteractive({
           }}
         >
           <div
+            style={
+              active
+                ? {
+                    background: "rgba(250,246,238,.85)",
+                    border: ".5px solid rgba(230,220,200,.7)",
+                    borderRadius: 14,
+                    padding: "20px 22px",
+                    marginBottom: 18,
+                    boxShadow: "0 6px 22px rgba(44,38,32,.10)",
+                    backdropFilter: "blur(2px)",
+                  }
+                : undefined
+            }
+          >
+          <div
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: 11,
@@ -421,6 +435,7 @@ export function ScentWheelInteractive({
           >
             {active ? active.description : L.intro}
           </p>
+          </div>
 
           {/* CTA */}
           {active && (

@@ -27,6 +27,12 @@ import { BestSellersRail } from "@/components/sections/best-sellers-rail";
 import { REEF_EDITORIAL, REEF_PRODUCTS } from "@/data/best-sellers";
 import { OilCardCarousel } from "@/components/sections/OilCardCarousel";
 import { DEMO as OIL_PRODUCTS } from "@/data/oil-products";
+import { PackGrid } from "@/components/sections/PackGrid";
+import { PackCard } from "@/components/sections/PackCard";
+import { DEMO as PACKS } from "@/data/packs";
+import { Faq } from "@/components/faq/Faq";
+import { CategoryRail } from "@/components/sections/CategoryRail";
+import { DEMO_CATEGORIES } from "@/components/sections/category-rail-data";
 import { addItem } from "@/lib/cart";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -294,7 +300,7 @@ function WelcomeModal() {
   const [cur, setCur] = useState("EUR");
 
   useEffect(() => {
-    const seen = localStorage.getItem("dp_welcome_shown_v2");
+    const seen = localStorage.getItem("dp_welcome_shown_v3");
     if (!seen) {
       const t = setTimeout(() => setShown(true), 1800);
       return () => clearTimeout(t);
@@ -302,7 +308,7 @@ function WelcomeModal() {
   }, []);
 
   const close = () => {
-    localStorage.setItem("dp_welcome_shown_v2", "1");
+    localStorage.setItem("dp_welcome_shown_v3", "1");
     setShown(false);
   };
 
@@ -578,6 +584,11 @@ export default function HomePageClient() {
       {/* ── 2. HERO ───────────────────────────────────────────────── */}
       <AnimatedHero />
 
+      {/* ── CATÉGORIES (rail circulaire, sous la bannière) ────────── */}
+      <section id="categories-rail" style={{ background: "var(--surface-page)", padding: "44px 0 16px" }}>
+        <CategoryRail categories={DEMO_CATEGORIES} locale={locale} />
+      </section>
+
       {/* Promo strip — VENTES FLASH retiré pour le moment */}
 
       {/* ── LES PARFUMS DE L'ÉTÉ (sous le slider) ─────────────────── */}
@@ -614,9 +625,32 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 13. TENDANCES DU MOMENT (au-dessus de Jumeau) ─────────── */}
-      <section id="social" style={{ background: "var(--espresso-900)" }}>
-        <TrendCarousel products={DEMO_TRENDS} locale={locale} />
+      {/* ── COFFRETS & PACKS D'ÉCHANTILLONS (au-dessus de Tendances) ─ */}
+      <section id="packs" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow="Coffrets & Packs"
+            title={<>Composez votre <em>découverte</em></>}
+            subtitle="Des packs d'échantillons pour explorer la parfumerie orientale avant de choisir votre flacon."
+          />
+          <PackGrid packs={PACKS} locale={locale} />
+        </div>
+      </section>
+
+      {/* ── DÉCOUVREZ LA MARQUE REEF PERFUMES (BestSellersRail) ───── */}
+      <section id="reef-rail" style={{ background: "#F7F3EC", padding: "20px 0 40px" }}>
+        <BestSellersRail
+          eyebrow="Maison à l'honneur"
+          heading="Découvrez la marque Reef Perfumes"
+          boldKeyword="Reef"
+          editorial={REEF_EDITORIAL}
+          products={REEF_PRODUCTS}
+          onAddToCart={(id) => {
+            const p = REEF_PRODUCTS.find((x) => x.id === id);
+            if (p) addItem({ id: p.id, name: p.name, brand: p.brand, price: p.price.amount, image: p.image });
+          }}
+          locale={locale}
+        />
       </section>
 
       {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
@@ -733,7 +767,7 @@ export default function HomePageClient() {
 
       {/* ── ROUE DES SENTEURS interactive (sous Le catalogue) ─────── */}
       <section id="roue-senteurs" style={{ background: "var(--surface-cream)", padding: "70px 20px 24px" }}>
-        <div style={{ maxWidth: 1180, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1500, margin: "0 auto" }}>
           <ScentWheelInteractive families={DEMO_SCENT_FAMILIES} locale={locale} />
         </div>
       </section>
@@ -1138,20 +1172,9 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── DÉCOUVREZ LA MARQUE REEF (BestSellersRail) ────────────── */}
-      <section id="reef-rail" style={{ background: "#F7F3EC", padding: "20px 0 40px" }}>
-        <BestSellersRail
-          eyebrow="Maison à l'honneur"
-          heading="Découvrez la marque Reef"
-          boldKeyword="Reef"
-          editorial={REEF_EDITORIAL}
-          products={REEF_PRODUCTS}
-          onAddToCart={(id) => {
-            const p = REEF_PRODUCTS.find((x) => x.id === id);
-            if (p) addItem({ id: p.id, name: p.name, brand: p.brand, price: p.price.amount, image: p.image });
-          }}
-          locale={locale}
-        />
+      {/* ── 13. TENDANCES DU MOMENT (TrendCarousel reel) ──────────── */}
+      <section id="social" style={{ background: "var(--espresso-900)" }}>
+        <TrendCarousel products={DEMO_TRENDS} locale={locale} />
       </section>
 
       {/* ── 16. TOP MAISONS ───────────────────────────────────────── */}
@@ -1176,8 +1199,8 @@ export default function HomePageClient() {
           <Image src="/assets/coffrets.jpg" alt="Coffrets découverte" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
         </div>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(21,16,11,0.92) 50%, rgba(21,16,11,0.5) 100%)" }} />
-        <div style={{ maxWidth: 1240, margin: "0 auto", position: "relative", zIndex: 2 }}>
-          <div style={{ maxWidth: 540 }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto", position: "relative", zIndex: 2, display: "flex", flexWrap: "wrap", gap: 40, alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ flex: "1 1 420px", maxWidth: 540 }}>
             <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 12 }}>L'art du cadeau oriental</div>
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3rem)", color: "var(--on-dark-strong)", margin: "0 0 18px", lineHeight: 1.1 }}>
               Coffrets Découverte<br /><em style={{ color: "var(--gold-400)" }}>dès 49 €</em>
@@ -1189,6 +1212,13 @@ export default function HomePageClient() {
               <a href="#" style={{ background: "var(--gold-500)", color: "#fff", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 700 }}>Voir les coffrets</a>
               <a href="#" style={{ border: "1.5px solid rgba(255,255,255,0.4)", color: "var(--on-dark-strong)", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem" }}>Personnaliser</a>
             </div>
+          </div>
+          <div style={{ flex: "1 1 420px", display: "flex", gap: 18, justifyContent: "center" }}>
+            {PACKS.slice(0, 2).map((p, i) => (
+              <div key={p.slug ?? i} style={{ flex: "1 1 0", minWidth: 0, maxWidth: 260 }}>
+                <PackCard pack={p} size={i === 0 ? "hero" : "soft"} locale={locale} />
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -1322,19 +1352,10 @@ export default function HomePageClient() {
         `}</style>
       </section>
 
-      {/* ── 25. FAQ ───────────────────────────────────────────────── */}
+      {/* ── 25. FAQ (centre d'aide 2 colonnes) ────────────────────── */}
       <section id="faq" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 800, margin: "0 auto" }}>
-          <SectionHeader eyebrow="Questions fréquentes" title="Tout savoir avant de commander" />
-          <FAQAccordion />
-          <div style={{ textAlign: "center", marginTop: 36 }}>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.88rem", color: "var(--ink-500)", marginBottom: 14 }}>Une autre question ?</p>
-            <a href="mailto:contact@dubai-parfumerie.fr" style={{
-              display: "inline-block", background: "var(--ink-900)", color: "var(--on-dark-strong)",
-              textDecoration: "none", padding: "12px 28px", borderRadius: "var(--r-pill)",
-              fontFamily: "var(--font-sans)", fontSize: "0.84rem", fontWeight: 600,
-            }}>Contacter le service client</a>
-          </div>
+        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+          <Faq locale={locale} />
         </div>
       </section>
 
