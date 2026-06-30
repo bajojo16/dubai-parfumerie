@@ -32,7 +32,7 @@ const COLUMNS = [
       { label: "FAQ", href: "/faq" },
       { label: "Livraison & Retours", href: "/livraison-retours" },
       { label: "Suivi de commande", href: "/suivi" },
-      { label: "Contact WhatsApp", href: "https://wa.me/33600000000" },
+      { label: "Contact WhatsApp", href: "https://wa.me/966583728407" },
       { label: "B2B / Grossiste", href: "/b2b" },
     ],
   },
@@ -242,7 +242,7 @@ export function Footer() {
           <div style={{ display: "flex", gap: 22 }}>
             {[
               { k: "10 ans", v: "d'expertise" },
-              { k: "8 400+", v: "clients" },
+              { k: "+7000", v: "articles commandés" },
               { k: "4,8/5", v: "Trustpilot" },
             ].map((s) => (
               <div key={s.k}>
@@ -259,21 +259,21 @@ export function Footer() {
             Service client
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <a href="https://wa.me/33600000000" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px", transition: "color .15s" }}
+            <a href="https://wa.me/966583728407" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px", transition: "color .15s" }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-400)")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--on-dark-muted)")}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-400)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.38 8.38 0 0 1-4-1L3 20l1-5.5a8.38 8.38 0 0 1-1-4A8.5 8.5 0 0 1 12.5 2 8.5 8.5 0 0 1 21 11.5z"/></svg>
               WhatsApp · réponse sous 1 h
             </a>
-            <a href="mailto:contact@dubai-parfumerie.fr" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px", transition: "color .15s" }}
+            <a href="mailto:contact@dubaiparfumerie.com" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px", transition: "color .15s" }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-400)")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--on-dark-muted)")}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-400)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
-              contact@dubai-parfumerie.fr
+              contact@dubaiparfumerie.com
             </a>
             <div style={{ display: "flex", alignItems: "center", gap: 10, color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px" }}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-400)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
-              Lun–Sam · 9 h – 19 h
+              Lun–Dim · 7 h – 20 h
             </div>
           </div>
         </div>

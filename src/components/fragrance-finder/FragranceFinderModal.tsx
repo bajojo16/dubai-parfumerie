@@ -26,7 +26,6 @@ const EMPTY_ANSWERS: QuizAnswers = {
   gender: null,
   family: null,
   note: null,
-  ambiance: null,
   season: null,
   loved: null,
   note2: null,

@@ -29,7 +29,8 @@ export type ShippingLabels = {
   emailCta: string;
   emailThanks: string;
   /** stats */
-  statCountriesSuffix: string; // "pays livrés" → "{N} pays livrés"
+  /** preuve sociale : pays desservis AUTRES que le pays courant ({n} = nombre formaté) */
+  ordersOtherCountries: string;
   statPrep: string;
   statTracking: string;
   noResults: string;
@@ -54,7 +55,7 @@ const DEFAULT_LABELS: ShippingLabels = {
   emailPlaceholder: "votre@email.com",
   emailCta: "Prévenez-moi",
   emailThanks: "Merci ! Nous vous écrirons dès l'ouverture de cette destination.",
-  statCountriesSuffix: "pays livrés",
+  ordersOtherCountries: "Nous avons déjà livré dans {n} autres pays",
   statPrep: "Préparation 24h–4 j",
   statTracking: "Suivi 100%",
   noResults: "Aucun pays trouvé",
@@ -202,16 +203,23 @@ export function ShippingChecker({
   const selected = selectedCode ? byCode.get(selectedCode.toUpperCase()) : undefined;
   const displayValue = open ? query : selected ? `${selected.flag} ${selected.name}` : query;
 
+  // Pays desservis AUTRES que le pays courant (dynamique, jamais hardcodé).
+  const otherServedCount = servedCount - (selected?.served ? 1 : 0);
+  const otherServedText = L.ordersOtherCountries.replace(
+    "{n}",
+    new Intl.NumberFormat(locale).format(otherServedCount)
+  );
+
   return (
     <section
       dir={isRTL ? "rtl" : "ltr"}
       style={{
         background: BG,
-        padding: "64px 24px",
+        padding: "40px 24px",
         fontFamily: "var(--font-sans)",
       }}
     >
-      <div style={{ maxWidth: 640, margin: "0 auto", textAlign: isRTL ? "right" : "left" }}>
+      <div style={{ maxWidth: 1100, margin: "0 auto", textAlign: isRTL ? "right" : "left" }}>
         {/* Eyebrow */}
         <div
           style={{
@@ -254,16 +262,27 @@ export function ShippingChecker({
           {L.subtitle}
         </p>
 
-        {/* Combobox pays — le résultat s'affiche en direct sous le champ */}
+        {/* 2 colonnes desktop : sélecteur | résultat — repli en colonne sur mobile (flexWrap) */}
         <div
-          ref={rootRef}
           style={{
             display: "flex",
-            gap: 10,
+            gap: 24,
             flexWrap: "wrap",
-            alignItems: "stretch",
+            alignItems: "flex-start",
           }}
         >
+          {/* Colonne sélecteur (le résultat s'affiche à côté en direct) */}
+          <div
+            ref={rootRef}
+            style={{
+              flex: "1 1 320px",
+              minWidth: 280,
+              display: "flex",
+              gap: 10,
+              flexWrap: "wrap",
+              alignItems: "stretch",
+            }}
+          >
           <div style={{ position: "relative", flex: "1 1 240px", minWidth: 220 }}>
             <label htmlFor={`${listboxId}-input`} style={srOnly}>
               {L.fieldLabel}
@@ -422,8 +441,8 @@ export function ShippingChecker({
           </div>
         </div>
 
-        {/* Zone de résultat (aria-live) */}
-        <div aria-live="polite" style={{ marginTop: 20 }}>
+          {/* Colonne résultat (aria-live) — à côté du sélecteur sur desktop */}
+          <div aria-live="polite" style={{ flex: "1 1 360px", minWidth: 280 }}>
           {result && result.served && (
             <div
               style={{
@@ -664,26 +683,27 @@ export function ShippingChecker({
               )}
             </div>
           )}
+          </div>
         </div>
 
-        {/* 3 stats de réassurance */}
+        {/* Preuve sociale + stats de réassurance — une seule rangée pleine largeur (repli mobile) */}
         <div
           style={{
             display: "flex",
             gap: 16,
-            marginTop: 32,
+            marginTop: 24,
             flexWrap: "wrap",
           }}
         >
           {[
-            `${servedCount} ${L.statCountriesSuffix}`,
-            L.statPrep,
-            L.statTracking,
-          ].map((s, i) => (
+            { text: otherServedText, grow: 2, basis: 240 },
+            { text: L.statPrep, grow: 1, basis: 150 },
+            { text: L.statTracking, grow: 1, basis: 150 },
+          ].map((chip, i) => (
             <div
               key={i}
               style={{
-                flex: "1 1 140px",
+                flex: `${chip.grow} 1 ${chip.basis}px`,
                 background: "#fff",
                 border: `1px solid ${FIELD_BORDER}`,
                 borderRadius: 14,
@@ -694,7 +714,7 @@ export function ShippingChecker({
                 fontFamily: "var(--font-sans)",
                 fontSize: 13,
                 color: TITLE,
-                fontWeight: 500,
+                fontWeight: i === 0 ? 600 : 500,
               }}
             >
               <span
@@ -707,7 +727,7 @@ export function ShippingChecker({
                   flexShrink: 0,
                 }}
               />
-              {s}
+              {chip.text}
             </div>
           ))}
         </div>

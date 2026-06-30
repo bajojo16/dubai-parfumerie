@@ -275,7 +275,7 @@ export function PackCard({
           position: "relative",
           width: "100%",
           flex: "1 1 auto",
-          minHeight: big ? 104 : 80,
+          minHeight: big ? 204 : 168,
           background:
             "radial-gradient(120% 90% at 50% 8%,#FBF4E6,#F1E7D3 70%,#E9DCC2)",
           overflow: "hidden",
@@ -316,7 +316,7 @@ export function PackCard({
           sizes={big ? "(max-width:720px) 100vw, 520px" : "(max-width:720px) 50vw, 320px"}
           style={{
             objectFit: "contain",
-            padding: big ? "9% 15% 13%" : "10% 16% 14%",
+            padding: big ? "6% 13% 9%" : "7% 14% 10%",
             filter: "drop-shadow(0 16px 20px rgba(80,60,30,.24))",
             transform: active ? "translateY(-4%) scale(1.03)" : "none",
             transition: prefersReduced ? "none" : "transform .55s cubic-bezier(.22,1,.36,1)",

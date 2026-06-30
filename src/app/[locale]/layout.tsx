@@ -4,6 +4,8 @@ import { routing } from '@/i18n/routing';
 import { getMessages } from 'next-intl/server';
 import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
+import { WhatsAppBubble } from '@/components/ui/WhatsAppBubble';
+import { FragranceFinderButton } from '@/components/fragrance-finder/FragranceFinderButton';
 
 export default async function LocaleLayout({
   children,
@@ -24,6 +26,8 @@ export default async function LocaleLayout({
         <Header />
         <main>{children}</main>
         <Footer />
+        <FragranceFinderButton locale={locale} />
+        <WhatsAppBubble />
       </div>
     </NextIntlClientProvider>
   );

@@ -27,6 +27,12 @@ export type BestSellersRailProps = {
   locale?: string;
   cardLabels?: Partial<RailCardLabels>;
   editorialLabels?: Partial<EditorialCardLabels>;
+  /**
+   * Position de la carte éditoriale vidéo dans le rail (propriété logique) :
+   * - "start" (défaut) : au début → gauche en LTR / droite en RTL
+   * - "end" : à la fin → droite en LTR / gauche en RTL
+   */
+  editorialSide?: "start" | "end";
 };
 
 // Rend le titre avec un mot-clé en gras s'il est présent
@@ -55,6 +61,7 @@ export function BestSellersRail({
   locale = "fr",
   cardLabels,
   editorialLabels,
+  editorialSide = "start",
 }: BestSellersRailProps) {
   const titleId = useId();
   // Logique RTL : la carte éditoriale passe à droite, le défilement démarre à droite,
@@ -131,14 +138,19 @@ export function BestSellersRail({
             msOverflowStyle: "none",
           }}
         >
-          {/* Carte éditoriale en premier (gauche en LTR / droite en RTL via l'ordre + dir) */}
-          <div style={{ scrollSnapAlign: "start", display: "flex" }}>
-            <EditorialVideoCard
-              card={editorial}
-              locale={locale}
-              labels={editorialLabels}
-            />
-          </div>
+          {/* Carte éditoriale — position dictée par editorialSide (propriété logique) :
+              "start" → début du rail (gauche LTR / droite RTL),
+              "end"   → fin du rail (droite LTR / gauche RTL).
+              L'ordre du flux + dir gèrent automatiquement le miroir RTL. */}
+          {editorialSide === "start" && (
+            <div style={{ scrollSnapAlign: "start", display: "flex" }}>
+              <EditorialVideoCard
+                card={editorial}
+                locale={locale}
+                labels={editorialLabels}
+              />
+            </div>
+          )}
 
           {products.map((p) => (
             <div key={p.id} style={{ scrollSnapAlign: "start", display: "flex" }}>
@@ -150,6 +162,16 @@ export function BestSellersRail({
               />
             </div>
           ))}
+
+          {editorialSide === "end" && (
+            <div style={{ scrollSnapAlign: "start", display: "flex" }}>
+              <EditorialVideoCard
+                card={editorial}
+                locale={locale}
+                labels={editorialLabels}
+              />
+            </div>
+          )}
         </div>
 
         {/* Voile de bord (fin du rail) — miroir en RTL via insetInlineEnd */}

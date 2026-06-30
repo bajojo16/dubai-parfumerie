@@ -22,7 +22,7 @@ const baseSvg = (size: number): React.CSSProperties => ({
 });
 
 /* Diffuseur + bâtonnets — « parfum-interieur ». */
-export function DiffuserIcon({ color = "#A8801F", size = 60 }: IconProps): ReactNode {
+export function DiffuserIcon({ color = "#A8801F", size = 48 }: IconProps): ReactNode {
   return (
     <svg viewBox="0 0 64 64" aria-hidden style={baseSvg(size)}>
       <g
@@ -49,7 +49,7 @@ export function DiffuserIcon({ color = "#A8801F", size = 60 }: IconProps): React
 }
 
 /* Mini-flacon de voyage — « parfum-voyage ». */
-export function TravelBottleIcon({ color = "#A8801F", size = 58 }: IconProps): ReactNode {
+export function TravelBottleIcon({ color = "#A8801F", size = 46 }: IconProps): ReactNode {
   return (
     <svg viewBox="0 0 64 64" aria-hidden style={baseSvg(size)}>
       <g
@@ -69,7 +69,7 @@ export function TravelBottleIcon({ color = "#A8801F", size = 58 }: IconProps): R
 }
 
 /* Flacon 50 ML — « format-50ml ». */
-export function Bottle50mlIcon({ color = "#A8801F", size = 60 }: IconProps): ReactNode {
+export function Bottle50mlIcon({ color = "#A8801F", size = 48 }: IconProps): ReactNode {
   return (
     <svg viewBox="0 0 64 64" aria-hidden style={baseSvg(size)}>
       <g
@@ -100,7 +100,7 @@ export function Bottle50mlIcon({ color = "#A8801F", size = 60 }: IconProps): Rea
 }
 
 /* Flacon attar (huile) — « huile-parfum ». */
-export function AttarBottleIcon({ color = "#A8801F", size = 58 }: IconProps): ReactNode {
+export function AttarBottleIcon({ color = "#A8801F", size = 46 }: IconProps): ReactNode {
   return (
     <svg viewBox="0 0 64 64" aria-hidden style={baseSvg(size)}>
       <g
@@ -123,7 +123,7 @@ export function AttarBottleIcon({ color = "#A8801F", size = 58 }: IconProps): Re
 }
 
 /* Flacon vaporisateur — « eau-parfum ». */
-export function SprayBottleIcon({ color = "#A8801F", size = 60 }: IconProps): ReactNode {
+export function SprayBottleIcon({ color = "#A8801F", size = 48 }: IconProps): ReactNode {
   return (
     <svg viewBox="0 0 64 64" aria-hidden style={baseSvg(size)}>
       <g
@@ -151,7 +151,7 @@ export function SprayBottleIcon({ color = "#A8801F", size = 60 }: IconProps): Re
 }
 
 /* Étoile + lauriers — disque « bestsellers » (sur fond encre). */
-export function LaurelStarIcon({ color = "#E4CE94", size = 64 }: IconProps): ReactNode {
+export function LaurelStarIcon({ color = "#E4CE94", size = 50 }: IconProps): ReactNode {
   return (
     <svg viewBox="0 0 64 64" aria-hidden style={baseSvg(size)}>
       {/* étoile pleine */}
@@ -187,7 +187,7 @@ export function PromoContent({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: 4,
+        gap: 3,
         textAlign: "center",
         lineHeight: 1,
       }}
@@ -195,7 +195,7 @@ export function PromoContent({
       <span
         style={{
           fontFamily: "var(--font-display)",
-          fontSize: 38,
+          fontSize: 30,
           fontWeight: 600,
           color: cream,
           textShadow: "0 1px 2px rgba(21,17,13,.28)",
@@ -206,9 +206,9 @@ export function PromoContent({
       <span
         style={{
           fontFamily: "var(--font-sans)",
-          fontSize: 10,
+          fontSize: 9,
           fontWeight: 600,
-          letterSpacing: "0.18em",
+          letterSpacing: "0.16em",
           textTransform: "uppercase",
           color: cream,
           opacity: 0.92,

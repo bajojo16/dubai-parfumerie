@@ -31,12 +31,15 @@ const C = {
 export function OlfactiveTwin({
   matches,
   locale = "fr",
+  variant = "full",
 }: {
   matches: OlfactiveMatch[];
   locale?: string;
+  variant?: "full" | "compact";
 }) {
   const t = useTranslations("olfactiveTwin");
   const isRTL = locale === "ar";
+  const compact = variant === "compact";
   const [query, setQuery] = useState("");
   const [selectedKey, setSelectedKey] = useState<string>(matches[0]?.key ?? "");
 
@@ -61,13 +64,13 @@ export function OlfactiveTwin({
       style={{
         background: C.stage,
         border: `0.5px solid ${C.border}`,
-        borderRadius: 16,
-        padding: 22,
+        borderRadius: compact ? 14 : 16,
+        padding: compact ? 14 : 22,
         textAlign: isRTL ? "right" : "left",
       }}
     >
       {/* Intro */}
-      <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: C.muted, margin: "0 0 16px" }}>
+      <p style={{ fontFamily: "var(--font-sans)", fontSize: compact ? 12 : 13, color: C.muted, margin: compact ? "0 0 10px" : "0 0 16px" }}>
         {t("intro")}
       </p>
 
@@ -76,15 +79,15 @@ export function OlfactiveTwin({
         style={{
           display: "flex",
           alignItems: "center",
-          gap: 10,
+          gap: compact ? 8 : 10,
           background: "#fff",
           border: `1px solid ${C.searchBorder}`,
           borderRadius: 999,
-          padding: "12px 18px",
-          marginBottom: 16,
+          padding: compact ? "8px 14px" : "12px 18px",
+          marginBottom: compact ? 10 : 16,
         }}
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={C.searchIcon} strokeWidth="2" strokeLinecap="round" aria-hidden>
+        <svg width={compact ? 15 : 18} height={compact ? 15 : 18} viewBox="0 0 24 24" fill="none" stroke={C.searchIcon} strokeWidth="2" strokeLinecap="round" aria-hidden>
           <circle cx="11" cy="11" r="7" />
           <path d="M21 21l-4.3-4.3" />
         </svg>
@@ -100,14 +103,20 @@ export function OlfactiveTwin({
             outline: "none",
             background: "transparent",
             fontFamily: "var(--font-sans)",
-            fontSize: 14,
+            fontSize: compact ? 13 : 14,
             color: C.ink,
           }}
         />
       </div>
 
       {/* Pills marques cibles */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 18 }}>
+      <div
+        style={
+          compact
+            ? { display: "flex", flexWrap: "nowrap", gap: 8, marginBottom: 12, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "thin", WebkitOverflowScrolling: "touch" }
+            : { display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 18 }
+        }
+      >
         {filtered.length === 0 && (
           <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: C.muted }}>{t("no_result")}</span>
         )}
@@ -121,9 +130,11 @@ export function OlfactiveTwin({
               onClick={() => setSelectedKey(m.key)}
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: 14,
+                fontSize: compact ? 12.5 : 14,
                 cursor: "pointer",
-                padding: "10px 16px",
+                padding: compact ? "6px 12px" : "10px 16px",
+                whiteSpace: compact ? "nowrap" : undefined,
+                flexShrink: compact ? 0 : undefined,
                 borderRadius: 999,
                 border: `1px solid ${active ? C.pillSelBg : C.pillBorder}`,
                 background: active ? C.pillSelBg : "#fff",
@@ -154,64 +165,79 @@ export function OlfactiveTwin({
       {/* Résultat */}
       <div aria-live="polite">
         {selected && (
-          <div style={{ background: "#fff", border: `0.5px solid ${C.border}`, borderRadius: 14, padding: 18 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 18, flexWrap: "wrap" }}>
+          <div style={{ background: "#fff", border: `0.5px solid ${C.border}`, borderRadius: compact ? 12 : 14, padding: compact ? 12 : 18 }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: compact ? "flex-start" : "center", gap: compact ? 10 : 18, flexWrap: "wrap" }}>
               {/* Vous aimez */}
-              <div style={{ minWidth: 140 }}>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "1px", textTransform: "uppercase", color: C.muted, marginBottom: 4 }}>
+              <div style={{ minWidth: compact ? 0 : 140 }}>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: compact ? 10 : 11, letterSpacing: "1px", textTransform: "uppercase", color: C.muted, marginBottom: compact ? 1 : 4 }}>
                   {t("you_like")}
                 </div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: 20, color: C.muted }}>{selected.targetName}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: compact ? 16 : 20, color: C.muted, lineHeight: 1.1 }}>{selected.targetName}</div>
               </div>
 
               {/* Flèche (sens de lecture) */}
-              <svg width="34" height="22" viewBox="0 0 34 22" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
+              <svg width={compact ? 26 : 34} height={compact ? 18 : 22} viewBox="0 0 34 22" fill="none" stroke={C.gold} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none", flexShrink: 0 }}>
                 <path d="M2 7h22" /><path d="M18 2l7 5-7 5" />
                 <path d="M2 15h26" /><path d="M22 10l7 5-7 5" />
               </svg>
 
               {/* Le jumeau oriental */}
-              <div style={{ display: "flex", alignItems: "center", gap: 14, flex: "0 1 auto", minWidth: 200 }}>
-                <div style={{ position: "relative", width: 64, height: 64, borderRadius: 10, overflow: "hidden", background: "#F7F3EE", flexShrink: 0 }}>
-                  <Image src={selected.product.image} alt={selected.product.name} fill sizes="64px" style={{ objectFit: "cover" }} />
+              <div style={{ display: "flex", alignItems: "center", gap: compact ? 10 : 14, flex: "1 1 auto", minWidth: compact ? 0 : 200 }}>
+                <div style={{ position: "relative", width: compact ? 44 : 64, height: compact ? 44 : 64, borderRadius: 10, overflow: "hidden", background: "#F7F3EE", flexShrink: 0 }}>
+                  <Image src={selected.product.image} alt={selected.product.name} fill sizes={compact ? "44px" : "64px"} style={{ objectFit: "cover" }} />
                 </div>
                 <div>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "1px", textTransform: "uppercase", color: C.goldLabel, marginBottom: 3 }}>
+                  <div style={{ fontFamily: "var(--font-sans)", fontSize: compact ? 10 : 11, letterSpacing: "1px", textTransform: "uppercase", color: C.goldLabel, marginBottom: compact ? 1 : 3 }}>
                     {t("the_twin")}
                   </div>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: 19, color: C.ink, lineHeight: 1.1 }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: compact ? 16 : 19, color: C.ink, lineHeight: 1.1 }}>
                     {selected.product.brand} · {selected.product.name}
                   </div>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: 14, color: C.goldLabel, marginTop: 2 }}>
-                    {t("from_price", { price: fmt(selected.product.price) })}
-                  </div>
-                  <span style={{ display: "inline-block", marginTop: 6, fontFamily: "var(--font-sans)", fontSize: 11, color: C.goldDark, background: C.tagBg, border: `1px solid ${C.tagBorder}`, borderRadius: 20, padding: "3px 10px" }}>
-                    {selected.family}
-                  </span>
+                  {compact ? (
+                    <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap", marginTop: 3 }}>
+                      <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: C.goldLabel }}>
+                        {t("from_price", { price: fmt(selected.product.price) })}
+                      </span>
+                      <span style={{ fontFamily: "var(--font-sans)", fontSize: 10.5, color: C.goldDark, background: C.tagBg, border: `1px solid ${C.tagBorder}`, borderRadius: 20, padding: "2px 8px" }}>
+                        {selected.family}
+                      </span>
+                    </div>
+                  ) : (
+                    <>
+                      <div style={{ fontFamily: "var(--font-sans)", fontSize: 14, color: C.goldLabel, marginTop: 2 }}>
+                        {t("from_price", { price: fmt(selected.product.price) })}
+                      </div>
+                      <span style={{ display: "inline-block", marginTop: 6, fontFamily: "var(--font-sans)", fontSize: 11, color: C.goldDark, background: C.tagBg, border: `1px solid ${C.tagBorder}`, borderRadius: 20, padding: "3px 10px" }}>
+                        {selected.family}
+                      </span>
+                    </>
+                  )}
                 </div>
               </div>
             </div>
 
             {/* Description */}
-            <div style={{ borderTop: `1px solid ${C.border}`, marginTop: 14, paddingTop: 12 }}>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: C.muted, margin: "0 0 14px", lineHeight: 1.6 }}>
+            <div style={{ borderTop: `1px solid ${C.border}`, marginTop: compact ? 10 : 14, paddingTop: compact ? 10 : 12, display: compact ? "flex" : "block", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: compact ? 11.5 : 12, color: C.muted, margin: compact ? 0 : "0 0 14px", lineHeight: compact ? 1.45 : 1.6, flex: compact ? "1 1 200px" : undefined }}>
                 {selected.description}
               </p>
               <Link
                 href={selected.product.href}
                 style={{
-                  display: "block",
+                  display: compact ? "inline-block" : "block",
                   textAlign: "center",
                   textDecoration: "none",
                   background: C.goldCta,
                   color: "#fff",
                   fontFamily: "var(--font-sans)",
-                  fontSize: 12,
+                  fontSize: compact ? 11 : 12,
                   fontWeight: 500,
                   letterSpacing: "1px",
                   textTransform: "uppercase",
                   borderRadius: 999,
-                  padding: "13px 16px",
+                  padding: compact ? "9px 18px" : "13px 16px",
+                  whiteSpace: compact ? "nowrap" : undefined,
+                  flexShrink: compact ? 0 : undefined,
                 }}
               >
                 {t("see_product")} →
@@ -222,11 +248,11 @@ export function OlfactiveTwin({
       </div>
 
       {/* Mention légale — toujours visible */}
-      <div style={{ display: "flex", alignItems: "flex-start", gap: 8, marginTop: 16 }}>
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={C.legal} strokeWidth="2" strokeLinecap="round" aria-hidden style={{ flexShrink: 0, marginTop: 1 }}>
+      <div style={{ display: "flex", alignItems: "flex-start", gap: compact ? 6 : 8, marginTop: compact ? 10 : 16 }}>
+        <svg width={compact ? 12 : 15} height={compact ? 12 : 15} viewBox="0 0 24 24" fill="none" stroke={C.legal} strokeWidth="2" strokeLinecap="round" aria-hidden style={{ flexShrink: 0, marginTop: 1 }}>
           <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
         </svg>
-        <p style={{ fontFamily: "var(--font-sans)", fontSize: 11.5, color: C.legal, margin: 0, lineHeight: 1.5 }}>
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: compact ? 10 : 11.5, color: C.legal, margin: 0, lineHeight: 1.4 }}>
           {t("legal")}
         </p>
       </div>

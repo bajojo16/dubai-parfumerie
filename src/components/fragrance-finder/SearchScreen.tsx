@@ -51,7 +51,8 @@ export function SearchScreen({
 
   const matches = useMemo(() => {
     const q = normalize(debounced);
-    if (q.length < 2) return [];
+    // Autocomplete dès le 1er caractère (recherche insensible casse/accents).
+    if (q.length < 1) return [];
     return products
       .filter(
         (p) =>
@@ -62,7 +63,7 @@ export function SearchScreen({
 
   const trimmed = raw.trim();
   const showFreeText =
-    trimmed.length >= 2 &&
+    trimmed.length >= 1 &&
     !matches.some((m) => normalize(m.name) === normalize(trimmed));
 
   return (
@@ -130,7 +131,7 @@ export function SearchScreen({
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               if (matches.length > 0) onSelectSlug(matches[0].slug);
-              else if (trimmed.length >= 2) onFreeText(trimmed);
+              else if (trimmed.length >= 1) onFreeText(trimmed);
             }
           }}
           placeholder={labels.searchPlaceholder}
@@ -239,7 +240,7 @@ export function SearchScreen({
       )}
 
       {/* Aucun résultat */}
-      {debounced.trim().length >= 2 && matches.length === 0 && !showFreeText && (
+      {debounced.trim().length >= 1 && matches.length === 0 && !showFreeText && (
         <p style={{ fontFamily: FF.sans, fontSize: "0.85rem", color: FF.muted, textAlign: "center", margin: 0 }}>
           {labels.searchEmpty}
         </p>

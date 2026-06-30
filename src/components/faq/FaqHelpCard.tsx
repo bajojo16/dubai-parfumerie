@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { T } from "./faq.data";
+import { CtaLink } from "./answers/CtaLink";
 
 export type FaqHelpLabels = {
   eyebrow: string;
@@ -9,6 +10,7 @@ export type FaqHelpLabels = {
   subtitle: string;
   whatsapp: string;
   email: string;
+  seeAll: string;
 };
 
 const DEFAULT_LABELS: FaqHelpLabels = {
@@ -17,20 +19,24 @@ const DEFAULT_LABELS: FaqHelpLabels = {
   subtitle: "Notre équipe vous répond en moins de 2h, du lundi au samedi.",
   whatsapp: "Discuter sur WhatsApp",
   email: "Nous écrire",
+  seeAll: "Voir toute la FAQ",
 };
 
 /** Numéro WhatsApp par défaut (format international sans « + »). À remplacer. */
-const DEFAULT_WHATSAPP = "33612345678";
-const DEFAULT_EMAIL = "contact@dubai-parfumerie.fr";
+const DEFAULT_WHATSAPP = "966583728407";
+const DEFAULT_EMAIL = "contact@dubaiparfumerie.com";
 
 export function FaqHelpCard({
   labels,
   whatsappNumber = DEFAULT_WHATSAPP,
   email = DEFAULT_EMAIL,
+  seeAllHref,
 }: {
   labels?: Partial<FaqHelpLabels>;
   whatsappNumber?: string;
   email?: string;
+  /** Si fourni, affiche le bouton « Voir toute la FAQ » en première position. */
+  seeAllHref?: string;
 }) {
   const L = { ...DEFAULT_LABELS, ...labels };
   const [hover, setHover] = useState<"wa" | "mail" | null>(null);
@@ -83,7 +89,8 @@ export function FaqHelpCard({
         {L.subtitle}
       </p>
 
-      <div style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+        {seeAllHref && <CtaLink href={seeAllHref} label={L.seeAll} variant="line" />}
         <a
           href={`https://wa.me/${whatsappNumber}`}
           target="_blank"

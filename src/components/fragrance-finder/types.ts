@@ -48,7 +48,6 @@ export interface QuizAnswers {
   gender: string | null;
   family: string | null;
   note: string | null;
-  ambiance: string | null;
   season: string | null;
   /** Q6 : recherche libre d'un parfum aimé (slug catalogue OU texte saisi). */
   loved: string | null;
@@ -110,6 +109,8 @@ export interface Recommendation {
 export interface FinderLabels {
   /** Bouton flottant. */
   openAria: string;
+  /** Étiquette pill visible à côté de la fiole (desktop). */
+  openLabel: string;
   /** En-tête modal. */
   eyebrow: string;
   modalTitle: string;
@@ -125,7 +126,10 @@ export interface FinderLabels {
   freeTextPrefix: string; // « Utiliser : »
   /** ResultScreen. */
   resultEyebrow: string;
-  resultTitle: string;
+  /** Titre singulier (1 reco). */
+  resultTitleOne: string;
+  /** Titre pluriel — doit contenir {count}. */
+  resultTitleMany: string;
   resultSubtitle: string;
   badgeMatch: string;
   badgeCoupDeCoeur: string;

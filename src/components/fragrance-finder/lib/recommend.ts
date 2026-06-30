@@ -3,7 +3,7 @@
  *
  * recommend(answers, products) → top 3 :
  *   1. Filtres DURS : genre (sauf « cadeau » qui n'exclut rien) + budget.
- *   2. Score par familles / notes / saison / ambiance / intensité / parfum aimé.
+ *   2. Score par familles / notes / saison / intensité / parfum aimé.
  *   3. Ajustements intensité (écart à l'intensité cible) + bonus best-seller/new.
  *   4. Badges : « Votre match » / « Coup de cœur » / « À découvrir ».
  *
@@ -19,8 +19,6 @@ import type {
 import {
   WEIGHTS,
   BUDGET_RANGES,
-  AMBIANCE_TARGET_INTENSITY,
-  AMBIANCE_FAMILIES,
   SEASON_FAMILIES,
   SEASON_TARGET_INTENSITY,
 } from "../data/scoring";
@@ -46,11 +44,8 @@ function passesBudget(p: CatalogProduct, answer: string | null): boolean {
   return p.price >= range.min && p.price <= range.max;
 }
 
-/** Intensité cible : l'ambiance prime, sinon la saison, sinon 2. */
+/** Intensité cible : la saison oriente, sinon 2. */
 function targetIntensity(answers: QuizAnswers): 1 | 2 | 3 {
-  if (answers.ambiance && AMBIANCE_TARGET_INTENSITY[answers.ambiance]) {
-    return AMBIANCE_TARGET_INTENSITY[answers.ambiance];
-  }
   if (answers.season && SEASON_TARGET_INTENSITY[answers.season]) {
     return SEASON_TARGET_INTENSITY[answers.season];
   }
@@ -79,12 +74,6 @@ function scoreProduct(
   if (answers.season) {
     const expected = SEASON_FAMILIES[answers.season] ?? [];
     if (overlap(fam, expected) > 0) score += WEIGHTS.seasonFit;
-  }
-
-  // Ambiance (Q4)
-  if (answers.ambiance) {
-    const expected = AMBIANCE_FAMILIES[answers.ambiance] ?? [];
-    if (overlap(fam, expected) > 0) score += WEIGHTS.ambianceFit;
   }
 
   // Intensité : pénalité par cran d'écart à la cible

@@ -106,8 +106,6 @@ const brands: BrandCardData[] = [
   { name: "Afnan", founded: 1997, origin: "Sharjah", count: "45+" },
   { name: "Maison Alhambra", origin: "UAE", count: "60+" },
   { name: "Ard Al Zaafaran", founded: 2007, origin: "Dubaï", count: "40+" },
-  { name: "Armaf", founded: 2013, origin: "UAE", count: "50+" },
-  { name: "Khadlaj", founded: 2003, origin: "Sharjah", count: "35+" },
 ];
 
 const faqItems = [
@@ -625,7 +623,8 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── COFFRETS & PACKS D'ÉCHANTILLONS (au-dessus de Tendances) ─ */}
+      {/* ── COFFRETS & PACKS D'ÉCHANTILLONS — désactivée ──────────── */}
+      {false && (
       <section id="packs" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
@@ -636,6 +635,7 @@ export default function HomePageClient() {
           <PackGrid packs={PACKS} locale={locale} />
         </div>
       </section>
+      )}
 
       {/* ── DÉCOUVREZ LA MARQUE REEF PERFUMES (BestSellersRail) ───── */}
       <section id="reef-rail" style={{ background: "#F7F3EC", padding: "20px 0 40px" }}>
@@ -892,7 +892,7 @@ export default function HomePageClient() {
 
       {/* ── LIVRAISON MONDE ───────────────────────────────────────── */}
       <section id="livraison" style={{ background: "var(--surface-page)", padding: "70px 20px" }}>
-        <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
           <ShippingChecker
             countries={DEMO_SHIPPING_COUNTRIES}
             detectedCode="FR"
@@ -956,7 +956,8 @@ export default function HomePageClient() {
 
       {/* ── 6. VENTES FLASH — retirée pour le moment ──────────────── */}
 
-      {/* ── 9. TROUVEZ VOTRE PARFUM ───────────────────────────────── */}
+      {/* ── 9. TROUVEZ VOTRE PARFUM — désactivée (remplacée par FragranceFinder flottant) ── */}
+      {false && (
       <section id="guide" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
@@ -967,6 +968,7 @@ export default function HomePageClient() {
           <QuizSignature />
         </div>
       </section>
+      )}
 
       {/* ── 10. ROUE DES SENTEURS — retirée ───────────────────────── */}
       {false && (
@@ -1228,7 +1230,7 @@ export default function HomePageClient() {
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
             eyebrow="Ils nous font confiance"
-            title="8 400 clients satisfaits"
+            title="+7000 articles commandés"
             subtitle="Authentiques, vérifiés, non modifiés."
           />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 18, marginBottom: 48 }}>
@@ -1377,7 +1379,7 @@ export default function HomePageClient() {
 
       {/* ── NEWSLETTER (juste avant le footer) ────────────────────── */}
       <section id="newsletter" style={{ background: "var(--surface-cream-2)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 960, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
           <NewsletterSection locale={locale} />
         </div>
       </section>

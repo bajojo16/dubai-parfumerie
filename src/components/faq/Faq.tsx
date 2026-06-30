@@ -15,7 +15,6 @@ import { FaqCategoryNav } from "./FaqCategoryNav";
 import { FaqHero } from "./FaqHero";
 import { FaqItem } from "./FaqItem";
 import { FaqHelpCard, type FaqHelpLabels } from "./FaqHelpCard";
-import { CtaLink } from "./answers/CtaLink";
 import type { PromoResult } from "./answers/PromoChecker";
 
 export type FaqLabels = {
@@ -211,19 +210,10 @@ export function Faq({
             ))}
           </div>
 
-          {/* Bouton vers la FAQ complète */}
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              marginTop: 24,
-            }}
-          >
-            <CtaLink href={faqHref} label={L.seeAll} variant="line" />
-          </div>
-
+          {/* Carte d'aide : rangée [Voir toute la FAQ] [WhatsApp] [Nous écrire] */}
           <FaqHelpCard
-            labels={L.help}
+            labels={{ seeAll: L.seeAll, ...L.help }}
+            seeAllHref={faqHref}
             whatsappNumber={whatsappNumber}
             email={email}
           />

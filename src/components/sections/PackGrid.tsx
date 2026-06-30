@@ -45,8 +45,8 @@ const RAIL_CSS = `
   align-items:flex-end;
 }
 .dpk-slide>*{width:100%;}
-.dpk-hero,.dpk-tall{height:332px;}
-.dpk-wide,.dpk-soft{height:300px;}
+.dpk-hero,.dpk-tall{height:360px;}
+.dpk-wide,.dpk-soft{height:326px;}
 .dpk-arrow{
   position:absolute;
   top:calc(50% - 4px);
@@ -70,8 +70,8 @@ const RAIL_CSS = `
 .dpk-next{inset-inline-end:-6px;}
 @media(max-width:720px){
   .dpk-slide{width:200px;}
-  .dpk-hero,.dpk-tall{height:320px;}
-  .dpk-wide,.dpk-soft{height:292px;}
+  .dpk-hero,.dpk-tall{height:344px;}
+  .dpk-wide,.dpk-soft{height:316px;}
   .dpk-arrow{display:none;}
 }
 @media(prefers-reduced-motion: reduce){

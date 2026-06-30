@@ -119,7 +119,7 @@ export function NewsletterSection({
         style={{
           position: "relative",
           flex: "0 0 43%",
-          minHeight: 420,
+          minHeight: 0,
           overflow: "hidden",
         }}
       >
@@ -148,8 +148,8 @@ export function NewsletterSection({
         <div
           style={{
             width: "100%",
-            maxWidth: 520,
-            padding: "48px 40px",
+            maxWidth: 560,
+            padding: "28px 40px",
             textAlign: "center",
             margin: "0 auto",
           }}
@@ -161,7 +161,7 @@ export function NewsletterSection({
             letterSpacing: "3px",
             textTransform: "uppercase",
             color: "#A8801F",
-            margin: "0 0 14px",
+            margin: "0 0 8px",
           }}
         >
           {L.eyebrow}
@@ -171,10 +171,10 @@ export function NewsletterSection({
           id={`${inputId}-title`}
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: 36,
+            fontSize: 28,
             lineHeight: 1.15,
             color: "#2C2620",
-            margin: "0 0 14px",
+            margin: "0 0 8px",
             fontWeight: 600,
           }}
         >
@@ -184,10 +184,10 @@ export function NewsletterSection({
         <p
           style={{
             fontFamily: "var(--font-sans)",
-            fontSize: 14,
-            lineHeight: 1.6,
+            fontSize: 13,
+            lineHeight: 1.5,
             color: "#6A6051",
-            margin: "0 0 26px",
+            margin: "0 0 16px",
           }}
         >
           {before}
@@ -273,7 +273,7 @@ export function NewsletterSection({
                 background: "#fff",
                 border: "1px solid #E0CFA8",
                 borderRadius: 999,
-                padding: "13px 18px 13px 44px",
+                padding: "11px 18px 11px 44px",
                 paddingInlineStart: 44,
                 paddingInlineEnd: 18,
                 outline: "none",
@@ -295,7 +295,7 @@ export function NewsletterSection({
               background: "#C4A24F",
               border: "none",
               borderRadius: 999,
-              padding: "13px 24px",
+              padding: "11px 24px",
               cursor: sending ? "default" : "pointer",
               whiteSpace: "nowrap",
               opacity: sending ? 0.8 : 1,
@@ -315,8 +315,8 @@ export function NewsletterSection({
           aria-live="polite"
           role="status"
           style={{
-            minHeight: 20,
-            marginTop: 14,
+            minHeight: 18,
+            marginTop: 10,
             fontFamily: "var(--font-sans)",
             fontSize: 13,
             color: status === "error" ? "#9A4A33" : "#3E7A4E",
@@ -331,8 +331,8 @@ export function NewsletterSection({
             fontFamily: "var(--font-sans)",
             fontSize: 11,
             color: "#9A8E78",
-            margin: "8px 0 0",
-            lineHeight: 1.6,
+            margin: "6px 0 0",
+            lineHeight: 1.5,
           }}
         >
           {L.micro}{" "}
@@ -350,8 +350,8 @@ export function NewsletterSection({
             fontFamily: "var(--font-sans)",
             fontSize: 10,
             color: "#A89C86",
-            margin: "6px 0 0",
-            lineHeight: 1.5,
+            margin: "4px 0 0",
+            lineHeight: 1.4,
           }}
         >
           {L.rgpd}{" "}
@@ -368,11 +368,9 @@ export function NewsletterSection({
 
       <style>{`
         .np-section { flex-direction: row; }
-        .np-content { min-height: 420px; }
         @media (max-width: 700px) {
           .np-section { flex-direction: column; }
-          .np-media { flex: 0 0 auto; min-height: 0; height: 180px; }
-          .np-content { min-height: 0; }
+          .np-media { flex: 0 0 auto; min-height: 0; height: 150px; }
         }
         .np-submit { transition: background .2s ease, transform .15s ease; }
         .np-submit:not(:disabled):hover {

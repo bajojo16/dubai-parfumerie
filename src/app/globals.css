@@ -284,7 +284,8 @@ img, svg, video { max-width: 100%; }
 /* ── Tablette ≤ 980px ───────────────────────────────────── */
 @media (max-width: 980px) {
   [style*="repeat(4,"], [style*="repeat(4 ,"],
-  [style*="repeat(4,1fr)"], [style*="repeat(4, 1fr)"] {
+  [style*="repeat(4,1fr)"], [style*="repeat(4, 1fr)"],
+  [style*="repeat(5,"], [style*="repeat(5, 1fr)"] {
     grid-template-columns: repeat(2, 1fr) !important;
   }
   [style*="repeat(3,"], [style*="repeat(3, 1fr)"] {
@@ -294,9 +295,13 @@ img, svg, video { max-width: 100%; }
 
 /* ── Mobile ≤ 760px ─────────────────────────────────────── */
 @media (max-width: 760px) {
-  /* Toutes grilles multi-colonnes → 1 colonne */
+  /* Grilles de cartes (produits, stats, piliers) → 2 colonnes */
   [style*="repeat(4,"], [style*="repeat(4, 1fr)"],
   [style*="repeat(3,"], [style*="repeat(3, 1fr)"],
+  [style*="repeat(5,"], [style*="repeat(5, 1fr)"] {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+  /* Panneaux éditoriaux 2-colonnes & bento → empilés */
   [style*="repeat(2,"], [style*="repeat(2, 1fr)"],
   [style*="1fr 1fr"], [style*="1.3fr 1fr 1fr"],
   [style*="1.3fr"] {
@@ -329,7 +334,7 @@ img, svg, video { max-width: 100%; }
   .dp-table-row, .dp-table-head { grid-template-columns: 1fr 1fr !important; }
 
   /* WelcomeModal mobile : une colonne, image cachée, × atteignable */
-  .dp-welcome-inner { grid-template-columns: 1fr !important; max-height: 88vh !important; }
+  .dp-welcome-inner { grid-template-columns: 1fr !important; max-height: 88dvh !important; }
   .dp-welcome-left { display: none !important; }
 }
 

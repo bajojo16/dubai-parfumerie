@@ -15,6 +15,7 @@ export type ScentWheelLabels = {
   cta: string; // libellé du bouton
   wheelAria: string; // aria-label de la roue
   priceFrom: string; // préfixe prix ("dès")
+  clickHint: string; // incitation au repos ("Cliquez sur une note")
 };
 
 const DEFAULT_LABELS: ScentWheelLabels = {
@@ -28,6 +29,7 @@ const DEFAULT_LABELS: ScentWheelLabels = {
   cta: "Découvrir la sélection",
   wheelAria: "Roue des familles olfactives",
   priceFrom: "",
+  clickHint: "Cliquez sur une note",
 };
 
 // Tracés SVG des 6 segments (ordre : Oud, Rose, Ambré, Boisé, Musc, Épicé)
@@ -179,12 +181,19 @@ export function ScentWheelInteractive({
             minWidth: 280,
           }}
         >
+          <div
+            style={{
+              position: "relative",
+              width: "100%",
+              maxWidth: 360,
+            }}
+          >
           <svg
             viewBox="0 0 300 300"
             width="100%"
             role="group"
             aria-label={L.wheelAria}
-            style={{ maxWidth: 360, overflow: "visible" }}
+            style={{ display: "block", overflow: "visible" }}
           >
             {/* clipPaths : un par segment ayant un media (image/vidéo) + cercle central */}
             <defs>
@@ -373,6 +382,60 @@ export function ScentWheelInteractive({
               {L.familySub}
             </text>
           </svg>
+
+          {/* Incitation à cliquer — annotation courbe pointant vers un segment, repos uniquement */}
+          {!active && (
+            <svg
+              aria-hidden
+              viewBox="0 0 300 300"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                overflow: "visible",
+                pointerEvents: "none",
+                animation: reduced
+                  ? "none"
+                  : "dpWheelHint 1.4s ease-in-out infinite",
+              }}
+            >
+              {/* Courbe + tête de flèche (miroir en RTL) */}
+              <g
+                transform={isRTL ? "translate(300,0) scale(-1,1)" : undefined}
+              >
+                <path
+                  d="M26,44 C30,26 50,28 64,36"
+                  fill="none"
+                  stroke="#A8801F"
+                  strokeWidth={1.6}
+                  strokeLinecap="round"
+                  strokeDasharray="4 4"
+                />
+                <path
+                  d="M52.2,34.4 L64,36 L56.7,26.6"
+                  fill="none"
+                  stroke="#A8801F"
+                  strokeWidth={1.6}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </g>
+              {/* Texte au-dessus du départ de la flèche, séparé de la courbe et de la roue */}
+              <text
+                x={isRTL ? 298 : 2}
+                y={11}
+                textAnchor={isRTL ? "end" : "start"}
+                fontFamily="var(--font-sans)"
+                fontSize={12}
+                letterSpacing=".02em"
+                fill="#A8801F"
+              >
+                {L.clickHint}
+              </text>
+            </svg>
+          )}
+          </div>
         </div>
 
         {/* Colonne panneau */}
@@ -560,6 +623,10 @@ export function ScentWheelInteractive({
         @keyframes dpWheelBgFade {
           from { opacity: 0; }
           to { opacity: 1; }
+        }
+        @keyframes dpWheelHint {
+          0%, 100% { opacity: .45; transform: translateY(0); }
+          50% { opacity: 1; transform: translateY(2px); }
         }
         .dp-wheel-seg:focus-visible path {
           stroke: #2C2620;

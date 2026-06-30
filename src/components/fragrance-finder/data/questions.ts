@@ -26,11 +26,6 @@ const G = {
   vanilla: "radial-gradient(circle at 30% 26%, #F7EACB, #C9A24A 80%)",
   musk: "radial-gradient(circle at 30% 26%, #ECE3D2, #B9A88C 82%)",
 
-  seductive: "radial-gradient(circle at 30% 26%, #C97A8E, #6B2235 84%)",
-  cleanfresh: "radial-gradient(circle at 30% 26%, #D7EAE6, #5E9A95 82%)",
-  mysterious: "radial-gradient(circle at 30% 26%, #5A4A6B, #211628 84%)",
-  cozy: "radial-gradient(circle at 30% 26%, #E7C79A, #9C6A1A 82%)",
-
   spring: "radial-gradient(circle at 30% 26%, #E8F0C9, #8FB05A 82%)",
   summer: "radial-gradient(circle at 30% 26%, #FCE9B8, #E0A93A 82%)",
   autumn: "radial-gradient(circle at 30% 26%, #E0A86A, #8A4A1F 84%)",
@@ -85,19 +80,6 @@ export const QUESTIONS: Question[] = [
       { value: "rose", label: "Rose", gradient: G.rose },
       { value: "vanilla", label: "Vanille", gradient: G.vanilla },
       { value: "musk", label: "Musc", gradient: G.musk },
-    ],
-  },
-  {
-    id: "ambiance",
-    title: "Quelle ambiance incarner ?",
-    subtitle: "Le caractère que doit révéler votre sillage.",
-    kind: "tiles",
-    allowSkipUnsure: true,
-    options: [
-      { value: "seductive", label: "Séducteur", gradient: G.seductive },
-      { value: "cleanfresh", label: "Frais & net", gradient: G.cleanfresh },
-      { value: "mysterious", label: "Mystérieux", gradient: G.mysterious },
-      { value: "cozy", label: "Cocon chaleureux", gradient: G.cozy },
     ],
   },
   {

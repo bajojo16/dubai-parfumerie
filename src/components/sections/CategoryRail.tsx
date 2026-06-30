@@ -200,6 +200,7 @@ export function CategoryRail({
           listStyle: "none",
           margin: 0,
           display: "flex",
+          alignItems: "flex-start",
           gap: 28,
           overflowX: "auto",
           scrollSnapType: "x proximity",
@@ -220,7 +221,7 @@ export function CategoryRail({
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
-                gap: 20,
+                gap: 16,
                 textDecoration: "none",
                 outline: "none",
               }}
@@ -268,10 +269,12 @@ const CSS = `
 }
 
 .dp-catrail-scroller {
-  --dp-disc: 148px;
+  --dp-disc: 116px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   scroll-padding-inline: 24px;
+  /* Centré quand tout tient ; repli flex-start au débordement (1er item non coupé). */
+  justify-content: safe center;
 }
 .dp-catrail-scroller::-webkit-scrollbar { display: none; }
 
@@ -286,7 +289,7 @@ const CSS = `
 .dp-catrail-name {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 21px;
+  font-size: 18px;
   line-height: 1.1;
   color: ${T.ink};
 }
@@ -311,8 +314,8 @@ const CSS = `
 }
 
 @media (max-width: 600px) {
-  .dp-catrail-scroller { --dp-disc: 120px; }
-  .dp-catrail-name { font-size: 18px; }
+  .dp-catrail-scroller { --dp-disc: 96px; }
+  .dp-catrail-name { font-size: 16px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

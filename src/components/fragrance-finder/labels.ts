@@ -6,6 +6,7 @@ import type { FinderLabels } from "./types";
 
 export const DEFAULT_LABELS: FinderLabels = {
   openAria: "Ouvrir le conseiller olfactif",
+  openLabel: "Choisir mon parfum",
   eyebrow: "Conseiller olfactif",
   modalTitle: "Trouvez votre signature",
   questionCounter: "Question {current}/{total}",
@@ -17,7 +18,8 @@ export const DEFAULT_LABELS: FinderLabels = {
   searchEmpty: "Aucun parfum trouvé dans notre catalogue.",
   freeTextPrefix: "Utiliser",
   resultEyebrow: "Votre profil olfactif",
-  resultTitle: "Vos 3 parfums sur mesure",
+  resultTitleOne: "Votre parfum sur mesure",
+  resultTitleMany: "Vos {count} parfums sur mesure",
   resultSubtitle: "Sélectionnés d'après vos réponses, du plus proche au plus surprenant.",
   badgeMatch: "Votre match",
   badgeCoupDeCoeur: "Coup de cœur",
@@ -32,7 +34,7 @@ export const DEFAULT_LABELS: FinderLabels = {
   emailPlaceholder: "Votre adresse e-mail",
   emailCta: "Recevoir par e-mail",
   emailSuccess: "C'est noté ! Vous recevrez votre profil très vite.",
-  whatsappCta: "Continuer sur WhatsApp",
+  whatsappCta: "Une question ? WhatsApp",
   rgpd:
     "En continuant, vous acceptez d'être recontacté(e). Vos données ne sont jamais revendues — désinscription à tout moment (RGPD).",
   loading: "Composition de votre profil olfactif…",
