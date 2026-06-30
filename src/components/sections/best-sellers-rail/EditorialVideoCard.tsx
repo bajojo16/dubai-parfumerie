@@ -107,7 +107,8 @@ export function EditorialVideoCard({
         boxShadow: "0 10px 30px rgba(40,30,15,0.16)",
       }}
     >
-      {/* Vidéo plein cadre */}
+      {/* Vidéo plein cadre — absolue : ne dicte pas la hauteur de la carte,
+          elle remplit (cover) la hauteur fixée par les cartes produits (pas d'étirement) */}
       <video
         ref={videoRef}
         src={card.video.src}
@@ -118,9 +119,12 @@ export function EditorialVideoCard({
         preload="none"
         aria-label={card.title}
         style={{
+          position: "absolute",
+          inset: 0,
           width: "100%",
           height: "100%",
           objectFit: "cover",
+          objectPosition: "center",
           display: "block",
         }}
       />

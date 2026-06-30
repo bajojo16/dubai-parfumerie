@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { addItem } from "@/lib/cart";
+import { QtyStepper } from "@/components/ui/QtyStepper";
 import type { OilProduct } from "@/data/oil-products";
 
 /* ── Tokens carte « huile concentrée » (hex exacts spec) ── */
@@ -111,6 +112,7 @@ export function OilProductCard({
   const [ctaHover, setCtaHover] = useState(false);
   const [added, setAdded] = useState(false);
   const [wished, setWished] = useState(false);
+  const [qty, setQty] = useState(1);
   const [prefersReduced] = useState(
     () =>
       typeof window !== "undefined" &&
@@ -141,7 +143,7 @@ export function OilProductCard({
         price: product.price,
         image: product.bottleImage,
       },
-      1
+      qty
     );
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1800);
@@ -201,43 +203,19 @@ export function OilProductCard({
         </g>
       </svg>
 
-      {/* Rangée badges (note début / cœur fin) */}
+      {/* Rangée badge (cœur fin uniquement — la note passe au pied du flacon) */}
       <div
         style={{
           position: "absolute",
           top: 10,
-          insetInlineStart: 10,
           insetInlineEnd: 10,
           display: "flex",
           alignItems: "flex-start",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           zIndex: 3,
           pointerEvents: "none",
         }}
       >
-        {/* Pastille note — début */}
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 4,
-            background: "rgba(255,255,255,.92)",
-            borderRadius: 999,
-            padding: "4px 9px",
-            fontFamily: "var(--font-sans)",
-            fontSize: 11,
-            fontWeight: 600,
-            color: T.ink,
-            boxShadow: "0 2px 8px rgba(120,90,40,.12)",
-          }}
-        >
-          <span style={{ color: T.star }} aria-hidden>
-            ★
-          </span>
-          {product.rating.toFixed(1)}
-          <span style={{ color: T.meta, fontWeight: 500 }}>({product.reviewCount})</span>
-        </span>
-
         {/* Cœur favori — fin */}
         <button
           type="button"
@@ -323,7 +301,7 @@ export function OilProductCard({
           }}
         />
 
-        <span style={{ position: "relative", zIndex: 2, filter: "drop-shadow(0 10px 14px rgba(120,90,40,.28))" }}>
+        <span style={{ position: "relative", zIndex: 2, transform: "translateY(-12px)", filter: "drop-shadow(0 10px 14px rgba(120,90,40,.28))" }}>
           <SafeImage
             src={product.bottleImage}
             alt={`${product.name} ${product.brand}`}
@@ -331,8 +309,34 @@ export function OilProductCard({
             height={160}
             fallbackSize={120}
             sizes="160px"
-            imgStyle={{ height: 160, width: "auto", objectFit: "contain", borderRadius: 10 }}
+            imgStyle={{ height: 160, width: "auto", objectFit: "contain" }}
           />
+        </span>
+
+        {/* Pastille note — au pied du flacon */}
+        <span
+          style={{
+            position: "absolute",
+            bottom: -6,
+            zIndex: 3,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 4,
+            background: "rgba(255,255,255,.94)",
+            borderRadius: 999,
+            padding: "4px 10px",
+            fontFamily: "var(--font-sans)",
+            fontSize: 11,
+            fontWeight: 600,
+            color: T.ink,
+            boxShadow: "0 3px 10px rgba(120,90,40,.18)",
+          }}
+        >
+          <span style={{ color: T.star }} aria-hidden>
+            ★
+          </span>
+          {product.rating.toFixed(1)}
+          <span style={{ color: T.meta, fontWeight: 500 }}>({product.reviewCount})</span>
         </span>
       </div>
 
@@ -341,7 +345,7 @@ export function OilProductCard({
         <div
           style={{
             fontFamily: "var(--font-sans)",
-            fontSize: 9.5,
+            fontSize: 11,
             letterSpacing: "2px",
             textTransform: "uppercase",
             color: T.brand,
@@ -365,9 +369,9 @@ export function OilProductCard({
         <div
           style={{
             fontFamily: "var(--font-sans)",
-            fontSize: 10,
+            fontSize: 13,
             color: T.meta,
-            marginTop: 3,
+            marginTop: 4,
           }}
         >
           {L.oil} · {product.volume} · {product.gender}
@@ -405,9 +409,9 @@ export function OilProductCard({
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 6,
-          marginTop: 12,
-          paddingTop: 10,
+          gap: 8,
+          marginTop: 14,
+          paddingTop: 12,
           borderTop: `1px solid ${T.rule}`,
         }}
       >
@@ -418,14 +422,15 @@ export function OilProductCard({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: 4,
+              gap: 6,
             }}
           >
             <span
               style={{
-                width: 28,
-                height: 28,
+                width: 46,
+                height: 46,
                 borderRadius: "50%",
+                overflow: "hidden",
                 background: "rgba(255,255,255,.6)",
                 display: "grid",
                 placeItems: "center",
@@ -435,17 +440,18 @@ export function OilProductCard({
               <SafeImage
                 src={f.icon}
                 alt=""
-                width={18}
-                height={18}
-                fallbackSize={14}
-                imgStyle={{ width: 18, height: 18, objectFit: "contain" }}
+                width={46}
+                height={46}
+                fallbackSize={46}
+                imgStyle={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
               />
             </span>
             <span
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: 9,
-                color: T.meta,
+                fontSize: 12,
+                fontWeight: 500,
+                color: T.ink,
                 textAlign: "center",
               }}
             >
@@ -455,19 +461,33 @@ export function OilProductCard({
         ))}
       </div>
 
-      {/* Bouton ajout panier / épuisé */}
-      <button
-        type="button"
-        onClick={onAdd}
-        disabled={!product.available}
-        aria-label={
-          product.available ? `${L.addToCart} — ${product.name}` : `${L.soldOut} — ${product.name}`
-        }
-        onMouseEnter={() => setCtaHover(true)}
-        onMouseLeave={() => setCtaHover(false)}
+      {/* Sélecteur quantité + bouton ajout panier / épuisé (colonne — bouton toujours aligné) */}
+      <div
+        onClick={(e) => e.stopPropagation()}
         style={{
           marginTop: 12,
-          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 8,
+        }}
+      >
+        {product.available ? (
+          <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
+        ) : (
+          <span aria-hidden style={{ height: 32 }} />
+        )}
+        <button
+          type="button"
+          onClick={onAdd}
+          disabled={!product.available}
+          aria-label={
+            product.available ? `${L.addToCart} — ${product.name}` : `${L.soldOut} — ${product.name}`
+          }
+          onMouseEnter={() => setCtaHover(true)}
+          onMouseLeave={() => setCtaHover(false)}
+          style={{
+            width: "100%",
           border: "none",
           borderRadius: 999,
           padding: "11px 16px",
@@ -488,6 +508,7 @@ export function OilProductCard({
       >
         {!product.available ? L.soldOut : added ? L.added : L.addToCart}
       </button>
+      </div>
     </Link>
   );
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
-import type { ShippingCountry } from "@/data/shipping-countries";
+import { customsFor, type ShippingCountry } from "@/data/shipping-countries";
 
 export type ShippingLabels = {
   eyebrow: string;
@@ -16,6 +16,12 @@ export type ShippingLabels = {
   servedPrefix: string;
   /** détail préparation (préfixe avant deliveryDays) */
   prepNote: string;
+  /** douane : aucun frais (UE) — ton positif */
+  customsNone: string;
+  /** douane : frais éventuels (hors UE, DOM-TOM inclus) — ton neutre */
+  customsPossible: string;
+  /** preuve sociale : compteur de commandes ({n} = nombre formaté) */
+  ordersNote: string;
   /** non desservi : "Nous ne livrons pas encore en " (suivi de {name}) */
   notServedPrefix: string;
   notServedHint: string;
@@ -39,6 +45,9 @@ const DEFAULT_LABELS: ShippingLabels = {
   check: "Vérifier",
   servedPrefix: "Oui, nous livrons en ",
   prepNote: "Préparation 24h à 4 jours · ",
+  customsNone: "Aucun frais de douane",
+  customsPossible: "Frais de douane éventuels à la charge du destinataire",
+  ordersNote: "Déjà {n} commandes réalisées dans ce pays",
   notServedPrefix: "Nous ne livrons pas encore en ",
   notServedHint:
     "Laissez-nous votre email, on vous prévient dès que c'est disponible.",
@@ -53,12 +62,16 @@ const DEFAULT_LABELS: ShippingLabels = {
 
 const BG = "#F6F0E4";
 const CTA = "#C4A24F";
-const CTA_HOVER = "linear-gradient(135deg,#D4B264,#B98F3A)";
 const ACCENT = "#A8801F";
 const TITLE = "#2C2620";
 const FIELD_BORDER = "#E0CFA8";
 const GLOBE = "#A8915F";
 const DETAIL = "#8A7E68";
+// Douane — tons discrets accordés à la palette luxe
+const CUSTOMS_OK = "#2F7D54"; // vert discret (UE : aucun frais)
+const CUSTOMS_OK_BG = "#EAF4EC";
+const CUSTOMS_WARN = "#8A6B1F"; // brun/or discret (frais éventuels)
+const CUSTOMS_WARN_BG = "#F4ECD8";
 
 function prefersReducedMotion() {
   if (typeof window === "undefined") return false;
@@ -88,7 +101,6 @@ export function ShippingChecker({
   const [result, setResult] = useState<ShippingCountry | null>(null);
   const [show, setShow] = useState(false); // pour l'animation d'apparition
   const [emailSent, setEmailSent] = useState(false);
-  const [hoverBtn, setHoverBtn] = useState(false);
 
   const listboxId = useId();
   const optionId = (i: number) => `${listboxId}-opt-${i}`;
@@ -153,14 +165,11 @@ export function ShippingChecker({
       setSelectedCode(c.code);
       setQuery("");
       setOpen(false);
-      // Changement manuel : on masque la confirmation précédente.
-      // La nouvelle confirmation n'apparaît qu'après clic sur « Vérifier ».
-      setResult(null);
-      setShow(false);
-      setEmailSent(false);
+      // Résultat affiché en direct dès la sélection (plus de bouton « Vérifier »).
+      runCheck(c.code);
       inputRef.current?.focus();
     },
-    []
+    [runCheck]
   );
 
   // Fermer le listbox au clic extérieur
@@ -185,7 +194,6 @@ export function ShippingChecker({
     } else if (e.key === "Enter") {
       e.preventDefault();
       if (open && filtered[activeIndex]) selectCountry(filtered[activeIndex]);
-      else if (selectedCode) runCheck(selectedCode);
     } else if (e.key === "Escape") {
       setOpen(false);
     }
@@ -193,9 +201,6 @@ export function ShippingChecker({
 
   const selected = selectedCode ? byCode.get(selectedCode.toUpperCase()) : undefined;
   const displayValue = open ? query : selected ? `${selected.flag} ${selected.name}` : query;
-
-  const startAlign = isRTL ? "right" : "left";
-  const arrow = isRTL ? "←" : "→";
 
   return (
     <section
@@ -249,7 +254,7 @@ export function ShippingChecker({
           {L.subtitle}
         </p>
 
-        {/* Ligne combobox + bouton */}
+        {/* Combobox pays — le résultat s'affiche en direct sous le champ */}
         <div
           ref={rootRef}
           style={{
@@ -415,34 +420,6 @@ export function ShippingChecker({
               </ul>
             )}
           </div>
-
-          {/* Bouton Vérifier */}
-          <button
-            type="button"
-            onClick={() => selectedCode && runCheck(selectedCode)}
-            onMouseEnter={() => setHoverBtn(true)}
-            onMouseLeave={() => setHoverBtn(false)}
-            disabled={!selectedCode}
-            style={{
-              flexShrink: 0,
-              border: "none",
-              borderRadius: 999,
-              padding: "0 26px",
-              height: 52,
-              background: hoverBtn && selectedCode ? CTA_HOVER : CTA,
-              color: "#fff",
-              fontFamily: "var(--font-sans)",
-              fontSize: 14,
-              fontWeight: 600,
-              letterSpacing: ".02em",
-              cursor: selectedCode ? "pointer" : "not-allowed",
-              opacity: selectedCode ? 1 : 0.55,
-              transition: "background .25s, opacity .2s",
-              whiteSpace: "nowrap",
-            }}
-          >
-            {L.check} {arrow}
-          </button>
         </div>
 
         {/* Zone de résultat (aria-live) */}
@@ -531,6 +508,58 @@ export function ShippingChecker({
                   {result.deliveryDays}
                   {result.freeShippingNote ? ` · ${result.freeShippingNote}` : ""}
                 </div>
+                {(() => {
+                  const customs = customsFor(result);
+                  const ok = customs === "none";
+                  return (
+                    <div
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: 6,
+                        marginTop: 10,
+                        padding: "5px 11px",
+                        borderRadius: 999,
+                        background: ok ? CUSTOMS_OK_BG : CUSTOMS_WARN_BG,
+                        color: ok ? CUSTOMS_OK : CUSTOMS_WARN,
+                        fontFamily: "var(--font-sans)",
+                        fontSize: 12,
+                        fontWeight: 600,
+                        lineHeight: 1.35,
+                      }}
+                    >
+                      <span aria-hidden style={{ fontSize: 13 }}>
+                        {ok ? "✓" : "ⓘ"}
+                      </span>
+                      <span>{ok ? L.customsNone : L.customsPossible}</span>
+                    </div>
+                  );
+                })()}
+                {typeof result.orders === "number" && (
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 7,
+                      marginTop: 10,
+                      fontFamily: "var(--font-sans)",
+                      fontSize: 12,
+                      color: ACCENT,
+                      fontWeight: 600,
+                      lineHeight: 1.4,
+                    }}
+                  >
+                    <span aria-hidden style={{ fontSize: 13 }}>
+                      ✦
+                    </span>
+                    <span>
+                      {L.ordersNote.replace(
+                        "{n}",
+                        new Intl.NumberFormat(locale).format(result.orders)
+                      )}
+                    </span>
+                  </div>
+                )}
               </div>
             </div>
           )}

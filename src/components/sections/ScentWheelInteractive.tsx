@@ -27,7 +27,7 @@ const DEFAULT_LABELS: ScentWheelLabels = {
     "Cliquez sur une famille olfactive pour explorer ses notes et découvrir nos best-sellers.",
   cta: "Découvrir la sélection",
   wheelAria: "Roue des familles olfactives",
-  priceFrom: "dès",
+  priceFrom: "",
 };
 
 // Tracés SVG des 6 segments (ordre : Oud, Rose, Ambré, Boisé, Musc, Épicé)
@@ -109,6 +109,56 @@ export function ScentWheelInteractive({
         padding: 22,
       }}
     >
+      {/* Fond d'ambiance — image (ou vidéo) de l'ingrédient de la famille active */}
+      {active?.ingredientImage && (
+        <div
+          key={active.key}
+          aria-hidden
+          style={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 0,
+            pointerEvents: "none",
+            animation: reduced ? "none" : "dpWheelBgFade .6s ease",
+          }}
+        >
+          {active.video ? (
+            <video
+              src={active.video}
+              poster={active.ingredientImage}
+              muted
+              loop
+              autoPlay
+              playsInline
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+            />
+          ) : (
+            <Image
+              src={active.ingredientImage}
+              alt=""
+              fill
+              sizes="100vw"
+              style={{ objectFit: "cover" }}
+            />
+          )}
+          {/* Voile crème pour garder le texte lisible */}
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "linear-gradient(180deg, rgba(250,246,238,.86), rgba(250,246,238,.82))",
+            }}
+          />
+        </div>
+      )}
+
       {/* Contenu */}
       <div
         style={{
@@ -137,7 +187,7 @@ export function ScentWheelInteractive({
             aria-label={L.wheelAria}
             style={{ maxWidth: 360, overflow: "visible" }}
           >
-            {/* clipPaths : un par segment ayant un media (image/vidéo) */}
+            {/* clipPaths : un par segment ayant un media (image/vidéo) + cercle central */}
             <defs>
               {families.map((f, i) =>
                 f.ingredientImage ? (
@@ -146,6 +196,9 @@ export function ScentWheelInteractive({
                   </clipPath>
                 ) : null
               )}
+              <clipPath id="wheel-center-clip">
+                <circle cx={150} cy={150} r={56} />
+              </clipPath>
             </defs>
 
             {families.map((f, i) => {
@@ -255,7 +308,7 @@ export function ScentWheelInteractive({
               );
             })}
 
-            {/* Cercle central */}
+            {/* Cercle central — fond crème uni (pas d'image) */}
             <circle
               cx={150}
               cy={150}
@@ -264,18 +317,42 @@ export function ScentWheelInteractive({
               stroke="#E6DCC8"
               strokeWidth={1}
             />
-            <text
-              x={150}
-              y={active ? 142 : 150}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fontFamily="var(--font-display)"
-              fontSize={active ? 22 : 16}
-              fill="#2C2620"
-              style={{ pointerEvents: "none" }}
-            >
-              {active ? active.label : L.restName}
-            </text>
+            {active ? (
+              <text
+                x={150}
+                y={142}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fontFamily="var(--font-display)"
+                fontSize={22}
+                fill="#2C2620"
+                style={{ pointerEvents: "none" }}
+              >
+                {active.label}
+              </text>
+            ) : (
+              <text
+                x={150}
+                y={150}
+                textAnchor="middle"
+                fontFamily="var(--font-display)"
+                fontSize={15}
+                fill="#2C2620"
+                style={{ pointerEvents: "none" }}
+              >
+                {(() => {
+                  const w = L.restName.split(" ");
+                  const mid = Math.ceil(w.length / 2);
+                  const lines = w.length > 2 ? [w.slice(0, mid).join(" "), w.slice(mid).join(" ")] : w;
+                  const startY = lines.length > 1 ? 144 : 150;
+                  return lines.map((ln, idx) => (
+                    <tspan key={idx} x={150} y={startY + idx * 17}>
+                      {ln}
+                    </tspan>
+                  ));
+                })()}
+              </text>
+            )}
             <text
               x={150}
               y={163}
@@ -284,11 +361,14 @@ export function ScentWheelInteractive({
               fontFamily="var(--font-sans)"
               fontSize={8.5}
               letterSpacing="2"
-              fill="#A8915F"
+              fill="#8A6E2E"
               style={{
                 pointerEvents: "none",
                 textTransform: "uppercase",
                 opacity: active ? 1 : 0,
+                paintOrder: "stroke",
+                stroke: active ? "rgba(250,246,238,.9)" : "none",
+                strokeWidth: active ? 3 : 0,
               }}
             >
               {L.familySub}
@@ -405,6 +485,7 @@ export function ScentWheelInteractive({
                       flexShrink: 0,
                       borderRadius: 10,
                       overflow: "hidden",
+                      background: "#F7F1E6",
                     }}
                   >
                     <Image
@@ -412,7 +493,7 @@ export function ScentWheelInteractive({
                       alt={p.name}
                       fill
                       sizes="56px"
-                      style={{ objectFit: "cover" }}
+                      style={{ objectFit: "contain" }}
                     />
                   </div>
                   <div style={{ minWidth: 0, flex: 1 }}>
@@ -450,7 +531,7 @@ export function ScentWheelInteractive({
                         color: "#A8801F",
                       }}
                     >
-                      {L.priceFrom} {fmtPrice(p.price)}
+                      {L.priceFrom ? `${L.priceFrom} ` : ""}{fmtPrice(p.price)}
                     </div>
                   </div>
                 </Link>
@@ -461,6 +542,10 @@ export function ScentWheelInteractive({
       </div>
 
       <style>{`
+        @keyframes dpWheelBgFade {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
         .dp-wheel-seg:focus-visible path {
           stroke: #2C2620;
           stroke-width: 2.5;

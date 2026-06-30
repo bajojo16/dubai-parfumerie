@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { addItem } from "@/lib/cart";
+import { QtyStepper } from "@/components/ui/QtyStepper";
 import type { ShoppableVideo } from "@/data/shoppable-videos";
 
 export type ShoppableCardLabels = {
@@ -41,6 +42,7 @@ export function ShoppableVideoCard({
   const [reduceMotion, setReduceMotion] = useState(false);
   const [hover, setHover] = useState(false);
   const [added, setAdded] = useState(false);
+  const [qty, setQty] = useState(1);
   const addedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const fmtPrice = useCallback(
@@ -108,12 +110,12 @@ export function ShoppableVideoCard({
         price: product.price,
         image: product.thumbnailUrl,
       },
-      1
+      qty
     );
     setAdded(true);
     if (addedTimer.current) clearTimeout(addedTimer.current);
     addedTimer.current = setTimeout(() => setAdded(false), 1800);
-  }, [available, product]);
+  }, [available, product, qty]);
 
   const buttonBg = !available
     ? "#D8D2C6"
@@ -253,6 +255,12 @@ export function ShoppableVideoCard({
         >
           {fmtPrice(product.price)}
         </div>
+
+        {available && (
+          <div style={{ marginTop: 12 }}>
+            <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
+          </div>
+        )}
 
         <button
           type="button"

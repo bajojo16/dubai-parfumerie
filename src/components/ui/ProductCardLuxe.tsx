@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
+import { QtyStepper } from "@/components/ui/QtyStepper";
 
 /* ── Design tokens « Soft Luxe Arrondi » (hex exacts) ── */
 const T = {
@@ -40,11 +41,12 @@ export function ProductCardLuxe({
   locale,
 }: {
   product: LuxeProduct;
-  onAddToCart?: (p: LuxeProduct) => void;
+  onAddToCart?: (p: LuxeProduct, qty: number) => void;
   locale?: string;
 }) {
   const t = useTranslations("common");
   const [hover, setHover] = useState(false);
+  const [qty, setQty] = useState(1);
   const isRTL = locale === "ar";
   const cur = product.currency ?? "€";
 
@@ -159,16 +161,17 @@ export function ProductCardLuxe({
           )}
         </div>
 
-        {/* Bouton */}
+        {/* Sélecteur quantité + bouton */}
+        <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
+        <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
         <button
           type="button"
           aria-label={`${t("add_to_cart")} — ${product.title}`}
           onMouseEnter={() => setHover(true)}
           onMouseLeave={() => setHover(false)}
-          onClick={() => onAddToCart?.(product)}
+          onClick={() => onAddToCart?.(product, qty)}
           style={{
-            marginTop: 6,
-            width: "100%",
+            flex: 1,
             border: "none",
             cursor: "pointer",
             borderRadius: 24,
@@ -187,6 +190,7 @@ export function ProductCardLuxe({
         >
           {t("add_to_cart")}
         </button>
+        </div>
       </div>
     </div>
   );

@@ -98,8 +98,8 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     video: "/assets/videos/roue-epice.mp4",
     collectionSlug: "epice",
     products: [
-      { name: "Saffron Mood", brand: "Lattafa", price: 30.9, image: "/assets/prod-5.jpg", href: "/produit/saffron-mood" },
-      { name: "Saffron Oud", brand: "Rasasi", price: 41.9, image: "/assets/prod-2.jpg", href: "/produit/saffron-oud" },
+      { name: "Saffron Mood", brand: "Lattafa", price: 30.9, image: "/assets/oils/tanasuk.png", href: "/produit/saffron-mood" },
+      { name: "Saffron Oud", brand: "Rasasi", price: 41.9, image: "/assets/oils/silk.png", href: "/produit/saffron-oud" },
     ],
   },
 ];

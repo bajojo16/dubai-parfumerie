@@ -242,7 +242,7 @@ export function Footer() {
           <div style={{ display: "flex", gap: 22 }}>
             {[
               { k: "10 ans", v: "d'expertise" },
-              { k: "7000+", v: "clients" },
+              { k: "8 400+", v: "clients" },
               { k: "4,8/5", v: "Trustpilot" },
             ].map((s) => (
               <div key={s.k}>

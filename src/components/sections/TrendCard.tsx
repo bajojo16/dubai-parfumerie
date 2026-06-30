@@ -1,11 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { TrendProduct } from "@/data/trend-products";
 import { type TrendTheme, getTrendTheme } from "@/data/trend-theme";
 import { addItem } from "@/lib/cart";
+import { QtyStepper } from "@/components/ui/QtyStepper";
 
 export type TrendCardLabels = {
   rank: string;        // "#{rank}" — {rank} remplacé
@@ -38,11 +38,13 @@ export function TrendCard({
   theme,
   locale = "fr",
   labels,
+  onOpen,
 }: {
   product: TrendProduct;
   theme?: TrendTheme;
   locale?: string;
   labels?: Partial<TrendCardLabels>;
+  onOpen?: () => void; // clic carte → ouvre la lightbox vidéo + avis
 }) {
   const T = theme ?? getTrendTheme();
   const L = { ...DEFAULT_LABELS, ...labels };
@@ -50,6 +52,7 @@ export function TrendCard({
   const [hover, setHover] = useState(false);
   const [added, setAdded] = useState(false);
   const [liked, setLiked] = useState(false);
+  const [qty, setQty] = useState(1);
   const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
@@ -85,7 +88,7 @@ export function TrendCard({
         price: product.price,
         image: product.image,
       },
-      1
+      qty
     );
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1800);
@@ -129,14 +132,24 @@ export function TrendCard({
   };
 
   return (
-    <Link
-      href={product.href}
+    <div
+      role="button"
+      tabIndex={0}
+      aria-label={product.name}
       dir={isRTL ? "rtl" : "ltr"}
+      onClick={() => onOpen?.()}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onOpen?.();
+        }
+      }}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
         position: "relative",
         display: "block",
+        cursor: "pointer",
         textDecoration: "none",
         aspectRatio: "9 / 16",
         borderRadius: 18,
@@ -149,18 +162,40 @@ export function TrendCard({
         boxShadow: animate && hover ? "0 16px 34px rgba(20,15,8,0.22)" : "none",
       }}
     >
-      {/* Média plein cadre (object-cover) */}
-      <Image
-        src={product.image}
-        alt={product.name}
-        fill
-        sizes="(max-width:600px) 70vw, 240px"
-        style={{
-          objectFit: "cover",
-          transition: animate ? "transform 360ms ease" : "none",
-          transform: animate && hover ? "scale(1.06)" : "none",
-        }}
-      />
+      {/* Média plein cadre (object-cover) — vidéo si fournie, sinon image */}
+      {product.cardVideo ? (
+        <video
+          src={product.cardVideo}
+          autoPlay
+          muted
+          loop
+          playsInline
+          preload="metadata"
+          poster={product.image}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            objectFit: "cover",
+            pointerEvents: "none",
+            transition: animate ? "transform 360ms ease" : "none",
+            transform: animate && hover ? "scale(1.06)" : "none",
+          }}
+        />
+      ) : (
+        <Image
+          src={product.image}
+          alt={product.name}
+          fill
+          sizes="(max-width:600px) 70vw, 240px"
+          style={{
+            objectFit: "cover",
+            transition: animate ? "transform 360ms ease" : "none",
+            transform: animate && hover ? "scale(1.06)" : "none",
+          }}
+        />
+      )}
 
       {/* Dégradé sombre bas (lisibilité) */}
       <div
@@ -325,14 +360,20 @@ export function TrendCard({
           )}
         </div>
 
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}
+        >
+        {product.available && (
+          <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
+        )}
         <button
           type="button"
           disabled={!product.available}
           onClick={onAdd}
           aria-label={product.available ? `${L.addToCart} — ${product.name}` : L.soldOut}
           style={{
-            marginTop: 8,
-            width: "100%",
+            flex: 1,
             display: "inline-flex",
             alignItems: "center",
             justifyContent: "center",
@@ -369,7 +410,8 @@ export function TrendCard({
             L.soldOut
           )}
         </button>
+        </div>
       </div>
-    </Link>
+    </div>
   );
 }

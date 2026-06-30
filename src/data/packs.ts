@@ -27,6 +27,8 @@ export type Pack = {
   available: boolean;
   variantId: string;
   href: string;
+  /** Nombre de fioles d'échantillons dans le coffret (pastille « xN »). */
+  sampleCount?: number;
 };
 
 export const DEMO: Pack[] = [
@@ -41,6 +43,7 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-trio-signature-oud",
     href: "/produit/trio-signature-oud",
+    sampleCount: 3,
   },
   {
     slug: "coffret-decouverte-prestige",
@@ -53,6 +56,7 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-coffret-decouverte-prestige",
     href: "/produit/coffret-decouverte-prestige",
+    sampleCount: 5,
   },
   {
     slug: "duo-oud-royal",
@@ -65,6 +69,7 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-duo-oud-royal",
     href: "/produit/duo-oud-royal",
+    sampleCount: 2,
   },
   {
     slug: "edition-nuit-doree",
@@ -77,6 +82,7 @@ export const DEMO: Pack[] = [
     available: false,
     variantId: "pack-edition-nuit-doree",
     href: "/produit/edition-nuit-doree",
+    sampleCount: 3,
   },
   {
     slug: "pack-jardin-d-orient",
@@ -88,6 +94,7 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-jardin-d-orient",
     href: "/produit/pack-jardin-d-orient",
+    sampleCount: 3,
   },
   {
     slug: "coffret-tendresse",
@@ -100,5 +107,45 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-coffret-tendresse",
     href: "/produit/coffret-tendresse",
+    sampleCount: 4,
+  },
+  {
+    slug: "coffret-ambre-saphir",
+    name: "Coffret Ambre & Saphir",
+    subtitle: "Trio ambré · 30 ml",
+    image: "/assets/prod-2.jpg",
+    price: 139,
+    compareAtPrice: 175,
+    badge: "bestseller",
+    available: true,
+    variantId: "pack-coffret-ambre-saphir",
+    href: "/produit/coffret-ambre-saphir",
+    sampleCount: 3,
+  },
+  {
+    slug: "edition-musc-imperial",
+    name: "Édition Musc Impérial",
+    subtitle: "Coffret limité · 4 fioles",
+    image: "/assets/prod-4.jpg",
+    price: 199,
+    compareAtPrice: 245,
+    badge: "limited",
+    available: true,
+    variantId: "pack-edition-musc-imperial",
+    href: "/produit/edition-musc-imperial",
+    sampleCount: 4,
+  },
+  {
+    slug: "pack-rose-de-taif",
+    name: "Pack Rose de Taïf",
+    subtitle: "Duo floral oriental · 50 ml",
+    image: "/assets/coffret-reef.jpg",
+    price: 109,
+    compareAtPrice: 129,
+    badge: "coup_de_coeur",
+    available: true,
+    variantId: "pack-rose-de-taif",
+    href: "/produit/pack-rose-de-taif",
+    sampleCount: 2,
   },
 ];

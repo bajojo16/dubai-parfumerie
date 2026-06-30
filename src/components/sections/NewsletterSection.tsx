@@ -100,49 +100,60 @@ export function NewsletterSection({
     <section
       dir={isRTL ? "rtl" : "ltr"}
       aria-labelledby={`${inputId}-title`}
+      className="np-section"
       style={{
         position: "relative",
-        minHeight: 420,
         borderRadius: 20,
         overflow: "hidden",
+        background: "#FAF6EE",
+        border: "1px solid #EFE6D2",
         display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
+        flexDirection: "row",
+        alignItems: "stretch",
         isolation: "isolate",
       }}
     >
-      {/* Image de fond */}
-      <Image
-        src={bgImage}
-        alt=""
-        aria-hidden
-        fill
-        sizes="(max-width: 768px) 100vw, 960px"
-        style={{ objectFit: "cover", zIndex: -2 }}
-      />
-
-      {/* Voile de lisibilité — clair, plus dense au centre (le visuel reste visible) */}
+      {/* Colonne image — occupe seulement une partie de l'encadré (pas le fond du texte) */}
       <div
-        aria-hidden
+        className="np-media"
         style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: -1,
-          background:
-            "radial-gradient(ellipse at center, rgba(246,240,228,0.55) 0%, rgba(246,240,228,0.42) 45%, rgba(246,240,228,0) 100%)",
-        }}
-      />
-
-      {/* Contenu superposé centré */}
-      <div
-        style={{
-          width: "100%",
-          maxWidth: 520,
-          padding: "48px 24px",
-          textAlign: "center",
-          margin: "0 auto",
+          position: "relative",
+          flex: "0 0 43%",
+          minHeight: 420,
+          overflow: "hidden",
         }}
       >
+        <Image
+          src={bgImage}
+          alt=""
+          aria-hidden
+          fill
+          sizes="(max-width: 700px) 100vw, 43vw"
+          style={{ objectFit: "cover" }}
+        />
+      </div>
+
+      {/* Colonne contenu — fond crème uni, texte parfaitement lisible */}
+      <div
+        className="np-content"
+        style={{
+          flex: "1 1 0%",
+          minWidth: 0,
+          background: "#FAF6EE",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <div
+          style={{
+            width: "100%",
+            maxWidth: 520,
+            padding: "48px 40px",
+            textAlign: "center",
+            margin: "0 auto",
+          }}
+        >
         <p
           style={{
             fontFamily: "var(--font-sans)",
@@ -352,9 +363,17 @@ export function NewsletterSection({
           </a>
           .
         </p>
+        </div>
       </div>
 
       <style>{`
+        .np-section { flex-direction: row; }
+        .np-content { min-height: 420px; }
+        @media (max-width: 700px) {
+          .np-section { flex-direction: column; }
+          .np-media { flex: 0 0 auto; min-height: 0; height: 180px; }
+          .np-content { min-height: 0; }
+        }
         .np-submit { transition: background .2s ease, transform .15s ease; }
         .np-submit:not(:disabled):hover {
           background: linear-gradient(135deg, #D4B264, #B98F3A);
