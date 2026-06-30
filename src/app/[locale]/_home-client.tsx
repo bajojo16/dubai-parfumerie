@@ -25,6 +25,7 @@ import { TrendCarousel } from "@/components/sections/TrendCarousel";
 import { DEMO_TRENDS } from "@/data/trend-products";
 import { BestSellersRail } from "@/components/sections/best-sellers-rail";
 import { REEF_EDITORIAL, REEF_PRODUCTS } from "@/data/best-sellers";
+import { TOP_EDITORIAL, TOP_PRODUCTS } from "@/data/best-sellers-top";
 import { OilCardCarousel } from "@/components/sections/OilCardCarousel";
 import { DEMO as OIL_PRODUCTS } from "@/data/oil-products";
 import { PackGrid } from "@/components/sections/PackGrid";
@@ -653,19 +654,7 @@ export default function HomePageClient() {
         />
       </section>
 
-      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
-      <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 920, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow={tTwin("eyebrow")}
-            title={tTwin("title")}
-            subtitle={tTwin("subtitle")}
-          />
-          <OlfactiveTwin matches={OLFACTIVE_TWINS} locale={locale} />
-        </div>
-      </section>
-
-      {/* ── COFFRETS & LOTS (sous bannière) ───────────────────────── */}
+      {/* ── COFFRETS & LOTS (sous Maison à l'honneur) ────────────── */}
       <section id="coffrets-lots" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
@@ -762,6 +751,35 @@ export default function HomePageClient() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
             {bestSellers.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
           </div>
+        </div>
+      </section>
+
+      {/* ── BEST-SELLERS (vidéo à droite, sous Coffrets & Lots) ───── */}
+      <section id="bestsellers-rail" style={{ background: "#F7F3EC", padding: "20px 0 40px" }}>
+        <BestSellersRail
+          eyebrow="Best-sellers"
+          heading="Les plus aimés du moment"
+          boldKeyword="plus aimés"
+          editorial={TOP_EDITORIAL}
+          products={TOP_PRODUCTS}
+          editorialSide="end"
+          onAddToCart={(id) => {
+            const p = TOP_PRODUCTS.find((x) => x.id === id);
+            if (p) addItem({ id: p.id, name: p.name, brand: p.brand, price: p.price.amount, image: p.image });
+          }}
+          locale={locale}
+        />
+      </section>
+
+      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
+      <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 920, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow={tTwin("eyebrow")}
+            title={tTwin("title")}
+            subtitle={tTwin("subtitle")}
+          />
+          <OlfactiveTwin matches={OLFACTIVE_TWINS} locale={locale} />
         </div>
       </section>
 
@@ -923,6 +941,13 @@ export default function HomePageClient() {
         </div>
       </section>
       )}
+
+      {/* ── NEWSLETTER (après Exclusif / Huiles) ──────────────────── */}
+      <section id="newsletter" style={{ background: "var(--surface-cream-2)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+          <NewsletterSection locale={locale} />
+        </div>
+      </section>
 
       {/* ── 5. AUTHENTICITÉ ───────────────────────────────────────── */}
       <section id="authenticite" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
@@ -1295,7 +1320,8 @@ export default function HomePageClient() {
       {/* ── 21. LE JOURNAL (JournalSection bento) ─────────────────── */}
       <JournalSection articles={JOURNAL_ARTICLES} locale={locale} />
 
-      {/* ── 22. ENCYCLOPÉDIE ──────────────────────────────────────── */}
+      {/* ── 22. ENCYCLOPÉDIE — désactivée ─────────────────────────── */}
+      {false && (
       <section id="encyclopedie" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
@@ -1315,6 +1341,7 @@ export default function HomePageClient() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── 23. RÉASSURANCE 5 PILIERS ─────────────────────────────── */}
       <section id="reassurance" style={{ background: "linear-gradient(180deg, #4a3a28, #3a2c1d)", padding: "60px 20px", borderTop: "1px solid rgba(200,144,30,0.18)" }}>
@@ -1374,13 +1401,6 @@ export default function HomePageClient() {
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", color: "var(--ink-500)", lineHeight: 1.82 }}>
             Livraison offerte dès 60 € d'achat, expédition sous 24h depuis notre entrepôt en France, paiement sécurisé en 4× sans frais. Retours acceptés 14 jours après réception pour tout article non ouvert. Dubai Parfumerie, votre ambassadeur de la parfumerie du Golfe depuis 2016.
           </p>
-        </div>
-      </section>
-
-      {/* ── NEWSLETTER (juste avant le footer) ────────────────────── */}
-      <section id="newsletter" style={{ background: "var(--surface-cream-2)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
-          <NewsletterSection locale={locale} />
         </div>
       </section>
 

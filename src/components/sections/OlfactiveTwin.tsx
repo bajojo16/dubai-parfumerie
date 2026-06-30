@@ -58,23 +58,47 @@ export function OlfactiveTwin({
     }
   };
 
-  return (
-    <div
-      dir={isRTL ? "rtl" : "ltr"}
-      style={{
-        background: C.stage,
-        border: `0.5px solid ${C.border}`,
-        borderRadius: compact ? 14 : 16,
-        padding: compact ? 14 : 22,
-        textAlign: isRTL ? "right" : "left",
-      }}
-    >
-      {/* Intro */}
-      <p style={{ fontFamily: "var(--font-sans)", fontSize: compact ? 12 : 13, color: C.muted, margin: compact ? "0 0 10px" : "0 0 16px" }}>
+  // --- Blocs réutilisables (agencés différemment selon le variant) ---
+
+  // Intro simple (variant full uniquement)
+  const introEl = (
+    <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: C.muted, margin: "0 0 16px" }}>
+      {t("intro")}
+    </p>
+  );
+
+  // Accroche « ? » dorée + question incitative (variant compact uniquement)
+  const hookEl = (
+    <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 14 }}>
+      <span
+        className="otwin-q"
+        aria-hidden
+        style={{
+          flexShrink: 0,
+          width: 42,
+          height: 42,
+          borderRadius: "50%",
+          display: "grid",
+          placeItems: "center",
+          background: C.tagBg,
+          border: `1.5px solid ${C.gold}`,
+          color: C.goldLabel,
+          fontFamily: "var(--font-display)",
+          fontSize: 26,
+          fontWeight: 600,
+          lineHeight: 1,
+        }}
+      >
+        ?
+      </span>
+      <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: 13.5, color: C.ink, lineHeight: 1.4 }}>
         {t("intro")}
       </p>
+    </div>
+  );
 
-      {/* Recherche */}
+  // Recherche
+  const searchEl = (
       <div
         style={{
           display: "flex",
@@ -108,8 +132,10 @@ export function OlfactiveTwin({
           }}
         />
       </div>
+  );
 
-      {/* Pills marques cibles */}
+  // Pills marques cibles
+  const pillsEl = (
       <div
         style={
           compact
@@ -161,8 +187,10 @@ export function OlfactiveTwin({
           );
         })}
       </div>
+  );
 
-      {/* Résultat */}
+  // Résultat
+  const resultEl = (
       <div aria-live="polite">
         {selected && (
           <div style={{ background: "#fff", border: `0.5px solid ${C.border}`, borderRadius: compact ? 12 : 14, padding: compact ? 12 : 18 }}>
@@ -246,8 +274,10 @@ export function OlfactiveTwin({
           </div>
         )}
       </div>
+  );
 
-      {/* Mention légale — toujours visible */}
+  // Mention légale — toujours visible
+  const legalEl = (
       <div style={{ display: "flex", alignItems: "flex-start", gap: compact ? 6 : 8, marginTop: compact ? 10 : 16 }}>
         <svg width={compact ? 12 : 15} height={compact ? 12 : 15} viewBox="0 0 24 24" fill="none" stroke={C.legal} strokeWidth="2" strokeLinecap="round" aria-hidden style={{ flexShrink: 0, marginTop: 1 }}>
           <circle cx="12" cy="12" r="10" /><path d="M12 16v-4" /><path d="M12 8h.01" />
@@ -256,6 +286,52 @@ export function OlfactiveTwin({
           {t("legal")}
         </p>
       </div>
+  );
+
+  return (
+    <div
+      dir={isRTL ? "rtl" : "ltr"}
+      style={{
+        background: C.stage,
+        border: `0.5px solid ${C.border}`,
+        borderRadius: compact ? 14 : 16,
+        padding: compact ? 14 : 22,
+        textAlign: isRTL ? "right" : "left",
+      }}
+    >
+      {compact ? (
+        <>
+          {/* Styles scoped : accroche pulsée (respecte prefers-reduced-motion) + grille responsive */}
+          <style>{`
+            @keyframes otwin-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(201,162,74,.45); } 50% { box-shadow: 0 0 0 7px rgba(201,162,74,0); } }
+            .otwin-q { animation: otwin-pulse 2.4s ease-in-out infinite; }
+            .otwin-grid { display: grid; grid-template-columns: minmax(0, 45fr) minmax(0, 55fr); gap: 18px; align-items: start; }
+            @media (max-width: 640px) { .otwin-grid { grid-template-columns: 1fr; } }
+            @media (prefers-reduced-motion: reduce) { .otwin-q { animation: none; } }
+          `}</style>
+          {hookEl}
+          <div className="otwin-grid">
+            {/* Colonne gauche : recherche + chips */}
+            <div>
+              {searchEl}
+              {pillsEl}
+            </div>
+            {/* Colonne droite : carte résultat + mention légale */}
+            <div>
+              {resultEl}
+              {legalEl}
+            </div>
+          </div>
+        </>
+      ) : (
+        <>
+          {introEl}
+          {searchEl}
+          {pillsEl}
+          {resultEl}
+          {legalEl}
+        </>
+      )}
     </div>
   );
 }

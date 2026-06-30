@@ -33,10 +33,17 @@ export function EditorialVideoCard({
   card,
   locale = "fr",
   labels,
+  fluid = false,
 }: {
   card: EditorialCard;
   locale?: string;
   labels?: Partial<EditorialCardLabels>;
+  /**
+   * Mode largeur :
+   * - false (défaut) : largeur fixe 380px (rail scrollable, mode "start").
+   * - true : remplit la largeur de son conteneur (zone vidéo ancrée, mode "end").
+   */
+  fluid?: boolean;
 }) {
   const L = { ...DEFAULT_LABELS, ...labels };
   const isRTL = locale === "ar";
@@ -98,8 +105,8 @@ export function EditorialVideoCard({
       ref={rootRef}
       dir={isRTL ? "rtl" : "ltr"}
       style={{
-        flex: "0 0 auto",
-        width: 380,
+        flex: fluid ? "1 1 auto" : "0 0 auto",
+        width: fluid ? "100%" : 380,
         position: "relative",
         borderRadius: 18,
         overflow: "hidden",

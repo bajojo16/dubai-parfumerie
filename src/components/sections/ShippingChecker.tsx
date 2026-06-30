@@ -57,7 +57,7 @@ const DEFAULT_LABELS: ShippingLabels = {
   emailThanks: "Merci ! Nous vous écrirons dès l'ouverture de cette destination.",
   ordersOtherCountries: "Nous avons déjà livré dans {n} autres pays",
   statPrep: "Préparation 24h–4 j",
-  statTracking: "Suivi 100%",
+  statTracking: "Numéro de suivi international et national",
   noResults: "Aucun pays trouvé",
 };
 
@@ -696,14 +696,15 @@ export function ShippingChecker({
           }}
         >
           {[
-            { text: otherServedText, grow: 2, basis: 240 },
-            { text: L.statPrep, grow: 1, basis: 150 },
-            { text: L.statTracking, grow: 1, basis: 150 },
-          ].map((chip, i) => (
+            otherServedText,
+            L.statPrep,
+            L.statTracking,
+          ].map((text, i) => (
             <div
               key={i}
               style={{
-                flex: `${chip.grow} 1 ${chip.basis}px`,
+                // 3 colonnes égales sur desktop, repli en colonne sur mobile
+                flex: "1 1 220px",
                 background: "#fff",
                 border: `1px solid ${FIELD_BORDER}`,
                 borderRadius: 14,
@@ -713,8 +714,9 @@ export function ShippingChecker({
                 gap: 10,
                 fontFamily: "var(--font-sans)",
                 fontSize: 13,
+                lineHeight: 1.35,
                 color: TITLE,
-                fontWeight: i === 0 ? 600 : 500,
+                fontWeight: 500,
               }}
             >
               <span
@@ -727,7 +729,7 @@ export function ShippingChecker({
                   flexShrink: 0,
                 }}
               />
-              {chip.text}
+              {text}
             </div>
           ))}
         </div>

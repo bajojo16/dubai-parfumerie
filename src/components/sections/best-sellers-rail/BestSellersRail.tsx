@@ -122,78 +122,159 @@ export function BestSellersRail({
         </h2>
       </div>
 
-      {/* Rail */}
-      <div style={{ position: "relative", marginTop: 22 }}>
+      {/* ── Mode "start" (défaut) : rail unique scrollable, carte vidéo en tête ── */}
+      {editorialSide === "start" && (
+        <div style={{ position: "relative", marginTop: 22 }}>
+          <div
+            className="bsr-scroll"
+            style={{
+              display: "flex",
+              gap: 18,
+              overflowX: "auto",
+              scrollSnapType: "x mandatory",
+              // Aligne le rail sur le conteneur centré et garde une marge de fin
+              paddingInline: "max(24px, calc((100% - 1240px) / 2 + 24px))",
+              paddingBlock: 8,
+              scrollbarWidth: "none", // Firefox
+              msOverflowStyle: "none",
+            }}
+          >
+            {/* Carte éditoriale en tête (gauche LTR / droite RTL via l'ordre + dir) */}
+            <div style={{ scrollSnapAlign: "start", display: "flex" }}>
+              <EditorialVideoCard
+                card={editorial}
+                locale={locale}
+                labels={editorialLabels}
+              />
+            </div>
+
+            {products.map((p) => (
+              <div key={p.id} style={{ scrollSnapAlign: "start", display: "flex" }}>
+                <RailProductCard
+                  product={p}
+                  onAddToCart={add}
+                  locale={locale}
+                  labels={cardLabels}
+                />
+              </div>
+            ))}
+          </div>
+
+          {/* Voile de bord (fin du rail) — miroir en RTL via insetInlineEnd */}
+          <div
+            aria-hidden
+            style={{
+              position: "absolute",
+              top: 0,
+              bottom: 0,
+              insetInlineEnd: 0,
+              width: 64,
+              background: isRTL
+                ? `linear-gradient(to left, ${C.cream}, rgba(247,243,236,0))`
+                : `linear-gradient(to right, ${C.cream}, rgba(247,243,236,0))`,
+              pointerEvents: "none",
+            }}
+          />
+        </div>
+      )}
+
+      {/* ── Mode "end" : 2 zones — produits scrollables + carte vidéo ancrée ──
+          La carte vidéo est fixe à la fin (droite LTR / gauche RTL via l'ordre + dir),
+          toujours visible sans défilement ; seules les cartes produits défilent.
+          Repli mobile (CSS) : vidéo en haut, produits scrollables dessous. */}
+      {editorialSide === "end" && (
         <div
-          className="bsr-scroll"
+          className="bsr-split"
           style={{
-            display: "flex",
-            gap: 18,
-            overflowX: "auto",
-            scrollSnapType: "x mandatory",
-            // Aligne le rail sur le conteneur centré et garde une marge de fin
+            marginTop: 22,
+            // Aligne l'ensemble sur le conteneur centré
             paddingInline: "max(24px, calc((100% - 1240px) / 2 + 24px))",
-            paddingBlock: 8,
-            scrollbarWidth: "none", // Firefox
-            msOverflowStyle: "none",
           }}
         >
-          {/* Carte éditoriale — position dictée par editorialSide (propriété logique) :
-              "start" → début du rail (gauche LTR / droite RTL),
-              "end"   → fin du rail (droite LTR / gauche RTL).
-              L'ordre du flux + dir gèrent automatiquement le miroir RTL. */}
-          {editorialSide === "start" && (
-            <div style={{ scrollSnapAlign: "start", display: "flex" }}>
-              <EditorialVideoCard
-                card={editorial}
-                locale={locale}
-                labels={editorialLabels}
-              />
+          {/* Zone scrollable produits (largeur restante) */}
+          <div className="bsr-split-rail">
+            <div
+              className="bsr-scroll"
+              style={{
+                display: "flex",
+                gap: 18,
+                overflowX: "auto",
+                scrollSnapType: "x mandatory",
+                paddingBlock: 8,
+                paddingInlineEnd: 8,
+                scrollbarWidth: "none",
+                msOverflowStyle: "none",
+              }}
+            >
+              {products.map((p) => (
+                <div key={p.id} style={{ scrollSnapAlign: "start", display: "flex" }}>
+                  <RailProductCard
+                    product={p}
+                    onAddToCart={add}
+                    locale={locale}
+                    labels={cardLabels}
+                  />
+                </div>
+              ))}
             </div>
-          )}
 
-          {products.map((p) => (
-            <div key={p.id} style={{ scrollSnapAlign: "start", display: "flex" }}>
-              <RailProductCard
-                product={p}
-                onAddToCart={add}
-                locale={locale}
-                labels={cardLabels}
-              />
-            </div>
-          ))}
+            {/* Voile de bord au bout de la zone scrollable (miroir RTL via insetInlineEnd) */}
+            <div
+              aria-hidden
+              className="bsr-split-fade"
+              style={{
+                position: "absolute",
+                top: 0,
+                bottom: 0,
+                insetInlineEnd: 0,
+                width: 48,
+                background: isRTL
+                  ? `linear-gradient(to left, ${C.cream}, rgba(247,243,236,0))`
+                  : `linear-gradient(to right, ${C.cream}, rgba(247,243,236,0))`,
+                pointerEvents: "none",
+              }}
+            />
+          </div>
 
-          {editorialSide === "end" && (
-            <div style={{ scrollSnapAlign: "start", display: "flex" }}>
-              <EditorialVideoCard
-                card={editorial}
-                locale={locale}
-                labels={editorialLabels}
-              />
-            </div>
-          )}
+          {/* Carte vidéo éditoriale ancrée (toujours visible, non scrollable) */}
+          <div className="bsr-split-editorial">
+            <EditorialVideoCard
+              card={editorial}
+              locale={locale}
+              labels={editorialLabels}
+              fluid
+            />
+          </div>
         </div>
+      )}
 
-        {/* Voile de bord (fin du rail) — miroir en RTL via insetInlineEnd */}
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            top: 0,
-            bottom: 0,
-            insetInlineEnd: 0,
-            width: 64,
-            background: isRTL
-              ? `linear-gradient(to left, ${C.cream}, rgba(247,243,236,0))`
-              : `linear-gradient(to right, ${C.cream}, rgba(247,243,236,0))`,
-            pointerEvents: "none",
-          }}
-        />
-      </div>
-
-      {/* Masque la scrollbar (WebKit) */}
+      {/* Masque la scrollbar (WebKit) + layout 2 zones du mode "end" */}
       <style>{`
         .bsr-scroll::-webkit-scrollbar { display: none; height: 0; }
+
+        /* Mode "end" : produits (flex:1) à côté de la vidéo ancrée (largeur fixe) */
+        .bsr-split {
+          display: flex;
+          gap: 18px;
+          align-items: stretch;
+          padding-block: 8px;
+        }
+        .bsr-split-rail {
+          position: relative;
+          flex: 1 1 auto;
+          min-width: 0;
+        }
+        .bsr-split-editorial {
+          flex: 0 0 380px;
+          display: flex;
+        }
+
+        /* Repli mobile : vidéo en haut, produits scrollables dessous */
+        @media (max-width: 760px) {
+          .bsr-split { flex-direction: column; }
+          .bsr-split-editorial { flex: 0 0 220px; order: -1; }
+          .bsr-split-fade { display: none; }
+        }
       `}</style>
     </section>
   );

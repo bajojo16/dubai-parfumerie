@@ -1,10 +1,13 @@
-import type { ReactNode } from "react";
+"use client";
+
+import { useState, type ReactNode } from "react";
 
 /* ──────────────────────────────────────────────────────────────────────────
    PAGE DE TRAVAIL — Propositions de réécriture de la section « Authenticité »
    Reproduit fidèlement la mise en page de la section #authenticite de la home
    (eyebrow doré + titre serif Cormorant avec partie en italique + sous-titre
    + 3 cartes numérotées 01/02/03), avec plusieurs variantes de texte.
+   Sélecteur d'onglets : une seule variante affichée à la fois (page compacte).
    Non liée à la home, sert uniquement à comparer les tons de copywriting.
    ────────────────────────────────────────────────────────────────────────── */
 
@@ -269,50 +272,84 @@ function AuthenticiteVariant({ variant }: { variant: Variant }) {
   );
 }
 
-function VariantSeparator({ variant }: { variant: Variant }) {
+function VariantTabs({
+  variants,
+  activeId,
+  onSelect,
+}: {
+  variants: Variant[];
+  activeId: string;
+  onSelect: (id: string) => void;
+}) {
   return (
     <div
       style={{
-        background: "var(--ink-900, #1C1611)",
-        padding: "26px 20px",
-        textAlign: "center",
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 10,
+        justifyContent: "center",
+        maxWidth: 1240,
+        margin: "26px auto 0",
+        padding: "0 20px",
       }}
     >
-      <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-        <div
-          style={{
-            fontFamily: "var(--font-display)",
-            fontSize: "1.7rem",
-            color: "var(--gold-100, #F6EAC8)",
-            lineHeight: 1.1,
-          }}
-        >
-          {variant.label}
-        </div>
-        <div
-          style={{
-            fontFamily: "var(--font-sans)",
-            fontSize: "0.78rem",
-            letterSpacing: "0.16em",
-            textTransform: "uppercase",
-            color: "var(--gold-400, #D8A63A)",
-            marginTop: 8,
-          }}
-        >
-          {variant.ton}
-        </div>
-      </div>
+      {variants.map((variant) => {
+        const active = variant.id === activeId;
+        return (
+          <button
+            key={variant.id}
+            type="button"
+            onClick={() => onSelect(variant.id)}
+            aria-pressed={active}
+            style={{
+              cursor: "pointer",
+              fontFamily: "var(--font-sans)",
+              fontSize: "0.82rem",
+              fontWeight: 600,
+              letterSpacing: "0.04em",
+              padding: "11px 20px",
+              borderRadius: 999,
+              border: active
+                ? "1px solid var(--gold-400, #D8A63A)"
+                : "1px solid rgba(255,255,255,0.18)",
+              background: active ? "var(--gold-400, #D8A63A)" : "transparent",
+              color: active ? "var(--ink-900, #1C1611)" : "rgba(255,255,255,0.78)",
+              transition: "all 0.18s ease",
+              lineHeight: 1.15,
+              textAlign: "center",
+            }}
+          >
+            <span style={{ display: "block" }}>{variant.label}</span>
+            <span
+              style={{
+                display: "block",
+                fontSize: "0.66rem",
+                fontWeight: 400,
+                letterSpacing: "0.08em",
+                textTransform: "uppercase",
+                opacity: active ? 0.78 : 0.55,
+                marginTop: 3,
+              }}
+            >
+              {variant.ton}
+            </span>
+          </button>
+        );
+      })}
     </div>
   );
 }
 
 export default function PreviewAuthenticiteTextesPage() {
+  const [activeId, setActiveId] = useState<string>(VARIANTS[0].id);
+  const active = VARIANTS.find((v) => v.id === activeId) ?? VARIANTS[0];
+
   return (
     <main style={{ background: "var(--surface-cream, #F8F2E6)", minHeight: "100vh" }}>
       <header
         style={{
           background: "var(--ink-900, #1C1611)",
-          padding: "44px 20px 38px",
+          padding: "40px 20px 30px",
           textAlign: "center",
         }}
       >
@@ -332,7 +369,7 @@ export default function PreviewAuthenticiteTextesPage() {
           <h1
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: "clamp(2rem, 4vw, 2.8rem)",
+              fontSize: "clamp(1.8rem, 3.6vw, 2.6rem)",
               color: "#FFFFFF",
               margin: 0,
               lineHeight: 1.1,
@@ -343,25 +380,22 @@ export default function PreviewAuthenticiteTextesPage() {
           <p
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "0.95rem",
+              fontSize: "0.92rem",
               color: "rgba(255,255,255,0.66)",
               maxWidth: 620,
-              margin: "16px auto 0",
-              lineHeight: 1.65,
+              margin: "14px auto 0",
+              lineHeight: 1.6,
             }}
           >
-            {VARIANTS.length} variantes de copywriting pour la section, à mise en
-            page identique. Comparez les tons et choisissez la version à intégrer.
+            {VARIANTS.length} variantes de copywriting, même mise en page.
+            Cliquez sur un onglet pour comparer les tons.
           </p>
         </div>
+
+        <VariantTabs variants={VARIANTS} activeId={activeId} onSelect={setActiveId} />
       </header>
 
-      {VARIANTS.map((variant) => (
-        <div key={variant.id}>
-          <VariantSeparator variant={variant} />
-          <AuthenticiteVariant variant={variant} />
-        </div>
-      ))}
+      <AuthenticiteVariant key={active.id} variant={active} />
     </main>
   );
 }

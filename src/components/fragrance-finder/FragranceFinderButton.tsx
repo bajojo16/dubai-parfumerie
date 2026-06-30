@@ -56,7 +56,7 @@ export function FragranceFinderButton({
         aria-haspopup="dialog"
         style={{
           position: "fixed",
-          // Remonté + côté début de lecture pour ne pas chevaucher le bouton
+          // En bas à droite, remonté pour ne pas chevaucher le bouton
           // back-to-top (insetInlineEnd / bottom:24, zIndex 1200).
           insetBlockEnd: 96,
           insetInlineEnd: 24,
@@ -71,7 +71,8 @@ export function FragranceFinderButton({
           transition: "transform .2s",
         }}
       >
-        {/* Étiquette pill sombre (masquée < 640px) — tuckée derrière le disque */}
+        {/* Étiquette pill sombre à GAUCHE (masquée < 640px) —
+            tuckée derrière le disque par la droite */}
         <span
           className="ff-pill-label"
           style={{
@@ -85,11 +86,11 @@ export function FragranceFinderButton({
             letterSpacing: "0.02em",
             whiteSpace: "nowrap",
             borderRadius: 999,
-            // tuck : on glisse la pastille sous le disque rond
-            paddingInlineStart: 40,
-            paddingInlineEnd: 18,
+            // tuck : le disque (à droite) chevauche le bord droit de la pastille
+            paddingInlineStart: 18,
+            paddingInlineEnd: 40,
             paddingBlock: 11,
-            marginInlineStart: -28,
+            marginInlineEnd: -28,
             boxShadow: "0 8px 22px rgba(21,17,13,0.30)",
             position: "relative",
             zIndex: 1,
@@ -98,12 +99,11 @@ export function FragranceFinderButton({
           {labels.openLabel}
         </span>
 
-        {/* Disque rond fiole (respiration + halo) — au-dessus de la pastille */}
+        {/* Disque rond fiole (respiration + halo) à DROITE — au-dessus de la pastille */}
         <span
           style={{
             position: "relative",
             zIndex: 2,
-            order: -1,
             width: 62,
             height: 62,
             borderRadius: "50%",

@@ -7,6 +7,7 @@
 import { useLocale } from "next-intl";
 import { FragranceFinderButton } from "@/components/fragrance-finder/FragranceFinderButton";
 import { LOCAL_CATALOG } from "@/components/fragrance-finder/data/productAttributes";
+import { QUESTION_COUNT } from "@/components/fragrance-finder/data/questions";
 
 export default function PreviewFragranceFinderPage() {
   const locale = useLocale();
@@ -54,8 +55,8 @@ export default function PreviewFragranceFinderPage() {
             maxWidth: 620,
           }}
         >
-          Cliquez sur la fiole dorée en bas {isRTL ? "à droite" : "à gauche"} pour lancer le
-          quiz en 9 questions. À la fin, 3 parfums sur mesure sont recommandés depuis le
+          Cliquez sur la fiole dorée en bas {isRTL ? "à gauche" : "à droite"} pour lancer le
+          quiz en {QUESTION_COUNT} questions. À la fin, jusqu'à 3 parfums sur mesure sont recommandés depuis le
           catalogue local, avec opt-in WhatsApp / e-mail (démo). Aperçu isolé — le bouton
           n'est pas encore monté dans le layout global.
         </p>
