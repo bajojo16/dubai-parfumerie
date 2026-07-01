@@ -111,7 +111,7 @@ function CategoryDisc({ category }: { category: Category }) {
             alt={category.name}
             fill
             sizes="(max-width: 600px) 120px, 148px"
-            style={{ objectFit: "cover" }}
+            style={{ objectFit: "cover", transform: "scale(1.28)" }}
           />
         </span>
       ) : (

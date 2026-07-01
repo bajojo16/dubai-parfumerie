@@ -23,6 +23,7 @@ export type TrendProduct = {
   variantId: string;
   image: string;
   cardVideo?: string; // vidéo jouée dans la carte (à la place de l'image)
+  cardObjectPosition?: string; // cadrage média carte (ex. "center 68%")
   video?: string; // vidéo verticale (lightbox)
   rank: number;
   price: number;
@@ -42,6 +43,7 @@ export const DEMO_TRENDS: TrendProduct[] = [
     variantId: "vanilla-voyage-50",
     image: "/assets/prod-1.jpg",
     cardVideo: "/assets/videos/vanilla-card.mp4",
+    cardObjectPosition: "center 72%",
     video: "/assets/videos/vanilla-voyage.mp4",
     rank: 1,
     price: 59,
@@ -94,7 +96,8 @@ export const DEMO_TRENDS: TrendProduct[] = [
     href: "/produit/reef-33",
     variantId: "reef-33-50",
     image: "/assets/prod-3.jpg",
-    video: "/assets/videos/reef33.mp4",
+    cardVideo: "/assets/videos/marshmallow-trend.mp4",
+    video: "/assets/videos/marshmallow-trend.mp4",
     rank: 3,
     price: 64,
     rating: 4.7,

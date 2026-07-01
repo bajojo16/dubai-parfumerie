@@ -78,3 +78,72 @@ export const DEMO_CATEGORIES: Category[] = [
     icon: <SprayBottleIcon />,
   },
 ];
+
+/* ──────────────────────────────────────────────────────────────────────────
+   2e rail (après la bannière Yara) — jeu de données INDÉPENDANT du premier.
+   Anciens libellés (formats), images/liens propres : éditer ce tableau
+   n'affecte PAS DEMO_CATEGORIES et inversement.
+   ────────────────────────────────────────────────────────────────────────── */
+export const DEMO_CATEGORIES_FORMATS: Category[] = [
+  {
+    slug: "bestsellers",
+    href: "/categorie/bestsellers",
+    variant: "bestseller",
+    name: "Best-sellers",
+    meta: "Les plus aimés",
+    icon: <LaurelStarIcon />,
+  },
+  {
+    slug: "offre-duo",
+    href: "/categorie/offre-duo",
+    variant: "promo",
+    name: "2ᵉ à −50%",
+    meta: "Offre duo",
+    image: "/assets/categories/lot-3-2.png",
+    icon: <PromoContent />,
+  },
+  {
+    slug: "parfum-interieur",
+    href: "/categorie/parfum-interieur",
+    variant: "default",
+    name: "Parfum d’intérieur",
+    meta: "Diffuseurs",
+    image: "/assets/categories/homme.png",
+    icon: <DiffuserIcon />,
+  },
+  {
+    slug: "parfum-voyage",
+    href: "/categorie/parfum-voyage",
+    variant: "default",
+    name: "Format voyage",
+    meta: "Nomade",
+    image: "/assets/categories/femme.png",
+    icon: <TravelBottleIcon />,
+  },
+  {
+    slug: "format-50ml",
+    href: "/categorie/format-50ml",
+    variant: "default",
+    name: "Format 50 ml",
+    meta: "Eau de parfum",
+    icon: <Bottle50mlIcon />,
+  },
+  {
+    slug: "huile-parfum",
+    href: "/categorie/huile-parfum",
+    variant: "default",
+    name: "Huile de parfum",
+    meta: "Attar concentré",
+    image: "/assets/categories/huile.png",
+    icon: <AttarBottleIcon />,
+  },
+  {
+    slug: "eau-parfum",
+    href: "/categorie/eau-parfum",
+    variant: "default",
+    name: "Eau de parfum",
+    meta: "Vaporisateur",
+    image: "/assets/categories/eau.png",
+    icon: <SprayBottleIcon />,
+  },
+];

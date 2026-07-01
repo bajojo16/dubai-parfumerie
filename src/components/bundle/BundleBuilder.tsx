@@ -376,26 +376,6 @@ export function BundleBuilder({
   return (
     <div className="b3" dir={isRTL ? "rtl" : "ltr"}>
       <div className="b3-wrap">
-        <div className="b3-view-toggle" role="tablist" aria-label="Mode d'affichage">
-          <button
-            type="button"
-            role="tab"
-            aria-selected={!modalOpen}
-            className={!modalOpen ? "active" : ""}
-            onClick={() => setModalOpen(false)}
-          >
-            Vue pleine page
-          </button>
-          <button
-            type="button"
-            role="tab"
-            aria-selected={modalOpen}
-            className={modalOpen ? "active" : ""}
-            onClick={() => setModalOpen(true)}
-          >
-            Vue modale
-          </button>
-        </div>
 
         <div className="b3-page-host">{renderPanel(false)}</div>
       </div>

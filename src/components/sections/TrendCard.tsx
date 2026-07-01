@@ -178,6 +178,7 @@ export function TrendCard({
             width: "100%",
             height: "100%",
             objectFit: "cover",
+            objectPosition: product.cardObjectPosition ?? "center",
             pointerEvents: "none",
             transition: animate ? "transform 360ms ease" : "none",
             transform: animate && hover ? "scale(1.06)" : "none",
@@ -191,6 +192,7 @@ export function TrendCard({
           sizes="(max-width:600px) 70vw, 240px"
           style={{
             objectFit: "cover",
+            objectPosition: product.cardObjectPosition ?? "center",
             transition: animate ? "transform 360ms ease" : "none",
             transform: animate && hover ? "scale(1.06)" : "none",
           }}

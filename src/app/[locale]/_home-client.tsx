@@ -33,9 +33,10 @@ import { PackCard } from "@/components/sections/PackCard";
 import { DEMO as PACKS } from "@/data/packs";
 import { Faq } from "@/components/faq/Faq";
 import { CategoryRail } from "@/components/sections/CategoryRail";
-import { DEMO_CATEGORIES } from "@/components/sections/category-rail-data";
+import { DEMO_CATEGORIES, DEMO_CATEGORIES_FORMATS } from "@/components/sections/category-rail-data";
 import { BundleBuilder } from "@/components/bundle/BundleBuilder";
 import { addItem } from "@/lib/cart";
+import { WelcomeModal } from "@/components/welcome/WelcomeModal";
 import { useLocale, useTranslations } from "next-intl";
 
 const COFFRETS_HOME: LuxeProduct[] = [
@@ -288,179 +289,6 @@ function ReassuranceIcon({ name }: { name: string }) {
     default:
       return null;
   }
-}
-
-// ─── WelcomeModal ─────────────────────────────────────────────────────────────
-
-function WelcomeModal() {
-  const [shown, setShown] = useState(false);
-  const [email, setEmail] = useState("");
-  const [whatsapp, setWhatsapp] = useState("");
-  const [lang, setLang] = useState("🇫🇷 Français");
-  const [cur, setCur] = useState("EUR");
-
-  useEffect(() => {
-    const seen = localStorage.getItem("dp_welcome_shown_v3");
-    if (!seen) {
-      const t = setTimeout(() => setShown(true), 1800);
-      return () => clearTimeout(t);
-    }
-  }, []);
-
-  const close = () => {
-    localStorage.setItem("dp_welcome_shown_v3", "1");
-    setShown(false);
-  };
-
-  if (!shown) return null;
-
-  return (
-    <div
-      suppressHydrationWarning
-      onClick={close}
-      style={{
-        position: "fixed", inset: 0, zIndex: 400,
-        background: "rgba(15,10,6,0.72)", backdropFilter: "blur(5px)",
-        display: "flex", alignItems: "center", justifyContent: "center",
-        padding: "20px",
-      }}
-    >
-      <div
-        className="dp-welcome-inner"
-        onClick={e => e.stopPropagation()}
-        style={{
-          display: "grid", gridTemplateColumns: "1fr 1fr",
-          maxWidth: 820, width: "100%", maxHeight: "90vh",
-          borderRadius: "var(--r-lg)", overflow: "hidden auto",
-          boxShadow: "0 40px 100px rgba(0,0,0,0.5)",
-        }}
-      >
-        {/* Left panel — image + coffrets */}
-        <div className="dp-welcome-left" style={{
-          position: "relative", background: "var(--espresso-900)",
-          padding: "44px 36px 40px",
-          display: "flex", flexDirection: "column", justifyContent: "flex-end",
-          minHeight: 460,
-        }}>
-          <Image src="/assets/popup-oud-roses.jpg" alt="Oud & Roses — parfums orientaux" fill sizes="400px" style={{ objectFit: "cover", opacity: 0.85 }} />
-          <div style={{ position: "absolute", inset: 0, background: "linear-gradient(180deg, rgba(21,16,11,.15) 0%, rgba(21,16,11,.45) 55%, rgba(21,16,11,.88) 100%)" }} />
-          <div style={{ position: "relative", zIndex: 1 }}>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.6rem, 2.5vw, 2rem)", color: "#fff", margin: "0 0 12px", lineHeight: 1.2 }}>
-              Nos Coffrets Découverte
-            </h2>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "rgba(255,255,255,0.75)", lineHeight: 1.65, marginBottom: 22 }}>
-              Explorez la richesse de la parfumerie orientale avec nos coffrets échantillons. Le meilleur moyen de trouver votre signature olfactive.
-            </p>
-            <div style={{ fontFamily: "var(--font-display)", fontSize: "1.1rem", color: "var(--gold-400)", marginBottom: 20 }}>
-              À partir de 9€
-            </div>
-            <a href="#coffrets" onClick={close} style={{
-              display: "inline-block", background: "var(--gold-500)", color: "#fff",
-              textDecoration: "none", padding: "11px 22px", borderRadius: "var(--r-sm)",
-              fontFamily: "var(--font-sans)", fontSize: "0.76rem", fontWeight: 700,
-              letterSpacing: "0.12em", textTransform: "uppercase",
-            }}>Découvrir les coffrets</a>
-            <p style={{ fontFamily: "var(--font-display)", fontSize: "0.95rem", color: "rgba(255,255,255,0.5)", marginTop: 24, fontStyle: "italic" }}>
-              «&nbsp;L&apos;Orient se respire,<br />il ne se raconte pas.&nbsp;»
-            </p>
-          </div>
-        </div>
-
-        {/* Right panel — form */}
-        <div style={{ background: "var(--surface-white)", padding: "44px 36px 40px", position: "relative" }}>
-          {/* Close */}
-          <button onClick={close} style={{
-            position: "absolute", top: 16, right: 16,
-            background: "none", border: "none", cursor: "pointer",
-            color: "var(--ink-400)", fontSize: "1.1rem", lineHeight: 1, padding: 4,
-          }}>×</button>
-
-          <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 14 }}>Offre de bienvenue</div>
-          <h3 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.5rem, 2.5vw, 2rem)", color: "var(--ink-900)", margin: "0 0 14px", lineHeight: 1.15 }}>
-            -10% &amp; un échantillon offert
-          </h3>
-          <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", color: "var(--ink-500)", lineHeight: 1.65, marginBottom: 24 }}>
-            Rejoignez Le Cercle et recevez votre code de bienvenue, plus un échantillon surprise glissé dans votre première commande.
-          </p>
-
-          <input
-            type="email"
-            placeholder="Votre adresse email"
-            value={email}
-            onChange={e => setEmail(e.target.value)}
-            style={{
-              width: "100%", padding: "13px 14px", marginBottom: 10,
-              border: "1px solid #ddd", borderRadius: "var(--r-sm)",
-              fontFamily: "var(--font-sans)", fontSize: "0.88rem",
-              color: "var(--ink-900)", background: "#fff", outline: "none",
-              boxSizing: "border-box",
-            }}
-          />
-
-          <div style={{ position: "relative", marginBottom: 10 }}>
-            <span aria-hidden style={{
-              position: "absolute", insetInlineStart: 12, top: "50%", transform: "translateY(-50%)",
-              display: "inline-flex", alignItems: "center", gap: 6,
-              color: "#25D366", pointerEvents: "none",
-            }}>
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-                <path d="M12.04 2a9.9 9.9 0 0 0-8.46 15.02L2 22l5.1-1.34A9.9 9.9 0 1 0 12.04 2Zm5.8 14.06c-.24.68-1.4 1.3-1.94 1.35-.5.05-1.13.07-1.83-.11a10.6 10.6 0 0 1-1.66-.62 8.3 8.3 0 0 1-3.18-2.8c-.66-.86-1.08-1.87-1.2-2.2-.13-.32-.01-.63.15-.86.14-.2.32-.33.48-.5.16-.16.21-.27.32-.46.1-.18.05-.35-.03-.5-.08-.14-.72-1.74-.99-2.38-.26-.62-.52-.54-.72-.55h-.6c-.2 0-.52.07-.8.36-.27.29-1.04 1.02-1.04 2.48s1.07 2.88 1.22 3.08c.15.2 2.1 3.2 5.08 4.49.71.31 1.26.49 1.7.62.71.23 1.36.2 1.87.12.57-.08 1.76-.72 2-1.41.25-.7.25-1.29.18-1.42-.07-.12-.27-.2-.56-.34Z" />
-              </svg>
-            </span>
-            <input
-              type="tel"
-              placeholder="Votre numéro WhatsApp"
-              value={whatsapp}
-              onChange={e => setWhatsapp(e.target.value)}
-              style={{
-                width: "100%", padding: "13px 14px 13px 40px",
-                border: "1px solid #ddd", borderRadius: "var(--r-sm)",
-                fontFamily: "var(--font-sans)", fontSize: "0.88rem",
-                color: "var(--ink-900)", background: "#fff", outline: "none",
-                boxSizing: "border-box",
-              }}
-            />
-          </div>
-
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
-            <select value={lang} onChange={e => setLang(e.target.value)} style={{
-              padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
-              fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
-              background: "#fff", outline: "none", cursor: "pointer",
-            }}>
-              {["🇫🇷 Français","🇬🇧 English","🇪🇸 Español","🇩🇪 Deutsch","🇮🇹 Italiano","🇷🇺 Русский","🇸🇦 العربية"].map(l => <option key={l}>{l}</option>)}
-            </select>
-            <select value={cur} onChange={e => setCur(e.target.value)} style={{
-              padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
-              fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
-              background: "#fff", outline: "none", cursor: "pointer",
-            }}>
-              {["EUR","AED","SAR","USD","GBP","MAD"].map(c => <option key={c}>{c}</option>)}
-            </select>
-          </div>
-
-          <button onClick={close} style={{
-            width: "100%", background: "var(--gold-500)", color: "#fff", border: "none",
-            borderRadius: "var(--r-sm)", padding: "14px", cursor: "pointer",
-            fontFamily: "var(--font-sans)", fontSize: "0.9rem", fontWeight: 700,
-            letterSpacing: "0.04em", marginBottom: 16,
-          }}>J&apos;EN PROFITE</button>
-
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-            <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--ink-400)" }}>
-              Déjà membre ?&nbsp;
-              <button onClick={close} style={{ background: "none", border: "none", color: "var(--gold-600)", textDecoration: "underline", cursor: "pointer", fontFamily: "inherit", fontSize: "inherit" }}>
-                Se connecter
-              </button>
-            </span>
-            <button onClick={close} style={{ background: "none", border: "none", color: "var(--ink-300)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.78rem" }}>
-              Non merci
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 // ─── FAQAccordion ─────────────────────────────────────────────────────────────
@@ -754,17 +582,8 @@ export default function HomePageClient() {
 
       {/* ── CATEGORY RAIL (2e occurrence, après la bannière Yara) ──── */}
       <section id="category-rail-2" style={{ background: "var(--surface-page)", padding: "20px 0" }}>
-        <CategoryRail
-          categories={DEMO_CATEGORIES}
-          locale={locale}
-          onCategoryClick={(cat) => {
-            if (cat.slug === "offre-duo") {
-              setBundleOpen(true);
-              return true;
-            }
-            return false;
-          }}
-        />
+        {/* Jeu de données indépendant (anciens libellés formats) */}
+        <CategoryRail categories={DEMO_CATEGORIES_FORMATS} locale={locale} />
       </section>
 
       {/* ── BEST-SELLERS (au-dessus de Le catalogue) ──────────────── */}
@@ -1005,8 +824,8 @@ export default function HomePageClient() {
       )}
 
       {/* ── LIVRAISON MONDE ───────────────────────────────────────── */}
-      <section id="livraison" style={{ background: "var(--surface-page)", padding: "70px 20px" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+      <section id="livraison" style={{ background: "var(--surface-page)", padding: "70px 0" }}>
+        <div style={{ width: "100%" }}>
           <ShippingChecker
             countries={DEMO_SHIPPING_COUNTRIES}
             detectedCode="FR"

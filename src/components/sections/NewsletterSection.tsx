@@ -103,10 +103,9 @@ export function NewsletterSection({
       className="np-section"
       style={{
         position: "relative",
-        borderRadius: 20,
+        // Pleine largeur, sans coins arrondis ni bordure (touche les bords)
         overflow: "hidden",
         background: "#FAF6EE",
-        border: "1px solid #EFE6D2",
         display: "flex",
         flexDirection: "row",
         alignItems: "stretch",
