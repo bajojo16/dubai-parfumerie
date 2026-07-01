@@ -182,7 +182,7 @@ function PromoOverlay({
                 const [a, b] = tagline.split("—");
                 return (
                   <>
-                    {a.trim()} —<br />
+                    — {a.trim()} —<br />
                     {b.trim()}
                   </>
                 );
