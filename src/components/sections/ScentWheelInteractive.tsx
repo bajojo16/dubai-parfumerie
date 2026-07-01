@@ -109,8 +109,7 @@ export function ScentWheelInteractive({
         position: "relative",
         overflow: "hidden",
         background: "#FAF6EE",
-        border: ".5px solid #E6DCC8",
-        borderRadius: 16,
+        // Pleine largeur, sans bordure ni coins arrondis (touche les bords)
         padding: 22,
       }}
     >
@@ -487,7 +486,7 @@ export function ScentWheelInteractive({
             }}
           >
             {L.title}
-            {active ? ` : ${active.name}` : ""}
+            {active ? ` : ${active.label}` : ""}
           </h2>
 
           <p

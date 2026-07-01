@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sélecteur d'échantillons — Maquette</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --charcoal:#1c1a17;--charcoal-soft:#2a2622;--ivory:#f6f1e7;--ivory-2:#efe8d9;
+    --gold:#c2a15b;--gold-deep:#a9873f;
+    --line:rgba(28,26,23,.12);--line-strong:rgba(28,26,23,.22);
+    --shadow:0 18px 50px -24px rgba(28,26,23,.45);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0}
+  body{background:var(--ivory);color:var(--charcoal);font-family:'Jost',system-ui,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased;padding-bottom:118px}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 22px}
+
+  .topbar{text-align:center;padding:32px 0 6px;border-bottom:1px solid var(--line)}
+  .brandmark{font-family:'Jost';font-weight:500;letter-spacing:.42em;font-size:12px;text-transform:uppercase;color:var(--gold-deep);margin:0 0 16px}
+  .eyebrow{font-weight:400;letter-spacing:.34em;text-transform:uppercase;font-size:11px;opacity:.55;margin:0 0 10px}
+  h1{font-family:'Cormorant Garamond';font-weight:500;font-size:clamp(28px,5vw,44px);line-height:1.02;margin:0 auto 12px;max-width:16ch}
+  .intro{font-weight:300;font-size:15px;line-height:1.6;opacity:.72;max-width:52ch;margin:0 auto 24px}
+
+  .progress{display:inline-flex;align-items:center;gap:14px;margin:0 auto 26px;padding:11px 22px;border-radius:100px;background:var(--charcoal);color:var(--ivory)}
+  .progress .count{font-family:'Cormorant Garamond';font-size:22px;font-weight:600;line-height:1}
+  .progress .count b{color:var(--gold)}
+  .pips{display:flex;gap:5px}
+  .pip{width:22px;height:3px;border-radius:2px;background:rgba(246,241,231,.22);transition:.35s}
+  .pip.man{background:var(--gold)}
+  .pip.auto{background:transparent;box-shadow:inset 0 0 0 1px var(--gold)}
+  .progress .lbl{font-size:11px;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
+
+  .toolbar{position:sticky;top:0;z-index:20;background:rgba(246,241,231,.92);backdrop-filter:blur(10px);border-bottom:1px solid var(--line);padding:14px 0 12px;margin-bottom:20px}
+  .search{position:relative;max-width:420px;margin:0 auto 12px}
+  .search input{width:100%;padding:11px 16px 11px 42px;border:1px solid var(--line-strong);border-radius:100px;background:#fff;font-family:'Jost';font-size:14px;font-weight:300;color:var(--charcoal);outline:none;transition:.25s}
+  .search input:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(194,161,91,.16)}
+  .search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);opacity:.4}
+  .filterrow{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
+  .filterrow:last-child{margin-bottom:0}
+  .flabel{display:block;width:100%;text-align:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;opacity:.42;margin:0 0 6px}
+  .chip{font-family:'Jost';font-size:12px;font-weight:400;letter-spacing:.03em;padding:6px 13px;border-radius:100px;border:1px solid var(--line-strong);background:transparent;color:var(--charcoal);cursor:pointer;transition:.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+  .chip:hover{border-color:var(--gold)}
+  .chip.active{background:var(--charcoal);color:var(--ivory);border-color:var(--charcoal)}
+  .chip.col.active{background:var(--gold-deep);border-color:var(--gold-deep);color:#fff}
+  .chip .ic{font-size:11px}
+
+  .assist{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,#fffdf8,#f3ecdb);border:1px solid rgba(194,161,91,.4);border-radius:14px;padding:15px 20px;margin-bottom:22px;position:sticky;top:var(--tb-h,150px);z-index:15;transition:padding .2s,box-shadow .2s}
+  .assist.hide{display:none}
+  .assist.stuck{padding:9px 18px;box-shadow:0 14px 30px -20px rgba(28,26,23,.55)}
+  .assist.stuck .assist-txt p{display:none}
+  .assist.stuck .assist-txt .h{font-size:17px}
+  #assist-sentinel{height:0;margin:0;padding:0}
+  .assist-txt{flex:1;min-width:210px}
+  .assist-txt .h{font-family:'Cormorant Garamond';font-size:22px;font-weight:600;line-height:1.1;margin:0 0 3px;display:flex;align-items:center;gap:8px}
+  .assist-txt .h .spark{color:var(--gold-deep)}
+  .assist-txt p{margin:0;font-size:13px;opacity:.7;line-height:1.5}
+  .assist-controls{display:flex;flex-direction:column;gap:9px;align-items:flex-end}
+  .crit{display:flex;gap:5px;background:#fff;border:1px solid var(--line-strong);border-radius:100px;padding:4px}
+  .crit button{border:none;background:transparent;font-family:'Jost';font-size:12px;font-weight:400;padding:6px 12px;border-radius:100px;cursor:pointer;color:var(--charcoal);transition:.18s;white-space:nowrap}
+  .crit button.on{background:var(--charcoal);color:var(--ivory)}
+  .assist-actions{display:flex;gap:8px}
+  .btn-gold{font-family:'Jost';font-weight:500;letter-spacing:.06em;font-size:12px;text-transform:uppercase;padding:10px 18px;border-radius:100px;border:none;cursor:pointer;background:var(--gold);color:var(--charcoal);transition:.2s}
+  .btn-gold:hover{background:#d8b96f}
+  .btn-ghost{font-family:'Jost';font-weight:400;font-size:12px;padding:10px 15px;border-radius:100px;border:1px solid var(--line-strong);background:transparent;cursor:pointer;color:var(--charcoal);transition:.2s}
+  .btn-ghost:hover{border-color:var(--gold);color:var(--gold-deep)}
+
+  /* ---- grille dense, mini vignettes ---- */
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:10px}
+  .tile{position:relative;border:1px solid var(--line);border-radius:11px;background:#fff;overflow:hidden;cursor:pointer;transition:.2s;display:flex;flex-direction:column}
+  .tile:hover{border-color:var(--gold);transform:translateY(-2px);box-shadow:var(--shadow)}
+  .tile.man{border-color:var(--gold-deep);box-shadow:0 0 0 2px var(--gold) inset}
+  .tile.auto{border-color:var(--gold-deep);box-shadow:0 0 0 1.5px var(--gold) inset;border-style:dashed;background:linear-gradient(180deg,#fffdf8,#fff)}
+  .thumb{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#faf7f0,#efe8d9);position:relative}
+  .thumb svg{width:52%;height:52%}
+  /* pastille collection en haut à gauche */
+  .tag{position:absolute;top:5px;left:5px;font-size:8px;letter-spacing:.06em;text-transform:uppercase;font-weight:500;padding:2px 6px;border-radius:100px;background:rgba(28,26,23,.82);color:var(--gold);display:none;align-items:center;gap:3px}
+  .tile .tag.show{display:inline-flex}
+  /* badge quantité (manuel) */
+  .qbadge{position:absolute;top:5px;right:5px;width:20px;height:20px;border-radius:50%;background:var(--gold-deep);color:#fff;font-family:'Cormorant Garamond';font-weight:600;font-size:13px;display:none;align-items:center;justify-content:center;box-shadow:var(--shadow)}
+  .tile.man .qbadge{display:flex}
+  .abadge{position:absolute;top:5px;right:5px;color:var(--gold);font-size:13px;display:none}
+  .tile.auto .abadge{display:flex}
+  /* bouton + (non sélectionné) */
+  .addbtn{position:absolute;bottom:5px;right:5px;width:24px;height:24px;border-radius:50%;background:#fff;border:1px solid var(--line-strong);color:var(--charcoal);font-size:16px;line-height:1;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:.15s;box-shadow:0 4px 10px -6px rgba(0,0,0,.4)}
+  .addbtn:hover{background:var(--gold);border-color:var(--gold);color:#fff}
+  .tile.man .addbtn,.tile.auto .addbtn{display:none}
+  /* pill de contrôle en bas de la vignette (sélectionné) */
+  .ctrl{position:absolute;bottom:5px;left:5px;right:5px;display:none;align-items:center;justify-content:center;gap:4px;background:rgba(28,26,23,.86);border-radius:100px;padding:3px}
+  .tile.man .ctrl.man-c,.tile.auto .ctrl.auto-c{display:flex}
+  .ctrl button{border:none;background:transparent;color:var(--ivory);cursor:pointer;width:22px;height:22px;border-radius:50%;font-size:14px;line-height:1;display:flex;align-items:center;justify-content:center;transition:.15s}
+  .ctrl button:hover{background:rgba(246,241,231,.16);color:#fff}
+  .ctrl .q{font-family:'Cormorant Garamond';font-weight:600;font-size:15px;color:var(--gold);min-width:14px;text-align:center}
+  .ctrl .keep{color:var(--gold);font-size:12px;font-weight:500;padding:0 6px;width:auto;letter-spacing:.04em}
+  .meta{padding:6px 8px 8px;text-align:center}
+  .fname{font-family:'Cormorant Garamond';font-size:14px;font-weight:600;line-height:1.05;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .brand{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.45;margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .empty{grid-column:1/-1;text-align:center;padding:40px 0;opacity:.5;font-style:italic;font-family:'Cormorant Garamond';font-size:20px}
+  .count-line{text-align:center;font-size:11px;letter-spacing:.06em;opacity:.45;margin:0 0 14px}
+
+  .tray{position:fixed;left:0;right:0;bottom:0;z-index:40;background:var(--charcoal);color:var(--ivory);border-top:2px solid var(--gold);box-shadow:0 -18px 44px -26px rgba(0,0,0,.6)}
+  .tray-in{max-width:1180px;margin:0 auto;padding:13px 22px;display:flex;align-items:center;gap:16px}
+  .tray-selection{display:flex;gap:7px;flex:1;overflow-x:auto;padding:2px 0}
+  .tslot{flex:0 0 auto;width:44px;height:44px;border-radius:9px;position:relative;background:rgba(246,241,231,.08);border:1px solid rgba(246,241,231,.14);display:flex;align-items:center;justify-content:center}
+  .tslot.man{background:rgba(194,161,91,.16);border-color:rgba(194,161,91,.5)}
+  .tslot.auto{background:transparent;border:1px dashed rgba(194,161,91,.65)}
+  .tslot svg{width:24px;height:24px}
+  .tslot .tq{position:absolute;bottom:-4px;right:-4px;background:var(--gold);color:var(--charcoal);font-family:'Cormorant Garamond';font-weight:700;font-size:11px;width:17px;height:17px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+  .tslot .ts{position:absolute;top:-5px;left:-5px;color:var(--gold);font-size:10px}
+  .tslot .rm{position:absolute;top:-6px;right:-6px;width:17px;height:17px;border-radius:50%;background:var(--ivory);color:var(--charcoal);border:none;cursor:pointer;font-size:11px;line-height:1;display:none;align-items:center;justify-content:center}
+  .tslot.man:hover .rm,.tslot.auto:hover .rm{display:flex}
+  .tray-status{text-align:right;flex:0 0 auto;min-width:100px}
+  .tray-status .n{font-family:'Cormorant Garamond';font-size:25px;font-weight:600;line-height:1}
+  .tray-status .n b{color:var(--gold)}
+  .tray-status small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.6;margin-top:2px}
+  .cta{flex:0 0 auto;font-family:'Jost';font-weight:500;letter-spacing:.14em;text-transform:uppercase;font-size:12px;padding:15px 26px;border-radius:100px;border:none;cursor:pointer;background:var(--gold);color:var(--charcoal);transition:.25s}
+  .cta:hover:not(:disabled){background:#d8b96f}
+  .cta:disabled{background:rgba(246,241,231,.16);color:rgba(246,241,231,.4);cursor:not-allowed}
+
+  .devnote{max-width:1180px;margin:26px auto 0;padding:0 22px}
+  .devnote details{background:#fff;border:1px dashed var(--line-strong);border-radius:12px;padding:14px 18px}
+  .devnote summary{cursor:pointer;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-deep);font-weight:500}
+  .devnote pre{margin:12px 0 0;font-size:12.5px;line-height:1.6;color:var(--charcoal-soft);background:var(--ivory-2);padding:12px 14px;border-radius:8px;overflow-x:auto;white-space:pre-wrap}
+
+  @media(max-width:640px){
+    .grid{grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:8px}
+    .assist-controls{align-items:stretch;width:100%}
+    .crit{overflow-x:auto}
+    .tray-status{min-width:auto}
+    .tray-status .n{font-size:20px}
+    .cta{padding:13px 15px;font-size:11px}
+    .tray-in{gap:10px}
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <p class="brandmark">Dubai Parfumerie</p>
+  <p class="eyebrow">Coffret découverte · 10 échantillons</p>
+  <h1>Composez votre sélection d'échantillons</h1>
+  <p class="intro">Choisissez vos coups de cœur… ou laissez la maison compléter les emplacements restants selon vos goûts et nos best-sellers.</p>
+  <div class="progress">
+    <span class="count"><b id="pcur">0</b> / <span id="pmax">10</span></span>
+    <div class="pips" id="pips"></div>
+    <span class="lbl">échantillons</span>
+  </div>
+</div>
+
+<div class="toolbar">
+  <div class="wrap">
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      <input id="search" type="text" placeholder="Rechercher un parfum…" autocomplete="off">
+    </div>
+    <div class="filterrow" id="cols"><span class="flabel">Sélections</span></div>
+    <div class="filterrow" id="brands"><span class="flabel">Marques</span></div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div id="assist-sentinel"></div>
+  <div class="assist" id="assist">
+    <div class="assist-txt">
+      <p class="h"><span class="spark">✦</span> <span id="assist-h">Laissez la maison compléter</span></p>
+      <p id="assist-p">Il reste des emplacements. On les remplit pour vous selon le critère choisi.</p>
+    </div>
+    <div class="assist-controls">
+      <div class="crit" id="crit">
+        <button data-c="bestsellers" class="on">Best-sellers</button>
+        <button data-c="affinity">Dans mes goûts</button>
+        <button data-c="discovery">Découverte</button>
+      </div>
+      <div class="assist-actions" id="assist-actions"></div>
+    </div>
+  </div>
+
+  <p class="count-line" id="countline"></p>
+  <div class="grid" id="grid"></div>
+</div>
+
+<div class="devnote">
+  <details>
+    <summary>Aperçu des données envoyées au panier (compatibilité Shopify)</summary>
+    <pre id="payload">Aucun échantillon sélectionné.</pre>
+  </details>
+</div>
+
+<div class="tray">
+  <div class="tray-in">
+    <div class="tray-selection" id="traysel"></div>
+    <div class="tray-status">
+      <div class="n"><b id="tcur">0</b>/<span id="tmax">10</span></div>
+      <small>sélectionnés</small>
+    </div>
+    <button class="cta" id="cta" disabled>Ajouter au panier</button>
+  </div>
+</div>
+
+<script>
+const MAX=10;
+
+function vial(tint){return `<svg viewBox="0 0 60 120" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#e9d59a"/><stop offset=".5" stop-color="#c2a15b"/><stop offset="1" stop-color="#a9873f"/></linearGradient></defs><rect x="24" y="2" width="12" height="16" rx="2" fill="#f3ede0" stroke="#d9cfba"/><rect x="18" y="16" width="24" height="14" rx="3" fill="url(#g)"/><rect x="20" y="28" width="20" height="72" rx="6" fill="${tint}" opacity=".9" stroke="#d9cfba"/><rect x="20" y="28" width="7" height="72" rx="6" fill="#ffffff" opacity=".28"/><rect x="26" y="60" width="8" height="42" rx="3" fill="#ffffff" opacity=".55"/></svg>`}
+
+const TINTS={oud:'#6b4a2e',rose:'#b06a72',musk:'#cbb892',fresh:'#8fa9a3',amber:'#c08a3e',floral:'#c98fa8'};
+// collections : best (best-seller), fav (coup de cœur), trend (tendance réseaux), new (nouveauté), limited (édition limitée)
+const COLS=[
+  {id:'all',label:'Toutes',ic:''},
+  {id:'best',label:'Best-sellers',ic:'★'},
+  {id:'fav',label:'Coups de cœur',ic:'♥'},
+  {id:'trend',label:'Tendance réseaux',ic:'✦'},
+  {id:'new',label:'Nouveautés',ic:'✧'},
+  {id:'niche',label:'Parfums de niche',ic:'❖'},
+  {id:'limited',label:'Éditions limitées',ic:'◆'},
+];
+const COLMETA={best:{ic:'★',short:'Best'},fav:{ic:'♥',short:'Cœur'},trend:{ic:'✦',short:'Tendance'},new:{ic:'✧',short:'Nouveau'},niche:{ic:'❖',short:'Niche'},limited:{ic:'◆',short:'Limitée'}};
+const RAW=[
+  {b:'Ahmed Al Maghlibi',n:'Agarwood',f:'oud',pop:72,t:['best']},
+  {b:'Ahmed Al Maghlibi',n:'Al Shaikha Hind',f:'amber',pop:40,t:['limited']},
+  {b:'Ahmed Al Maghlibi',n:'Arwa',f:'floral',pop:55,t:['fav']},
+  {b:'Ahmed Al Maghlibi',n:'Bidun Esam',f:'musk',pop:38,t:['niche']},
+  {b:'Ahmed Al Maghlibi',n:'Daam Watani',f:'amber',pop:44,t:['limited']},
+  {b:'Ahmed Al Maghlibi',n:'Little Hearts',f:'rose',pop:61,t:['fav','new']},
+  {b:'Ahmed Al Maghlibi',n:'Musk & Roses',f:'rose',pop:88,t:['best','fav']},
+  {b:'Ahmed Al Maghlibi',n:'Oud Lavender',f:'oud',pop:66,t:['fav','niche']},
+  {b:'Ahmed Al Maghlibi',n:'Oud & Roses',f:'oud',pop:95,t:['best','fav']},
+  {b:'Ahmed Al Maghlibi',n:'Patchouli',f:'musk',pop:33,t:[]},
+  {b:'Ahmed Al Maghlibi',n:'Pearl Oud',f:'oud',pop:70,t:['fav','niche']},
+  {b:'Ahmed Al Maghlibi',n:'Raheeque',f:'floral',pop:48,t:['limited','niche']},
+  {b:'Ahmed Al Maghlibi',n:'Supreme',f:'amber',pop:52,t:['limited']},
+  {b:'Ahmed Al Maghlibi',n:'Touch Oud',f:'oud',pop:63,t:['niche']},
+  {b:'Ajmal',n:'Abia',f:'floral',pop:57,t:['new']},
+  {b:'Ajmal',n:'Adventure',f:'fresh',pop:74,t:['trend','new']},
+  {b:'Ajmal',n:'Ashwaq',f:'amber',pop:69,t:['new','trend','niche']},
+  {b:'Ajmal',n:'Aurum',f:'floral',pop:50,t:['new']},
+  {b:'Ajmal',n:'Blu',f:'fresh',pop:59,t:['trend']},
+  {b:'Ajmal',n:'Cool Moon',f:'fresh',pop:64,t:['trend','new']},
+  {b:'Ajmal',n:'Evoke Gold Edition',f:'amber',pop:82,t:['best','new']},
+  {b:'Ajmal',n:'Farah (huile)',f:'rose',pop:46,t:['fav']},
+  {b:'Ajmal',n:'Mizyaan',f:'musk',pop:41,t:[]},
+  {b:'Lattafa',n:'Asad',f:'oud',pop:90,t:['best','trend']},
+  {b:'Lattafa',n:'Yara',f:'floral',pop:93,t:['best','trend']},
+  {b:'Lattafa',n:'Mousuf Wardi',f:'rose',pop:78,t:['fav','trend','niche']},
+];
+const PRODUCTS=RAW.map((p,i)=>({id:'s'+i,...p,tint:TINTS[p.f]}));
+const BRANDS=['Toutes',...[...new Set(PRODUCTS.map(p=>p.b))]];
+
+const man={},auto={};
+let filterBrand='Toutes',filterCol='all',q='',crit='bestsellers';
+
+const $=s=>document.querySelector(s);
+$('#pmax').textContent=MAX;$('#tmax').textContent=MAX;
+const sum=o=>Object.values(o).reduce((a,b)=>a+b,0);
+const totalMan=()=>sum(man),totalAuto=()=>sum(auto),total=()=>totalMan()+totalAuto();
+const P=id=>PRODUCTS.find(x=>x.id===id);
+
+function buildFilters(){
+  const cols=$('#cols');cols.querySelectorAll('.chip').forEach(e=>e.remove());
+  COLS.forEach(c=>{const el=document.createElement('button');el.className='chip col'+(c.id===filterCol?' active':'');el.innerHTML=(c.ic?`<span class="ic">${c.ic}</span>`:'')+c.label;el.onclick=()=>{filterCol=c.id;buildFilters();buildGrid()};cols.appendChild(el)});
+  const br=$('#brands');br.querySelectorAll('.chip').forEach(e=>e.remove());
+  BRANDS.forEach(b=>{const el=document.createElement('button');el.className='chip'+(b===filterBrand?' active':'');el.textContent=b;el.onclick=()=>{filterBrand=b;buildFilters();buildGrid()};br.appendChild(el)});
+}
+
+function matchFilter(p){
+  const okBrand=filterBrand==='Toutes'||p.b===filterBrand;
+  const okCol=filterCol==='all'||p.t.includes(filterCol);
+  const okQ=p.n.toLowerCase().includes(q)||p.b.toLowerCase().includes(q);
+  return okBrand&&okCol&&okQ;
+}
+
+function buildGrid(){
+  const g=$('#grid');g.innerHTML='';
+  const list=PRODUCTS.filter(matchFilter);
+  $('#countline').textContent=list.length?`${list.length} parfum${list.length>1?'s':''}`:'';
+  if(!list.length){g.innerHTML='<div class="empty">Aucun parfum ne correspond.</div>';return}
+  const full=total()>=MAX;
+  list.forEach(p=>{
+    const mq=man[p.id]||0,aq=auto[p.id]||0;
+    const state=mq?'man':aq?'auto':'';
+    const primaryTag=p.t[0];
+    const tagHtml=primaryTag?`<span class="tag show"><span>${COLMETA[primaryTag].ic}</span>${COLMETA[primaryTag].short}</span>`:'';
+    const tile=document.createElement('div');
+    tile.className='tile'+(state?' '+state:'');
+    tile.title=p.n+' — '+p.b;
+    tile.innerHTML=`
+      <div class="thumb">
+        ${tagHtml}
+        ${vial(p.tint)}
+        <div class="qbadge">${mq}</div>
+        <div class="abadge">✦</div>
+        <button class="addbtn" title="Ajouter">+</button>
+        <div class="ctrl man-c"><button data-a="minus">−</button><span class="q">${mq}</span><button data-a="plus" ${full?'disabled style="opacity:.35"':''}>+</button></div>
+        <div class="ctrl auto-c"><button class="keep" data-a="pin">✓ Garder</button><button data-a="rm">×</button></div>
+      </div>
+      <div class="meta"><p class="fname">${p.n}</p><p class="brand">${p.b}</p></div>`;
+    const add=()=>addMan(p.id,1);
+    if(!state){tile.onclick=add}
+    tile.querySelector('.addbtn').onclick=e=>{e.stopPropagation();add()};
+    if(state==='man'){tile.querySelector('[data-a="plus"]').onclick=e=>{e.stopPropagation();addMan(p.id,1)};tile.querySelector('[data-a="minus"]').onclick=e=>{e.stopPropagation();addMan(p.id,-1)}}
+    if(state==='auto'){tile.querySelector('[data-a="pin"]').onclick=e=>{e.stopPropagation();pin(p.id)};tile.querySelector('[data-a="rm"]').onclick=e=>{e.stopPropagation();delete auto[p.id];refresh()}}
+    g.appendChild(tile);
+  });
+}
+
+function addMan(id,d){const cur=man[id]||0;if(d>0){if(total()>=MAX){if(totalAuto()>0)removeOneAuto();else return}}const next=cur+d;if(next<=0)delete man[id];else man[id]=next;refresh()}
+function removeOneAuto(){const ks=Object.keys(auto);const k=ks[ks.length-1];if(!k)return;if(auto[k]>1)auto[k]--;else delete auto[k]}
+function pin(id){const aq=auto[id]||0;if(!aq)return;man[id]=(man[id]||0)+aq;delete auto[id];refresh()}
+
+function pickAuto(){
+  for(const k in auto)delete auto[k];
+  const gap=MAX-totalMan();if(gap<=0){refresh();return}
+  const taken=new Set(Object.keys(man));
+  let pool=PRODUCTS.filter(p=>!taken.has(p.id));
+  if(crit==='bestsellers'){pool.sort((a,b)=>b.pop-a.pop);}
+  else if(crit==='affinity'){const fc={};Object.keys(man).forEach(id=>{const f=P(id).f;fc[f]=(fc[f]||0)+man[id]});const has=Object.keys(fc).length>0;pool.sort((a,b)=>((fc[b.f]||0)-(fc[a.f]||0))||(b.pop-a.pop));if(!has)pool.sort((a,b)=>b.pop-a.pop);}
+  else{const owned=new Set(Object.keys(man).map(id=>P(id).f));const byNovel=[...pool].sort((a,b)=>(owned.has(a.f)-owned.has(b.f))||(b.pop-a.pop));const picked=[],usedFam=new Set();while(picked.length<gap&&byNovel.length){let i=byNovel.findIndex(p=>!usedFam.has(p.f));if(i===-1){i=0;usedFam.clear()}const p=byNovel.splice(i,1)[0];usedFam.add(p.f);picked.push(p)}picked.forEach(p=>auto[p.id]=1);refresh();return;}
+  pool.slice(0,gap).forEach(p=>auto[p.id]=1);refresh();
+}
+
+function buildAssist(){
+  const hasAuto=totalAuto()>0,a=$('#assist');
+  if(MAX-totalMan()<=0&&!hasAuto){a.classList.add('hide');return}
+  a.classList.remove('hide');
+  $('#assist-h').textContent=hasAuto?'Sélection maison ajoutée':'Laissez la maison compléter';
+  $('#assist-p').textContent=hasAuto?`${totalAuto()} échantillon${totalAuto()>1?'s':''} choisi${totalAuto()>1?'s':''} pour vous. Épinglez ceux que vous gardez, ou régénérez.`:`Il reste ${MAX-totalMan()} emplacement${MAX-totalMan()>1?'s':''}. On les remplit selon le critère choisi.`;
+  $('#crit').querySelectorAll('button').forEach(b=>b.classList.toggle('on',b.dataset.c===crit));
+  const act=$('#assist-actions');act.innerHTML='';
+  if(!hasAuto){const b=document.createElement('button');b.className='btn-gold';b.textContent=`Compléter (${MAX-totalMan()})`;b.onclick=pickAuto;act.appendChild(b);}
+  else{const r=document.createElement('button');r.className='btn-gold';r.textContent='↻ Régénérer';r.onclick=pickAuto;const c=document.createElement('button');c.className='btn-ghost';c.textContent='Effacer';c.onclick=()=>{for(const k in auto)delete auto[k];refresh()};act.appendChild(r);act.appendChild(c);}
+}
+$('#crit').querySelectorAll('button').forEach(b=>b.onclick=()=>{crit=b.dataset.c;if(totalAuto()>0)pickAuto();else buildAssist()});
+
+function updateProgress(){const tm=totalMan(),t=total();$('#pcur').textContent=t;$('#tcur').textContent=t;const pips=$('#pips');pips.innerHTML='';for(let i=0;i<MAX;i++){const d=document.createElement('span');d.className='pip'+(i<tm?' man':i<t?' auto':'');pips.appendChild(d)}const cta=$('#cta');cta.disabled=t!==MAX;cta.textContent=t===MAX?'Ajouter au panier':`Encore ${MAX-t} à choisir`}
+
+function buildTray(){const tr=$('#traysel');tr.innerHTML='';let filled=0;const draw=(map,cls,spark)=>Object.entries(map).forEach(([id,qy])=>{const p=P(id);const s=document.createElement('div');s.className='tslot '+cls;s.title=p.n+' — '+p.b;s.innerHTML=vial(p.tint)+(spark?'<span class="ts">✦</span>':'')+(qy>1?`<span class="tq">${qy}</span>`:'')+'<button class="rm">×</button>';s.querySelector('.rm').onclick=()=>{delete map[id];refresh()};tr.appendChild(s);filled+=qy});draw(man,'man',false);draw(auto,'auto',true);for(let i=filled;i<MAX;i++){const s=document.createElement('div');s.className='tslot';tr.appendChild(s)}}
+
+function updatePayload(){const lines=[];let idx=1;const push=map=>Object.entries(map).forEach(([id,qy])=>{const p=P(id);for(let k=0;k<qy;k++){lines.push(`  "Échantillon n°${idx}": "${p.n} - ${p.b}"`);idx++}});push(man);push(auto);$('#payload').textContent=lines.length?'{\n'+lines.join(',\n')+'\n}':'Aucun échantillon sélectionné.'}
+
+function refresh(){buildGrid();buildTray();updateProgress();buildAssist();updatePayload()}
+
+$('#search').oninput=e=>{q=e.target.value.toLowerCase().trim();buildGrid()};
+$('#cta').onclick=()=>{if(total()===MAX)alert('✔ Coffret validé — ajout au panier (démo).')};
+
+buildFilters();refresh();
+
+(function(){const tb=document.querySelector('.toolbar'),as=document.querySelector('#assist'),sent=document.querySelector('#assist-sentinel');const setH=()=>document.documentElement.style.setProperty('--tb-h',tb.offsetHeight+'px');setH();window.addEventListener('resize',setH);new IntersectionObserver(([e])=>as.classList.toggle('stuck',!e.isIntersecting),{rootMargin:`-${tb.offsetHeight+1}px 0px 0px 0px`,threshold:0}).observe(sent)})();
+</script>
+</body>
+</html>
