@@ -740,6 +740,11 @@ export default function HomePageClient() {
         `}</style>
       </section>
 
+      {/* ── CATEGORY RAIL (2e occurrence, après la bannière Yara) ──── */}
+      <section id="category-rail-2" style={{ background: "var(--surface-page)", padding: "20px 0" }}>
+        <CategoryRail categories={DEMO_CATEGORIES} locale={locale} />
+      </section>
+
       {/* ── TOUS NOS INCONTOURNABLES (au-dessus de la roue) ───────── */}
       <section id="catalogue" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
@@ -771,19 +776,7 @@ export default function HomePageClient() {
         />
       </section>
 
-      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
-      <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow={tTwin("eyebrow")}
-            title={tTwin("title")}
-            subtitle={tTwin("subtitle")}
-          />
-          <OlfactiveTwin matches={OLFACTIVE_TWINS} variant="compact" locale={locale} />
-        </div>
-      </section>
-
-      {/* ── 17. COFFRETS (L'art du cadeau oriental, au-dessus de Recherche par notes) ── */}
+      {/* ── COFFRETS (L'art du cadeau oriental, au-dessus de jumeau) ── */}
       <section id="coffrets" style={{ background: "linear-gradient(135deg, var(--espresso-900) 0%, var(--espresso-600) 100%)", padding: "80px 20px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, opacity: 0.22 }}>
           <Image src="/assets/coffrets.jpg" alt="Coffrets découverte" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
@@ -813,6 +806,51 @@ export default function HomePageClient() {
         </div>
       </section>
 
+      {/* ── 13. TENDANCES DU MOMENT / @dubaiparfumerie (au-dessus de Nos univers) ── */}
+      <section id="social" style={{ background: "var(--espresso-900)" }}>
+        <TrendCarousel products={DEMO_TRENDS} locale={locale} />
+      </section>
+
+      {/* ── 12. CATÉGORIES (Nos univers, au-dessus de jumeau) ─────── */}
+      <section id="categories" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <SectionHeader eyebrow="Nos univers" title="Pour elle, pour lui, pour tous" />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+            {[
+              { img: "/assets/cat-femme.jpg", label: "Pour Elle", count: "320 parfums" },
+              { img: "/assets/cat-homme.jpg", label: "Pour Lui", count: "280 parfums" },
+              { img: "/assets/cat-mixte.jpg", label: "Mixte", count: "420 parfums" },
+              { img: "/assets/coffrets.jpg", label: "Coffrets", count: "85 coffrets" },
+            ].map(cat => (
+              <a key={cat.label} href="#" style={{
+                textDecoration: "none", display: "block",
+                position: "relative", paddingBottom: "125%",
+                borderRadius: "var(--r-lg)", overflow: "hidden",
+              }}>
+                <Image src={cat.img} alt={cat.label} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
+                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(21,16,11,0.8) 0%, transparent 55%)" }} />
+                <div style={{ position: "absolute", bottom: 20, left: 20, right: 20 }}>
+                  <div style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: "#fff", marginBottom: 4 }}>{cat.label}</div>
+                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--on-dark-muted)" }}>{cat.count}</div>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
+      <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1040, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow={tTwin("eyebrow")}
+            title={tTwin("title")}
+            subtitle={tTwin("subtitle")}
+          />
+          <OlfactiveTwin matches={OLFACTIVE_TWINS} variant="compact" locale={locale} />
+        </div>
+      </section>
+
       {/* ── ROUE DES SENTEURS interactive (sous Le catalogue) ─────── */}
       <section id="roue-senteurs" style={{ background: "var(--surface-cream)", padding: "70px 20px 24px" }}>
         <div style={{ maxWidth: 1500, margin: "0 auto" }}>
@@ -820,10 +858,6 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 13. TENDANCES DU MOMENT (après Recherche par notes) ───── */}
-      <section id="social" style={{ background: "var(--espresso-900)" }}>
-        <TrendCarousel products={DEMO_TRENDS} locale={locale} />
-      </section>
 
 
       {/* ── HUILES DE PARFUM (sous Shopping vidéo) ────────────────── */}
@@ -855,6 +889,9 @@ export default function HomePageClient() {
           </div>
         </div>
       </section>
+
+      {/* ── 21. LE JOURNAL (BLOG, sous Exclusif) ──────────────────── */}
+      <JournalSection articles={JOURNAL_ARTICLES} locale={locale} />
 
       {/* ── LE MUR DES SENTEURS — désactivé ───────────────────────── */}
       {false && (
@@ -1170,33 +1207,6 @@ export default function HomePageClient() {
 
       {/* ── 11. FAMILLES OLFACTIVES — retirée ─────────────────────── */}
 
-      {/* ── 12. CATÉGORIES ────────────────────────────────────────── */}
-      <section id="categories" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader eyebrow="Nos univers" title="Pour elle, pour lui, pour tous" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-            {[
-              { img: "/assets/cat-femme.jpg", label: "Pour Elle", count: "320 parfums" },
-              { img: "/assets/cat-homme.jpg", label: "Pour Lui", count: "280 parfums" },
-              { img: "/assets/cat-mixte.jpg", label: "Mixte", count: "420 parfums" },
-              { img: "/assets/coffrets.jpg", label: "Coffrets", count: "85 coffrets" },
-            ].map(cat => (
-              <a key={cat.label} href="#" style={{
-                textDecoration: "none", display: "block",
-                position: "relative", paddingBottom: "125%",
-                borderRadius: "var(--r-lg)", overflow: "hidden",
-              }}>
-                <Image src={cat.img} alt={cat.label} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(21,16,11,0.8) 0%, transparent 55%)" }} />
-                <div style={{ position: "absolute", bottom: 20, left: 20, right: 20 }}>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: "#fff", marginBottom: 4 }}>{cat.label}</div>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--on-dark-muted)" }}>{cat.count}</div>
-                </div>
-              </a>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── 15. FOCUS MARQUE ──────────────────────────────────────── */}
       <section id="marque" style={{ background: "var(--espresso-900)", padding: "80px 20px" }}>
@@ -1317,8 +1327,6 @@ export default function HomePageClient() {
       </section>
       )}
 
-      {/* ── 21. LE JOURNAL (JournalSection bento) ─────────────────── */}
-      <JournalSection articles={JOURNAL_ARTICLES} locale={locale} />
 
       {/* ── 22. ENCYCLOPÉDIE — désactivée ─────────────────────────── */}
       {false && (
@@ -1344,7 +1352,7 @@ export default function HomePageClient() {
       )}
 
       {/* ── 23. RÉASSURANCE 5 PILIERS ─────────────────────────────── */}
-      <section id="reassurance" style={{ background: "linear-gradient(180deg, #4a3a28, #3a2c1d)", padding: "60px 20px", borderTop: "1px solid rgba(200,144,30,0.18)" }}>
+      <section id="reassurance" style={{ background: "linear-gradient(135deg, var(--espresso-900) 0%, var(--espresso-600) 100%)", padding: "60px 20px", borderTop: "1px solid rgba(200,144,30,0.18)" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, textAlign: "center" }}>
             {[

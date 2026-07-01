@@ -58,83 +58,83 @@ const COLUMNS = [
   },
 ];
 
-// Logos de paiement — SVG inline sur cartes blanches (inspiré du visuel fourni)
-const CARD_W = 44, CARD_H = 28;
+// Logos de paiement — SVG inline sur pastilles blanches, marques colorées reconnaissables
+const CARD_W = 62, CARD_H = 40;
 const PaymentLogos: { name: string; svg: React.ReactNode }[] = [
   {
     name: "Mastercard",
     svg: (
-      <svg viewBox="0 0 40 25" width="30" height="19" role="img" aria-label="Mastercard">
-        <circle cx="16" cy="12.5" r="9" fill="#EB001B" />
-        <circle cx="24" cy="12.5" r="9" fill="#F79E1B" />
-        <path d="M20 5.5a9 9 0 0 1 0 14 9 9 0 0 1 0-14z" fill="#FF5F00" />
+      <svg viewBox="0 0 40 25" width="38" height="24" role="img" aria-label="Mastercard">
+        <circle cx="16" cy="12.5" r="9.5" fill="#EB001B" />
+        <circle cx="24" cy="12.5" r="9.5" fill="#F79E1B" />
+        <path
+          d="M20 5.4a9.5 9.5 0 0 1 0 14.2 9.5 9.5 0 0 1 0-14.2z"
+          fill="#FF5F00"
+        />
       </svg>
     ),
   },
   {
     name: "PayPal",
     svg: (
-      <svg viewBox="0 0 26 26" width="20" height="20" role="img" aria-label="PayPal">
-        <path d="M7 22 8.6 3.5h7.2c3.2 0 5.2 1.7 4.8 4.8-.5 3.6-3 5.2-6.4 5.2h-2.8L10.6 22z" fill="#003087"/>
-        <path d="M9.8 24 11.4 5.5h6.4c2.9 0 4.7 1.5 4.3 4.4-.5 3.4-2.9 4.9-6 4.9h-2.6L12.6 24z" fill="#009CDE" opacity="0.85"/>
+      <svg viewBox="0 0 58 18" width="50" height="16" role="img" aria-label="PayPal">
+        <text x="0" y="14.5" fontFamily="Arial, Helvetica, sans-serif" fontStyle="italic" fontWeight="800" fontSize="16" fill="#003087">Pay</text>
+        <text x="25" y="14.5" fontFamily="Arial, Helvetica, sans-serif" fontStyle="italic" fontWeight="800" fontSize="16" fill="#009CDE">Pal</text>
       </svg>
     ),
   },
   {
     name: "Visa",
     svg: (
-      <svg viewBox="0 0 48 16" width="36" height="12" role="img" aria-label="Visa">
-        <text x="0" y="13" fontFamily="Arial, sans-serif" fontStyle="italic" fontWeight="800" fontSize="15" fill="#1A1F71" letterSpacing="0.5">VISA</text>
+      <svg viewBox="0 0 48 16" width="46" height="15" role="img" aria-label="Visa">
+        <text x="0" y="14" fontFamily="Arial, Helvetica, sans-serif" fontStyle="italic" fontWeight="800" fontSize="16" fill="#1A1F71" letterSpacing="0.5">VISA</text>
       </svg>
     ),
   },
   {
     name: "American Express",
     svg: (
-      <svg viewBox="0 0 44 28" width="34" height="22" role="img" aria-label="American Express">
-        <rect width="44" height="28" rx="3" fill="#2671B9" />
-        <text x="22" y="11.5" textAnchor="middle" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="5.5" fill="#fff">AMERICAN</text>
-        <text x="22" y="20" textAnchor="middle" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="5.5" fill="#fff">EXPRESS</text>
+      <svg viewBox="0 0 44 28" width="37" height="24" role="img" aria-label="American Express">
+        <rect width="44" height="28" rx="3" fill="#006FCF" />
+        <text x="22" y="18.5" textAnchor="middle" fontFamily="Arial, Helvetica, sans-serif" fontWeight="800" fontSize="10" letterSpacing="0.5" fill="#fff">AMEX</text>
       </svg>
     ),
   },
   {
     name: "Discover",
     svg: (
-      <svg viewBox="0 0 76 16" width="48" height="11" role="img" aria-label="Discover">
-        <text x="0" y="13" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="13" fill="#231F20">DISC</text>
-        <circle cx="48" cy="8" r="6" fill="#F58220" />
-        <text x="55" y="13" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="13" fill="#231F20">VER</text>
+      <svg viewBox="0 0 82 16" width="52" height="10" role="img" aria-label="Discover">
+        <text x="0" y="13.5" fontFamily="Arial, Helvetica, sans-serif" fontWeight="700" fontSize="14" fill="#231F20">disc</text>
+        <circle cx="35" cy="8.5" r="6.5" fill="#F58220" />
+        <text x="41" y="13.5" fontFamily="Arial, Helvetica, sans-serif" fontWeight="700" fontSize="14" fill="#231F20">ver</text>
       </svg>
     ),
   },
   {
     name: "iDEAL",
     svg: (
-      <svg viewBox="0 0 44 28" width="32" height="20" role="img" aria-label="iDEAL">
-        <rect width="44" height="28" rx="3" fill="#fff" />
-        <text x="6" y="20" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="13" fill="#CC0066">i</text>
-        <text x="13" y="20" fontFamily="Arial, sans-serif" fontWeight="800" fontSize="13" fill="#000">DEAL</text>
+      <svg viewBox="0 0 48 28" width="42" height="24" role="img" aria-label="iDEAL">
+        <text x="2" y="21" fontFamily="Arial, Helvetica, sans-serif" fontStyle="italic" fontWeight="800" fontSize="16" fill="#CC0066">i</text>
+        <text x="11" y="21" fontFamily="Arial, Helvetica, sans-serif" fontWeight="800" fontSize="16" fill="#000">DEAL</text>
       </svg>
     ),
   },
   {
     name: "SOFORT",
     svg: (
-      <svg viewBox="0 0 70 24" width="48" height="16" role="img" aria-label="SOFORT Überweisung">
-        <text x="0" y="13" fontFamily="Arial, sans-serif" fontStyle="italic" fontWeight="800" fontSize="12" fill="#EE7F00">SOFORT</text>
-        <text x="0" y="21" fontFamily="Arial, sans-serif" fontWeight="500" fontSize="5" fill="#666" letterSpacing="0.5">ÜBERWEISUNG</text>
+      <svg viewBox="0 0 66 16" width="50" height="12" role="img" aria-label="SOFORT Überweisung">
+        <text x="0" y="13" fontFamily="Arial, Helvetica, sans-serif" fontStyle="italic" fontWeight="800" fontSize="14" fill="#EE7F00">SOFORT.</text>
       </svg>
     ),
   },
   {
     name: "Bancontact",
     svg: (
-      <svg viewBox="0 0 70 24" width="48" height="16" role="img" aria-label="Bancontact">
-        <path d="M0 22 L22 22 L34 8 L12 8 Z" fill="#005498" />
-        <path d="M36 2 L58 2 L46 16 L24 16 Z" fill="#FFD800" />
-        <text x="2" y="14" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="5.5" fill="#fff">Banc</text>
-        <text x="40" y="13" fontFamily="Arial, sans-serif" fontWeight="700" fontSize="5.5" fill="#005498">ontact</text>
+      <svg viewBox="0 0 72 26" width="50" height="18" role="img" aria-label="Bancontact">
+        <path d="M2 23 L24 23 L37 8 L15 8 Z" fill="#005498" />
+        <path d="M39 3 L61 3 L48 18 L26 18 Z" fill="#FFD800" />
+        <text x="2" y="15" fontFamily="Arial, Helvetica, sans-serif" fontWeight="800" fontSize="6.5" fill="#fff">banc</text>
+        <text x="44" y="14.5" fontFamily="Arial, Helvetica, sans-serif" fontWeight="800" fontSize="6.5" fill="#005498">ontact</text>
       </svg>
     ),
   },
@@ -419,21 +419,25 @@ export function Footer() {
         </span>
 
         {/* Payment logos */}
-        <div style={{ display: "flex", alignItems: "center", gap: 8, flexWrap: "wrap" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           {PaymentLogos.map(({ name, svg }) => (
             <span
               key={name}
               title={name}
+              aria-label={name}
               style={{
                 display: "inline-flex",
                 alignItems: "center",
                 justifyContent: "center",
                 width: CARD_W,
                 height: CARD_H,
+                paddingInline: 8,
                 background: "#fff",
-                borderRadius: 5,
-                boxShadow: "0 1px 3px rgba(0,0,0,.25)",
+                borderRadius: 8,
+                border: "1px solid rgba(0,0,0,.06)",
+                boxShadow: "0 1px 4px rgba(0,0,0,.22)",
                 flexShrink: 0,
+                boxSizing: "border-box",
               }}
             >
               {svg}

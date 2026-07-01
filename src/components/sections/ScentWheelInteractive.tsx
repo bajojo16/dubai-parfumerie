@@ -487,6 +487,7 @@ export function ScentWheelInteractive({
             }}
           >
             {L.title}
+            {active ? ` : ${active.name}` : ""}
           </h2>
 
           <p

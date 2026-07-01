@@ -18,7 +18,8 @@ const PROMO_PRODUCTS = [
   { id: 12, name: "Lot Découverte Huiles 6×3ml", brand: "Dubaï Parfumerie", price: 24.90, oldPrice: 54.90, discount: 55, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
 ];
 
-const FILTERS = ["Tous", "Femme", "Homme", "Mixte", "Huile de Parfum", "Coffrets & Lots"];
+const OFFER_2_3 = "Achète 2 = 3 offert";
+const FILTERS = ["Tous", "Femme", "Homme", "Mixte", "Huile de Parfum", "Coffrets & Lots", OFFER_2_3];
 
 function useCountdown(totalSeconds: number) {
   const [remaining, setRemaining] = useState(totalSeconds);
@@ -48,7 +49,12 @@ export default function PromoFlashPage() {
   const filteredProducts =
     activeFilter === "Tous" || activeFilter === "Huile de Parfum"
       ? PROMO_PRODUCTS
-      : PROMO_PRODUCTS.filter((p) => p.category === activeFilter);
+      : activeFilter === OFFER_2_3
+        ? // Offre « Achète 2 = 3 offert » : parfums individuels éligibles
+          PROMO_PRODUCTS.filter((p) =>
+            ["Femme", "Homme", "Mixte"].includes(p.category)
+          )
+        : PROMO_PRODUCTS.filter((p) => p.category === activeFilter);
 
   return (
     <>
@@ -216,6 +222,7 @@ export default function PromoFlashPage() {
         >
           {FILTERS.map((filter) => {
             const isActive = activeFilter === filter;
+            const isOffer = filter === OFFER_2_3;
             return (
               <button
                 key={filter}
@@ -224,18 +231,26 @@ export default function PromoFlashPage() {
                 style={{
                   padding: "8px 20px",
                   borderRadius: 999,
-                  border: isActive ? "1.5px solid var(--gold-500)" : "1.5px solid var(--ink-400)",
-                  background: isActive ? "var(--gold-500)" : "var(--surface-white)",
-                  color: isActive ? "#fff" : "var(--ink-700)",
+                  border: isActive
+                    ? "1.5px solid var(--gold-500)"
+                    : isOffer
+                      ? "1.5px solid var(--gold-500)"
+                      : "1.5px solid var(--ink-400)",
+                  background: isActive
+                    ? "var(--gold-500)"
+                    : isOffer
+                      ? "var(--gold-100)"
+                      : "var(--surface-white)",
+                  color: isActive ? "#fff" : isOffer ? "var(--gold-700)" : "var(--ink-700)",
                   fontFamily: "var(--font-sans)",
                   fontSize: 14,
-                  fontWeight: isActive ? 600 : 400,
+                  fontWeight: isActive || isOffer ? 600 : 400,
                   cursor: "pointer",
                   transition: "all 0.18s ease",
                   whiteSpace: "nowrap",
                 }}
               >
-                {filter}
+                {isOffer ? `★ ${filter}` : filter}
               </button>
             );
           })}

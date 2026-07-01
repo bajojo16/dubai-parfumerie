@@ -59,6 +59,7 @@ function PromoOverlay({
   href,
   tagline,
   scrim,
+  alignFocalToCondition,
 }: {
   line1: string;
   line2: string;
@@ -68,6 +69,7 @@ function PromoOverlay({
   href: string;
   tagline?: string;
   scrim?: boolean;
+  alignFocalToCondition?: boolean;
 }) {
   return (
     <motion.div
@@ -102,64 +104,81 @@ function PromoOverlay({
         maxWidth: scrim ? "min(46vw, 600px)" : "min(42vw, 560px)",
       }}
     >
-      {/* Bloc titre+focal : largeur = élément le plus large (focal en général).
-          Chaque ligne du titre se justifie à cette largeur (inter-character →
-          même les mots seuls comme ÉCHANTILLONS / CONVOITÉS s'étirent). */}
-      <div style={{ display: "flex", flexDirection: "column", width: "fit-content" }}>
-        {/* Titre 2 lignes */}
-        <div
-          style={{
-            width: "100%",
-            fontWeight: 600,
-            textTransform: "uppercase",
-            fontSize: "clamp(1.7rem, 3vw, 2.8rem)",
-            lineHeight: 1.04,
-            letterSpacing: "0.04em",
-            textAlign: "justify",
-            textAlignLast: "justify",
-            textJustify: "inter-character",
-          }}
-        >
-          <div>{line1}</div>
-          <div>{line2}</div>
-        </div>
+      {(() => {
+        /* Condition avec filets latéraux */
+        const conditionEl = (
+          <div
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: 12,
+              width: "100%",
+              justifyContent: "flex-end",
+              fontFamily: "var(--font-sans)",
+              fontWeight: 400,
+              fontSize: "clamp(0.6rem, 1vw, 0.8rem)",
+              letterSpacing: "0.18em",
+              textTransform: "uppercase",
+              marginBottom: 20,
+            }}
+          >
+            <span style={{ flex: 1, height: 1, maxWidth: 40, background: "rgba(255,255,255,.6)" }} />
+            <span style={{ whiteSpace: "nowrap" }}>{condition}</span>
+            <span style={{ flex: 1, height: 1, maxWidth: 40, background: "rgba(255,255,255,.6)" }} />
+          </div>
+        );
+        return (
+          <>
+            {/* Bloc titre+focal (+condition si demandé) : largeur = élément le plus
+                large. Titre justifié inter-character. Si alignFocalToCondition,
+                la condition entre dans le wrapper et le focal s'étire à sa largeur
+                (TOP 10 aussi large que « CE QUE TOUT LE MONDE S'ARRACHE »). */}
+            <div style={{ display: "flex", flexDirection: "column", width: "fit-content" }}>
+              <div
+                style={{
+                  width: "100%",
+                  fontWeight: 600,
+                  textTransform: "uppercase",
+                  fontSize: "clamp(1.7rem, 3vw, 2.8rem)",
+                  lineHeight: 1.04,
+                  letterSpacing: "0.04em",
+                  textAlign: "justify",
+                  textAlignLast: "justify",
+                  textJustify: "inter-character",
+                }}
+              >
+                <div>{line1}</div>
+                <div>{line2}</div>
+              </div>
 
-        {/* Élément focal (ex. -15% / 1 ML / TOP 10) */}
-        <div
-          style={{
-            width: "100%",
-            fontWeight: 600,
-            fontSize: "clamp(3.6rem, 7.5vw, 6.6rem)",
-            lineHeight: 0.84,
-            letterSpacing: "-0.01em",
-            margin: "0.04em 0 0.08em",
-            textAlign: "center",
-          }}
-        >
-          {focal}
-        </div>
-      </div>
+              {/* Élément focal (ex. -15% / 1 ML / TOP 10) */}
+              <div
+                style={{
+                  width: "100%",
+                  fontWeight: 600,
+                  fontSize: "clamp(3.6rem, 7.5vw, 6.6rem)",
+                  lineHeight: 0.84,
+                  letterSpacing: "-0.01em",
+                  margin: "0.04em 0 0.08em",
+                  ...(alignFocalToCondition
+                    ? {
+                        textAlign: "justify" as const,
+                        textAlignLast: "justify" as const,
+                        textJustify: "inter-character" as const,
+                      }
+                    : { textAlign: "center" as const }),
+                }}
+              >
+                {focal}
+              </div>
 
-      {/* Condition avec filets latéraux */}
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 12,
-          width: "100%",
-          justifyContent: "flex-end",
-          fontFamily: "var(--font-sans)",
-          fontWeight: 400,
-          fontSize: "clamp(0.6rem, 1vw, 0.8rem)",
-          letterSpacing: "0.18em",
-          textTransform: "uppercase",
-          marginBottom: 20,
-        }}
-      >
-        <span style={{ flex: 1, height: 1, maxWidth: 40, background: "rgba(255,255,255,.6)" }} />
-        <span style={{ whiteSpace: "nowrap" }}>{condition}</span>
-        <span style={{ flex: 1, height: 1, maxWidth: 40, background: "rgba(255,255,255,.6)" }} />
-      </div>
+              {alignFocalToCondition && conditionEl}
+            </div>
+
+            {!alignFocalToCondition && conditionEl}
+          </>
+        );
+      })()}
 
       {/* Tagline optionnelle (bannière 1) */}
       {tagline && (
@@ -172,8 +191,14 @@ function PromoOverlay({
             color: "rgba(255,255,255,.95)",
             maxWidth: "42ch",
             marginInline: "auto",
-            textAlign: "center",
             marginBottom: 22,
+            ...(alignFocalToCondition
+              ? {
+                  textAlign: "justify" as const,
+                  textAlignLast: "justify" as const,
+                  textJustify: "inter-character" as const,
+                }
+              : { textAlign: "center" as const }),
           }}
         >
           {/* Casse après le tiret : « Nos … » reste avec « échantillons … » */}
@@ -531,6 +556,7 @@ export function AnimatedHero() {
             cta="JE DÉCOUVRE"
             tagline="Découvrez les fragrances que tout le monde s'arrache"
             href="#bestsellers-rail"
+            alignFocalToCondition
           />
         )}
       </AnimatePresence>
