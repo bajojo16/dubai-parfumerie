@@ -745,21 +745,7 @@ export default function HomePageClient() {
         <CategoryRail categories={DEMO_CATEGORIES} locale={locale} />
       </section>
 
-      {/* ── TOUS NOS INCONTOURNABLES (au-dessus de la roue) ───────── */}
-      <section id="catalogue" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow="Le catalogue"
-            title={<>Tous nos <em>incontournables</em></>}
-            subtitle="Les parfums les plus appréciés de notre clientèle, semaine après semaine."
-          />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {bestSellers.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
-          </div>
-        </div>
-      </section>
-
-      {/* ── BEST-SELLERS (vidéo à droite, sous Coffrets & Lots) ───── */}
+      {/* ── BEST-SELLERS (au-dessus de Le catalogue) ──────────────── */}
       <section id="bestsellers-rail" style={{ background: "#F7F3EC", padding: "20px 0 40px" }}>
         <BestSellersRail
           eyebrow="Best-sellers"
@@ -775,6 +761,22 @@ export default function HomePageClient() {
           locale={locale}
         />
       </section>
+
+      {/* ── TOUS NOS INCONTOURNABLES (Le catalogue) — désactivée ───── */}
+      {false && (
+      <section id="catalogue" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow="Le catalogue"
+            title={<>Tous nos <em>incontournables</em></>}
+            subtitle="Les parfums les plus appréciés de notre clientèle, semaine après semaine."
+          />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+            {bestSellers.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
+          </div>
+        </div>
+      </section>
+      )}
 
       {/* ── COFFRETS (L'art du cadeau oriental, au-dessus de jumeau) ── */}
       <section id="coffrets" style={{ background: "linear-gradient(135deg, var(--espresso-900) 0%, var(--espresso-600) 100%)", padding: "80px 20px", position: "relative", overflow: "hidden" }}>
@@ -852,8 +854,8 @@ export default function HomePageClient() {
       </section>
 
       {/* ── ROUE DES SENTEURS interactive (sous Le catalogue) ─────── */}
-      <section id="roue-senteurs" style={{ background: "var(--surface-cream)", padding: "70px 20px 24px" }}>
-        <div style={{ maxWidth: 1500, margin: "0 auto" }}>
+      <section id="roue-senteurs" style={{ background: "var(--surface-cream)", padding: "70px 0 24px" }}>
+        <div style={{ width: "100%" }}>
           <ScentWheelInteractive families={DEMO_SCENT_FAMILIES} locale={locale} />
         </div>
       </section>
