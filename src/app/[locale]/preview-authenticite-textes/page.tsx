@@ -1,14 +1,11 @@
-"use client";
-
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 
 /* ──────────────────────────────────────────────────────────────────────────
-   PAGE DE TRAVAIL — Propositions de réécriture de la section « Authenticité »
-   Reproduit fidèlement la mise en page de la section #authenticite de la home
-   (eyebrow doré + titre serif Cormorant avec partie en italique + sous-titre
-   + 3 cartes numérotées 01/02/03), avec plusieurs variantes de texte.
-   Sélecteur d'onglets : une seule variante affichée à la fois (page compacte).
-   Non liée à la home, sert uniquement à comparer les tons de copywriting.
+   PAGE DE TRAVAIL — Propositions de réécriture de la section « Authenticité ».
+   Chaque variante est rendue EXACTEMENT comme elle apparaîtrait dans la vraie
+   section Authenticité de la home (mêmes tokens, même SectionHeader, même
+   grille de 3 cartes). Les variantes sont empilées pour comparaison réelle,
+   précédées d'un bandeau d'étiquette discret. Usage interne.
    ────────────────────────────────────────────────────────────────────────── */
 
 type Card = { n: string; title: string; desc: string };
@@ -21,19 +18,19 @@ type Variant = {
   title: ReactNode;
   subtitle: string;
   cards: Card[];
+  recommended?: boolean;
 };
 
 const VARIANTS: Variant[] = [
   {
     id: "A",
     label: "Variante A",
-    ton: "Ton premium / maison de luxe",
+    ton: "Premium · maison de luxe",
     eyebrow: "Notre promesse",
+    recommended: true,
     title: (
       <>
-        L&apos;authenticité,
-        <br />
-        <em>sans compromis</em>
+        L&apos;authenticité, <em>sans compromis</em>
       </>
     ),
     subtitle:
@@ -59,13 +56,11 @@ const VARIANTS: Variant[] = [
   {
     id: "B",
     label: "Variante B",
-    ton: "Ton rassurant / direct",
+    ton: "Rassurant · direct",
     eyebrow: "Notre engagement",
     title: (
       <>
-        100% authentique,
-        <br />
-        <em>ou remboursé</em>
+        100% authentique, <em>ou remboursé</em>
       </>
     ),
     subtitle:
@@ -91,13 +86,11 @@ const VARIANTS: Variant[] = [
   {
     id: "C",
     label: "Variante C",
-    ton: "Ton orienté preuve / concret",
+    ton: "Preuve · concret",
     eyebrow: "Authenticité vérifiable",
     title: (
       <>
-        La preuve,
-        <br />
-        <em>pas la promesse</em>
+        La preuve, <em>pas la promesse</em>
       </>
     ),
     subtitle:
@@ -123,13 +116,11 @@ const VARIANTS: Variant[] = [
   {
     id: "D",
     label: "Variante D",
-    ton: "Ton sensoriel / narratif oriental",
+    ton: "Sensoriel · narratif oriental",
     eyebrow: "L'art du flacon véritable",
     title: (
       <>
-        Du Golfe à vous,
-        <br />
-        <em>rien entre les deux</em>
+        Du Golfe à vous, <em>rien entre les deux</em>
       </>
     ),
     subtitle:
@@ -154,14 +145,15 @@ const VARIANTS: Variant[] = [
   },
 ];
 
-function SectionHeaderPreview({
+/* SectionHeader — réplique exacte de celui de la home */
+function SectionHeader({
   eyebrow,
   title,
   subtitle,
 }: {
   eyebrow: string;
   title: ReactNode;
-  subtitle: string;
+  subtitle?: string;
 }) {
   return (
     <div style={{ textAlign: "center", marginBottom: 48 }}>
@@ -171,7 +163,7 @@ function SectionHeaderPreview({
           fontSize: "0.78rem",
           letterSpacing: "0.22em",
           textTransform: "uppercase",
-          color: "var(--gold-700, #A8801F)",
+          color: "var(--gold-700)",
           marginBottom: 12,
           fontWeight: 500,
         }}
@@ -189,41 +181,53 @@ function SectionHeaderPreview({
       >
         {title}
       </h2>
-      <p
-        style={{
-          fontFamily: "var(--font-sans)",
-          fontSize: "1.1rem",
-          color: "var(--ink-500)",
-          marginTop: 16,
-          lineHeight: 1.7,
-          maxWidth: 640,
-          marginInline: "auto",
-        }}
-      >
-        {subtitle}
-      </p>
+      {subtitle && (
+        <p
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: "1.1rem",
+            color: "var(--ink-500)",
+            marginTop: 16,
+            lineHeight: 1.7,
+            maxWidth: 640,
+            marginInline: "auto",
+          }}
+        >
+          {subtitle}
+        </p>
+      )}
     </div>
   );
 }
 
-function AuthenticiteVariant({ variant }: { variant: Variant }) {
+/* Rendu RÉEL de la section Authenticité pour une variante donnée */
+function AuthenticiteSection({ variant }: { variant: Variant }) {
   return (
-    <section style={{ background: "var(--surface-cream, #F8F2E6)", padding: "80px 20px" }}>
+    <section
+      style={{ background: "var(--surface-cream)", padding: "80px 20px" }}
+    >
       <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-        <SectionHeaderPreview
+        <SectionHeader
           eyebrow={variant.eyebrow}
           title={variant.title}
           subtitle={variant.subtitle}
         />
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
+        <div
+          className="auth-cards"
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(3, 1fr)",
+            gap: 28,
+          }}
+        >
           {variant.cards.map((card) => (
             <div
               key={card.n}
               style={{
-                background: "var(--surface-white, #FFFFFF)",
-                borderRadius: "var(--r-lg, 14px)",
+                background: "var(--surface-white)",
+                borderRadius: "var(--r-lg)",
                 padding: "36px 28px",
-                border: "1px solid var(--line-200, #E5DAC6)",
+                border: "1px solid var(--line-200)",
                 position: "relative",
                 overflow: "hidden",
               }}
@@ -232,10 +236,10 @@ function AuthenticiteVariant({ variant }: { variant: Variant }) {
                 style={{
                   fontFamily: "var(--font-display)",
                   fontSize: "4rem",
-                  color: "var(--gold-100, #F6EAC8)",
+                  color: "var(--gold-100)",
                   position: "absolute",
                   top: 10,
-                  right: 18,
+                  insetInlineEnd: 18,
                   lineHeight: 1,
                   userSelect: "none",
                 }}
@@ -272,130 +276,70 @@ function AuthenticiteVariant({ variant }: { variant: Variant }) {
   );
 }
 
-function VariantTabs({
-  variants,
-  activeId,
-  onSelect,
-}: {
-  variants: Variant[];
-  activeId: string;
-  onSelect: (id: string) => void;
-}) {
-  return (
-    <div
-      style={{
-        display: "flex",
-        flexWrap: "wrap",
-        gap: 10,
-        justifyContent: "center",
-        maxWidth: 1240,
-        margin: "26px auto 0",
-        padding: "0 20px",
-      }}
-    >
-      {variants.map((variant) => {
-        const active = variant.id === activeId;
-        return (
-          <button
-            key={variant.id}
-            type="button"
-            onClick={() => onSelect(variant.id)}
-            aria-pressed={active}
-            style={{
-              cursor: "pointer",
-              fontFamily: "var(--font-sans)",
-              fontSize: "0.82rem",
-              fontWeight: 600,
-              letterSpacing: "0.04em",
-              padding: "11px 20px",
-              borderRadius: 999,
-              border: active
-                ? "1px solid var(--gold-400, #D8A63A)"
-                : "1px solid rgba(255,255,255,0.18)",
-              background: active ? "var(--gold-400, #D8A63A)" : "transparent",
-              color: active ? "var(--ink-900, #1C1611)" : "rgba(255,255,255,0.78)",
-              transition: "all 0.18s ease",
-              lineHeight: 1.15,
-              textAlign: "center",
-            }}
-          >
-            <span style={{ display: "block" }}>{variant.label}</span>
-            <span
-              style={{
-                display: "block",
-                fontSize: "0.66rem",
-                fontWeight: 400,
-                letterSpacing: "0.08em",
-                textTransform: "uppercase",
-                opacity: active ? 0.78 : 0.55,
-                marginTop: 3,
-              }}
-            >
-              {variant.ton}
-            </span>
-          </button>
-        );
-      })}
-    </div>
-  );
-}
-
 export default function PreviewAuthenticiteTextesPage() {
-  const [activeId, setActiveId] = useState<string>(VARIANTS[0].id);
-  const active = VARIANTS.find((v) => v.id === activeId) ?? VARIANTS[0];
-
   return (
-    <main style={{ background: "var(--surface-cream, #F8F2E6)", minHeight: "100vh" }}>
-      <header
-        style={{
-          background: "var(--ink-900, #1C1611)",
-          padding: "40px 20px 30px",
-          textAlign: "center",
-        }}
-      >
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div
-            style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: "0.72rem",
-              letterSpacing: "0.24em",
-              textTransform: "uppercase",
-              color: "var(--gold-400, #D8A63A)",
-              marginBottom: 14,
-            }}
-          >
-            Page de travail · interne
+    <main style={{ background: "var(--surface-page)" }}>
+      {VARIANTS.map((variant) => (
+        <div key={variant.id}>
+          {/* Bandeau étiquette de la variante */}
+          <div className="vlabel">
+            <span className="vlabel-id">{variant.label}</span>
+            <span className="vlabel-ton">{variant.ton}</span>
+            {variant.recommended && (
+              <span className="vlabel-reco">Recommandée</span>
+            )}
           </div>
-          <h1
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "clamp(1.8rem, 3.6vw, 2.6rem)",
-              color: "#FFFFFF",
-              margin: 0,
-              lineHeight: 1.1,
-            }}
-          >
-            Section « Authenticité » — <em>propositions de texte</em>
-          </h1>
-          <p
-            style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: "0.92rem",
-              color: "rgba(255,255,255,0.66)",
-              maxWidth: 620,
-              margin: "14px auto 0",
-              lineHeight: 1.6,
-            }}
-          >
-            {VARIANTS.length} variantes de copywriting, même mise en page.
-            Cliquez sur un onglet pour comparer les tons.
-          </p>
+          {/* Rendu réel de la section */}
+          <AuthenticiteSection variant={variant} />
         </div>
+      ))}
 
-        <VariantTabs variants={VARIANTS} activeId={activeId} onSelect={setActiveId} />
-      </header>
-
-      <AuthenticiteVariant key={active.id} variant={active} />
+      <style>{`
+        .vlabel {
+          display: flex;
+          align-items: center;
+          gap: 14px;
+          flex-wrap: wrap;
+          max-width: 1240px;
+          margin-inline: auto;
+          padding: 22px 20px 0;
+        }
+        .vlabel-id {
+          font-family: var(--font-display);
+          font-size: 1.25rem;
+          font-weight: 600;
+          color: var(--ink-900);
+        }
+        .vlabel-ton {
+          font-family: var(--font-sans);
+          font-size: 0.7rem;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          font-weight: 600;
+          color: var(--ink-500, #6B5D4E);
+          padding-inline: 12px;
+          padding-block: 6px;
+          border: 1px solid var(--line-200);
+          border-radius: 999px;
+          background: #fff;
+        }
+        .vlabel-reco {
+          font-family: var(--font-sans);
+          font-size: 0.64rem;
+          letter-spacing: 0.16em;
+          text-transform: uppercase;
+          font-weight: 700;
+          color: var(--gold-700);
+          padding-inline: 13px;
+          padding-block: 6px;
+          border-radius: 999px;
+          background: linear-gradient(180deg, #FBF1D6, #F4E4BA);
+          border: 1px solid var(--gold-400, #D8A63A);
+        }
+        @media (max-width: 760px) {
+          .auth-cards { grid-template-columns: 1fr !important; }
+        }
+      `}</style>
     </main>
   );
 }

@@ -44,8 +44,17 @@ function passesBudget(p: CatalogProduct, answer: string | null): boolean {
   return p.price >= range.min && p.price <= range.max;
 }
 
-/** Intensité cible : la saison oriente, sinon 2. */
+/**
+ * Intensité cible.
+ * 1) Préférence explicite (Q3 intensity = "1"|"2"|"3") si fournie ;
+ * 2) sinon orientation par la saison ;
+ * 3) sinon 2 (modéré). Toute valeur inconnue est ignorée proprement.
+ */
 function targetIntensity(answers: QuizAnswers): 1 | 2 | 3 {
+  const explicit = Number(answers.intensity);
+  if (explicit === 1 || explicit === 2 || explicit === 3) {
+    return explicit as 1 | 2 | 3;
+  }
   if (answers.season && SEASON_TARGET_INTENSITY[answers.season]) {
     return SEASON_TARGET_INTENSITY[answers.season];
   }
@@ -64,11 +73,9 @@ function scoreProduct(
   // Famille (Q2)
   if (has(fam, answers.family)) score += WEIGHTS.familyMatch;
 
-  // Note signature (Q3) — comptée si dans notes OU familles
+  // Note signature (Q7) — comptée si dans notes OU familles.
+  // Les slugs sans attribut produit (saffron, sandalwood…) ne matchent simplement pas.
   if (has(notes, answers.note) || has(fam, answers.note)) score += WEIGHTS.noteMatch;
-
-  // Seconde note (Q7)
-  if (has(notes, answers.note2) || has(fam, answers.note2)) score += WEIGHTS.note2Match;
 
   // Saison (Q5)
   if (answers.season) {
@@ -118,6 +125,8 @@ function buildReason(p: CatalogProduct, answers: QuizAnswers): string {
     powdery: "le poudré",
     woody: "le bois",
     amber: "l'ambre",
+    saffron: "le safran",
+    sandalwood: "le bois de santal",
   };
 
   if (answers.family && has(p.families, answers.family) && FAMILY_FR[answers.family]) {

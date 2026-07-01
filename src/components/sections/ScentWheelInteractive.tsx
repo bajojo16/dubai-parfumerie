@@ -75,7 +75,10 @@ export function ScentWheelInteractive({
   const L = { ...DEFAULT_LABELS, ...labels };
   const isRTL = locale === "ar";
   const reduced = usePrefersReducedMotion();
-  const [activeKey, setActiveKey] = useState<string | null>(null);
+  // Famille active par défaut : « épice » (si présente, sinon aucune)
+  const [activeKey, setActiveKey] = useState<string | null>(
+    families.some((f) => f.key === "epice") ? "epice" : null
+  );
 
   const active = useMemo(
     () => families.find((f) => f.key === activeKey) ?? null,

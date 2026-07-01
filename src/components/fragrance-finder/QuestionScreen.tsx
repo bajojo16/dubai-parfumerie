@@ -3,7 +3,10 @@
 /**
  * QuestionScreen — écran de question à vignettes.
  * Clic sur une tuile = sélection immédiate (le parent gère l'auto-avance ~260ms).
- * « Je ne sais pas » pleine largeur en bas si allowSkipUnsure (Q4 + Q7).
+ * Les options `fullWidth` (ex. « Je ne sais pas », value:"none") sont rendues
+ * en pleine largeur, séparées, sous la grille — elles auto-avancent aussi mais
+ * leur value:"none" est ignorée par le scoring (aucun filtre appliqué).
+ * Bouton « Retour » : géré dans ProgressHeader (désactivé sur Q1).
  */
 import type { Question, FinderLabels } from "./types";
 import { Tile } from "./Tile";
@@ -13,19 +16,19 @@ export function QuestionScreen({
   question,
   selected,
   reduced,
-  labels,
   onSelect,
-  onUnsure,
 }: {
   question: Question;
   selected: string | null;
   reduced: boolean;
   labels: FinderLabels;
   onSelect: (value: string) => void;
-  onUnsure: () => void;
 }) {
   const options = question.options ?? [];
-  const cols = options.length === 3 ? 3 : 2;
+  const gridOptions = options.filter((o) => !o.fullWidth);
+  const fullWidthOptions = options.filter((o) => o.fullWidth);
+  // 3 colonnes pour 3 ou 6 tuiles (grille compacte sans scroll), 2 colonnes sinon.
+  const cols = gridOptions.length === 3 || gridOptions.length === 6 ? 3 : 2;
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
@@ -66,7 +69,7 @@ export function QuestionScreen({
           gap: 12,
         }}
       >
-        {options.map((opt) => (
+        {gridOptions.map((opt) => (
           <Tile
             key={opt.value}
             option={opt}
@@ -77,26 +80,29 @@ export function QuestionScreen({
         ))}
       </div>
 
-      {question.allowSkipUnsure && (
+      {fullWidthOptions.map((opt) => (
         <button
+          key={opt.value}
           type="button"
-          onClick={onUnsure}
+          role="radio"
+          aria-checked={selected === opt.value}
+          onClick={() => onSelect(opt.value)}
           style={{
             width: "100%",
             padding: "13px 18px",
-            background: selected === null ? FF.cream2 : "transparent",
-            border: `1px dashed ${FF.border}`,
+            background: selected === opt.value ? FF.cream2 : "transparent",
+            border: `1px dashed ${selected === opt.value ? FF.gold : FF.border}`,
             borderRadius: 14,
-            color: FF.muted,
+            color: selected === opt.value ? FF.ink2 : FF.muted,
             fontFamily: FF.sans,
             fontSize: "0.88rem",
             cursor: "pointer",
-            transition: "background .2s, color .2s",
+            transition: reduced ? "none" : "background .2s, color .2s, border-color .2s",
           }}
         >
-          {labels.unsure}
+          {opt.label}
         </button>
-      )}
+      ))}
     </div>
   );
 }

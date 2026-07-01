@@ -24,11 +24,12 @@ const AUTO_ADVANCE_MS = 260;
 
 const EMPTY_ANSWERS: QuizAnswers = {
   gender: null,
+  level: null,
+  intensity: null,
   family: null,
-  note: null,
   season: null,
   loved: null,
-  note2: null,
+  note: null,
   budget: null,
   format: null,
 };
@@ -257,7 +258,6 @@ export function FragranceFinderModal({
                 reduced={reduced}
                 labels={labels}
                 onSelect={(value) => answer(value)}
-                onUnsure={() => answer(null)}
               />
             )}
           </>

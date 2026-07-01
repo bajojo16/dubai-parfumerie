@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { OlfactiveMatch } from "@/data/olfactive-twins";
+import { addItem } from "@/lib/cart";
 
 const C = {
   stage: "#FAF6EE",
@@ -42,6 +43,7 @@ export function OlfactiveTwin({
   const compact = variant === "compact";
   const [query, setQuery] = useState("");
   const [selectedKey, setSelectedKey] = useState<string>(matches[0]?.key ?? "");
+  const [addedKey, setAddedKey] = useState<string>("");
 
   const filtered = useMemo(
     () => matches.filter((m) => m.targetName.toLowerCase().includes(query.trim().toLowerCase())),
@@ -139,7 +141,7 @@ export function OlfactiveTwin({
       <div
         style={
           compact
-            ? { display: "flex", flexWrap: "nowrap", gap: 8, marginBottom: 12, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "thin", WebkitOverflowScrolling: "touch" }
+            ? { display: "flex", flexWrap: "wrap", alignContent: "flex-start", gap: 8, marginBottom: 12 }
             : { display: "flex", flexWrap: "wrap", gap: 10, marginBottom: 18 }
         }
       >
@@ -194,7 +196,7 @@ export function OlfactiveTwin({
       <div aria-live="polite">
         {selected && (
           <div style={{ background: "#fff", border: `0.5px solid ${C.border}`, borderRadius: compact ? 12 : 14, padding: compact ? 12 : 18 }}>
-            <div style={{ display: "flex", alignItems: "center", justifyContent: compact ? "flex-start" : "center", gap: compact ? 10 : 18, flexWrap: "wrap" }}>
+            <div style={{ display: "flex", alignItems: "center", justifyContent: compact ? "flex-start" : "center", gap: compact ? 10 : 18, flexWrap: compact ? "nowrap" : "wrap" }}>
               {/* Vous aimez */}
               <div style={{ minWidth: compact ? 0 : 140 }}>
                 <div style={{ fontFamily: "var(--font-sans)", fontSize: compact ? 10 : 11, letterSpacing: "1px", textTransform: "uppercase", color: C.muted, marginBottom: compact ? 1 : 4 }}>
@@ -211,8 +213,8 @@ export function OlfactiveTwin({
 
               {/* Le jumeau oriental */}
               <div style={{ display: "flex", alignItems: "center", gap: compact ? 10 : 14, flex: "1 1 auto", minWidth: compact ? 0 : 200 }}>
-                <div style={{ position: "relative", width: compact ? 44 : 64, height: compact ? 44 : 64, borderRadius: 10, overflow: "hidden", background: "#F7F3EE", flexShrink: 0 }}>
-                  <Image src={selected.product.image} alt={selected.product.name} fill sizes={compact ? "44px" : "64px"} style={{ objectFit: "cover" }} />
+                <div style={{ position: "relative", width: compact ? 84 : 64, height: compact ? 84 : 64, borderRadius: 10, overflow: "hidden", background: "#F7F3EE", flexShrink: 0 }}>
+                  <Image src={selected.product.image} alt={selected.product.name} fill sizes={compact ? "84px" : "64px"} style={{ objectFit: "cover" }} />
                 </div>
                 <div>
                   <div style={{ fontFamily: "var(--font-sans)", fontSize: compact ? 10 : 11, letterSpacing: "1px", textTransform: "uppercase", color: C.goldLabel, marginBottom: compact ? 1 : 3 }}>
@@ -241,6 +243,40 @@ export function OlfactiveTwin({
                     </>
                   )}
                 </div>
+                {compact && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      addItem({
+                        id: selected.key,
+                        name: selected.product.name,
+                        brand: selected.product.brand,
+                        price: selected.product.price,
+                        image: selected.product.image,
+                      });
+                      setAddedKey(selected.key);
+                    }}
+                    style={{
+                      marginInlineStart: "auto",
+                      flexShrink: 0,
+                      alignSelf: "center",
+                      border: "none",
+                      cursor: "pointer",
+                      borderRadius: 999,
+                      padding: "7px 13px",
+                      fontFamily: "var(--font-sans)",
+                      fontSize: 10.5,
+                      fontWeight: 600,
+                      letterSpacing: "0.4px",
+                      textTransform: "uppercase",
+                      whiteSpace: "nowrap",
+                      color: "#fff",
+                      background: C.goldCta,
+                    }}
+                  >
+                    {addedKey === selected.key ? "Ajouté ✓" : "Ajouter au panier"}
+                  </button>
+                )}
               </div>
             </div>
 

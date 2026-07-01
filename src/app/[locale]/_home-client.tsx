@@ -638,6 +638,22 @@ export default function HomePageClient() {
       </section>
       )}
 
+      {/* ── COFFRETS & LOTS (juste après Shopping vidéo) ─────────── */}
+      <section id="coffrets-lots" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow="Coffrets & Lots"
+            title={<>Plus de senteurs, <em>meilleur prix</em></>}
+            subtitle="Découvrez plusieurs fragrances en un seul achat, à prix réduit."
+          />
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
+            {COFFRETS_HOME.map((p, i) => (
+              <ProductCardLuxe key={i} product={p} locale={locale} />
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── DÉCOUVREZ LA MARQUE REEF PERFUMES (BestSellersRail) ───── */}
       <section id="reef-rail" style={{ background: "#F7F3EC", padding: "20px 0 40px" }}>
         <BestSellersRail
@@ -652,22 +668,6 @@ export default function HomePageClient() {
           }}
           locale={locale}
         />
-      </section>
-
-      {/* ── COFFRETS & LOTS (sous Maison à l'honneur) ────────────── */}
-      <section id="coffrets-lots" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow="Coffrets & Lots"
-            title={<>Plus de senteurs, <em>meilleur prix</em></>}
-            subtitle="Découvrez plusieurs fragrances en un seul achat, à prix réduit."
-          />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
-            {COFFRETS_HOME.map((p, i) => (
-              <ProductCardLuxe key={i} product={p} locale={locale} />
-            ))}
-          </div>
-        </div>
       </section>
 
       {/* ── BEST SELLERS « Premium Collections » — désactivée ─────── */}
@@ -773,13 +773,43 @@ export default function HomePageClient() {
 
       {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
       <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 920, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <SectionHeader
             eyebrow={tTwin("eyebrow")}
             title={tTwin("title")}
             subtitle={tTwin("subtitle")}
           />
-          <OlfactiveTwin matches={OLFACTIVE_TWINS} locale={locale} />
+          <OlfactiveTwin matches={OLFACTIVE_TWINS} variant="compact" locale={locale} />
+        </div>
+      </section>
+
+      {/* ── 17. COFFRETS (L'art du cadeau oriental, au-dessus de Recherche par notes) ── */}
+      <section id="coffrets" style={{ background: "linear-gradient(135deg, var(--espresso-900) 0%, var(--espresso-600) 100%)", padding: "80px 20px", position: "relative", overflow: "hidden" }}>
+        <div style={{ position: "absolute", inset: 0, opacity: 0.22 }}>
+          <Image src="/assets/coffrets.jpg" alt="Coffrets découverte" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
+        </div>
+        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(21,16,11,0.92) 50%, rgba(21,16,11,0.5) 100%)" }} />
+        <div style={{ maxWidth: 1240, margin: "0 auto", position: "relative", zIndex: 2, display: "flex", flexWrap: "wrap", gap: 40, alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ flex: "1 1 420px", maxWidth: 540 }}>
+            <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 12 }}>L'art du cadeau oriental</div>
+            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3rem)", color: "var(--on-dark-strong)", margin: "0 0 18px", lineHeight: 1.1 }}>
+              Coffrets Découverte<br /><em style={{ color: "var(--gold-400)" }}>dès 49 €</em>
+            </h2>
+            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.93rem", color: "var(--on-dark)", lineHeight: 1.78, marginBottom: 28 }}>
+              Offrez l'Orient en un écrin. Nos coffrets comprennent 3 à 12 miniatures sélectionnées par nos experts, avec guide olfactif et certificat d'authenticité. Idéal pour s'initier ou faire découvrir la parfumerie orientale.
+            </p>
+            <div style={{ display: "flex", gap: 14 }}>
+              <a href="#" style={{ background: "var(--gold-500)", color: "#fff", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 700 }}>Voir les coffrets</a>
+              <a href="#" style={{ border: "1.5px solid rgba(255,255,255,0.4)", color: "var(--on-dark-strong)", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem" }}>Personnaliser</a>
+            </div>
+          </div>
+          <div style={{ flex: "1 1 420px", display: "flex", gap: 18, justifyContent: "center" }}>
+            {PACKS.slice(0, 2).map((p, i) => (
+              <div key={p.slug ?? i} style={{ flex: "1 1 0", minWidth: 0, maxWidth: 260 }}>
+                <PackCard pack={p} size={i === 0 ? "hero" : "soft"} locale={locale} />
+              </div>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -788,6 +818,11 @@ export default function HomePageClient() {
         <div style={{ maxWidth: 1500, margin: "0 auto" }}>
           <ScentWheelInteractive families={DEMO_SCENT_FAMILIES} locale={locale} />
         </div>
+      </section>
+
+      {/* ── 13. TENDANCES DU MOMENT (après Recherche par notes) ───── */}
+      <section id="social" style={{ background: "var(--espresso-900)" }}>
+        <TrendCarousel products={DEMO_TRENDS} locale={locale} />
       </section>
 
 
@@ -943,8 +978,8 @@ export default function HomePageClient() {
       )}
 
       {/* ── NEWSLETTER (après Exclusif / Huiles) ──────────────────── */}
-      <section id="newsletter" style={{ background: "var(--surface-cream-2)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1400, margin: "0 auto" }}>
+      <section id="newsletter" style={{ background: "var(--surface-cream-2)", padding: "80px 0" }}>
+        <div style={{ width: "100%", margin: "0 auto" }}>
           <NewsletterSection locale={locale} />
         </div>
       </section>
@@ -1199,11 +1234,6 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 13. TENDANCES DU MOMENT (TrendCarousel reel) ──────────── */}
-      <section id="social" style={{ background: "var(--espresso-900)" }}>
-        <TrendCarousel products={DEMO_TRENDS} locale={locale} />
-      </section>
-
       {/* ── 16. TOP MAISONS ───────────────────────────────────────── */}
       <section id="maisons" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
@@ -1215,36 +1245,6 @@ export default function HomePageClient() {
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14 }}>
             {brands.map((b) => (
               <BrandCard key={b.name} brand={{ ...b, href: "#" }} locale={locale} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* ── 17. COFFRETS ──────────────────────────────────────────── */}
-      <section id="coffrets" style={{ background: "linear-gradient(135deg, var(--espresso-900) 0%, var(--espresso-600) 100%)", padding: "80px 20px", position: "relative", overflow: "hidden" }}>
-        <div style={{ position: "absolute", inset: 0, opacity: 0.22 }}>
-          <Image src="/assets/coffrets.jpg" alt="Coffrets découverte" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-        </div>
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(21,16,11,0.92) 50%, rgba(21,16,11,0.5) 100%)" }} />
-        <div style={{ maxWidth: 1240, margin: "0 auto", position: "relative", zIndex: 2, display: "flex", flexWrap: "wrap", gap: 40, alignItems: "center", justifyContent: "space-between" }}>
-          <div style={{ flex: "1 1 420px", maxWidth: 540 }}>
-            <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 12 }}>L'art du cadeau oriental</div>
-            <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3rem)", color: "var(--on-dark-strong)", margin: "0 0 18px", lineHeight: 1.1 }}>
-              Coffrets Découverte<br /><em style={{ color: "var(--gold-400)" }}>dès 49 €</em>
-            </h2>
-            <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.93rem", color: "var(--on-dark)", lineHeight: 1.78, marginBottom: 28 }}>
-              Offrez l'Orient en un écrin. Nos coffrets comprennent 3 à 12 miniatures sélectionnées par nos experts, avec guide olfactif et certificat d'authenticité. Idéal pour s'initier ou faire découvrir la parfumerie orientale.
-            </p>
-            <div style={{ display: "flex", gap: 14 }}>
-              <a href="#" style={{ background: "var(--gold-500)", color: "#fff", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 700 }}>Voir les coffrets</a>
-              <a href="#" style={{ border: "1.5px solid rgba(255,255,255,0.4)", color: "var(--on-dark-strong)", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem" }}>Personnaliser</a>
-            </div>
-          </div>
-          <div style={{ flex: "1 1 420px", display: "flex", gap: 18, justifyContent: "center" }}>
-            {PACKS.slice(0, 2).map((p, i) => (
-              <div key={p.slug ?? i} style={{ flex: "1 1 0", minWidth: 0, maxWidth: 260 }}>
-                <PackCard pack={p} size={i === 0 ? "hero" : "soft"} locale={locale} />
-              </div>
             ))}
           </div>
         </div>

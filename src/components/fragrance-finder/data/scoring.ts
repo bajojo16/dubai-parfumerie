@@ -10,10 +10,8 @@ import type { BudgetTier } from "../types";
 export const WEIGHTS = {
   /** La famille choisie figure dans les familles du produit. */
   familyMatch: 30,
-  /** La note signature (Q3) figure dans les notes ou familles. */
+  /** La note signature (Q7) figure dans les notes ou familles. */
   noteMatch: 24,
-  /** La seconde note (Q7) figure dans les notes. */
-  note2Match: 14,
   /** Bonus best-seller (réassurance). */
   bestseller: 8,
   /** Bonus nouveauté (mise en avant douce). */

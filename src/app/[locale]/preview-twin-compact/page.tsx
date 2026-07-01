@@ -10,7 +10,7 @@ export default function PreviewTwinCompactPage() {
 
   return (
     <main style={{ background: "#FDFBF6", minHeight: "100vh", padding: "60px 24px" }}>
-      <div style={{ maxWidth: 720, margin: "0 auto" }}>
+      <div style={{ maxWidth: 1040, margin: "0 auto" }}>
         <div style={{ textAlign: "center", marginBottom: 22 }}>
           <div style={{ fontFamily: "var(--font-sans)", fontSize: 12, letterSpacing: "0.2em", textTransform: "uppercase", color: "#A8801F", marginBottom: 8 }}>
             {t("eyebrow")}

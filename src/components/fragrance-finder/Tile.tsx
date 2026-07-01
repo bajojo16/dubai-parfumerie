@@ -45,7 +45,7 @@ export function Tile({
         borderRadius: 18,
         overflow: "hidden",
         cursor: "pointer",
-        textAlign: "start",
+        textAlign: "center",
         fontFamily: FF.sans,
         transition: reduced
           ? "border-color .2s"
@@ -128,6 +128,7 @@ export function Tile({
         style={{
           display: "flex",
           flexDirection: "column",
+          alignItems: "center",
           gap: 2,
           padding: "12px 14px 14px",
         }}

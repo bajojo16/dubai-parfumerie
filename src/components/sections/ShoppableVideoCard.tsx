@@ -256,10 +256,14 @@ export function ShoppableVideoCard({
           {fmtPrice(product.price)}
         </div>
 
-        {available && (
+        {available ? (
           <div style={{ marginTop: 12 }}>
             <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
           </div>
+        ) : (
+          /* Réserve la hauteur du stepper (38px) pour aligner le bouton Épuisé
+             avec les boutons « Ajouter au panier » des cartes voisines */
+          <div aria-hidden style={{ marginTop: 12, height: 38 }} />
         )}
 
         <button

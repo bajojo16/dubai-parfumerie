@@ -58,6 +58,7 @@ function PromoOverlay({
   cta,
   href,
   tagline,
+  scrim,
 }: {
   line1: string;
   line2: string;
@@ -66,6 +67,7 @@ function PromoOverlay({
   cta: string;
   href: string;
   tagline?: string;
+  scrim?: boolean;
 }) {
   return (
     <motion.div
@@ -87,35 +89,55 @@ function PromoOverlay({
         fontFamily: "var(--font-display)",
         fontVariantNumeric: "lining-nums",
         fontFeatureSettings: '"lnum" 1, "tnum" 0',
-        textShadow: "0 2px 22px rgba(0,0,0,.35)",
-        maxWidth: "min(42vw, 560px)",
+        // Voile sombre dégradé : UNIQUEMENT bannière 2 (fond Reef clair) pour
+        // garantir la lisibilité du texte blanc. B1/B3 gardent leur rendu net.
+        background: scrim
+          ? "radial-gradient(125% 120% at 72% 42%, rgba(18,13,9,0.58), rgba(18,13,9,0.24) 58%, rgba(18,13,9,0) 84%)"
+          : undefined,
+        padding: scrim ? "clamp(20px, 2.6vw, 40px) clamp(22px, 2.8vw, 44px)" : undefined,
+        borderRadius: scrim ? 22 : undefined,
+        textShadow: scrim
+          ? "0 2px 10px rgba(0,0,0,.62), 0 1px 28px rgba(0,0,0,.5)"
+          : "0 2px 22px rgba(0,0,0,.35)",
+        maxWidth: scrim ? "min(46vw, 600px)" : "min(42vw, 560px)",
       }}
     >
-      {/* Titre 2 lignes */}
-      <div
-        style={{
-          fontWeight: 600,
-          textTransform: "uppercase",
-          fontSize: "clamp(1.7rem, 3vw, 2.8rem)",
-          lineHeight: 1.04,
-          letterSpacing: "0.04em",
-        }}
-      >
-        <div>{line1}</div>
-        <div>{line2}</div>
-      </div>
+      {/* Bloc titre+focal : largeur = élément le plus large (focal en général).
+          Chaque ligne du titre se justifie à cette largeur (inter-character →
+          même les mots seuls comme ÉCHANTILLONS / CONVOITÉS s'étirent). */}
+      <div style={{ display: "flex", flexDirection: "column", width: "fit-content" }}>
+        {/* Titre 2 lignes */}
+        <div
+          style={{
+            width: "100%",
+            fontWeight: 600,
+            textTransform: "uppercase",
+            fontSize: "clamp(1.7rem, 3vw, 2.8rem)",
+            lineHeight: 1.04,
+            letterSpacing: "0.04em",
+            textAlign: "justify",
+            textAlignLast: "justify",
+            textJustify: "inter-character",
+          }}
+        >
+          <div>{line1}</div>
+          <div>{line2}</div>
+        </div>
 
-      {/* Élément focal (ex. -15% / 1 ML) */}
-      <div
-        style={{
-          fontWeight: 600,
-          fontSize: "clamp(3.6rem, 7.5vw, 6.6rem)",
-          lineHeight: 0.84,
-          letterSpacing: "-0.01em",
-          margin: "0.04em 0 0.08em",
-        }}
-      >
-        {focal}
+        {/* Élément focal (ex. -15% / 1 ML / TOP 10) */}
+        <div
+          style={{
+            width: "100%",
+            fontWeight: 600,
+            fontSize: "clamp(3.6rem, 7.5vw, 6.6rem)",
+            lineHeight: 0.84,
+            letterSpacing: "-0.01em",
+            margin: "0.04em 0 0.08em",
+            textAlign: "center",
+          }}
+        >
+          {focal}
+        </div>
       </div>
 
       {/* Condition avec filets latéraux */}
@@ -148,11 +170,24 @@ function PromoOverlay({
             fontSize: "clamp(0.95rem, 1.3vw, 1.25rem)",
             lineHeight: 1.35,
             color: "rgba(255,255,255,.95)",
-            maxWidth: "30ch",
+            maxWidth: "42ch",
+            marginInline: "auto",
+            textAlign: "center",
             marginBottom: 22,
           }}
         >
-          {tagline}
+          {/* Casse après le tiret : « Nos … » reste avec « échantillons … » */}
+          {tagline.includes("—")
+            ? (() => {
+                const [a, b] = tagline.split("—");
+                return (
+                  <>
+                    {a.trim()} —<br />
+                    {b.trim()}
+                  </>
+                );
+              })()
+            : tagline}
         </div>
       )}
 
@@ -483,6 +518,19 @@ export function AnimatedHero() {
             condition={tReef("condition")}
             cta={tReef("cta")}
             href="#promo"
+            scrim
+          />
+        )}
+        {i === 2 && (
+          <PromoOverlay
+            key="convoites-overlay"
+            line1="LES PLUS"
+            line2="CONVOITÉS"
+            focal="TOP 10"
+            condition="CE QUE TOUT LE MONDE S'ARRACHE"
+            cta="JE DÉCOUVRE"
+            tagline="Découvrez les fragrances que tout le monde s'arrache"
+            href="#bestsellers-rail"
           />
         )}
       </AnimatePresence>

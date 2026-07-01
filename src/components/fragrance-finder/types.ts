@@ -45,14 +45,23 @@ export interface CatalogProduct {
  * `null` = non répondu / passé / « Je ne sais pas ».
  */
 export interface QuizAnswers {
+  /** Q1 : women / men / unisex / gift. */
   gender: string | null;
+  /** Q2 : niveau (beginner / expert). Pas de filtre dur — bonus de calibrage seulement. */
+  level: string | null;
+  /** Q3 : intensité cible ("1" léger, "2" moyen, "3" intense). */
+  intensity: string | null;
+  /** Q4 : famille olfactive (amber / woody / floral / fresh / none). */
   family: string | null;
-  note: string | null;
+  /** Q5 : saison (summer / winter / all / none). */
   season: string | null;
   /** Q6 : recherche libre d'un parfum aimé (slug catalogue OU texte saisi). */
   loved: string | null;
-  note2: string | null;
+  /** Q7 : note signature (rose / oud / vanilla / musk / saffron / sandalwood / none). */
+  note: string | null;
+  /** Q8 : budget (low / mid / high) — filtre dur. */
   budget: string | null;
+  /** Q9 : format (sample / bottle / gift / travel). */
   format: string | null;
 }
 
@@ -73,6 +82,11 @@ export interface QuizOption {
   image?: string;
   /** Dégradé radial de repli (CSS background). */
   gradient?: string;
+  /**
+   * Rendue en pleine largeur, séparée, sous la grille de tuiles (ex. « Je ne sais pas »).
+   * value:"none" est volontairement ignorée par le scoring (aucun filtre).
+   */
+  fullWidth?: boolean;
 }
 
 /** Type d'écran d'une question. */
@@ -87,9 +101,7 @@ export interface Question {
   subtitle?: string;
   kind: QuestionKind;
   options?: QuizOption[];
-  /** Affiche une action pleine largeur « Je ne sais pas » (Q4, Q7). */
-  allowSkipUnsure?: boolean;
-  /** Affiche une action « Passer » discrète (Q6). */
+  /** Affiche une action « Passer » discrète (Q6 — recherche). */
   allowSkip?: boolean;
 }
 
@@ -145,6 +157,8 @@ export interface FinderLabels {
   emailCta: string;
   emailSuccess: string;
   whatsappCta: string;
+  /** Séparateur entre WhatsApp (prioritaire) et e-mail (secondaire). */
+  optInOr: string;
   rgpd: string;
   /** Loading. */
   loading: string;

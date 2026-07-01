@@ -245,6 +245,43 @@ function OptIn({ labels, reduced }: { labels: FinderLabels; reduced: boolean }) 
         </p>
       </div>
 
+      {/* WhatsApp — canal PRIORITAIRE, mis en avant */}
+      <a
+        href={WHATSAPP_URL}
+        target="_blank"
+        rel="noopener noreferrer"
+        style={{
+          display: "inline-flex",
+          alignItems: "center",
+          justifyContent: "center",
+          gap: 9,
+          background: "#25D366",
+          color: "#0B2E13",
+          borderRadius: 12,
+          padding: "14px 18px",
+          fontFamily: FF.sans,
+          fontSize: "0.95rem",
+          fontWeight: 700,
+          textDecoration: "none",
+          boxShadow: "0 6px 18px rgba(37,211,102,0.32)",
+        }}
+      >
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
+          <path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.8.7.7-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.1-.2 0-.4.1-.5l.4-.5c.1-.2.1-.3 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 2.2.9 2.6.7 3.1.7.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1z" />
+        </svg>
+        {labels.whatsappCta}
+      </a>
+
+      {/* Séparateur — e-mail en option secondaire */}
+      <div style={{ display: "flex", alignItems: "center", gap: 10 }} aria-hidden>
+        <span style={{ flex: 1, height: 1, background: FF.border }} />
+        <span style={{ fontFamily: FF.sans, fontSize: "0.68rem", color: FF.muted, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+          {labels.optInOr}
+        </span>
+        <span style={{ flex: 1, height: 1, background: FF.border }} />
+      </div>
+
+      {/* E-mail — canal secondaire */}
       {status === "done" ? (
         <p
           style={{
@@ -293,9 +330,9 @@ function OptIn({ labels, reduced }: { labels: FinderLabels; reduced: boolean }) 
             type="submit"
             disabled={!valid || status === "loading"}
             style={{
-              background: FF.ink,
-              color: "#FFF",
-              border: "none",
+              background: "transparent",
+              color: FF.ink2,
+              border: `1.5px solid ${FF.border}`,
               borderRadius: 10,
               padding: "10px 16px",
               fontFamily: FF.sans,
@@ -310,31 +347,6 @@ function OptIn({ labels, reduced }: { labels: FinderLabels; reduced: boolean }) 
           </button>
         </form>
       )}
-
-      <a
-        href={WHATSAPP_URL}
-        target="_blank"
-        rel="noopener noreferrer"
-        style={{
-          display: "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          gap: 8,
-          background: "#25D366",
-          color: "#0B2E13",
-          borderRadius: 10,
-          padding: "10px 16px",
-          fontFamily: FF.sans,
-          fontSize: "0.84rem",
-          fontWeight: 700,
-          textDecoration: "none",
-        }}
-      >
-        <svg width="17" height="17" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
-          <path d="M12 2a10 10 0 0 0-8.6 15l-1.3 4.7 4.8-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-2.8.7.7-2.8-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8-.2-.1-.4-.1-.5.1l-.7.9c-.1.2-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.1-.2 0-.4.1-.5l.4-.5c.1-.2.1-.3 0-.5l-.7-1.7c-.2-.4-.4-.4-.5-.4h-.5c-.2 0-.5.1-.7.3-.2.3-.9.9-.9 2.2s.9 2.5 1 2.7c.1.2 1.8 2.8 4.4 3.9 2.2.9 2.6.7 3.1.7.5-.1 1.4-.6 1.6-1.1.2-.6.2-1 .1-1.1z" />
-        </svg>
-        {labels.whatsappCta}
-      </a>
 
       <p
         style={{

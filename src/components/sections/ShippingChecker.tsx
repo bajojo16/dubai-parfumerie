@@ -38,7 +38,7 @@ export type ShippingLabels = {
 
 const DEFAULT_LABELS: ShippingLabels = {
   eyebrow: "Livraison internationale",
-  title: "Nous livrons partout dans le monde",
+  title: "Nous livrons presque partout dans le monde",
   subtitle:
     "Où que vous soyez, l'Orient vous parvient. Vérifiez la livraison dans votre pays.",
   fieldLabel: "Votre pays de livraison",
@@ -142,11 +142,25 @@ export function ShippingChecker({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  // Ordre liste : pays prioritaires en tête (ordre fixe), puis reste alphabétique
+  const ordered = useMemo(() => {
+    const PRIORITY = ["FR", "BE", "DE", "GB", "CH", "US", "NL", "ES", "IT", "RE", "MQ"];
+    const byCode = new Map(countries.map((c) => [c.code.toUpperCase(), c]));
+    const top = PRIORITY.map((code) => byCode.get(code)).filter(
+      (c): c is ShippingCountry => Boolean(c)
+    );
+    const topSet = new Set(top.map((c) => c.code.toUpperCase()));
+    const rest = countries
+      .filter((c) => !topSet.has(c.code.toUpperCase()))
+      .sort((a, b) => a.name.localeCompare(b.name, locale));
+    return [...top, ...rest];
+  }, [countries, locale]);
+
   const filtered = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return countries;
-    return countries.filter((c) => c.name.toLowerCase().includes(q));
-  }, [countries, query]);
+    if (!q) return ordered;
+    return ordered.filter((c) => c.name.toLowerCase().includes(q));
+  }, [ordered, query]);
 
   const runCheck = useCallback(
     (code?: string) => {
@@ -287,14 +301,14 @@ export function ShippingChecker({
             <label htmlFor={`${listboxId}-input`} style={srOnly}>
               {L.fieldLabel}
             </label>
-            {/* Champ pill */}
+            {/* Champ pill — bordure neutre discrète (pas de cadre coloré) */}
             <div
               style={{
                 display: "flex",
                 alignItems: "center",
                 gap: 10,
                 background: "#fff",
-                border: `1px solid ${FIELD_BORDER}`,
+                border: "1px solid #EAE6DD",
                 borderRadius: 999,
                 padding: "0 16px",
                 height: 52,
@@ -438,6 +452,47 @@ export function ShippingChecker({
                 })}
               </ul>
             )}
+          </div>
+
+          {/* Preuve sociale + stats — boutons compacts (largeur du contenu),
+              en rangée qui se replie ; sous le sélecteur (= à gauche du résultat) */}
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "flex-start",
+              gap: 10,
+              marginTop: 4,
+            }}
+          >
+            {[otherServedText, L.statPrep, L.statTracking].map((text, i) => (
+              <div
+                key={i}
+                style={{
+                  // Largeur = contenu (compact), pas pleine largeur
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 9,
+                  maxWidth: "100%",
+                  background: "#fff",
+                  border: `1px solid ${FIELD_BORDER}`,
+                  borderRadius: 14,
+                  padding: "11px 16px",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: 13,
+                  lineHeight: 1.35,
+                  color: TITLE,
+                  fontWeight: 500,
+                }}
+              >
+                <span
+                  aria-hidden
+                  style={{ width: 8, height: 8, borderRadius: "50%", background: CTA, flexShrink: 0 }}
+                />
+                {text}
+              </div>
+            ))}
           </div>
         </div>
 
@@ -686,53 +741,6 @@ export function ShippingChecker({
           </div>
         </div>
 
-        {/* Preuve sociale + stats de réassurance — une seule rangée pleine largeur (repli mobile) */}
-        <div
-          style={{
-            display: "flex",
-            gap: 16,
-            marginTop: 24,
-            flexWrap: "wrap",
-          }}
-        >
-          {[
-            otherServedText,
-            L.statPrep,
-            L.statTracking,
-          ].map((text, i) => (
-            <div
-              key={i}
-              style={{
-                // 3 colonnes égales sur desktop, repli en colonne sur mobile
-                flex: "1 1 220px",
-                background: "#fff",
-                border: `1px solid ${FIELD_BORDER}`,
-                borderRadius: 14,
-                padding: "14px 16px",
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                fontFamily: "var(--font-sans)",
-                fontSize: 13,
-                lineHeight: 1.35,
-                color: TITLE,
-                fontWeight: 500,
-              }}
-            >
-              <span
-                aria-hidden
-                style={{
-                  width: 8,
-                  height: 8,
-                  borderRadius: "50%",
-                  background: CTA,
-                  flexShrink: 0,
-                }}
-              />
-              {text}
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Keyframes (injectées inline, désactivées via prefers-reduced-motion côté JS) */}

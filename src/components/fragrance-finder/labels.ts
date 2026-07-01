@@ -34,7 +34,8 @@ export const DEFAULT_LABELS: FinderLabels = {
   emailPlaceholder: "Votre adresse e-mail",
   emailCta: "Recevoir par e-mail",
   emailSuccess: "C'est noté ! Vous recevrez votre profil très vite.",
-  whatsappCta: "Une question ? WhatsApp",
+  whatsappCta: "Recevoir mes parfums sur WhatsApp",
+  optInOr: "ou par e-mail",
   rgpd:
     "En continuant, vous acceptez d'être recontacté(e). Vos données ne sont jamais revendues — désinscription à tout moment (RGPD).",
   loading: "Composition de votre profil olfactif…",
