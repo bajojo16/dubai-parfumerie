@@ -41,8 +41,25 @@ const C = {
   shadow: "0 18px 50px -24px rgba(28,26,23,.45)",
 };
 
-type Crit = "bestsellers" | "affinity" | "discovery";
+/**
+ * Identifiant de critère de complétion « maison ». Deux formes :
+ *  - algos spéciaux : "bestsellers" | "affinity" | "discovery"
+ *  - dérivés d'une collection : `col:<SampleCollectionId>` (ex. "col:trend")
+ *  - par famille olfactive : "family" (+ sous-sélecteur `SAMPLE_FAMILIES`)
+ */
+type CritId = string;
 type QtyMap = Record<string, number>;
+
+// Options du nombre total d'échantillons (segmented control « N »).
+const N_OPTIONS = [1, 3, 6, 12, 20];
+
+// Algos spéciaux (gardés) — les autres critères sont générés dynamiquement
+// depuis SAMPLE_COLLECTIONS + un critère « Par note » (famille).
+const SPECIAL_CRITERIA: { id: CritId; label: string }[] = [
+  { id: "affinity", label: "Dans mes goûts" },
+  { id: "bestsellers", label: "Best-sellers" },
+  { id: "discovery", label: "Découverte" },
+];
 
 export interface SampleSelectorProps {
   /** N — nombre d'emplacements du coffret (défaut 10, comme la maquette). */
@@ -112,7 +129,6 @@ export default function SampleSelector({
   coffretPrice = 24.9,
   coffretImage = "/assets/coffrets.jpg",
 }: SampleSelectorProps) {
-  const MAX = sampleCount;
   const PRODUCTS = products;
   const BRANDS = useMemo(
     () =>
@@ -122,16 +138,46 @@ export default function SampleSelector({
     [products],
   );
 
+  // ─── N = nombre total d'échantillons (état interne, initialisé par prop) ────
+  const initialN = N_OPTIONS.includes(sampleCount)
+    ? sampleCount
+    : N_OPTIONS.reduce((a, b) =>
+        Math.abs(b - sampleCount) < Math.abs(a - sampleCount) ? b : a,
+      );
+  const [n, setN] = useState(initialN);
+  const MAX = n;
+
   const [man, setMan] = useState<QtyMap>({});
   const [auto, setAuto] = useState<QtyMap>({});
   const [filterBrand, setFilterBrand] = useState("Toutes");
   const [filterCol, setFilterCol] = useState<SampleCollectionId | "all">("all");
   const [q, setQ] = useState("");
-  const [crit, setCrit] = useState<Crit>("bestsellers");
+  const [crit, setCrit] = useState<CritId>("bestsellers");
+  // Famille active du critère « Par note » (défaut : 1re famille du catalogue).
+  const [critFamily, setCritFamily] = useState<string>(
+    PRODUCTS[0]?.family ?? "oud",
+  );
+  const critTouched = useRef(false);
   const [stuck, setStuck] = useState(false);
+  const [toolbarStuck, setToolbarStuck] = useState(false);
+
+  // ─── Critères de complétion générés dynamiquement ──────────────────────────
+  // 3 algos spéciaux + 1 critère par collection existante + « Par note ».
+  const CRITERIA = useMemo(
+    () => [
+      ...SPECIAL_CRITERIA,
+      ...SAMPLE_COLLECTIONS.filter((c) => c.id !== "all").map((c) => ({
+        id: `col:${c.id}` as CritId,
+        label: c.label,
+      })),
+      { id: "family" as CritId, label: "Par note" },
+    ],
+    [],
+  );
 
   const toolbarRef = useRef<HTMLDivElement>(null);
   const sentinelRef = useRef<HTMLDivElement>(null);
+  const topSentinelRef = useRef<HTMLDivElement>(null);
   const [tbH, setTbH] = useState(150);
 
   const P = useCallback(
@@ -157,9 +203,20 @@ export default function SampleSelector({
       { rootMargin: `-${tb.offsetHeight + 1}px 0px 0px 0px`, threshold: 0 },
     );
     io.observe(sent);
+    // Passe la barre d'outils en mode compact quand elle est épinglée en haut.
+    let ioTop: IntersectionObserver | undefined;
+    const topSent = topSentinelRef.current;
+    if (topSent) {
+      ioTop = new IntersectionObserver(
+        ([e]) => setToolbarStuck(!e.isIntersecting),
+        { threshold: 0 },
+      );
+      ioTop.observe(topSent);
+    }
     return () => {
       ro.disconnect();
       io.disconnect();
+      ioTop?.disconnect();
       window.removeEventListener("resize", setH);
     };
   }, []);
@@ -249,7 +306,7 @@ export default function SampleSelector({
           : b.popularity - a.popularity,
       );
       sorted.slice(0, gap).forEach((p) => (next[p.id] = 1));
-    } else {
+    } else if (crit === "discovery") {
       // découverte : maximise la diversité de familles
       const owned = new Set(Object.keys(man).map((id) => P(id)?.family));
       const byNovel = [...pool].sort(
@@ -270,21 +327,92 @@ export default function SampleSelector({
         picked.push(p);
       }
       picked.forEach((p) => (next[p.id] = 1));
+    } else if (crit.startsWith("col:")) {
+      // collection : priorise les parfums tagués, puis complète par popularité
+      const colId = crit.slice(4);
+      const tagged = pool
+        .filter((p) => p.tags.includes(colId as SampleCollectionId))
+        .sort((a, b) => b.popularity - a.popularity);
+      const rest = pool
+        .filter((p) => !p.tags.includes(colId as SampleCollectionId))
+        .sort((a, b) => b.popularity - a.popularity);
+      [...tagged, ...rest].slice(0, gap).forEach((p) => (next[p.id] = 1));
+    } else if (crit === "family") {
+      // par note/famille : priorise la famille choisie, puis popularité
+      const match = pool
+        .filter((p) => p.family === critFamily)
+        .sort((a, b) => b.popularity - a.popularity);
+      const rest = pool
+        .filter((p) => p.family !== critFamily)
+        .sort((a, b) => b.popularity - a.popularity);
+      [...match, ...rest].slice(0, gap).forEach((p) => (next[p.id] = 1));
+    } else {
+      // repli : best-sellers par popularité
+      [...pool]
+        .sort((a, b) => b.popularity - a.popularity)
+        .slice(0, gap)
+        .forEach((p) => (next[p.id] = 1));
     }
     setAuto(next);
-  }, [MAX, totalMan, man, PRODUCTS, crit, P]);
+  }, [MAX, totalMan, man, PRODUCTS, crit, critFamily, P]);
 
-  const onCrit = (c: Crit) => {
-    setCrit(c);
-    if (totalAuto > 0) {
-      // régénère avec le nouveau critère (effet via pickAuto au prochain rendu)
-      setTimeout(() => pickAutoRef.current(), 0);
-    }
-  };
   const pickAutoRef = useRef(pickAuto);
   useEffect(() => {
     pickAutoRef.current = pickAuto;
   }, [pickAuto]);
+
+  const regenIfAuto = () => {
+    if (totalAuto > 0) setTimeout(() => pickAutoRef.current(), 0);
+  };
+  const onCrit = (c: CritId) => {
+    critTouched.current = true;
+    setCrit(c);
+    regenIfAuto();
+  };
+  const onCritFamily = (f: string) => {
+    setCritFamily(f);
+    regenIfAuto();
+  };
+
+  // ─── Critère par défaut : « Dans mes goûts » si sélection, sinon best-sellers.
+  useEffect(() => {
+    if (critTouched.current) return;
+    const def = totalMan > 0 ? "affinity" : "bestsellers";
+    setCrit((prev) => (prev === def ? prev : def));
+  }, [totalMan]);
+
+  // ─── Changement de N : met à jour le plafond et tronque proprement ─────────
+  // Retire d'abord les choix maison (auto, LIFO), puis au besoin les derniers
+  // manuels — les choix figés (« Garder » = passés en manuel) restent en dernier.
+  const changeN = (newN: number) => {
+    let overflow = totalMan + totalAuto - newN;
+    if (overflow <= 0) {
+      setN(newN);
+      return;
+    }
+    const nextAuto = { ...auto };
+    const nextMan = { ...man };
+    const drain = (map: QtyMap) => {
+      const keys = Object.keys(map);
+      for (let i = keys.length - 1; i >= 0 && overflow > 0; i--) {
+        const k = keys[i];
+        while (map[k] > 0 && overflow > 0) {
+          if (map[k] > 1) map[k]--;
+          else {
+            delete map[k];
+            overflow--;
+            break;
+          }
+          overflow--;
+        }
+      }
+    };
+    drain(nextAuto);
+    if (overflow > 0) drain(nextMan);
+    setMan(nextMan);
+    setAuto(nextAuto);
+    setN(newN);
+  };
 
   // ─── Filtrage ───────────────────────────────────────────────────────────
   const matchFilter = (p: SampleProduct) => {
@@ -350,60 +478,92 @@ export default function SampleSelector({
     <div className="ss-root" dir={locale === "ar" ? "rtl" : "ltr"} style={{ background: C.ivory, color: C.charcoal, paddingBottom: 118 }}>
       <StyleBlock />
 
-      {/* ── Topbar ── */}
-      <div className="ss-topbar" style={{ textAlign: "center", padding: "32px 0 6px", borderBottom: `1px solid ${C.line}` }}>
+      {/* ── Header éditorial (non sticky) ── */}
+      <div className="ss-topbar" style={{ textAlign: "center", padding: "32px 0 20px", borderBottom: `1px solid ${C.line}` }}>
         <p style={{ fontFamily: "'Jost',var(--font-sans)", fontWeight: 500, letterSpacing: ".42em", fontSize: 12, textTransform: "uppercase", color: C.goldDeep, margin: "0 0 16px" }}>{brandmark}</p>
         <p style={{ fontWeight: 400, letterSpacing: ".34em", textTransform: "uppercase", fontSize: 11, opacity: 0.55, margin: "0 0 10px" }}>Coffret découverte · {MAX} échantillons</p>
         <h1 style={{ fontFamily: "'Cormorant Garamond',var(--font-display)", fontWeight: 500, fontSize: "clamp(28px,5vw,44px)", lineHeight: 1.02, margin: "0 auto 12px", maxWidth: "16ch" }}>Composez votre sélection d&apos;échantillons</h1>
-        <p style={{ fontWeight: 300, fontSize: 15, lineHeight: 1.6, opacity: 0.72, maxWidth: "52ch", margin: "0 auto 24px" }}>Choisissez vos coups de cœur… ou laissez la maison compléter les emplacements restants selon vos goûts et nos best-sellers.</p>
-        <div className="ss-progress" style={{ display: "inline-flex", alignItems: "center", gap: 14, margin: "0 auto 26px", padding: "11px 22px", borderRadius: 100, background: C.charcoal, color: C.ivory }}>
-          <span style={{ fontFamily: "'Cormorant Garamond',var(--font-display)", fontSize: 22, fontWeight: 600, lineHeight: 1 }}>
-            <b style={{ color: C.gold }}>{total}</b> / <span>{MAX}</span>
-          </span>
-          <div style={{ display: "flex", gap: 5 }}>
-            {Array.from({ length: MAX }).map((_, i) => (
-              <span key={i} style={{ width: 22, height: 3, borderRadius: 2, transition: ".35s", background: i < totalMan ? C.gold : "rgba(246,241,231,.22)", boxShadow: i >= totalMan && i < total ? `inset 0 0 0 1px ${C.gold}` : "none" }} />
-            ))}
-          </div>
-          <span style={{ fontSize: 11, letterSpacing: ".14em", textTransform: "uppercase", opacity: 0.7 }}>échantillons</span>
-        </div>
+        <p style={{ fontWeight: 300, fontSize: 15, lineHeight: 1.6, opacity: 0.72, maxWidth: "52ch", margin: "0 auto" }}>Choisissez vos coups de cœur… ou laissez la maison compléter les emplacements restants selon vos goûts et nos best-sellers.</p>
       </div>
 
-      {/* ── Toolbar sticky ── */}
-      <div ref={toolbarRef} className="ss-toolbar" style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(246,241,231,.92)", backdropFilter: "blur(10px)", borderBottom: `1px solid ${C.line}`, padding: "14px 0 12px", marginBottom: 20 }}>
-        <div className="ss-wrap">
-          <div className="ss-search" style={{ position: "relative", maxWidth: 420, margin: "0 auto 12px" }}>
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ position: "absolute", insetInlineStart: 16, top: "50%", transform: "translateY(-50%)", opacity: 0.4 }}>
-              <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
-            </svg>
-            <input
-              type="text"
-              value={q}
-              onChange={(e) => setQ(e.target.value.toLowerCase().trim())}
-              placeholder="Rechercher un parfum…"
-              autoComplete="off"
-              aria-label="Rechercher un parfum"
-              style={{ width: "100%", padding: "11px 16px 11px 42px", border: `1px solid ${C.lineStrong}`, borderRadius: 100, background: "#fff", fontFamily: "'Jost',var(--font-sans)", fontSize: 14, fontWeight: 300, color: C.charcoal, outline: "none" }}
-            />
+      {/* ── Sentinelle : détecte l'épinglage de la barre d'outils ── */}
+      <div ref={topSentinelRef} style={{ height: 0, margin: 0, padding: 0 }} />
+
+      {/* ── Barre d'outils UNIQUE, sticky & compacte (progression + N + recherche + filtres) ── */}
+      <div
+        ref={toolbarRef}
+        className={"ss-toolbar" + (toolbarStuck ? " ss-tb-stuck" : "")}
+        style={{ position: "sticky", top: 0, zIndex: 20, background: "rgba(246,241,231,.94)", backdropFilter: "blur(10px)", borderBottom: `1px solid ${C.line}`, marginBottom: 20 }}
+      >
+        <div className="ss-wrap ss-toolbar-in">
+          {/* Ligne 1 : progression (gauche) + N-selector (droite) */}
+          <div className="ss-toolrow-top">
+            <div className="ss-progress-c">
+              <span className="ss-pcount"><b>{total}</b>/<span>{MAX}</span></span>
+              <div className="ss-pips" aria-hidden="true">
+                {Array.from({ length: MAX }).map((_, i) => (
+                  <span key={i} className={"ss-pip" + (i < totalMan ? " ss-pman" : i < total ? " ss-pauto" : "")} />
+                ))}
+              </div>
+              <span className="ss-plbl">échantillons</span>
+            </div>
+            <div className="ss-nwrap">
+              <span className="ss-nlbl">Nombre</span>
+              <div className="ss-nseg" role="radiogroup" aria-label="Nombre d'échantillons">
+                {N_OPTIONS.map((opt) => {
+                  const active = opt === n;
+                  return (
+                    <button
+                      key={opt}
+                      role="radio"
+                      aria-checked={active}
+                      className={active ? "ss-on" : ""}
+                      onClick={() => changeN(opt)}
+                    >
+                      {opt}
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
-          <div className="ss-filterrow">
-            <span className="ss-flabel">Sélections</span>
-            {SAMPLE_COLLECTIONS.map((c) => {
-              const active = c.id === filterCol;
-              return (
-                <button
-                  key={c.id}
-                  className={"ss-chip ss-col" + (active ? " ss-active" : "")}
-                  aria-pressed={active}
-                  onClick={() => setFilterCol(c.id)}
-                >
-                  {c.icon && <span style={{ fontSize: 11 }}>{c.icon}</span>}
-                  {c.label}
-                </button>
-              );
-            })}
+
+          {/* Ligne 2 : recherche + filtres Sélections (condensés, scrollables) */}
+          <div className="ss-toolrow-mid">
+            <div className="ss-search">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" style={{ position: "absolute", insetInlineStart: 13, top: "50%", transform: "translateY(-50%)", opacity: 0.4 }}>
+                <circle cx="11" cy="11" r="7" /><path d="m21 21-4.3-4.3" />
+              </svg>
+              <input
+                type="text"
+                value={q}
+                onChange={(e) => setQ(e.target.value.toLowerCase().trim())}
+                placeholder="Rechercher un parfum…"
+                autoComplete="off"
+                aria-label="Rechercher un parfum"
+              />
+            </div>
+            <div className="ss-filterrow ss-scroll" role="group" aria-label="Filtre Sélections">
+              <span className="ss-flabel">Sélections</span>
+              {SAMPLE_COLLECTIONS.map((c) => {
+                const active = c.id === filterCol;
+                return (
+                  <button
+                    key={c.id}
+                    className={"ss-chip ss-col" + (active ? " ss-active" : "")}
+                    aria-pressed={active}
+                    onClick={() => setFilterCol(c.id)}
+                  >
+                    {c.icon && <span style={{ fontSize: 10 }}>{c.icon}</span>}
+                    {c.label}
+                  </button>
+                );
+              })}
+            </div>
           </div>
-          <div className="ss-filterrow">
+
+          {/* Ligne 3 : filtres Marques (condensés, scrollables) */}
+          <div className="ss-filterrow ss-scroll" role="group" aria-label="Filtre Marques">
             <span className="ss-flabel">Marques</span>
             {BRANDS.map((b) => {
               const active = b === filterBrand;
@@ -444,11 +604,7 @@ export default function SampleSelector({
             </div>
             <div className="ss-assist-controls">
               <div className="ss-crit" role="group" aria-label="Critère de complétion">
-                {([
-                  ["bestsellers", "Best-sellers"],
-                  ["affinity", "Dans mes goûts"],
-                  ["discovery", "Découverte"],
-                ] as [Crit, string][]).map(([id, label]) => (
+                {CRITERIA.map(({ id, label }) => (
                   <button
                     key={id}
                     className={crit === id ? "ss-on" : ""}
@@ -459,6 +615,25 @@ export default function SampleSelector({
                   </button>
                 ))}
               </div>
+              {crit === "family" && (
+                <div className="ss-famrow" role="radiogroup" aria-label="Note olfactive privilégiée">
+                  {Object.values(SAMPLE_FAMILIES).map((f) => {
+                    const active = critFamily === f.id;
+                    return (
+                      <button
+                        key={f.id}
+                        role="radio"
+                        aria-checked={active}
+                        className={"ss-famchip" + (active ? " ss-on" : "")}
+                        onClick={() => onCritFamily(f.id)}
+                      >
+                        <span aria-hidden="true" style={{ width: 9, height: 9, borderRadius: "50%", background: f.tint, display: "inline-block" }} />
+                        {f.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
               <div className="ss-assist-actions">
                 {!hasAuto ? (
                   <button className="ss-btn-gold" onClick={pickAuto}>
@@ -623,18 +798,51 @@ function StyleBlock() {
     .ss-root{font-family:'Jost',var(--font-sans),system-ui,sans-serif;font-weight:300;-webkit-font-smoothing:antialiased}
     .ss-wrap{max-width:1180px;margin:0 auto;padding-inline:22px}
 
-    .ss-progress b{color:#c2a15b}
+    /* ── Barre d'outils unique, compacte ── */
+    .ss-toolbar-in{display:flex;flex-direction:column;gap:8px;padding-block:10px}
+    .ss-toolrow-top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+    .ss-toolrow-mid{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 
-    .ss-search input:focus{border-color:#c2a15b !important;box-shadow:0 0 0 3px rgba(194,161,91,.16)}
+    /* progression compacte (pastille charcoal) */
+    .ss-progress-c{display:inline-flex;align-items:center;gap:10px;padding:6px 14px;border-radius:100px;background:#1c1a17;color:#f6f1e7}
+    .ss-pcount{font-family:'Cormorant Garamond',var(--font-display);font-size:18px;font-weight:600;line-height:1}
+    .ss-pcount b{color:#c2a15b}
+    .ss-pips{display:flex;gap:4px}
+    .ss-pip{width:16px;height:3px;border-radius:2px;background:rgba(246,241,231,.22);transition:.35s}
+    .ss-pip.ss-pman{background:#c2a15b}
+    .ss-pip.ss-pauto{background:transparent;box-shadow:inset 0 0 0 1px #c2a15b}
+    .ss-plbl{font-size:9px;letter-spacing:.14em;text-transform:uppercase;opacity:.7}
 
-    .ss-filterrow{display:flex;align-items:center;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:8px}
-    .ss-filterrow:last-child{margin-bottom:0}
-    .ss-flabel{display:block;width:100%;text-align:center;font-size:9px;letter-spacing:.18em;text-transform:uppercase;opacity:.42;margin:0 0 6px}
-    .ss-chip{font-family:'Jost',var(--font-sans);font-size:12px;font-weight:400;letter-spacing:.03em;padding:6px 13px;border-radius:100px;border:1px solid rgba(28,26,23,.22);background:transparent;color:#1c1a17;cursor:pointer;transition:.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:5px}
+    /* N-selector à droite */
+    .ss-nwrap{display:inline-flex;align-items:center;gap:8px}
+    .ss-nlbl{font-size:9px;letter-spacing:.16em;text-transform:uppercase;opacity:.42}
+
+    /* recherche compacte */
+    .ss-search{position:relative;flex:1 1 200px;min-width:150px;max-width:340px}
+    .ss-search input{width:100%;padding:8px 14px 8px 34px;border:1px solid rgba(28,26,23,.22);border-radius:100px;background:#fff;font-family:'Jost',var(--font-sans);font-size:13px;font-weight:300;color:#1c1a17;outline:none;transition:.25s}
+    .ss-search input:focus{border-color:#c2a15b;box-shadow:0 0 0 3px rgba(194,161,91,.16)}
+    .ss-search input::placeholder{opacity:.5}
+
+    /* rangées de filtres : scrollables horizontalement, label inline */
+    .ss-filterrow{display:flex;align-items:center;gap:6px}
+    .ss-toolrow-mid .ss-filterrow{flex:2 1 320px;min-width:0}
+    .ss-scroll{overflow-x:auto;scrollbar-width:thin;scrollbar-color:rgba(28,26,23,.28) transparent;-webkit-overflow-scrolling:touch;padding-block:2px}
+    .ss-scroll::-webkit-scrollbar{height:5px}
+    .ss-scroll::-webkit-scrollbar-thumb{background:rgba(28,26,23,.24);border-radius:5px}
+    .ss-flabel{flex:0 0 auto;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.42;margin:0;padding-inline-end:2px}
+    .ss-chip{flex:0 0 auto;font-family:'Jost',var(--font-sans);font-size:11.5px;font-weight:400;letter-spacing:.02em;padding:5px 11px;border-radius:100px;border:1px solid rgba(28,26,23,.22);background:transparent;color:#1c1a17;cursor:pointer;transition:.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
     .ss-chip:hover{border-color:#c2a15b}
     .ss-chip.ss-active{background:#1c1a17;color:#f6f1e7;border-color:#1c1a17}
     .ss-chip.ss-col.ss-active{background:#a9873f;border-color:#a9873f;color:#fff}
     .ss-chip:focus-visible{outline:2px solid #a9873f;outline-offset:2px}
+
+    /* mode épinglé : encore plus compact */
+    .ss-toolbar.ss-tb-stuck .ss-toolbar-in{gap:6px;padding-block:6px}
+    .ss-toolbar.ss-tb-stuck .ss-plbl{display:none}
+    .ss-toolbar.ss-tb-stuck .ss-progress-c{padding:4px 12px}
+    .ss-toolbar.ss-tb-stuck .ss-pips{display:none}
+    .ss-toolbar.ss-tb-stuck .ss-nlbl{display:none}
+    .ss-toolbar.ss-tb-stuck .ss-search input{padding-block:6px}
 
     .ss-assist{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,#fffdf8,#f3ecdb);border:1px solid rgba(194,161,91,.4);border-radius:14px;padding:15px 20px;margin-bottom:22px;position:sticky;z-index:15;transition:padding .2s,box-shadow .2s}
     .ss-assist.ss-stuck{padding:9px 18px;box-shadow:0 14px 30px -20px rgba(28,26,23,.55)}
@@ -648,6 +856,19 @@ function StyleBlock() {
     .ss-crit button{border:none;background:transparent;font-family:'Jost',var(--font-sans);font-size:12px;font-weight:400;padding:6px 12px;border-radius:100px;cursor:pointer;color:#1c1a17;transition:.18s;white-space:nowrap}
     .ss-crit button.ss-on{background:#1c1a17;color:#f6f1e7}
     .ss-crit button:focus-visible{outline:2px solid #a9873f;outline-offset:1px}
+
+    .ss-nseg{display:inline-flex;gap:3px;background:#fff;border:1px solid rgba(28,26,23,.22);border-radius:100px;padding:3px}
+    .ss-nseg button{border:none;background:transparent;font-family:'Cormorant Garamond',var(--font-display);font-weight:600;font-size:15px;min-width:30px;padding:5px 9px;border-radius:100px;cursor:pointer;color:#1c1a17;transition:.18s;line-height:1}
+    .ss-nseg button:hover{color:#a9873f}
+    .ss-nseg button.ss-on{background:#1c1a17;color:#c2a15b}
+    .ss-nseg button:focus-visible{outline:2px solid #a9873f;outline-offset:2px}
+    .ss-toolbar.ss-tb-stuck .ss-nseg button{padding-block:3px;font-size:14px}
+
+    .ss-famrow{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end}
+    .ss-famchip{display:inline-flex;align-items:center;gap:5px;font-family:'Jost',var(--font-sans);font-size:11px;font-weight:400;padding:5px 10px;border-radius:100px;border:1px solid rgba(28,26,23,.22);background:#fff;color:#1c1a17;cursor:pointer;transition:.18s;white-space:nowrap}
+    .ss-famchip:hover{border-color:#c2a15b}
+    .ss-famchip.ss-on{background:#a9873f;border-color:#a9873f;color:#fff}
+    .ss-famchip:focus-visible{outline:2px solid #a9873f;outline-offset:1px}
     .ss-assist-actions{display:flex;gap:8px}
     .ss-btn-gold{font-family:'Jost',var(--font-sans);font-weight:500;letter-spacing:.06em;font-size:12px;text-transform:uppercase;padding:10px 18px;border-radius:100px;border:none;cursor:pointer;background:#c2a15b;color:#1c1a17;transition:.2s}
     .ss-btn-gold:hover{background:#d8b96f}

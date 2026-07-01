@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
+import { useLocale } from "next-intl";
 
 const PROMO_PRODUCTS = [
   { id: 1, name: "Lattafa Oud Pour Elle", brand: "Lattafa", price: 18.90, oldPrice: 84.90, discount: 77, category: "Femme", image: "prod-1.jpg" },
@@ -43,6 +44,7 @@ function useCountdown(totalSeconds: number) {
 }
 
 export default function PromoFlashPage() {
+  const locale = useLocale();
   const [activeFilter, setActiveFilter] = useState("Tous");
   const { hh, mm, ss } = useCountdown(86399); // 23:59:59
 
@@ -223,6 +225,33 @@ export default function PromoFlashPage() {
           {FILTERS.map((filter) => {
             const isActive = activeFilter === filter;
             const isOffer = filter === OFFER_2_3;
+            // Le chip « Achète 2 = 3 » est un LIEN vers la page complète du lot
+            if (isOffer) {
+              return (
+                <a
+                  key={filter}
+                  href={`/${locale}/offres/lot-3-pour-2`}
+                  style={{
+                    padding: "8px 20px",
+                    borderRadius: 999,
+                    border: "1.5px solid var(--gold-500)",
+                    background: "var(--gold-100)",
+                    color: "var(--gold-700)",
+                    fontFamily: "var(--font-sans)",
+                    fontSize: 14,
+                    fontWeight: 600,
+                    cursor: "pointer",
+                    textDecoration: "none",
+                    whiteSpace: "nowrap",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: 6,
+                  }}
+                >
+                  ★ {filter} →
+                </a>
+              );
+            }
             return (
               <button
                 key={filter}

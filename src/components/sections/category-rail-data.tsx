@@ -30,6 +30,7 @@ export const DEMO_CATEGORIES: Category[] = [
     variant: "promo",
     name: "3 pour 2 acheté",
     meta: "Le 3ᵉ offert",
+    image: "/assets/categories/lot-3-2.png",
     icon: <PromoContent big="3=2" small="3ᵉ OFFERT" />,
   },
   {
@@ -38,6 +39,7 @@ export const DEMO_CATEGORIES: Category[] = [
     variant: "default",
     name: "Homme",
     meta: "Pour lui",
+    image: "/assets/categories/homme.png",
     icon: <DiffuserIcon />,
   },
   {
@@ -46,6 +48,7 @@ export const DEMO_CATEGORIES: Category[] = [
     variant: "default",
     name: "Femme",
     meta: "Pour elle",
+    image: "/assets/categories/femme.png",
     icon: <TravelBottleIcon />,
   },
   {
@@ -62,6 +65,7 @@ export const DEMO_CATEGORIES: Category[] = [
     variant: "default",
     name: "Huile de parfum",
     meta: "Attar concentré",
+    image: "/assets/categories/huile.png",
     icon: <AttarBottleIcon />,
   },
   {
@@ -70,6 +74,7 @@ export const DEMO_CATEGORIES: Category[] = [
     variant: "default",
     name: "Eau de parfum",
     meta: "Vaporisateur",
+    image: "/assets/categories/eau.png",
     icon: <SprayBottleIcon />,
   },
 ];

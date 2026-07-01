@@ -78,7 +78,8 @@ function discShadow(variant: Variant): string {
 }
 
 function CategoryDisc({ category }: { category: Category }) {
-  const useImage = !!category.image && category.variant === "default";
+  // Photo si fournie (toutes variantes, y compris promo « 3 pour 2 »)
+  const useImage = !!category.image;
 
   return (
     <span
@@ -140,11 +141,14 @@ export function CategoryRail({
   heading,
   locale = "fr",
   labels,
+  onCategoryClick,
 }: {
   categories?: Category[];
   heading?: CategoryRailHeading;
   locale?: string;
   labels?: Partial<CategoryRailLabels>;
+  /** Retourne true si le clic est intercepté (empêche la navigation). */
+  onCategoryClick?: (cat: Category) => boolean;
 }) {
   const L = { ...DEFAULT_LABELS, ...labels };
   const isRTL = locale === "ar";
@@ -217,6 +221,9 @@ export function CategoryRail({
               href={cat.href}
               aria-label={cat.name}
               className="dp-catrail-item"
+              onClick={(e) => {
+                if (onCategoryClick?.(cat)) e.preventDefault();
+              }}
               style={{
                 display: "flex",
                 flexDirection: "column",

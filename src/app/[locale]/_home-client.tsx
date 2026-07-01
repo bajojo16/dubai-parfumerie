@@ -34,6 +34,7 @@ import { DEMO as PACKS } from "@/data/packs";
 import { Faq } from "@/components/faq/Faq";
 import { CategoryRail } from "@/components/sections/CategoryRail";
 import { DEMO_CATEGORIES } from "@/components/sections/category-rail-data";
+import { BundleBuilder } from "@/components/bundle/BundleBuilder";
 import { addItem } from "@/lib/cart";
 import { useLocale, useTranslations } from "next-intl";
 
@@ -546,6 +547,7 @@ export default function HomePageClient() {
   const locale = useLocale();
   const tTwin = useTranslations("olfactiveTwin");
   const [selectedScent, setSelectedScent] = useState<string | null>(null);
+  const [bundleOpen, setBundleOpen] = useState(false);
   const [hoveredScent, setHoveredScent] = useState<string | null>(null);
   const [hoveredScentCard, setHoveredScentCard] = useState<number | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -585,7 +587,17 @@ export default function HomePageClient() {
 
       {/* ── CATÉGORIES (rail circulaire, sous la bannière) ────────── */}
       <section id="categories-rail" style={{ background: "var(--surface-page)", padding: "44px 0 16px" }}>
-        <CategoryRail categories={DEMO_CATEGORIES} locale={locale} />
+        <CategoryRail
+          categories={DEMO_CATEGORIES}
+          locale={locale}
+          onCategoryClick={(cat) => {
+            if (cat.slug === "offre-duo") {
+              setBundleOpen(true);
+              return true;
+            }
+            return false;
+          }}
+        />
       </section>
 
       {/* Promo strip — VENTES FLASH retiré pour le moment */}
@@ -742,7 +754,17 @@ export default function HomePageClient() {
 
       {/* ── CATEGORY RAIL (2e occurrence, après la bannière Yara) ──── */}
       <section id="category-rail-2" style={{ background: "var(--surface-page)", padding: "20px 0" }}>
-        <CategoryRail categories={DEMO_CATEGORIES} locale={locale} />
+        <CategoryRail
+          categories={DEMO_CATEGORIES}
+          locale={locale}
+          onCategoryClick={(cat) => {
+            if (cat.slug === "offre-duo") {
+              setBundleOpen(true);
+              return true;
+            }
+            return false;
+          }}
+        />
       </section>
 
       {/* ── BEST-SELLERS (au-dessus de Le catalogue) ──────────────── */}
@@ -1413,6 +1435,11 @@ export default function HomePageClient() {
           </p>
         </div>
       </section>
+
+      {/* Modale « 3 pour 2 » — ouverte au clic sur la vignette CategoryRail */}
+      {bundleOpen && (
+        <BundleBuilder variant="modal" locale={locale} onClose={() => setBundleOpen(false)} />
+      )}
 
       {/* Footer doublon retiré — le footer global <Footer/> (layout) fait foi */}
     </>

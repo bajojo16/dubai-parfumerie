@@ -510,7 +510,7 @@ function ScopedStyles() {
       }
       .b3-notes{ color:#9a938a; font-size:.76rem; text-align:center; margin:3px 0 12px; font-weight:300; }
       .b3-price{ text-align:center; margin-bottom:14px; }
-      .b3-price .now{ font-weight:600; font-size:1.15rem; color:var(--charcoal); }
+      .b3-price .now{ font-family:var(--font-display,'Cormorant Garamond',serif); font-weight:600; font-size:1.32rem; color:var(--charcoal); font-variant-numeric:lining-nums; }
       .b3-price .was{ color:#b7b0a4; text-decoration:line-through; font-size:.92rem; margin-inline-start:6px; }
 
       .b3-add-btn{
