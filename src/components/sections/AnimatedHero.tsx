@@ -189,16 +189,13 @@ function PromoOverlay({
             fontSize: "clamp(0.95rem, 1.3vw, 1.25rem)",
             lineHeight: 1.35,
             color: "rgba(255,255,255,.95)",
-            maxWidth: "42ch",
+            // B3 : bloc resserré équilibré (évite le mot orphelin étiré) ;
+            // B1 : plus large. textWrap balance répartit les lignes.
+            maxWidth: alignFocalToCondition ? "24ch" : "42ch",
             marginInline: "auto",
             marginBottom: 22,
-            ...(alignFocalToCondition
-              ? {
-                  textAlign: "justify" as const,
-                  textAlignLast: "justify" as const,
-                  textJustify: "inter-character" as const,
-                }
-              : { textAlign: "center" as const }),
+            textAlign: "center",
+            textWrap: "balance",
           }}
         >
           {/* Casse après le tiret : « Nos … » reste avec « échantillons … » */}
