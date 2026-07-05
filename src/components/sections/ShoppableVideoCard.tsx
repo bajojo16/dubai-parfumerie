@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { addItem } from "@/lib/cart";
 import { QtyStepper } from "@/components/ui/QtyStepper";
 import type { ShoppableVideo } from "@/data/shoppable-videos";
@@ -90,8 +90,20 @@ export function ShoppableVideoCard({
       v.pause();
       return;
     }
-    if (visible) v.play().catch(() => {});
-    else v.pause();
+    if (!visible) {
+      v.pause();
+      return;
+    }
+    // Autoplay mobile (iOS/Android) exige `muted` réellement appliqué côté
+    // propriété JS, pas seulement l'attribut HTML — on le force par sécurité.
+    v.muted = true;
+    const tryPlay = () => v.play().catch(() => {});
+    tryPlay();
+    // Sur mobile, si les données ne sont pas encore bufferisées au moment du
+    // 1er appel, play() échoue silencieusement (promesse rejetée) et la vidéo
+    // reste bloquée sur le poster. On retente dès que le navigateur est prêt.
+    v.addEventListener("canplay", tryPlay, { once: true });
+    return () => v.removeEventListener("canplay", tryPlay);
   }, [visible, reduceMotion]);
 
   useEffect(() => {
@@ -157,7 +169,7 @@ export function ShoppableVideoCard({
           muted
           loop
           playsInline
-          preload="metadata"
+          preload="auto"
           aria-label={`${L.playVideo} — ${product.name}`}
           style={{
             width: "100%",

@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { useLocale } from "next-intl";
+import { Link } from "@/i18n/navigation";
 
 const PROMO_PRODUCTS = [
   { id: 1, name: "Lattafa Oud Pour Elle", brand: "Lattafa", price: 18.90, oldPrice: 84.90, discount: 77, category: "Femme", image: "prod-1.jpg" },
@@ -44,7 +44,6 @@ function useCountdown(totalSeconds: number) {
 }
 
 export default function PromoFlashPage() {
-  const locale = useLocale();
   const [activeFilter, setActiveFilter] = useState("Tous");
   const { hh, mm, ss } = useCountdown(86399); // 23:59:59
 
@@ -228,9 +227,9 @@ export default function PromoFlashPage() {
             // Le chip « Achète 2 = 3 » est un LIEN vers la page complète du lot
             if (isOffer) {
               return (
-                <a
+                <Link
                   key={filter}
-                  href={`/${locale}/offres/lot-3-pour-2`}
+                  href="/offres/lot-3-pour-2"
                   style={{
                     padding: "8px 20px",
                     borderRadius: 999,
@@ -249,7 +248,7 @@ export default function PromoFlashPage() {
                   }}
                 >
                   ★ {filter} →
-                </a>
+                </Link>
               );
             }
             return (

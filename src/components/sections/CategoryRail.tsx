@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { ReactNode } from "react";
 import { DEMO_CATEGORIES } from "./category-rail-data";
 
@@ -37,6 +37,10 @@ export type Category = {
   icon?: ReactNode;
   /** Photo produit détourée (mode photo, variant `default` uniquement). */
   image?: string;
+  /** Zoom photo dans le disque (défaut 1.28). */
+  imageScale?: number;
+  /** Cadrage photo dans le disque (défaut "center"). */
+  imagePosition?: string;
 };
 
 export type CategoryRailHeading = {
@@ -111,7 +115,7 @@ function CategoryDisc({ category }: { category: Category }) {
             alt={category.name}
             fill
             sizes="(max-width: 600px) 120px, 148px"
-            style={{ objectFit: "cover", transform: "scale(1.28)" }}
+            style={{ objectFit: "cover", objectPosition: category.imagePosition ?? "center", transform: `scale(${category.imageScale ?? 1.28})` }}
           />
         </span>
       ) : (
@@ -205,11 +209,11 @@ export function CategoryRail({
           margin: 0,
           display: "flex",
           alignItems: "flex-start",
-          gap: 28,
+          gap: "var(--dp-gap)",
           overflowX: "auto",
           scrollSnapType: "x proximity",
           paddingBlock: 12,
-          paddingInline: 24,
+          paddingInline: "var(--dp-pad-x)",
         }}
       >
         {categories.map((cat) => (
@@ -236,6 +240,7 @@ export function CategoryRail({
               <CategoryDisc category={cat} />
 
               <span
+                className="dp-catrail-label"
                 style={{
                   display: "flex",
                   flexDirection: "column",
@@ -250,7 +255,7 @@ export function CategoryRail({
                   style={{
                     fontFamily: "var(--font-sans)",
                     fontWeight: 300,
-                    fontSize: 11,
+                    fontSize: "var(--dp-meta-fs)",
                     textTransform: "uppercase",
                     letterSpacing: isRTL ? "0" : "0.16em",
                     color: T.goldDeep,
@@ -277,6 +282,9 @@ const CSS = `
 
 .dp-catrail-scroller {
   --dp-disc: 116px;
+  --dp-gap: 28px;
+  --dp-pad-x: 24px;
+  --dp-meta-fs: 11px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   scroll-padding-inline: 24px;
@@ -321,8 +329,17 @@ const CSS = `
 }
 
 @media (max-width: 600px) {
-  .dp-catrail-scroller { --dp-disc: 96px; }
-  .dp-catrail-name { font-size: 16px; }
+  .dp-catrail-scroller {
+    --dp-disc: 72px;
+    --dp-gap: 12px;
+    --dp-pad-x: 16px;
+    --dp-meta-fs: 9px;
+  }
+  .dp-catrail-name { font-size: 13px; }
+  /* Contraint la largeur du libellé (autrement le texte non wrappé, ex.
+     « 3 pour 2 acheté », dépasse la largeur du disque et annule le gain
+     de place obtenu en réduisant --dp-disc). */
+  .dp-catrail-label { max-width: 88px; }
 }
 
 @media (prefers-reduced-motion: reduce) {

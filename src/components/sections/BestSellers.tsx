@@ -27,7 +27,7 @@ const SLIDES: BSlide[] = [
     price: 28.9,
     desc: "Rose damascène et safran sur un fond de oud sombre et d'ambre crémeux. Un sillage envoûtant qui tient plus de 24 h.",
     main: "/assets/prod-1.jpg",
-    mood: "/assets/scents/rose.png",
+    mood: "/assets/scents/rose.jpg",
     tint: "#EFE3DD",
   },
   {
@@ -38,7 +38,7 @@ const SLIDES: BSlide[] = [
     price: 34.9,
     desc: "Cardamome et poivre noir ouvrent sur un oud royal et une rose de Taïf, posés sur une base d'ambre et de résines précieuses.",
     main: "/assets/prod-2.jpg",
-    mood: "/assets/scents/ambre.png",
+    mood: "/assets/scents/ambre.jpg",
     tint: "#EBE0CF",
   },
   {
@@ -49,7 +49,7 @@ const SLIDES: BSlide[] = [
     price: 42.9,
     desc: "Bois de oud, santal et rose de Taïf. Une composition intense et résineuse pour une signature qui dure toute la journée.",
     main: "/assets/prod-4.jpg",
-    mood: "/assets/scents/oud.png",
+    mood: "/assets/scents/oud.jpg",
     tint: "#E4E7DD",
   },
   {
@@ -60,7 +60,7 @@ const SLIDES: BSlide[] = [
     price: 36.9,
     desc: "Épices chaudes, ambre et encens. Une fragrance opulente et boisée, pensée pour celles et ceux qui aiment marquer leur présence.",
     main: "/assets/prod-6.jpg",
-    mood: "/assets/scents/epice.png",
+    mood: "/assets/scents/epice.jpg",
     tint: "#EAE2D8",
   },
 ];

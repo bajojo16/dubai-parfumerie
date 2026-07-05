@@ -62,6 +62,8 @@ export function BundleBuilder({
 
   /* Lot : liste d'ids, doublons autorisés (comme la maquette). */
   const [bundle, setBundle] = useState<string[]>([]);
+  /* Nombre de lots à ajouter au panier (stepper CTA). */
+  const [lotQty, setLotQty] = useState(1);
   /* Toggle interne page ↔ modale (uniquement en variant "page"). */
   const [modalOpen, setModalOpen] = useState(false);
   /* Toast. */
@@ -118,6 +120,12 @@ export function BundleBuilder({
     });
   }, []);
 
+  /* Vider entièrement la liste des parfums sélectionnés. */
+  const clearBundle = useCallback(() => {
+    setBundle([]);
+    setLotQty(1);
+  }, []);
+
   const handleAddToCart = useCallback(() => {
     if (!isComplete) return;
     // On ajoute les 3 parfums au PRIX PLEIN (pas de remise dans le localStorage).
@@ -127,11 +135,12 @@ export function BundleBuilder({
       if (!p) return;
       addItem(
         { id: p.id, name: p.name, brand: p.brand, price: p.price, image: p.image },
-        1
+        lotQty
       );
     });
-    showToast(`✓ Lot ajouté — ${fmt(totals.grand)} (économie ${fmt(totals.save)})`);
-  }, [isComplete, bundle, productOf, totals.grand, totals.save, showToast]);
+    const label = lotQty > 1 ? `${lotQty} lots ajoutés` : "Lot ajouté";
+    showToast(`✓ ${label} — ${fmt(totals.grand * lotQty)} (économie ${fmt(totals.save * lotQty)})`);
+  }, [isComplete, bundle, productOf, lotQty, totals.grand, totals.save, showToast]);
 
   const closeModal = useCallback(() => {
     if (externalModal) {
@@ -183,6 +192,118 @@ export function BundleBuilder({
   /* ── Rendu d'un panneau (page ou modale) ── */
   const renderPanel = (modalMode: boolean) => {
     const titleId = `b3-title-${modalMode ? "modal" : "page"}`;
+
+    /*
+     * Barre de lot : collante en HAUT (juste sous le header du site,
+     * position:sticky top) en variante "page", et toujours collante en
+     * BAS en variante "modale" (comportement d'origine, inchangé — la
+     * modale n'a pas le header du site au-dessus d'elle).
+     */
+    const tray = (
+      <div className={`b3-tray${modalMode ? "" : " b3-tray-top"}`}>
+        <div className="b3-progress">
+          <div className="b3-lbl">
+            <span>{`${count} / ${BUNDLE_SIZE} sélectionnés`}</span>
+            <span className="msg">{progressMsg}</span>
+            {count > 0 && (
+              <button type="button" className="b3-clear" onClick={clearBundle}>
+                ✕ Vider la liste
+              </button>
+            )}
+          </div>
+          <div className="b3-bar" aria-hidden>
+            <span style={{ width: `${Math.min(100, (count / BUNDLE_SIZE) * 100)}%` }} />
+          </div>
+        </div>
+
+        <div className="b3-slots">
+          {Array.from({ length: BUNDLE_SIZE }).map((_, i) => {
+            const id = sortedBundle[i];
+            if (!id) {
+              return (
+                <div key={i} className="b3-slot">
+                  {i + 1}
+                </div>
+              );
+            }
+            const p = productOf(id);
+            const isFree = isComplete && i < FREE_COUNT;
+            return (
+              <div key={i} className={`b3-slot filled${isFree ? " free-tag" : ""}`}>
+                <div className="mini">
+                  <Image
+                    src={p?.image || FALLBACK_IMAGE}
+                    alt={p?.name ?? ""}
+                    fill
+                    sizes="44px"
+                    style={{ objectFit: "cover" }}
+                  />
+                </div>
+                <button
+                  type="button"
+                  className="rm"
+                  onClick={() => removeOne(id)}
+                  aria-label={`Retirer ${p?.name ?? ""} du lot`}
+                >
+                  ✕
+                </button>
+              </div>
+            );
+          })}
+        </div>
+
+        {isComplete && (
+          <div className="b3-totals">
+            <div className="row">
+              <span>Sous-total</span>
+              <span>{fmt(totals.sub)}</span>
+            </div>
+            <div className="row save">
+              <span>Économie</span>
+              <span>– {fmt(totals.save)}</span>
+            </div>
+            <div className="row grand">
+              <span>Total</span>
+              <b>{fmt(totals.grand)}</b>
+            </div>
+          </div>
+        )}
+
+        <div className="b3-cta-row">
+          {isComplete && (
+            <div className="b3-qty" role="group" aria-label="Nombre de lots">
+              <button
+                type="button"
+                aria-label="Retirer un lot"
+                onClick={() => setLotQty((q) => Math.max(1, q - 1))}
+                disabled={lotQty <= 1}
+              >
+                −
+              </button>
+              <span aria-live="polite">{lotQty}</span>
+              <button
+                type="button"
+                aria-label="Ajouter un lot"
+                onClick={() => setLotQty((q) => Math.min(99, q + 1))}
+              >
+                +
+              </button>
+            </div>
+          )}
+          <button
+            type="button"
+            className="b3-cta"
+            onClick={handleAddToCart}
+            disabled={!isComplete}
+          >
+            {isComplete
+              ? "Ajouter au panier"
+              : `Sélectionnez ${BUNDLE_SIZE - count} de plus`}
+          </button>
+        </div>
+      </div>
+    );
+
     return (
       <div className={`b3-panel${modalMode ? " modal-mode" : ""}`}>
         {modalMode && (
@@ -203,6 +324,9 @@ export function BundleBuilder({
           </h1>
           <p>Composez votre trio — le moins cher vous est offert.</p>
         </div>
+
+        {/* Barre de lot — collante en haut en variante page (sous le header) */}
+        {!modalMode && tray}
 
         {/* Grille produits */}
         <div className="b3-grid">
@@ -255,82 +379,8 @@ export function BundleBuilder({
           })}
         </div>
 
-        {/* Barre de lot (sticky bas) */}
-        <div className="b3-tray">
-          <div className="b3-progress">
-            <div className="b3-lbl">
-              <span>{`${count} / ${BUNDLE_SIZE} sélectionnés`}</span>
-              <span className="msg">{progressMsg}</span>
-            </div>
-            <div className="b3-bar" aria-hidden>
-              <span style={{ width: `${Math.min(100, (count / BUNDLE_SIZE) * 100)}%` }} />
-            </div>
-          </div>
-
-          <div className="b3-slots">
-            {Array.from({ length: BUNDLE_SIZE }).map((_, i) => {
-              const id = sortedBundle[i];
-              if (!id) {
-                return (
-                  <div key={i} className="b3-slot">
-                    {i + 1}
-                  </div>
-                );
-              }
-              const p = productOf(id);
-              const isFree = isComplete && i < FREE_COUNT;
-              return (
-                <div key={i} className={`b3-slot filled${isFree ? " free-tag" : ""}`}>
-                  <div className="mini">
-                    <Image
-                      src={p?.image || FALLBACK_IMAGE}
-                      alt={p?.name ?? ""}
-                      fill
-                      sizes="44px"
-                      style={{ objectFit: "cover" }}
-                    />
-                  </div>
-                  <button
-                    type="button"
-                    className="rm"
-                    onClick={() => removeOne(id)}
-                    aria-label={`Retirer ${p?.name ?? ""} du lot`}
-                  >
-                    ✕
-                  </button>
-                </div>
-              );
-            })}
-          </div>
-
-          {isComplete && (
-            <div className="b3-totals">
-              <div className="row">
-                <span>Sous-total</span>
-                <span>{fmt(totals.sub)}</span>
-              </div>
-              <div className="row save">
-                <span>Économie</span>
-                <span>– {fmt(totals.save)}</span>
-              </div>
-              <div className="row grand">
-                <span>Total</span>
-                <b>{fmt(totals.grand)}</b>
-              </div>
-            </div>
-          )}
-
-          <button
-            type="button"
-            className="b3-cta"
-            onClick={handleAddToCart}
-            disabled={!isComplete}
-          >
-            {isComplete
-              ? "Ajouter le lot au panier"
-              : `Sélectionnez ${BUNDLE_SIZE - count} de plus`}
-          </button>
-        </div>
+        {/* Barre de lot — collante en bas en variante modale (comportement d'origine) */}
+        {modalMode && tray}
 
         <div className="b3-continue">
           <a role="button" tabIndex={0} onClick={handleContinue} onKeyDown={(e) => {
@@ -417,7 +467,7 @@ function ScopedStyles() {
         max-width:1180px; margin-inline:auto;
         min-height:100vh;
         padding:clamp(16px,4vw,48px);
-        background:radial-gradient(120% 90% at 50% -10%, #2a2723 0%, var(--charcoal) 55%);
+        background:transparent;
       }
 
       /* Toggle page / modale */
@@ -505,13 +555,21 @@ function ScopedStyles() {
       .b3-add-btn:disabled{ background:#e7dec9; border-color:#e7dec9; color:#8a8278; cursor:not-allowed; }
       .b3-card.sold-out .b3-add-btn::before{ content:""; }
 
-      /* Barre de lot */
+      /* Barre de lot — collante en bas par défaut (variante modale) */
       .b3-tray{
         position:sticky; bottom:0; background:rgba(28,26,23,.97);
         backdrop-filter:blur(8px); color:var(--ivory);
         border-top:1px solid var(--line);
         padding:16px clamp(16px,3vw,30px);
         display:flex; align-items:center; gap:22px; flex-wrap:wrap;
+      }
+      /* Variante page : collante en HAUT, juste sous le header sticky du site
+         (74px de hauteur, cf. Header.tsx). Reste au-dessus de la grille produits
+         qui défile dessous (z-index) et inverse la bordure de séparation. */
+      .b3-tray-top{
+        bottom:auto; top:74px; z-index:5;
+        border-top:none; border-bottom:1px solid var(--line);
+        box-shadow:0 12px 24px -18px rgba(0,0,0,.5);
       }
       .b3-progress{ flex:1; min-width:220px; }
       .b3-lbl{ display:flex; justify-content:space-between; font-size:.8rem; margin-bottom:7px; color:var(--ivory-dim); gap:12px; }
@@ -545,6 +603,7 @@ function ScopedStyles() {
       .b3-totals .row.grand{ margin-top:5px; padding-top:6px; border-top:1px solid rgba(255,255,255,.14); }
       .b3-totals .row.grand b{ font-size:1.25rem; color:#fff; font-family:var(--font-display,'Cormorant Garamond',serif); }
 
+      .b3-cta-row{ display:flex; align-items:stretch; gap:12px; }
       .b3-cta{
         font-family:inherit; font-weight:600; letter-spacing:.1em;
         text-transform:uppercase; font-size:.82rem;
@@ -553,6 +612,33 @@ function ScopedStyles() {
       }
       .b3-cta:disabled{ background:rgba(255,255,255,.12); color:var(--muted); cursor:not-allowed; }
       .b3-cta:not(:disabled):hover{ background:var(--gold-soft); transform:translateY(-1px); }
+
+      /* Stepper nombre de lots (façon pilule) */
+      .b3-qty{
+        display:inline-flex; align-items:center; gap:2px;
+        background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.16);
+        border-radius:999px; padding:3px;
+      }
+      .b3-qty button{
+        width:34px; height:34px; border-radius:50%; border:none; cursor:pointer;
+        background:transparent; color:var(--gold); font-size:1.15rem; line-height:1;
+        display:grid; place-items:center; transition:.2s;
+      }
+      .b3-qty button:not(:disabled):hover{ background:rgba(201,162,74,.18); }
+      .b3-qty button:disabled{ color:var(--muted); cursor:not-allowed; }
+      .b3-qty span{
+        min-width:26px; text-align:center; color:#fff; font-weight:600;
+        font-size:.95rem; font-variant-numeric:tabular-nums;
+      }
+
+      /* Bouton vider la liste */
+      .b3-clear{
+        margin-inline-start:12px; background:transparent; border:none; cursor:pointer;
+        color:var(--gold-soft); font-family:inherit; font-size:.72rem; font-weight:600;
+        letter-spacing:.04em; text-decoration:underline; text-underline-offset:2px; padding:0;
+        transition:.2s; white-space:nowrap;
+      }
+      .b3-clear:hover{ color:#fff; }
 
       .b3-continue{ text-align:center; padding:16px; background:#f6f1e7; }
       .b3-continue a{ color:#6f6a62; font-size:.85rem; text-decoration:underline; cursor:pointer; }
@@ -576,7 +662,8 @@ function ScopedStyles() {
       @media(max-width:640px){
         .b3-tray{ flex-direction:column; align-items:stretch; gap:14px; }
         .b3-totals{ text-align:start; }
-        .b3-cta{ width:100%; }
+        .b3-cta-row{ width:100%; }
+        .b3-cta{ flex:1; width:auto; }
         .b3-slots{ justify-content:center; }
       }
     `}</style>

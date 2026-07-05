@@ -170,9 +170,21 @@
   --dur: 240ms;
   --dur-slow: 480ms;
 
-  /* Z */
+  /* Z — hiérarchie globale (couches croissantes) :
+     1. --z-header (100)  : nav sticky
+     2. --z-overlay (200) : voiles/backdrops génériques
+     3. --z-float (220)   : boutons flottants persistants (WhatsApp,
+        FragranceFinder, BackToTop) — TOUJOURS sous les drawers/modales
+        ci-dessous, quel que soit leur z-index propre (900-1200).
+     4. --z-modal (300)   : référence de base pour toute modale/drawer qui
+        s'ouvre par-dessus le contenu (WelcomeModal @400, drawer panier
+        @1000-1001, menu mobile & AuthModal @1100-1101, lightbox tendances
+        & FragranceFinderModal & bundle "3 pour 2" @1000+, toasts @1200) :
+        ces composants utilisent des valeurs > --z-modal mais doivent tous
+        rester au-dessus de --z-float. */
   --z-header: 100;
   --z-overlay: 200;
+  --z-float: 220;
   --z-modal: 300;
 }
 
@@ -308,6 +320,18 @@ img, svg, video { max-width: 100%; }
     grid-template-columns: 1fr !important;
   }
 
+  /* Grilles produit de la homepage (nouveautés, coffrets & lots, catalogue)
+     → 2 colonnes serrées, cartes ~150-160px (taille standard grille
+     e-commerce mobile), centrées avec marges qui respirent sur les
+     largeurs entre 430px et 760px. Placée après la règle générique
+     [style*="repeat(4,"] ci-dessus pour la primer (même spécificité,
+     ordre de source). */
+  .dp-home-prod-grid {
+    grid-template-columns: repeat(2, minmax(0, 158px)) !important;
+    justify-content: center !important;
+    gap: 12px !important;
+  }
+
   /* Header */
   .dp-nav { display: none !important; }
   .dp-burger { display: flex !important; }
@@ -316,6 +340,19 @@ img, svg, video { max-width: 100%; }
   .dp-account-label { display: none !important; }
   .dp-topbar-msg { font-size: 10.5px !important; }
   .dp-topbar-selectors { gap: 4px !important; }
+
+  /* Icônes compte / favoris / panier — zone tactile agrandie (~46px) */
+  .dp-icon-btn { padding: 10px !important; }
+  .dp-icon-btn svg { width: 26px !important; height: 26px !important; }
+  .dp-badge { width: 17px !important; height: 17px !important; font-size: 10px !important; top: -6px !important; right: -7px !important; }
+
+  /* Sélecteurs langue/devise topbar (header) — zone tactile ≥40px */
+  .dp-topbar-select {
+    padding: 11px 6px !important;
+    line-height: 1.3 !important;
+    min-height: 40px !important;
+    box-sizing: border-box !important;
+  }
 
   /* Header free-shipping progress bar → empilé */
   .dp-shipbar { flex-wrap: wrap !important; height: auto !important; padding: 8px 16px !important; gap: 6px !important; }
@@ -336,9 +373,112 @@ img, svg, video { max-width: 100%; }
   /* WelcomeModal mobile : une colonne, image cachée, × atteignable */
   .dp-welcome-inner { grid-template-columns: 1fr !important; max-height: 88dvh !important; }
   .dp-welcome-left { display: none !important; }
+
+  /* Footer — liens de nav : zone tactile ≥40px (était ~13px de hauteur de ligne) */
+  .dp-footer-navlink {
+    padding: 11px 0 !important;
+    line-height: 1.5 !important;
+  }
+
+  /* Footer — sélecteurs langue/devise : zone tactile ≥40px (étaient ~55-66x28px) */
+  .dp-footer-select {
+    padding: 11px 10px !important;
+    min-height: 40px !important;
+    box-sizing: border-box !important;
+  }
+
+  /* Footer — icônes sociales : zone tactile ≥40px (étaient 15x15px) */
+  .dp-fsocial {
+    padding: 13px !important;
+  }
 }
 
 /* ── Petit mobile ≤ 420px ───────────────────────────────── */
 @media (max-width: 420px) {
   .dp-cta-row { flex-direction: column !important; align-items: stretch !important; }
+}
+
+/* ── ProductCardLuxe : stepper + bouton panier ─────────────
+   En grille 2 colonnes sur mobile (≤760px, cf. règle ci-dessus),
+   la carte devient trop étroite (~170-190px) pour loger le
+   sélecteur de quantité (~104px) ET le bouton "AJOUTER AU PANIER"
+   côte à côte : le bouton est forcé à sa largeur minimale de
+   contenu et déborde, puis se fait tronquer par l'overflow:hidden
+   de la carte. On empile verticalement sous ce seuil. ────── */
+@media (max-width: 560px) {
+  .dp-cardluxe-actions {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  .dp-cardluxe-addbtn {
+    width: 100% !important;
+  }
+}
+
+/* ── RailProductCard (rails "Maison à l'honneur" / "Best-sellers") ──
+   Sur mobile, la carte (300px de large, image en ratio 1/1.15 → 345px
+   de haut) prenait quasi tout l'écran en hauteur et débordait à droite
+   en ne laissant qu'un mince bandeau de la carte suivante visible.
+   On réduit largeur + hauteur d'image + densité du corps pour révéler
+   un vrai pattern de carousel "peek" (carte + bout de carte suivante). */
+@media (max-width: 760px) {
+  .dp-rail-card { width: 220px !important; }
+  .dp-rail-card-media { aspect-ratio: 1 / 1 !important; }
+  .dp-rail-card-body { padding: 9px 12px 11px !important; gap: 3px !important; }
+  .dp-rail-card-name { font-size: 16px !important; }
+  .dp-rail-card-notes {
+    font-size: 11px !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+  .dp-rail-card-price { font-size: 16px !important; }
+  .dp-rail-card-addbtn {
+    padding: 7px 14px !important;
+    font-size: 11px !important;
+    margin-top: 4px !important;
+  }
+}
+
+/* ── EditorialVideoCard (carte vidéo en tête du rail Reef, mode "start") ──
+   Largeur fixe 380px inline (voir composant) sans override mobile : la carte
+   débordait quasi tout l'écran (~380x363 mesuré à 375px), ne laissant aucun
+   "peek" de la carte suivante. On aligne sur le même pattern que .dp-rail-card
+   (largeur réduite pour révéler le carousel), en gardant une largeur légèrement
+   supérieure car le ratio vidéo est plus large que les cartes produit.
+   Ne s'applique qu'en mode largeur fixe (className absent en mode fluide, voir
+   EditorialVideoCard.tsx : le mode fluide a son propre repli via
+   .bsr-split-editorial dans BestSellersRail.tsx). */
+@media (max-width: 760px) {
+  .dp-editorial-card { width: 240px !important; }
+  .dp-editorial-play-btn { width: 48px !important; height: 48px !important; }
+  .dp-editorial-title { font-size: 19px !important; }
+  .dp-editorial-content { padding: 12px 16px 14px !important; }
+}
+
+/* ── #maisons (BrandCard) — carrousel horizontal sur mobile ──
+   La grille auto-fill(minmax(180px,1fr)) ne laisse plus qu'1 colonne
+   sous ~375px de large (180*2+gap > largeur dispo) : 12 BrandCard
+   empilées en 1 colonne = ~3400px de scroll vertical. On bascule en
+   carrousel horizontal scroll-snap (même pattern "peek" que
+   TrendCarousel / rails best-sellers) sous 760px uniquement — le
+   rendu desktop en grille est déjà satisfaisant. */
+@media (max-width: 760px) {
+  .dp-maisons-grid {
+    display: flex !important;
+    grid-template-columns: none !important;
+    overflow-x: auto !important;
+    scroll-snap-type: x mandatory !important;
+    -webkit-overflow-scrolling: touch !important;
+    scrollbar-width: none !important;
+    gap: 12px !important;
+    padding-bottom: 4px !important;
+  }
+  .dp-maisons-grid::-webkit-scrollbar { display: none; }
+  .dp-maisons-item {
+    flex: 0 0 auto !important;
+    width: 46vw !important;
+    max-width: 210px !important;
+    scroll-snap-align: start !important;
+  }
 }

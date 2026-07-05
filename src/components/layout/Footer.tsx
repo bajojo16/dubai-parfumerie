@@ -1,8 +1,35 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
+import { Link, usePathname as useLocalePathname, useRouter } from "@/i18n/navigation";
+import { WHATSAPP_URL } from "@/lib/contact";
 
 const LANGUAGES = ["FR", "EN", "ES", "DE", "IT", "RU", "AR"];
 const CURRENCIES = ["EUR", "AED", "SAR", "QAR", "USD", "GBP", "MAD"];
+
+// Devise — état partagé simple (localStorage + event global), synchronisé avec Header.tsx.
+const CURRENCY_KEY = "dp_currency";
+const CURRENCY_EVENT = "dp-currency-change";
+
+function readStoredCurrency(): string {
+  if (typeof window === "undefined") return "EUR";
+  try {
+    return window.localStorage.getItem(CURRENCY_KEY) || "EUR";
+  } catch {
+    return "EUR";
+  }
+}
+
+function writeStoredCurrency(value: string) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(CURRENCY_KEY, value);
+  } catch {
+    /* ignore */
+  }
+  window.dispatchEvent(new Event(CURRENCY_EVENT));
+}
 
 const COLUMNS = [
   {
@@ -32,7 +59,7 @@ const COLUMNS = [
       { label: "FAQ", href: "/faq" },
       { label: "Livraison & Retours", href: "/livraison-retours" },
       { label: "Suivi de commande", href: "/suivi" },
-      { label: "Contact WhatsApp", href: "https://wa.me/966583728407" },
+      { label: "Contact WhatsApp", href: WHATSAPP_URL },
       { label: "B2B / Grossiste", href: "/b2b" },
     ],
   },
@@ -173,10 +200,36 @@ function IconYouTube() {
 }
 
 export function Footer() {
-  const [activeLang, setActiveLang] = useState("FR");
+  const pathname = usePathname();
+  const isPreviewWelcome = pathname?.includes("/preview-welcome") ?? false;
+  const locale = useLocale();
+  const localePathname = useLocalePathname();
+  const router = useRouter();
   const [currency, setCurrency] = useState("EUR");
   const [email, setEmail] = useState("");
   const [subscribed, setSubscribed] = useState(false);
+
+  // Devise — hydrate + s'abonne aux changements (sync cross-onglet + avec Header)
+  useEffect(() => {
+    setCurrency(readStoredCurrency());
+    const onChange = () => setCurrency(readStoredCurrency());
+    window.addEventListener(CURRENCY_EVENT, onChange);
+    window.addEventListener("storage", onChange);
+    return () => {
+      window.removeEventListener(CURRENCY_EVENT, onChange);
+      window.removeEventListener("storage", onChange);
+    };
+  }, []);
+
+  function handleCurrencyChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const value = e.target.value;
+    setCurrency(value);
+    writeStoredCurrency(value);
+  }
+
+  function handleLangChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    router.replace(localePathname, { locale: e.target.value.toLowerCase() });
+  }
 
   function handleSubscribe(e: React.FormEvent) {
     e.preventDefault();
@@ -259,7 +312,7 @@ export function Footer() {
             Service client
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-            <a href="https://wa.me/966583728407" style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px", transition: "color .15s" }}
+            <a href={WHATSAPP_URL} style={{ display: "flex", alignItems: "center", gap: 10, textDecoration: "none", color: "var(--on-dark-muted)", fontFamily: "var(--font-sans)", fontSize: "13px", transition: "color .15s" }}
               onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-400)")}
               onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--on-dark-muted)")}>
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--gold-400)" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-8.5 8.5 8.38 8.38 0 0 1-4-1L3 20l1-5.5a8.38 8.38 0 0 1-1-4A8.5 8.5 0 0 1 12.5 2 8.5 8.5 0 0 1 21 11.5z"/></svg>
@@ -378,14 +431,15 @@ export function Footer() {
             <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "flex", flexDirection: "column", gap: 10 }}>
               {col.links.map(({ label, href }) => (
                 <li key={href}>
-                  <a
+                  <Link
                     href={href}
+                    className="dp-footer-navlink"
                     style={linkStyle}
                     onMouseEnter={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--gold-400)")}
                     onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--on-dark-muted)")}
                   >
                     {label}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -447,53 +501,59 @@ export function Footer() {
 
         {/* Lang + currency + socials */}
         <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-          <select
-            value={activeLang}
-            onChange={(e) => setActiveLang(e.target.value)}
-            style={{
-              background: "transparent",
-              border: "1px solid rgba(255,255,255,.12)",
-              borderRadius: "var(--r-sm)",
-              color: "var(--on-dark-muted)",
-              fontFamily: "var(--font-sans)",
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: ".08em",
-              cursor: "pointer",
-              outline: "none",
-              padding: "4px 8px",
-            }}
-          >
-            {LANGUAGES.map((l) => (
-              <option key={l} value={l} style={{ background: "var(--espresso-900)", color: "#fff" }}>
-                {l}
-              </option>
-            ))}
-          </select>
+          {!isPreviewWelcome && (
+            <>
+              <select
+                className="dp-footer-select"
+                value={locale.toUpperCase()}
+                onChange={handleLangChange}
+                style={{
+                  background: "transparent",
+                  border: "1px solid rgba(255,255,255,.12)",
+                  borderRadius: "var(--r-sm)",
+                  color: "var(--on-dark-muted)",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  letterSpacing: ".08em",
+                  cursor: "pointer",
+                  outline: "none",
+                  padding: "4px 8px",
+                }}
+              >
+                {LANGUAGES.map((l) => (
+                  <option key={l} value={l} style={{ background: "var(--espresso-900)", color: "#fff" }}>
+                    {l}
+                  </option>
+                ))}
+              </select>
 
-          <select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            style={{
-              background: "transparent",
-              border: "1px solid rgba(255,255,255,.12)",
-              borderRadius: "var(--r-sm)",
-              color: "var(--on-dark-muted)",
-              fontFamily: "var(--font-sans)",
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: ".08em",
-              cursor: "pointer",
-              outline: "none",
-              padding: "4px 8px",
-            }}
-          >
-            {CURRENCIES.map((c) => (
-              <option key={c} value={c} style={{ background: "var(--espresso-900)", color: "#fff" }}>
-                {c}
-              </option>
-            ))}
-          </select>
+              <select
+                className="dp-footer-select"
+                value={currency}
+                onChange={handleCurrencyChange}
+                style={{
+                  background: "transparent",
+                  border: "1px solid rgba(255,255,255,.12)",
+                  borderRadius: "var(--r-sm)",
+                  color: "var(--on-dark-muted)",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "11px",
+                  fontWeight: 600,
+                  letterSpacing: ".08em",
+                  cursor: "pointer",
+                  outline: "none",
+                  padding: "4px 8px",
+                }}
+              >
+                {CURRENCIES.map((c) => (
+                  <option key={c} value={c} style={{ background: "var(--espresso-900)", color: "#fff" }}>
+                    {c}
+                  </option>
+                ))}
+              </select>
+            </>
+          )}
 
           {/* Social icons — mêmes animations brand que le header */}
           <style>{`

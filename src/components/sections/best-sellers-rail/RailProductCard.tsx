@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { addItem } from "@/lib/cart";
 
 /* ── Palette éditoriale (hex inline, façon ProductCardLuxe) ── */
@@ -137,6 +137,7 @@ export function RailProductCard({
 
   return (
     <article
+      className="dp-rail-card"
       dir={isRTL ? "rtl" : "ltr"}
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
@@ -163,6 +164,7 @@ export function RailProductCard({
       <Link
         href={productHref}
         aria-label={`${L.viewProduct} — ${product.name}`}
+        className="dp-rail-card-media"
         style={{
           position: "relative",
           display: "block",
@@ -229,6 +231,7 @@ export function RailProductCard({
 
       {/* Corps */}
       <div
+        className="dp-rail-card-body"
         style={{
           padding: "11px 16px 13px",
           display: "flex",
@@ -259,6 +262,7 @@ export function RailProductCard({
             {product.brand}
           </span>
           <span
+            className="dp-rail-card-name"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 20,
@@ -273,6 +277,7 @@ export function RailProductCard({
 
         {/* Notes olfactives */}
         <span
+          className="dp-rail-card-notes"
           style={{
             fontFamily: "var(--font-sans)",
             fontSize: 12.5,
@@ -293,6 +298,7 @@ export function RailProductCard({
           }}
         >
           <span
+            className="dp-rail-card-price"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 19,
@@ -326,6 +332,7 @@ export function RailProductCard({
             handleAdd();
           }}
           aria-label={`${L.addToCart} — ${product.name}`}
+          className="dp-rail-card-addbtn"
           style={{
             marginTop: 6,
             width: "100%",

@@ -25,7 +25,7 @@ export const DEMO_STORIES: ProductStory[] = [
   {
     id: "reef-33",
     videoUrl: "/assets/videos/reef33.mp4",
-    posterUrl: "/assets/prod-3.jpg",
+    posterUrl: "/assets/reef/reef33.jpg",
     title: "Reef 33",
   },
   {

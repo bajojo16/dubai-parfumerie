@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 
 const C = {
   cream: "#F7F3EC",
@@ -104,6 +104,11 @@ export function EditorialVideoCard({
     <article
       ref={rootRef}
       dir={isRTL ? "rtl" : "ltr"}
+      // Classe appliquée uniquement en largeur fixe (mode "start", rail Reef) :
+      // en mode fluide (mode "end"), la carte remplit déjà son conteneur ancré
+      // (largeur pilotée par .bsr-split-editorial dans BestSellersRail.tsx),
+      // qui a son propre repli mobile — pas besoin (et pas souhaitable) d'override ici.
+      className={fluid ? undefined : "dp-editorial-card"}
       style={{
         flex: fluid ? "1 1 auto" : "0 0 auto",
         width: fluid ? "100%" : 380,
@@ -142,6 +147,7 @@ export function EditorialVideoCard({
           type="button"
           onClick={handlePlayClick}
           aria-label={L.play}
+          className="dp-editorial-play-btn"
           style={{
             position: "absolute",
             top: "44%",
@@ -185,6 +191,7 @@ export function EditorialVideoCard({
 
       {/* Contenu éditorial */}
       <div
+        className="dp-editorial-content"
         style={{
           position: "absolute",
           insetInline: 0,
@@ -194,6 +201,7 @@ export function EditorialVideoCard({
         }}
       >
         <h3
+          className="dp-editorial-title"
           style={{
             margin: 0,
             fontFamily: "var(--font-display)",

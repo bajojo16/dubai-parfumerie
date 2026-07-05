@@ -95,7 +95,7 @@ export const DEMO_TRENDS: TrendProduct[] = [
     brand: "Dubaï Parfumerie",
     href: "/produit/reef-33",
     variantId: "reef-33-50",
-    image: "/assets/prod-3.jpg",
+    image: "/assets/reef/reef33.jpg",
     cardVideo: "/assets/videos/marshmallow-trend.mp4",
     video: "/assets/videos/marshmallow-trend.mp4",
     rank: 3,

@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 
 // Données inlinées depuis _home-client.tsx (non exportées là-bas) ───────────────
 const scentProducts: Record<string, { brand: string; name: string; price: number; oldPrice: number; img: string }[]> = {
@@ -116,10 +117,10 @@ export function ScentWheel({ locale = "fr" }: { locale?: string }) {
                 })}
                 {/* Center circle */}
                 <circle cx={CX} cy={CY} r={RC} fill="#15100b" stroke="#C8901E" strokeWidth="1.5" strokeDasharray="6 4" />
-                <text x={CX} y={CY - 8} textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="17" fill={selectedScent ? "#D8A63A" : "#e8dfc8"} fontStyle="italic">
+                <text x={CX} y={CY - 8} textAnchor="middle" style={{ fontFamily: "var(--font-display)" }} fontSize="17" fill={selectedScent ? "#D8A63A" : "#e8dfc8"} fontStyle="italic">
                   {selectedScent || "La Roue"}
                 </text>
-                <text x={CX} y={CY + 12} textAnchor="middle" fontFamily="Jost, sans-serif" fontSize="8.5" fill="rgba(220,200,160,.55)" letterSpacing="2">
+                <text x={CX} y={CY + 12} textAnchor="middle" style={{ fontFamily: "var(--font-sans)" }} fontSize="8.5" fill="rgba(220,200,160,.55)" letterSpacing="2">
                   {selectedScent ? "SÉLECTIONNÉ" : "CLIQUEZ UNE NOTE"}
                 </text>
                 {/* Outer nodes */}
@@ -142,7 +143,7 @@ export function ScentWheel({ locale = "fr" }: { locale?: string }) {
                         strokeWidth="1.2"
                         style={{ transition: "fill .2s, stroke .2s" }}
                       />
-                      <text x={p.x} y={p.y + 6} textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="15" fill={active ? "#D8A63A" : "#e8dfc8"} style={{ pointerEvents: "none", transition: "fill .2s" }}>
+                      <text x={p.x} y={p.y + 6} textAnchor="middle" fontSize="15" fill={active ? "#D8A63A" : "#e8dfc8"} style={{ fontFamily: "var(--font-display)", pointerEvents: "none", transition: "fill .2s" }}>
                         {n.label}
                       </text>
                     </g>
@@ -162,7 +163,7 @@ export function ScentWheel({ locale = "fr" }: { locale?: string }) {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
             {scentProducts[selectedScent].map(p => (
-              <a key={p.name} href={`/produit/${p.name.trim().toLowerCase().replace(/\s+/g, "-")}`} style={{
+              <Link key={p.name} href={`/produit/${p.name.trim().toLowerCase().replace(/\s+/g, "-")}`} style={{
                 textDecoration: "none", display: "flex", alignItems: "center", gap: 12,
                 background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,144,30,0.18)",
                 borderRadius: "var(--r-md)", padding: 8, transition: "border-color .25s",
@@ -181,7 +182,7 @@ export function ScentWheel({ locale = "fr" }: { locale?: string }) {
                     <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--on-dark-muted)", textDecoration: "line-through" }}>{p.oldPrice.toFixed(2).replace(".", ",")} €</span>
                   </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>

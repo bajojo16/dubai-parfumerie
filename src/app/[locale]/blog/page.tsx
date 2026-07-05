@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
@@ -316,7 +317,7 @@ export default function BlogPage() {
             padding: "56px 24px 0",
           }}
         >
-          <a
+          <Link
             href={`/blog/${featuredArticle.slug}`}
             style={{ textDecoration: "none", display: "block" }}
           >
@@ -488,7 +489,7 @@ export default function BlogPage() {
                 </div>
               </div>
             </div>
-          </a>
+          </Link>
         </section>
 
         {/* ── Article Grid ──────────────────────────────────────────────── */}
@@ -501,7 +502,7 @@ export default function BlogPage() {
         >
           <div className="blog-grid">
             {gridArticles.map((article) => (
-              <a
+              <Link
                 key={article.id}
                 href={`/blog/${article.slug}`}
                 className="article-card-link"
@@ -649,7 +650,7 @@ export default function BlogPage() {
                     </div>
                   </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </section>

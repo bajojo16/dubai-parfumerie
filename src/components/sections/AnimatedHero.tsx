@@ -73,6 +73,7 @@ function PromoOverlay({
 }) {
   return (
     <motion.div
+      data-dp-promo
       initial={{ opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}
@@ -80,13 +81,32 @@ function PromoOverlay({
       style={{
         position: "absolute",
         zIndex: 4,
-        top: "clamp(70px, 13%, 130px)",
-        right: "clamp(110px, 10vw, 210px)",
+        // max(0px, 730px - 100vh) : sur viewport court (ex. iPhone SE
+        // 375×667), remonte le bloc pour dégager le CTA pilule du bouton
+        // flottant FragranceFinderButton (position:fixed, ancré au
+        // viewport, inset-block-end 78/85px) — sans transform mesuré,
+        // les deux se chevauchaient de ~39×38px sur 375×667 (voir aussi
+        // le rail de vignettes plus bas, même cause : deux référentiels
+        // de positionnement différents — section vs viewport — qui se
+        // rapprochent dangereusement quand 100vh est petit). Aucun effet
+        // sur viewport haut (le terme max() vaut alors 0).
+        top: "calc(clamp(70px, 13%, 130px) - max(0px, 730px - 100vh))",
+        right: "var(--dp-promo-right, clamp(110px, 10vw, 210px))",
         transform: "none",
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-end",
         textAlign: "right",
+        // Le bloc n'a pas de largeur explicite : en flex column avec des
+        // enfants width:100%, le navigateur lui donne la largeur du plus
+        // grand contenu (titre en gros clamp()), ce qui peut déborder très
+        // au-delà du texte visible (right-aligné). Comme le zIndex (4) passe
+        // au-dessus du rail de vignettes (zIndex 3) et de tout élément situé
+        // sous ce bloc, cette zone "vide" restait cliquable et interceptait
+        // les clics destinés aux vignettes/CTA en dessous. On neutralise les
+        // events sur le conteneur et on les réactive uniquement sur le CTA
+        // (le seul élément cliquable de l'overlay).
+        pointerEvents: "none",
         color: "#ffffff",
         fontFamily: "var(--font-display)",
         fontVariantNumeric: "lining-nums",
@@ -135,6 +155,7 @@ function PromoOverlay({
                 (TOP 10 aussi large que « CE QUE TOUT LE MONDE S'ARRACHE »). */}
             <div style={{ display: "flex", flexDirection: "column", width: "fit-content" }}>
               <div
+                className="dp-promo-title"
                 style={{
                   width: "100%",
                   fontWeight: 600,
@@ -153,10 +174,11 @@ function PromoOverlay({
 
               {/* Élément focal (ex. -15% / 1 ML / TOP 10) */}
               <div
+                className={alignFocalToCondition ? "dp-promo-focal-justify" : undefined}
                 style={{
                   width: "100%",
                   fontWeight: 600,
-                  fontSize: "clamp(3.6rem, 7.5vw, 6.6rem)",
+                  fontSize: "var(--dp-promo-focal-size, clamp(3.6rem, 7.5vw, 6.6rem))",
                   lineHeight: 0.84,
                   letterSpacing: "-0.01em",
                   margin: "0.04em 0 0.08em",
@@ -242,6 +264,7 @@ function PromoOverlay({
           alignSelf: "center",
           marginTop: 18,
           alignItems: "center",
+          pointerEvents: "auto",
           fontFamily: "var(--font-display)",
           fontWeight: 600,
           fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)",
@@ -272,6 +295,27 @@ function PromoOverlay({
           }}
         />
       </motion.a>
+
+      {/* Responsive : offset droit + taille du focal réduits sur mobile pour éviter
+          tout débordement/chevauchement (voir breakpoints 760/420 déjà en place
+          ailleurs dans ce fichier, ex. vignettes / barre de progression).
+          Le justify du titre (dp-promo-title) et du focal (dp-promo-focal-justify)
+          est neutralisé sous 760px : sur mobile, une ligne courte issue d'un
+          wrap ("VOS", "TOP 10"…) devient la dernière/seule ligne et se retrouve
+          étirée lettre par lettre par text-align-last: justify. */}
+      <style>{`
+        @media (max-width: 760px) {
+          [data-dp-promo] { --dp-promo-right: clamp(16px, 5vw, 48px); --dp-promo-focal-size: clamp(2.4rem, 10vw, 4.2rem); }
+          .dp-promo-title, .dp-promo-focal-justify {
+            text-align: right !important;
+            text-align-last: auto !important;
+            text-justify: auto !important;
+          }
+        }
+        @media (max-width: 420px) {
+          [data-dp-promo] { --dp-promo-right: clamp(12px, 4vw, 24px); --dp-promo-focal-size: clamp(1.8rem, 12vw, 3rem); }
+        }
+      `}</style>
     </motion.div>
   );
 }
@@ -306,19 +350,20 @@ export function AnimatedHero() {
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ opacity: { duration: 1.4, ease: EASE } }}
-          style={{ position: "absolute", inset: 0 }}
+          style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
         >
           <motion.div
             initial={{ scale: 1.0 }}
             animate={{ scale: 1.0 }}
             transition={{ duration: 0, ease: "linear" }}
-            style={{ position: "absolute", inset: 0 }}
+            style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
           >
             <Image
               src={slide.img}
               alt={slide.title}
               fill
               priority={i === 0}
+              sizes="100vw"
               style={{ objectFit: "cover", opacity: 1 }}
             />
           </motion.div>
@@ -528,7 +573,7 @@ export function AnimatedHero() {
             condition={tSample("condition")}
             cta={tSample("cta")}
             tagline={tSample("tagline")}
-            href="#echantillons"
+            href="#coffrets-lots"
           />
         )}
         {i === 1 && (
@@ -539,7 +584,7 @@ export function AnimatedHero() {
             focal={tReef("discount")}
             condition={tReef("condition")}
             cta={tReef("cta")}
-            href="#promo"
+            href="#reef-rail"
             scrim
           />
         )}
@@ -558,13 +603,24 @@ export function AnimatedHero() {
         )}
       </AnimatePresence>
 
-      {/* Vignettes verticales (style image #2) */}
+      {/* Vignettes verticales (style image #2)
+          Le rail est centré verticalement dans la section (top:50%), alors
+          que FragranceFinderButton est en position:fixed ancré au VIEWPORT
+          (inset-block-end 78/85px) — deux référentiels différents. Sur les
+          petits viewports courts (ex. iPhone SE 375×667 : section 70vh ≈
+          467px), le centrage à 50% place la 3e vignette à ~5px seulement du
+          bouton flottant fiole : marge quasi nulle qui bascule en
+          chevauchement réel sur beaucoup d'appareils (barre d'adresse
+          dynamique, traductions plus longues, arrondis de rendu). Le "max()"
+          ci-dessous ne remonte le rail que lorsque 100vh < 710px (aucun
+          effet sur les écrans hauts, où le centrage à 50% reste inchangé),
+          ce qui redonne une marge de sécurité réelle avec le bouton flottant. */}
       <div
         style={{
           position: "absolute",
           zIndex: 3,
           right: "clamp(16px, 3vw, 40px)",
-          top: "50%",
+          top: "calc(50% - max(0px, 710px - 100vh))",
           transform: "translateY(-50%)",
           display: "flex",
           flexDirection: "column",

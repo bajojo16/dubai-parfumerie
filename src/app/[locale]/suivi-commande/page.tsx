@@ -1,5 +1,6 @@
 "use client";
 import { useState } from "react";
+import { Link } from "@/i18n/navigation";
 
 const steps = [
   { label: "Commande confirmée", desc: "Paiement validé · email de confirmation envoyé", date: "20 juin, 09:14", done: true, icon: "m5 12 5 5 9-11" },
@@ -94,7 +95,7 @@ export default function SuiviCommandePage() {
           </div>
           <div style={{ textAlign: "center", marginTop: 24, fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-500)" }}>
             Un problème avec votre colis ?{" "}
-            <a href="/faq" style={{ color: "var(--gold-700)" }}>Contactez-nous</a>
+            <Link href="/faq" style={{ color: "var(--gold-700)" }}>Contactez-nous</Link>
           </div>
         </section>
       )}

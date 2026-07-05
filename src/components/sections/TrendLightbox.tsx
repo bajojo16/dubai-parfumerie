@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
 import type { TrendProduct } from "@/data/trend-products";
 
@@ -11,6 +11,7 @@ export type TrendLightboxLabels = {
   next: string;
   helpful: string; // "Utile ?"
   seeProduct: string; // "Voir le produit"
+  productSheet: string; // "Fiche produit"
   verified: string; // "Achat vérifié"
 };
 
@@ -20,6 +21,7 @@ const DEFAULT_LABELS: TrendLightboxLabels = {
   next: "Avis suivant",
   helpful: "Utile ?",
   seeProduct: "Voir le produit",
+  productSheet: "Fiche produit",
   verified: "Achat vérifié",
 };
 
@@ -201,7 +203,60 @@ export function TrendLightbox({
           ) : (
             <Image src={product.image} alt={product.name} fill sizes="470px" style={{ objectFit: "cover" }} />
           )}
+
+          {/* Vignette produit cliquable (bas de vidéo) → fiche produit */}
+          <Link
+            href={product.href}
+            aria-label={`${L.seeProduct} — ${product.name}`}
+            className="trend-lb-thumb"
+            style={{
+              position: "absolute",
+              insetInlineStart: "50%",
+              bottom: 16,
+              transform: "translateX(-50%)",
+              width: 72,
+              height: 72,
+              borderRadius: 12,
+              border: "3px solid #fff",
+              boxShadow: "0 6px 18px rgba(0,0,0,.35)",
+              overflow: "hidden",
+              display: "block",
+              background: "#FAF6EE",
+              zIndex: 4,
+            }}
+          >
+            <Image src={product.image} alt={product.name} width={72} height={72} style={{ width: "100%", height: "100%", objectFit: "cover" }} />
+          </Link>
         </div>
+
+        {/* Bouton "Fiche produit" — haut droite des avis */}
+        <Link
+          href={product.href}
+          aria-label={`${L.seeProduct} — ${product.name}`}
+          className="trend-lb-fiche"
+          style={{
+            position: "absolute",
+            top: 14,
+            insetInlineEnd: 14,
+            zIndex: 5,
+            display: "inline-flex",
+            alignItems: "center",
+            gap: 6,
+            padding: "7px 13px",
+            borderRadius: 999,
+            background: "#2C2620",
+            color: "#fff",
+            fontFamily: "var(--font-sans)",
+            fontSize: 12,
+            fontWeight: 600,
+            letterSpacing: "0.3px",
+            textDecoration: "none",
+            boxShadow: "0 4px 12px rgba(0,0,0,.18)",
+          }}
+        >
+          {L.seeProduct}
+          <span aria-hidden style={{ display: "inline-block", transform: isRTL ? "scaleX(-1)" : "none" }}>→</span>
+        </Link>
 
         {/* Droite : avis */}
         <div
@@ -327,9 +382,10 @@ export function TrendLightbox({
       </div>
 
       <style>{`
-        @media (max-width: 640px) {
+        @media (max-width: 760px) {
           .trend-lb-card { grid-template-columns: 1fr !important; max-height: calc(100vh - 24px) !important; }
           .trend-lb-card > div:first-of-type { aspect-ratio: 4 / 5 !important; }
+          .trend-lb-fiche { top: 70px !important; }
         }
       `}</style>
     </div>

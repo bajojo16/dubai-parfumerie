@@ -36,6 +36,8 @@ export interface WelcomeModalProps {
   whatsappPlaceholder?: string;
   languageOptions?: string[];
   currencyOptions?: string[];
+  /** Affiche les sélecteurs langue/devise du formulaire (défaut : true). */
+  showLangCurrency?: boolean;
   submitLabel?: string;
   alreadyMemberLabel?: string;
   loginLabel?: string;
@@ -76,6 +78,7 @@ export function WelcomeModal({
   whatsappPlaceholder = "Votre numéro WhatsApp",
   languageOptions = DEFAULT_LANGUAGES,
   currencyOptions = DEFAULT_CURRENCIES,
+  showLangCurrency = true,
   submitLabel = "J'EN PROFITE",
   alreadyMemberLabel = "Déjà membre ?",
   loginLabel = "Se connecter",
@@ -211,22 +214,24 @@ export function WelcomeModal({
             />
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
-            <select value={lang} onChange={e => setLang(e.target.value)} style={{
-              padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
-              fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
-              background: "#fff", outline: "none", cursor: "pointer",
-            }}>
-              {languageOptions.map(l => <option key={l}>{l}</option>)}
-            </select>
-            <select value={cur} onChange={e => setCur(e.target.value)} style={{
-              padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
-              fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
-              background: "#fff", outline: "none", cursor: "pointer",
-            }}>
-              {currencyOptions.map(c => <option key={c}>{c}</option>)}
-            </select>
-          </div>
+          {showLangCurrency && (
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10, marginBottom: 16 }}>
+              <select value={lang} onChange={e => setLang(e.target.value)} style={{
+                padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
+                fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
+                background: "#fff", outline: "none", cursor: "pointer",
+              }}>
+                {languageOptions.map(l => <option key={l}>{l}</option>)}
+              </select>
+              <select value={cur} onChange={e => setCur(e.target.value)} style={{
+                padding: "11px 12px", border: "1px solid #ddd", borderRadius: "var(--r-sm)",
+                fontFamily: "var(--font-sans)", fontSize: "0.84rem", color: "var(--ink-900)",
+                background: "#fff", outline: "none", cursor: "pointer",
+              }}>
+                {currencyOptions.map(c => <option key={c}>{c}</option>)}
+              </select>
+            </div>
+          )}
 
           <button onClick={close} style={{
             width: "100%", background: "var(--gold-500)", color: "#fff", border: "none",
@@ -238,11 +243,11 @@ export function WelcomeModal({
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
             <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.78rem", color: "var(--ink-400)" }}>
               {alreadyMemberLabel}&nbsp;
-              <button onClick={close} style={{ background: "none", border: "none", color: "var(--gold-600)", textDecoration: "underline", cursor: "pointer", fontFamily: "inherit", fontSize: "inherit" }}>
+              <button onClick={close} style={{ background: "none", border: "none", color: "var(--gold-500)", textDecoration: "underline", cursor: "pointer", fontFamily: "inherit", fontSize: "inherit" }}>
                 {loginLabel}
               </button>
             </span>
-            <button onClick={close} style={{ background: "none", border: "none", color: "var(--ink-300)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.78rem" }}>
+            <button onClick={close} style={{ background: "none", border: "none", color: "var(--ink-400)", cursor: "pointer", fontFamily: "var(--font-sans)", fontSize: "0.78rem" }}>
               {declineLabel}
             </button>
           </div>

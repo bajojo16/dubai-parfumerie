@@ -4,16 +4,22 @@
  * WhatsAppBubble — bouton flottant rond (vert WhatsApp) ouvrant la
  * conversation service client. Monté globalement dans le layout.
  *
- * - Position : bas à DROITE (propriétés logiques → RTL-safe).
- *   Décalé en hauteur (insetBlockEnd 88) pour ne PAS chevaucher le
- *   bouton back-to-top (insetInlineEnd 24 / bottom 24, zIndex 1200).
- * - zIndex 1150 : au-dessus du contenu, SOUS les modales.
+ * - Position : bas à GAUCHE en LTR (insetInlineStart → propriétés
+ *   logiques, RTL-safe : bascule à droite en arabe).
+ *   insetBlockEnd 88 + hauteur 56 => centre vertical à 116px du bas,
+ *   identique au centre du FragranceFinderButton (bulle dorée, bas à
+ *   droite : insetBlockEnd 85 + 62 = 116) pour un alignement visuel
+ *   exact des deux bulles flottantes.
+ * - zIndex : var(--z-float) (globals.css) — au-dessus du contenu, TOUJOURS
+ *   sous tout overlay/modal/drawer (panier, auth, bundle, lightbox,
+ *   fragrance finder, welcome modal).
+ * - ≤420px : bulle réduite 56→44px + marge de sécurité accrue pour limiter
+ *   le recouvrement des CTA "Ajouter au panier" en grille 2 colonnes mobile.
  * - prefers-reduced-motion : désactive le pulse.
  */
 import { useEffect, useState } from "react";
+import { WHATSAPP_URL as WA_URL } from "@/lib/contact";
 
-const WA_PHONE = "966583728407";
-const WA_URL = `https://wa.me/${WA_PHONE}`;
 const WA_GREEN = "#25D366";
 
 export function WhatsAppBubble() {
@@ -34,13 +40,13 @@ export function WhatsAppBubble() {
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Contacter le service client sur WhatsApp"
+        className="wa-bubble"
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
         style={{
           position: "fixed",
           insetBlockEnd: 88,
           insetInlineStart: 24,
-          zIndex: 1150,
           width: 56,
           height: 56,
           borderRadius: "50%",
@@ -71,9 +77,27 @@ export function WhatsAppBubble() {
       </a>
 
       <style>{`
+        .wa-bubble {
+          z-index: var(--z-float, 220);
+        }
         @keyframes wa-pulse {
           0%, 100% { box-shadow: 0 8px 22px rgba(37,211,102,0.32); }
           50% { box-shadow: 0 10px 30px rgba(37,211,102,0.55); }
+        }
+        @media (max-width: 420px) {
+          /* !important nécessaire : l'élément a aussi width/height/inset-*
+             en inline style (spécificité max), donc une règle de classe
+             normale ne les écraserait jamais. */
+          .wa-bubble {
+            width: 44px !important;
+            height: 44px !important;
+            inset-inline-start: 16px !important;
+            inset-block-end: 82px !important;
+          }
+          .wa-bubble svg {
+            width: 24px !important;
+            height: 24px !important;
+          }
         }
       `}</style>
     </>

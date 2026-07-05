@@ -103,7 +103,7 @@ export const QUESTIONS: Question[] = [
   // Q4
   {
     id: "family",
-    title: "Quelle ambiance vous attire ?",
+    title: "Quel univers vous attire ?",
     subtitle: "Touchez la matière qui vous parle.",
     kind: "tiles",
     options: [
@@ -117,14 +117,14 @@ export const QUESTIONS: Question[] = [
   // Q5
   {
     id: "season",
-    title: "Un parfum de saison ?",
-    subtitle: "Pour ajuster fraîcheur et chaleur.",
+    title: "Pour quelle occasion cherchez-vous votre parfum ?",
+    subtitle: "Pour cibler le sillage adapté au moment.",
     kind: "tiles",
     options: [
-      { value: "summer", label: "Plutôt estival", hint: "Frais, léger", gradient: G.summer },
-      { value: "winter", label: "Plutôt hivernal", hint: "Chaud, intense", gradient: G.winter },
-      { value: "all", label: "Polyvalent", hint: "Toute l'année", gradient: G.allseasons },
-      { value: "none", label: "Peu importe", hint: "Sans préférence", gradient: G.noseason },
+      { value: "all", label: "Au quotidien", hint: "Un sillage discret qui vous accompagne chaque jour", gradient: G.allseasons },
+      { value: "winter", label: "Événement spécial", hint: "Soirée, mariage, occasion mémorable", gradient: G.winter },
+      { value: "summer", label: "Escapade / voyage", hint: "Un parfum qui évoque l'évasion et le soleil", gradient: G.summer },
+      { value: "none", label: "Cadeau", gradient: G.noseason },
     ],
   },
   // Q6

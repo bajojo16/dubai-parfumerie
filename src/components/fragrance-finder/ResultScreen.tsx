@@ -9,9 +9,10 @@ import Image from "next/image";
 import { addItem } from "@/lib/cart";
 import type { Recommendation, FinderLabels, ResultBadge } from "./types";
 import { FF } from "./tokens";
+import { WHATSAPP_URL as DEFAULT_WHATSAPP_URL } from "@/lib/contact";
 
 const WHATSAPP_URL =
-  process.env.NEXT_PUBLIC_WHATSAPP_INVITE_URL || "https://wa.me/966583728407";
+  process.env.NEXT_PUBLIC_WHATSAPP_INVITE_URL || DEFAULT_WHATSAPP_URL;
 
 function badgeStyle(badge: ResultBadge): { bg: string; fg: string; border: string } {
   switch (badge) {

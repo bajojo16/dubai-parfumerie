@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
 import type { OlfactiveMatch } from "@/data/olfactive-twins";
@@ -342,7 +342,7 @@ export function OlfactiveTwin({
             @keyframes otwin-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(201,162,74,.45); } 50% { box-shadow: 0 0 0 7px rgba(201,162,74,0); } }
             .otwin-q { animation: otwin-pulse 2.4s ease-in-out infinite; }
             .otwin-grid { display: grid; grid-template-columns: minmax(0, 45fr) minmax(0, 55fr); gap: 18px; align-items: start; }
-            @media (max-width: 640px) { .otwin-grid { grid-template-columns: 1fr; } }
+            @media (max-width: 760px) { .otwin-grid { grid-template-columns: 1fr; } }
             @media (prefers-reduced-motion: reduce) { .otwin-q { animation: none; } }
           `}</style>
           {hookEl}

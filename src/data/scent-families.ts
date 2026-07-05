@@ -29,7 +29,7 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     color: "#6B4A2B",
     description:
       "Boisé profond et résineux, l'oud est le cœur de la parfumerie orientale. Une signature mystérieuse, animale et précieuse, issue du bois d'agar.",
-    ingredientImage: "/assets/scents/oud.png",
+    ingredientImage: "/assets/scents/oud.jpg",
     collectionSlug: "oud",
     products: [
       { name: "Oud Mood", brand: "Lattafa", price: 32.9, image: "/assets/prod-1.jpg", href: "/produit/oud-mood" },
@@ -42,7 +42,7 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     color: "#C56B7A",
     description:
       "Florale et poudrée, la rose de Taïf apporte une élégance veloutée. Romantique et lumineuse, elle adoucit les compositions les plus intenses.",
-    ingredientImage: "/assets/scents/rose.png",
+    ingredientImage: "/assets/scents/rose.jpg",
     collectionSlug: "rose",
     products: [
       { name: "Rose pour Elle", brand: "Lattafa", price: 28.9, image: "/assets/prod-4.jpg", href: "/produit/rose-pour-elle" },
@@ -55,7 +55,7 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     color: "#C9912E",
     description:
       "Chaud, sucré et enveloppant, l'ambre diffuse une sensualité dorée. Notes de résine, vanille et benjoin pour un sillage réconfortant.",
-    ingredientImage: "/assets/scents/ambre.png",
+    ingredientImage: "/assets/scents/ambre.jpg",
     collectionSlug: "ambre",
     products: [
       { name: "Amber Oud", brand: "Al Haramain", price: 34.9, image: "/assets/prod-2.jpg", href: "/produit/amber-oud" },
@@ -68,7 +68,7 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     color: "#7A6A3A",
     description:
       "Sec et noble, le boisé évoque le santal et le cèdre. Une élégance racée et intemporelle, structure de nombreuses créations masculines.",
-    ingredientImage: "/assets/scents/boise.png",
+    ingredientImage: "/assets/scents/boise.jpg",
     collectionSlug: "boise",
     products: [
       { name: "Sandal Wood", brand: "Al Haramain", price: 36.9, image: "/assets/prod-6.jpg", href: "/produit/sandal-wood" },
@@ -81,7 +81,7 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     color: "#B9A88C",
     description:
       "Doux, propre et caressant, le musc enveloppe la peau d'un voile sensuel. Délicat et addictif, il signe les sillages les plus intimes.",
-    ingredientImage: "/assets/scents/musc.png",
+    ingredientImage: "/assets/scents/musc.jpg",
     collectionSlug: "musc",
     products: [
       { name: "Musk Mood", brand: "Lattafa", price: 24.9, image: "/assets/prod-3.jpg", href: "/produit/musk-mood" },

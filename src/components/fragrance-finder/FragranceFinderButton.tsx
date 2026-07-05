@@ -54,13 +54,19 @@ export function FragranceFinderButton({
         onMouseLeave={() => setHover(false)}
         aria-label={labels.openAria}
         aria-haspopup="dialog"
+        className="ff-btn"
         style={{
           position: "fixed",
-          // En bas à droite, remonté pour ne pas chevaucher le bouton
-          // back-to-top (insetInlineEnd / bottom:24, zIndex 1200).
-          insetBlockEnd: 96,
+          // En bas à droite. insetBlockEnd 85 + disque 62px => centre
+          // vertical à 116px du bas, identique au centre de WhatsAppBubble
+          // (insetBlockEnd 88 + 56px = 116) pour un alignement visuel exact
+          // des deux bulles flottantes.
+          // zIndex : var(--z-float) (globals.css) — TOUJOURS sous tout
+          // overlay/modal/drawer (panier, auth, bundle, lightbox,
+          // fragrance finder, welcome modal). Voir hiérarchie dans
+          // globals.css.
+          insetBlockEnd: 85,
           insetInlineEnd: 24,
-          zIndex: 900,
           padding: 0,
           border: "none",
           background: "transparent",
@@ -101,6 +107,7 @@ export function FragranceFinderButton({
 
         {/* Disque rond fiole (respiration + halo) à DROITE — au-dessus de la pastille */}
         <span
+          className="ff-disc"
           style={{
             position: "relative",
             zIndex: 2,
@@ -147,6 +154,9 @@ export function FragranceFinderButton({
       />
 
       <style>{`
+        .ff-btn {
+          z-index: var(--z-float, 220);
+        }
         @keyframes ff-breathe {
           0%, 100% { box-shadow: 0 10px 26px rgba(168,128,31,0.30); }
           50% { box-shadow: 0 12px 32px rgba(168,128,31,0.46); }
@@ -158,6 +168,24 @@ export function FragranceFinderButton({
         /* Mobile : on ne garde que le disque fiole */
         @media (max-width: 640px) {
           .ff-pill-label { display: none !important; }
+        }
+        /* Très petit mobile : bulle réduite 62→48px + marge de sécurité
+           accrue pour limiter le recouvrement des CTA "Ajouter au panier"
+           en grille 2 colonnes mobile (!important nécessaire : la bulle a
+           aussi width/height en inline style, spécificité max). */
+        @media (max-width: 420px) {
+          .ff-btn {
+            inset-block-end: 78px !important;
+            inset-inline-end: 16px !important;
+          }
+          .ff-disc {
+            width: 48px !important;
+            height: 48px !important;
+          }
+          .ff-disc svg {
+            width: 22px !important;
+            height: 22px !important;
+          }
         }
       `}</style>
     </>

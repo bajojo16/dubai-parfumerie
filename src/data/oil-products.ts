@@ -2,11 +2,13 @@
  * OilProduct — huiles de parfum concentrées, cartes « Ajmal-style »
  * (flacon qui déborde au-dessus du haut de la carte).
  *
- * En production : bottleImage / decorAccents pointent vers /oils/*.png,
+ * En production : bottleImage / decorAccents pointeront vers des assets dédiés,
  * et le prix/stock/variante sont résolus côté serveur via `slug`.
  * Ici, données démo : on réutilise des visuels produit existants
- * (/assets/prod-*.jpg) comme flacon, et les icônes de familles
- * pointent vers /assets/scents/*.png (fallback pastille or si manquant).
+ * (/assets/oils/*.png) comme flacon, et les icônes de familles
+ * pointent vers /assets/scents/*.jpg (fallback pastille or si manquant).
+ * decorAccents est optionnel : aucun asset "accent" décoratif n'existe
+ * encore dans public/, donc on ne le renseigne pas (évite les 404).
  */
 export type OilFamily = {
   label: string;
@@ -39,7 +41,6 @@ export const DEMO: OilProduct[] = [
     href: "/produit/tanasuk",
     variantId: "tanasuk",
     bottleImage: "/assets/oils/tanasuk.png",
-    decorAccents: ["/oils/accent-leaf.png"],
     volume: "12 ml",
     gender: "Mixte",
     price: 34.9,
@@ -47,9 +48,9 @@ export const DEMO: OilProduct[] = [
     rating: 4.9,
     reviewCount: 214,
     families: [
-      { label: "Ambré", icon: "/assets/scents/ambre.png" },
-      { label: "Oud", icon: "/assets/scents/oud.png" },
-      { label: "Épicé", icon: "/assets/scents/epice.png" },
+      { label: "Ambré", icon: "/assets/scents/ambre.jpg" },
+      { label: "Oud", icon: "/assets/scents/oud.jpg" },
+      { label: "Épicé", icon: "/assets/scents/epice.jpg" },
     ],
     available: true,
   },
@@ -60,7 +61,6 @@ export const DEMO: OilProduct[] = [
     href: "/produit/noora",
     variantId: "noora",
     bottleImage: "/assets/oils/silk.png",
-    decorAccents: ["/oils/accent-rose.png"],
     volume: "12 ml",
     gender: "Femme",
     price: 27.9,
@@ -68,9 +68,9 @@ export const DEMO: OilProduct[] = [
     rating: 5.0,
     reviewCount: 98,
     families: [
-      { label: "Rosé", icon: "/assets/scents/rose.png" },
-      { label: "Ambré", icon: "/assets/scents/ambre.png" },
-      { label: "Boisé", icon: "/assets/scents/boise.png" },
+      { label: "Rosé", icon: "/assets/scents/rose.jpg" },
+      { label: "Ambré", icon: "/assets/scents/ambre.jpg" },
+      { label: "Boisé", icon: "/assets/scents/boise.jpg" },
     ],
     available: false,
   },

@@ -1,6 +1,16 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 
+/**
+ * ChatbotWidget — NON monté actuellement dans layout.tsx (dormant).
+ * Fixes préventifs appliqués malgré tout, pour éviter tout conflit si ce
+ * composant est activé un jour :
+ * - Panneau : largeur `min(360px, calc(100vw - 32px))` au lieu de 360px fixe,
+ *   qui déborderait sur écran < 384px.
+ * - Position décalée de BackToTop (src/components/ui/BackToTop.tsx, bas à
+ *   droite, bottom:24/insetInlineEnd:24, 48px) — bouton ici placé à
+ *   bottom:96 (au-dessus, pas à côté, pour éviter tout chevauchement).
+ */
 type Message = { role: 'user' | 'assistant'; content: string };
 
 export function ChatbotWidget() {
@@ -74,7 +84,7 @@ export function ChatbotWidget() {
         aria-label="Chatbot parfumeur"
         style={{
           position: 'fixed',
-          bottom: 24,
+          bottom: 96,
           right: 24,
           zIndex: 250,
           width: 56,
@@ -98,10 +108,11 @@ export function ChatbotWidget() {
       {open && (
         <div style={{
           position: 'fixed',
-          bottom: 92,
+          bottom: 164,
           right: 24,
           zIndex: 250,
-          width: 360,
+          width: 'min(360px, calc(100vw - 32px))',
+          maxWidth: 'calc(100vw - 32px)',
           height: 480,
           background: 'var(--surface-white)',
           borderRadius: 'var(--r-lg)',

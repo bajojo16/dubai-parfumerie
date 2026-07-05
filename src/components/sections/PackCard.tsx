@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
 import { addItem } from "@/lib/cart";
 import type { Pack, PackBadge } from "@/data/packs";

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 
 const brands = [
   {
@@ -355,7 +356,7 @@ export default function MarquesPage() {
                 </p>
 
                 {/* CTA link */}
-                <a
+                <Link
                   href={`/catalogue?marque=${encodeURIComponent(brand.name)}`}
                   style={{
                     fontFamily: "var(--font-sans)",
@@ -372,7 +373,7 @@ export default function MarquesPage() {
                   }}
                 >
                   Voir la collection →
-                </a>
+                </Link>
               </div>
             </article>
           ))}

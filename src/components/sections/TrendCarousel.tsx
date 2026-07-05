@@ -24,7 +24,7 @@ const DEFAULT_LABELS: TrendCarouselLabels = {
   kicker: "@dubaiparfumerie",
   title: "Tendances",
   titleEm: "du moment",
-  subtitle: "Ce que notre communauté s'arrache cette semaine sur TikTok & Instagram.",
+  subtitle: "Ce que les gens s'arrachent en ce moment sur TikTok & Instagram.",
   prev: "Précédent",
   next: "Suivant",
   follow: "Suivez-nous",
@@ -244,7 +244,9 @@ export function TrendCarousel({
         .trend-arrows { display: none; }
         @media (min-width: 768px) { .trend-arrows { display: inline-flex; } }
         .trend-scroll::-webkit-scrollbar { display: none; }
-        .trend-item { width: 72vw; max-width: 300px; }
+        .trend-item { width: 72vw; max-width: 260px; }
+        @media (max-width: 600px) { .trend-item { width: 64vw; max-width: 240px; } }
+        @media (max-width: 420px) { .trend-item { width: 58vw; max-width: 208px; } }
         @media (min-width: 640px) { .trend-item { width: 300px; } }
         .trend-follow-btn { transition: border-color .2s ease, color .2s ease, transform .2s ease; }
         .trend-follow-btn:hover { border-color: #C9A24A; color: #A8801F; }

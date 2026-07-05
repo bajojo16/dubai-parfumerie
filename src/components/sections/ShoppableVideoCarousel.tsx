@@ -75,7 +75,7 @@ export function ShoppableVideoCarousel({
             style={{
               flex: "0 0 auto",
               scrollSnapAlign: "start",
-              width: "var(--dp-shoppable-card-w, 78%)",
+              width: "var(--dp-shoppable-card-w, 62%)",
             }}
           >
             <ShoppableVideoCard video={v} locale={locale} labels={labels} />
@@ -98,6 +98,13 @@ export function ShoppableVideoCarousel({
 
       <style>{`
         .dp-shoppable-arrow { display: none; }
+        /* Mobile par défaut : carte ~62% (fallback inline) + peek de la carte suivante */
+        @media (max-width: 760px) {
+          [data-dp-shoppable] { --dp-shoppable-card-w: 62%; }
+        }
+        @media (max-width: 420px) {
+          [data-dp-shoppable] { --dp-shoppable-card-w: 58%; }
+        }
         @media (min-width: 768px) {
           .dp-shoppable-arrow { display: grid; }
           [data-dp-shoppable] { --dp-shoppable-card-w: 30%; }

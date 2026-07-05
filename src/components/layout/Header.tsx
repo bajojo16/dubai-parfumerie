@@ -1,7 +1,47 @@
 "use client";
 import React, { useState, useEffect } from "react";
+import { usePathname } from "next/navigation";
+import { useLocale } from "next-intl";
+import { Link, usePathname as useLocalePathname, useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { getCart, cartCount as getCartCount, removeItem, setQty, subscribe, type CartItem } from "@/lib/cart";
+
+// Devise — état partagé simple (localStorage + event global), synchronisé avec Footer.tsx.
+const CURRENCY_KEY = "dp_currency";
+const CURRENCY_EVENT = "dp-currency-change";
+
+function readStoredCurrency(): string {
+  if (typeof window === "undefined") return "EUR";
+  try {
+    return window.localStorage.getItem(CURRENCY_KEY) || "EUR";
+  } catch {
+    return "EUR";
+  }
+}
+
+function writeStoredCurrency(value: string) {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(CURRENCY_KEY, value);
+  } catch {
+    /* ignore */
+  }
+  window.dispatchEvent(new Event(CURRENCY_EVENT));
+}
+
+// Favoris — compteur réel basé sur localStorage (pas de store wishlist existant dans le repo).
+const WISHLIST_KEY = "dp_wishlist";
+
+function readWishlistCount(): number {
+  if (typeof window === "undefined") return 0;
+  try {
+    const raw = window.localStorage.getItem(WISHLIST_KEY);
+    const arr = raw ? JSON.parse(raw) : [];
+    return Array.isArray(arr) ? arr.length : 0;
+  } catch {
+    return 0;
+  }
+}
 
 const ICON = (paths: React.ReactNode) => (
   <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ flexShrink: 0 }}>
@@ -61,7 +101,7 @@ const MEGA: Record<string, MegaData> = {
     ],
     features: [
       { img: "/assets/cat-femme.jpg", label: "Collection Femme", sub: "Sillages floraux & orientaux", href: "/parfums-femme" },
-      { img: "/assets/scents/rose.png", label: "Rose de Taïf", sub: "L'élégance florale du Golfe", href: "/parfums-femme" },
+      { img: "/assets/scents/rose.jpg", label: "Rose de Taïf", sub: "L'élégance florale du Golfe", href: "/parfums-femme" },
     ],
   },
   "/parfums-homme": {
@@ -87,7 +127,7 @@ const MEGA: Record<string, MegaData> = {
     ],
     features: [
       { img: "/assets/cat-homme.jpg", label: "Collection Homme", sub: "Boisés intenses & oud noble", href: "/parfums-homme" },
-      { img: "/assets/scents/oud.png", label: "Oud Royal", sub: "La profondeur d'un bois précieux", href: "/parfums-homme" },
+      { img: "/assets/scents/oud.jpg", label: "Oud Royal", sub: "La profondeur d'un bois précieux", href: "/parfums-homme" },
     ],
   },
   "/marques": {
@@ -448,6 +488,15 @@ function AuthModal({ open, onClose }: AuthModalProps) {
   const [password, setPassword] = React.useState("");
   const [mode, setMode] = React.useState<"login" | "register">("login");
 
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open, onClose]);
+
   return (
     <>
       <div onClick={onClose} style={{ position: "fixed", inset: 0, background: "rgba(21,16,11,.55)", zIndex: 1100, opacity: open ? 1 : 0, pointerEvents: open ? "auto" : "none", transition: "opacity .25s" }} />
@@ -573,7 +622,7 @@ function MegaMenu({ data, onClose }: { data: MegaData; onClose: () => void }) {
               </div>
               <div style={{ display: "flex", flexDirection: "column", gap: 11 }}>
                 {col.links.map((l) => (
-                  <a
+                  <Link
                     key={l.label}
                     href={l.href}
                     onClick={onClose}
@@ -588,7 +637,7 @@ function MegaMenu({ data, onClose }: { data: MegaData; onClose: () => void }) {
                     onMouseLeave={(e) => ((e.currentTarget as HTMLElement).style.color = "var(--ink-700)")}
                   >
                     {l.label}
-                  </a>
+                  </Link>
                 ))}
               </div>
             </div>
@@ -598,7 +647,7 @@ function MegaMenu({ data, onClose }: { data: MegaData; onClose: () => void }) {
         {/* Images produit */}
         <div style={{ display: "flex", gap: 18, flex: 1, justifyContent: "flex-end" }}>
           {data.features.map((f) => (
-            <a
+            <Link
               key={f.label}
               href={f.href}
               onClick={onClose}
@@ -626,7 +675,7 @@ function MegaMenu({ data, onClose }: { data: MegaData; onClose: () => void }) {
                 <div style={{ fontFamily: "var(--font-display)", fontSize: "1.25rem", fontWeight: 600, color: "#fff", lineHeight: 1.1 }}>{f.label}</div>
                 <div style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "rgba(255,255,255,.8)", marginTop: 2 }}>{f.sub}</div>
               </div>
-            </a>
+            </Link>
           ))}
         </div>
       </div>
@@ -635,13 +684,22 @@ function MegaMenu({ data, onClose }: { data: MegaData; onClose: () => void }) {
 }
 
 export function Header() {
-  const [activeLang, setActiveLang] = useState("FR");
+  const pathname = usePathname();
+  const isPreviewWelcome = pathname?.includes("/preview-welcome") ?? false;
+  const locale = useLocale();
+  const localePathname = useLocalePathname();
+  const router = useRouter();
   const [currency, setCurrency] = useState("EUR");
   const [cartOpen, setCartOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
-  const [wishCount] = useState(1);
+  const cartTotalAmount = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
+  const SHIP_THRESHOLD = 60; // aligné sur "Livraison offerte dès 60 €" / GiftProgressBar
+  const shipRemaining = Math.max(0, SHIP_THRESHOLD - cartTotalAmount);
+  const shipPct = Math.min(100, Math.round((cartTotalAmount / SHIP_THRESHOLD) * 100));
+  const [wishCount, setWishCount] = useState(0);
+  const [wishToast, setWishToast] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mega, setMega] = useState<string | null>(null);
 
@@ -656,6 +714,41 @@ export function Header() {
       prev = next;
     });
   }, []);
+
+  // Devise — hydrate + s'abonne aux changements (sync cross-onglet + avec Footer)
+  useEffect(() => {
+    setCurrency(readStoredCurrency());
+    const onChange = () => setCurrency(readStoredCurrency());
+    window.addEventListener(CURRENCY_EVENT, onChange);
+    window.addEventListener("storage", onChange);
+    return () => {
+      window.removeEventListener(CURRENCY_EVENT, onChange);
+      window.removeEventListener("storage", onChange);
+    };
+  }, []);
+
+  function handleCurrencyChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    const value = e.target.value;
+    setCurrency(value);
+    writeStoredCurrency(value);
+  }
+
+  function handleLangChange(e: React.ChangeEvent<HTMLSelectElement>) {
+    router.replace(localePathname, { locale: e.target.value.toLowerCase() });
+  }
+
+  // Favoris — compteur réel (localStorage), pas de page wishlist existante : toast "bientôt disponible"
+  useEffect(() => {
+    setWishCount(readWishlistCount());
+    const onChange = () => setWishCount(readWishlistCount());
+    window.addEventListener("storage", onChange);
+    return () => window.removeEventListener("storage", onChange);
+  }, []);
+
+  function handleWishClick() {
+    setWishToast(true);
+    window.setTimeout(() => setWishToast(false), 2200);
+  }
 
   return (
     <>
@@ -745,51 +838,55 @@ export function Header() {
         </div>
 
         {/* Language & currency */}
-        <div className="dp-topbar-selectors" style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto" }}>
-          <select
-            value={activeLang}
-            onChange={(e) => setActiveLang(e.target.value)}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: "var(--on-dark-muted)",
-              fontFamily: "var(--font-sans)",
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: ".08em",
-              cursor: "pointer",
-              outline: "none",
-            }}
-          >
-            {LANGUAGES.map((l) => (
-              <option key={l} value={l} style={{ background: "var(--espresso-900)", color: "#fff" }}>
-                {l}
-              </option>
-            ))}
-          </select>
-          <span style={{ color: "var(--on-dark-muted)", fontSize: 11 }}>|</span>
-          <select
-            value={currency}
-            onChange={(e) => setCurrency(e.target.value)}
-            style={{
-              background: "transparent",
-              border: "none",
-              color: "var(--on-dark-muted)",
-              fontFamily: "var(--font-sans)",
-              fontSize: "11px",
-              fontWeight: 600,
-              letterSpacing: ".08em",
-              cursor: "pointer",
-              outline: "none",
-            }}
-          >
-            {CURRENCIES.map((c) => (
-              <option key={c} value={c} style={{ background: "var(--espresso-900)", color: "#fff" }}>
-                {c}
-              </option>
-            ))}
-          </select>
-        </div>
+        {!isPreviewWelcome && (
+          <div className="dp-topbar-selectors" style={{ display: "flex", alignItems: "center", gap: 8, flex: "0 0 auto" }}>
+            <select
+              className="dp-topbar-select"
+              value={locale.toUpperCase()}
+              onChange={handleLangChange}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "var(--on-dark-muted)",
+                fontFamily: "var(--font-sans)",
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: ".08em",
+                cursor: "pointer",
+                outline: "none",
+              }}
+            >
+              {LANGUAGES.map((l) => (
+                <option key={l} value={l} style={{ background: "var(--espresso-900)", color: "#fff" }}>
+                  {l}
+                </option>
+              ))}
+            </select>
+            <span style={{ color: "var(--on-dark-muted)", fontSize: 11 }}>|</span>
+            <select
+              className="dp-topbar-select"
+              value={currency}
+              onChange={handleCurrencyChange}
+              style={{
+                background: "transparent",
+                border: "none",
+                color: "var(--on-dark-muted)",
+                fontFamily: "var(--font-sans)",
+                fontSize: "11px",
+                fontWeight: 600,
+                letterSpacing: ".08em",
+                cursor: "pointer",
+                outline: "none",
+              }}
+            >
+              {CURRENCIES.map((c) => (
+                <option key={c} value={c} style={{ background: "var(--espresso-900)", color: "#fff" }}>
+                  {c}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
       {/* Main header */}
@@ -831,9 +928,9 @@ export function Header() {
           </button>
 
           {/* Logo */}
-          <a href="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
+          <Link href="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
             <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 28, width: "auto", display: "block" }} />
-          </a>
+          </Link>
 
           {/* Nav */}
           <nav className="dp-nav" style={{ display: "flex", alignItems: "center", gap: 2, flex: "0 0 auto" }}>
@@ -841,8 +938,8 @@ export function Header() {
               const hasMega = !!MEGA[href];
               const isActive = mega === href;
               return (
-                <a
-                  key={href}
+                <Link
+                  key={label}
                   href={href}
                   onMouseEnter={(e) => {
                     setMega(hasMega ? href : null);
@@ -868,7 +965,7 @@ export function Header() {
                   }}
                 >
                   {label}
-                </a>
+                </Link>
               );
             })}
           </nav>
@@ -922,6 +1019,7 @@ export function Header() {
           {/* Right icons */}
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: "auto" }}>
             <button
+              className="dp-icon-btn"
               onClick={() => setAuthOpen(true)}
               style={{
                 background: "none",
@@ -945,6 +1043,8 @@ export function Header() {
             </button>
 
             <button
+              className="dp-icon-btn"
+              onClick={handleWishClick}
               style={{
                 background: "none",
                 border: "none",
@@ -967,6 +1067,7 @@ export function Header() {
                 <IconHeart />
                 {wishCount > 0 && (
                   <span
+                    className="dp-badge"
                     style={{
                       position: "absolute",
                       top: -5,
@@ -992,6 +1093,7 @@ export function Header() {
             </button>
 
             <button
+              className="dp-icon-btn"
               onClick={() => setCartOpen(true)}
               style={{
                 background: "transparent",
@@ -1015,6 +1117,7 @@ export function Header() {
                 <IconBag />
                 {cartCount > 0 && (
                   <span
+                    className="dp-badge"
                     style={{
                       position: "absolute",
                       top: -6,
@@ -1090,7 +1193,7 @@ export function Header() {
           >
             <div
               style={{
-                width: "30%",
+                width: `${shipPct}%`,
                 height: "100%",
                 background: "linear-gradient(90deg, #C9A24A, #8A6A1E)",
                 borderRadius: 99,
@@ -1106,7 +1209,11 @@ export function Header() {
               color: "#6B5A38",
             }}
           >
-            Il vous manque <strong style={{ color: "#A8801F" }}>42 €</strong> pour en bénéficier
+            {shipRemaining > 0 ? (
+              <>Il vous manque <strong style={{ color: "#A8801F" }}>{shipRemaining.toFixed(2).replace(".", ",")} €</strong> pour en bénéficier</>
+            ) : (
+              <strong style={{ color: "#A8801F" }}>Livraison offerte débloquée !</strong>
+            )}
           </span>
         </div>
         <style>{`@keyframes dpShipShimmer { 0% { background-position: 200% 0 } 100% { background-position: -200% 0 } }`}</style>
@@ -1148,8 +1255,8 @@ export function Header() {
         </div>
         <nav style={{ display: "flex", flexDirection: "column", padding: "8px 0" }}>
           {NAV_LINKS.map(({ label, href, highlight }) => (
-            <a
-              key={href}
+            <Link
+              key={label}
               href={href}
               onClick={() => setMobileMenuOpen(false)}
               style={{
@@ -1161,13 +1268,43 @@ export function Header() {
               }}
             >
               {label}
-            </a>
+            </Link>
           ))}
         </nav>
       </aside>
 
       <CartSidebar open={cartOpen} onClose={() => setCartOpen(false)} cartCount={cartCount} items={cartItems} />
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />
+
+      {/* Toast favoris — pas de page wishlist existante, feedback minimal non-inerte */}
+      {wishToast && (
+        <div
+          role="status"
+          aria-live="polite"
+          style={{
+            position: "fixed",
+            bottom: 24,
+            left: "50%",
+            transform: "translateX(-50%)",
+            zIndex: 1200,
+            background: "var(--espresso-900)",
+            color: "#fff",
+            fontFamily: "var(--font-sans)",
+            fontSize: 13,
+            fontWeight: 600,
+            padding: "12px 20px",
+            borderRadius: "var(--r-md)",
+            boxShadow: "0 12px 32px rgba(0,0,0,.25)",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            animation: "fadeSlideIn .25s ease",
+          }}
+        >
+          <IconHeart />
+          Favoris — bientôt disponible
+        </div>
+      )}
 
       <style>{`
         @keyframes fadeSlideIn {

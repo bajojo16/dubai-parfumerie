@@ -187,8 +187,9 @@ export function BestSellersRail({
           className="bsr-split"
           style={{
             marginTop: 22,
-            // Aligne l'ensemble sur le conteneur centré
-            paddingInline: "max(24px, calc((100% - 1240px) / 2 + 24px))",
+            // Aligne le début sur le conteneur centré, mais colle la carte vidéo au bord droit
+            paddingInlineStart: "max(24px, calc((100% - 1240px) / 2 + 24px))",
+            paddingInlineEnd: 0,
           }}
         >
           {/* Zone scrollable produits (largeur restante) */}
@@ -218,7 +219,7 @@ export function BestSellersRail({
               ))}
             </div>
 
-            {/* Voile de bord au bout de la zone scrollable (miroir RTL via insetInlineEnd) */}
+            {/* Voile de bord côté OPPOSÉ à la carte éditoriale (bord extérieur), façon miroir de la maison Reef */}
             <div
               aria-hidden
               className="bsr-split-fade"
@@ -226,12 +227,13 @@ export function BestSellersRail({
                 position: "absolute",
                 top: 0,
                 bottom: 0,
-                insetInlineEnd: 0,
+                insetInlineStart: 0,
                 width: 48,
                 background: isRTL
                   ? `linear-gradient(to left, ${C.cream}, rgba(247,243,236,0))`
                   : `linear-gradient(to right, ${C.cream}, rgba(247,243,236,0))`,
                 pointerEvents: "none",
+                zIndex: 2,
               }}
             />
           </div>

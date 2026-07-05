@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { Article } from "@/data/journal-articles";
 import { JournalCard } from "./JournalCard";
 

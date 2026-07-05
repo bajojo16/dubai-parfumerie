@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from "react";
 import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 import { AnimatedHero } from "@/components/sections/AnimatedHero";
 import { BestSellers } from "@/components/sections/BestSellers";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
@@ -446,8 +447,15 @@ export default function HomePageClient() {
             title={<>Les parfums <em>de l&apos;été</em></>}
             subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
-            {products.slice(0, 4).map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
+          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+            {products.slice(0, 4).map(p => (
+              <ProductCardLuxe
+                key={p.id}
+                product={toLuxe(p)}
+                locale={locale}
+                onAddToCart={(prod, qty) => addItem({ id: String(p.id), name: prod.title, brand: prod.brand, price: prod.price, image: prod.image }, qty)}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -486,9 +494,14 @@ export default function HomePageClient() {
             title={<>Plus de senteurs, <em>meilleur prix</em></>}
             subtitle="Découvrez plusieurs fragrances en un seul achat, à prix réduit."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
+          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
             {COFFRETS_HOME.map((p, i) => (
-              <ProductCardLuxe key={i} product={p} locale={locale} />
+              <ProductCardLuxe
+                key={i}
+                product={p}
+                locale={locale}
+                onAddToCart={(prod, qty) => addItem({ id: `coffret-${i}`, name: prod.title, brand: prod.brand, price: prod.price, image: prod.image }, qty)}
+              />
             ))}
           </div>
         </div>
@@ -514,7 +527,7 @@ export default function HomePageClient() {
       {false && <BestSellers />}
 
       {/* ── BANNIÈRE PROMO YARA (roll-on) ─────────────────────────── */}
-      <section style={{ position: "relative", width: "100%", overflow: "hidden", height: "clamp(220px, 25vw, 360px)" }}>
+      <section className="dp-yara-banner" style={{ position: "relative", width: "100%", overflow: "hidden", height: "clamp(220px, 25vw, 360px)" }}>
         <Image
           src="/assets/banner-yara.jpg"
           alt="Yara & Mousuf Wardi — roll-on de voyage"
@@ -533,7 +546,7 @@ export default function HomePageClient() {
           }}
         >
           {/* Bouton (gauche) */}
-          <a
+          <Link
             href="/promo-flash"
             className="dp-yara-cta"
             style={{
@@ -547,7 +560,7 @@ export default function HomePageClient() {
             }}
           >
             <span style={{ position: "relative", zIndex: 1 }}>Découvrir →</span>
-          </a>
+          </Link>
 
           {/* Texte (droite) */}
           <div style={{ textAlign: "right", maxWidth: "min(56%, 620px)" }}>
@@ -577,6 +590,13 @@ export default function HomePageClient() {
           .dp-yara-cta::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 50%,transparent 70%);transform:translateX(-130%)}
           .dp-yara-cta:hover::after{transform:translateX(130%);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
           .dp-yara-cta:hover{background:#fff;animation-play-state:paused}
+          /* Mobile : la hauteur plancher (220px) est trop grande vs le contenu réel (~90px) → on la resserre */
+          @media (max-width: 760px) {
+            .dp-yara-banner { height: clamp(140px, 34vw, 190px) !important; }
+          }
+          @media (max-width: 420px) {
+            .dp-yara-banner { height: 150px !important; }
+          }
         `}</style>
       </section>
 
@@ -612,7 +632,7 @@ export default function HomePageClient() {
             title={<>Tous nos <em>incontournables</em></>}
             subtitle="Les parfums les plus appréciés de notre clientèle, semaine après semaine."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
             {bestSellers.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
           </div>
         </div>
@@ -635,8 +655,8 @@ export default function HomePageClient() {
               Offrez l'Orient en un écrin. Nos coffrets comprennent 3 à 12 miniatures sélectionnées par nos experts, avec guide olfactif et certificat d'authenticité. Idéal pour s'initier ou faire découvrir la parfumerie orientale.
             </p>
             <div style={{ display: "flex", gap: 14 }}>
-              <a href="#" style={{ background: "var(--gold-500)", color: "#fff", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 700 }}>Voir les coffrets</a>
-              <a href="#" style={{ border: "1.5px solid rgba(255,255,255,0.4)", color: "var(--on-dark-strong)", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem" }}>Personnaliser</a>
+              <Link href="/promo-flash" style={{ background: "var(--gold-500)", color: "#fff", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 700 }}>Voir les coffrets</Link>
+              <Link href="/promo-flash" style={{ border: "1.5px solid rgba(255,255,255,0.4)", color: "var(--on-dark-strong)", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem" }}>Personnaliser</Link>
             </div>
           </div>
           <div style={{ flex: "1 1 420px", display: "flex", gap: 18, justifyContent: "center" }}>
@@ -660,12 +680,12 @@ export default function HomePageClient() {
           <SectionHeader eyebrow="Nos univers" title="Pour elle, pour lui, pour tous" />
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
             {[
-              { img: "/assets/cat-femme.jpg", label: "Pour Elle", count: "320 parfums" },
-              { img: "/assets/cat-homme.jpg", label: "Pour Lui", count: "280 parfums" },
-              { img: "/assets/cat-mixte.jpg", label: "Mixte", count: "420 parfums" },
-              { img: "/assets/coffrets.jpg", label: "Coffrets", count: "85 coffrets" },
+              { img: "/assets/cat-femme.jpg", label: "Pour Elle", count: "320 parfums", href: "/parfums-femme" },
+              { img: "/assets/cat-homme.jpg", label: "Pour Lui", count: "280 parfums", href: "/parfums-homme" },
+              { img: "/assets/cat-mixte.jpg", label: "Mixte", count: "420 parfums", href: "/marques" },
+              { img: "/assets/coffrets.jpg", label: "Coffrets", count: "85 coffrets", href: "/promo-flash" },
             ].map(cat => (
-              <a key={cat.label} href="#" style={{
+              <Link key={cat.label} href={cat.href} style={{
                 textDecoration: "none", display: "block",
                 position: "relative", paddingBottom: "125%",
                 borderRadius: "var(--r-lg)", overflow: "hidden",
@@ -676,14 +696,14 @@ export default function HomePageClient() {
                   <div style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: "#fff", marginBottom: 4 }}>{cat.label}</div>
                   <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--on-dark-muted)" }}>{cat.count}</div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
       {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
-      <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+      <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px 40px" }}>
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <SectionHeader
             eyebrow={tTwin("eyebrow")}
@@ -695,7 +715,7 @@ export default function HomePageClient() {
       </section>
 
       {/* ── ROUE DES SENTEURS interactive (sous Le catalogue) ─────── */}
-      <section id="roue-senteurs" style={{ background: "var(--surface-cream)", padding: "70px 0 24px" }}>
+      <section id="roue-senteurs" style={{ background: "var(--surface-cream)", padding: "0 0 24px" }}>
         <div style={{ width: "100%" }}>
           <ScentWheelInteractive families={DEMO_SCENT_FAMILIES} locale={locale} />
         </div>
@@ -722,13 +742,43 @@ export default function HomePageClient() {
                   </li>
                 ))}
               </ul>
-              <a href="#" style={{
+              <Link href="/huile-de-parfum" style={{
                 display: "inline-block", background: "var(--ink-900)", color: "var(--on-dark-strong)",
                 textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)",
                 fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 600,
-              }}>Découvrir les huiles →</a>
+              }}>Découvrir les huiles →</Link>
             </div>
             <OilCardCarousel products={OIL_PRODUCTS} locale={locale} />
+          </div>
+        </div>
+      </section>
+
+      {/* ── 5. AUTHENTICITÉ (Notre promesse, avant le blog) ───────── */}
+      <section id="authenticite" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <RevealOnScroll>
+          <SectionHeader
+            eyebrow="Notre promesse"
+            title={<>100% Authentique,<br /><em>ou remboursé</em></>}
+            subtitle="Chaque flacon est sourcé directement auprès des distributeurs officiels aux Émirats."
+          />
+          </RevealOnScroll>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
+            {[
+              { n: "01", title: "Sourcing direct Dubaï", desc: "Nous nous approvisionnons exclusivement auprès des distilleries et distributeurs agréés aux EAU, garantissant l'authenticité de chaque flacon." },
+              { n: "02", title: "Certificats d'authenticité", desc: "Chaque commande est accompagnée d'un certificat numéroté. Code QR vérifiable directement sur le site officiel de la marque." },
+              { n: "03", title: "Garantie satisfaction", desc: "Pas convaincu ? Nous vous remboursons intégralement sous 30 jours, sans question. Votre confiance est notre priorité absolue." },
+            ].map(card => (
+              <div key={card.n} style={{
+                background: "var(--surface-white)", borderRadius: "var(--r-lg)",
+                padding: "36px 28px", border: "1px solid var(--line-200)",
+                position: "relative", overflow: "hidden",
+              }}>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "4rem", color: "var(--gold-100)", position: "absolute", top: 10, right: 18, lineHeight: 1, userSelect: "none" }}>{card.n}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", color: "var(--ink-900)", marginBottom: 14, position: "relative" }}>{card.title}</div>
+                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.88rem", color: "var(--ink-500)", lineHeight: 1.72, margin: 0 }}>{card.desc}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
@@ -750,14 +800,14 @@ export default function HomePageClient() {
           </div>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
             {[
-              { img: "/assets/scents/oud.png", label: "Oud", sub: "Profond · Mystérieux" },
-              { img: "/assets/scents/ambre.png", label: "Ambre", sub: "Chaud · Enveloppant" },
-              { img: "/assets/scents/floral.png", label: "Floral", sub: "Rose · Jasmin" },
-              { img: "/assets/scents/boise.png", label: "Boisé", sub: "Cèdre · Vétiver" },
-              { img: "/assets/scents/musc.png", label: "Musc", sub: "Délicat · Poudreux" },
-              { img: "/assets/scents/rose.png", label: "Rose", sub: "Royal · Envoûtant" },
-              { img: "/assets/scents/epice.png", label: "Épicé", sub: "Safran · Cardamome" },
-              { img: "/assets/scents/mixte.png", label: "Mixte", sub: "Universel · Moderne" },
+              { img: "/assets/scents/oud.jpg", label: "Oud", sub: "Profond · Mystérieux" },
+              { img: "/assets/scents/ambre.jpg", label: "Ambre", sub: "Chaud · Enveloppant" },
+              { img: "/assets/scents/floral.jpg", label: "Floral", sub: "Rose · Jasmin" },
+              { img: "/assets/scents/boise.jpg", label: "Boisé", sub: "Cèdre · Vétiver" },
+              { img: "/assets/scents/musc.jpg", label: "Musc", sub: "Délicat · Poudreux" },
+              { img: "/assets/scents/rose.jpg", label: "Rose", sub: "Royal · Envoûtant" },
+              { img: "/assets/scents/epice.jpg", label: "Épicé", sub: "Safran · Cardamome" },
+              { img: "/assets/scents/mixte.jpg", label: "Mixte", sub: "Universel · Moderne" },
             ].map((card, i) => (
               <div
                 key={i}
@@ -824,7 +874,7 @@ export default function HomePageClient() {
       )}
 
       {/* ── LIVRAISON MONDE ───────────────────────────────────────── */}
-      <section id="livraison" style={{ background: "var(--surface-page)", padding: "70px 0" }}>
+      <section id="livraison" style={{ background: "var(--surface-page)", padding: "0" }}>
         <div style={{ width: "100%" }}>
           <ShippingChecker
             countries={DEMO_SHIPPING_COUNTRIES}
@@ -856,43 +906,6 @@ export default function HomePageClient() {
         </div>
       </section>
       )}
-
-      {/* ── NEWSLETTER (après Exclusif / Huiles) ──────────────────── */}
-      <section id="newsletter" style={{ background: "var(--surface-cream-2)", padding: "80px 0" }}>
-        <div style={{ width: "100%", margin: "0 auto" }}>
-          <NewsletterSection locale={locale} />
-        </div>
-      </section>
-
-      {/* ── 5. AUTHENTICITÉ ───────────────────────────────────────── */}
-      <section id="authenticite" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <RevealOnScroll>
-          <SectionHeader
-            eyebrow="Notre promesse"
-            title={<>100% Authentique,<br /><em>ou remboursé</em></>}
-            subtitle="Chaque flacon est sourcé directement auprès des distributeurs officiels aux Émirats."
-          />
-          </RevealOnScroll>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
-            {[
-              { n: "01", title: "Sourcing direct Dubaï", desc: "Nous nous approvisionnons exclusivement auprès des distilleries et distributeurs agréés aux EAU, garantissant l'authenticité de chaque flacon." },
-              { n: "02", title: "Certificats d'authenticité", desc: "Chaque commande est accompagnée d'un certificat numéroté. Code QR vérifiable directement sur le site officiel de la marque." },
-              { n: "03", title: "Garantie satisfaction", desc: "Pas convaincu ? Nous vous remboursons intégralement sous 30 jours, sans question. Votre confiance est notre priorité absolue." },
-            ].map(card => (
-              <div key={card.n} style={{
-                background: "var(--surface-white)", borderRadius: "var(--r-lg)",
-                padding: "36px 28px", border: "1px solid var(--line-200)",
-                position: "relative", overflow: "hidden",
-              }}>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "4rem", color: "var(--gold-100)", position: "absolute", top: 10, right: 18, lineHeight: 1, userSelect: "none" }}>{card.n}</div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.35rem", color: "var(--ink-900)", marginBottom: 14, position: "relative" }}>{card.title}</div>
-                <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.88rem", color: "var(--ink-500)", lineHeight: 1.72, margin: 0 }}>{card.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── 6. VENTES FLASH — retirée pour le moment ──────────────── */}
 
@@ -975,10 +988,10 @@ export default function HomePageClient() {
                   })}
                   {/* Center circle */}
                   <circle cx={CX} cy={CY} r={RC} fill="#15100b" stroke="#C8901E" strokeWidth="1.5" strokeDasharray="6 4" />
-                  <text x={CX} y={CY - 8} textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="17" fill={selectedScent ? "#D8A63A" : "#e8dfc8"} fontStyle="italic">
+                  <text x={CX} y={CY - 8} textAnchor="middle" style={{ fontFamily: "var(--font-display)" }} fontSize="17" fill={selectedScent ? "#D8A63A" : "#e8dfc8"} fontStyle="italic">
                     {selectedScent || "La Roue"}
                   </text>
-                  <text x={CX} y={CY + 12} textAnchor="middle" fontFamily="Jost, sans-serif" fontSize="8.5" fill="rgba(220,200,160,.55)" letterSpacing="2">
+                  <text x={CX} y={CY + 12} textAnchor="middle" style={{ fontFamily: "var(--font-sans)" }} fontSize="8.5" fill="rgba(220,200,160,.55)" letterSpacing="2">
                     {selectedScent ? "SÉLECTIONNÉ" : "CLIQUEZ UNE NOTE"}
                   </text>
                   {/* Outer nodes */}
@@ -1001,7 +1014,7 @@ export default function HomePageClient() {
                           strokeWidth="1.2"
                           style={{ transition: "fill .2s, stroke .2s" }}
                         />
-                        <text x={p.x} y={p.y + 6} textAnchor="middle" fontFamily="Cormorant Garamond, serif" fontSize="15" fill={active ? "#D8A63A" : "#e8dfc8"} style={{ pointerEvents: "none", transition: "fill .2s" }}>
+                        <text x={p.x} y={p.y + 6} textAnchor="middle" fontSize="15" fill={active ? "#D8A63A" : "#e8dfc8"} style={{ fontFamily: "var(--font-display)", pointerEvents: "none", transition: "fill .2s" }}>
                           {n.label}
                         </text>
                       </g>
@@ -1021,7 +1034,7 @@ export default function HomePageClient() {
             </div>
             <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
               {scentProducts[selectedScent].map(p => (
-                <a key={p.name} href={`/produit/${p.name.trim().toLowerCase().replace(/\s+/g, "-")}`} style={{
+                <Link key={p.name} href={`/produit/${p.name.trim().toLowerCase().replace(/\s+/g, "-")}`} style={{
                   textDecoration: "none", display: "flex", alignItems: "center", gap: 12,
                   background: "rgba(255,255,255,0.03)", border: "1px solid rgba(200,144,30,0.18)",
                   borderRadius: "var(--r-md)", padding: 8, transition: "border-color .25s",
@@ -1040,7 +1053,7 @@ export default function HomePageClient() {
                       <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--on-dark-muted)", textDecoration: "line-through" }}>{p.oldPrice.toFixed(2).replace(".", ",")} €</span>
                     </div>
                   </div>
-                </a>
+                </Link>
               ))}
             </div>
           </div>
@@ -1077,11 +1090,11 @@ export default function HomePageClient() {
                   </div>
                 ))}
               </div>
-              <a href="#" style={{
+              <Link href="/marques" style={{
                 display: "inline-block", background: "var(--gold-500)", color: "#fff",
                 textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)",
                 fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 600,
-              }}>Explorer Lattafa →</a>
+              }}>Explorer Lattafa →</Link>
             </div>
           </div>
         </div>
@@ -1095,11 +1108,20 @@ export default function HomePageClient() {
             title="Les grandes maisons orientales"
             subtitle="Parmi les plus belles maisons de parfumerie orientale et du Golfe. Des flacons 100 % authentiques, sans contrefaçon et au juste prix, donc sans compromis."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14 }}>
+          <div className="dp-maisons-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14 }}>
             {brands.map((b) => (
-              <BrandCard key={b.name} brand={{ ...b, href: "#" }} locale={locale} />
+              <div key={b.name} className="dp-maisons-item">
+                <BrandCard brand={{ ...b, href: "/marques" }} locale={locale} />
+              </div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── NEWSLETTER (après Nos marques) ────────────────────────── */}
+      <section id="newsletter" style={{ background: "var(--surface-cream-2)", padding: "0" }}>
+        <div style={{ width: "100%", margin: "0 auto" }}>
+          <NewsletterSection locale={locale} />
         </div>
       </section>
 
@@ -1195,40 +1217,56 @@ export default function HomePageClient() {
       )}
 
       {/* ── 23. RÉASSURANCE 5 PILIERS ─────────────────────────────── */}
-      <section id="reassurance" style={{ background: "linear-gradient(135deg, var(--espresso-900) 0%, var(--espresso-600) 100%)", padding: "60px 20px", borderTop: "1px solid rgba(200,144,30,0.18)" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 14, textAlign: "center" }}>
+      <section id="reassurance" style={{
+        background: "radial-gradient(130% 90% at 50% -10%, #2b1d0e 0%, #1c130a 52%, #130c06 100%)",
+        padding: "84px 20px",
+        borderTop: "1px solid rgba(201,162,74,0.14)",
+        borderBottom: "1px solid rgba(201,162,74,0.10)",
+      }}>
+        <div style={{ maxWidth: 1280, margin: "0 auto" }}>
+          <div className="dp-pillars-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gap: 20, textAlign: "center" }}>
             {[
               { icon: "shipping", title: "Livraison offerte", sub: "Dès 60 € d'achat" },
               { icon: "secure", title: "Paiement sécurisé", sub: "SSL · 3D Secure" },
-              { icon: "authentic", title: "100% Authentique", sub: "Certifié origines" },
+              { icon: "authentic", title: "100% Authentique", sub: "Certifié origines", featured: true },
               { icon: "returns", title: "Retours 14 jours", sub: "Sans question" },
               { icon: "installments", title: "Paiement 4×", sub: "Sans frais dès 60 €" },
             ].map((p) => (
-              <div key={p.title} className="dp-pillar" style={{
-                padding: "26px 14px 22px", borderRadius: 16,
-                border: "1px solid rgba(200,144,30,0.10)",
-                background: "rgba(255,255,255,0.018)",
-                transition: "transform .3s ease, border-color .3s ease, background .3s ease",
+              <div key={p.title} className={`dp-pillar${p.featured ? " is-featured" : ""}`} style={{
+                padding: "38px 18px 32px", borderRadius: 18,
+                border: p.featured ? "1px solid rgba(201,162,74,0.55)" : "1px solid rgba(201,162,74,0.12)",
+                background: p.featured
+                  ? "radial-gradient(120% 120% at 50% 0%, rgba(201,162,74,0.14), rgba(201,162,74,0.03) 60%, transparent)"
+                  : "linear-gradient(180deg, rgba(255,255,255,0.028), rgba(255,255,255,0.008))",
+                boxShadow: p.featured
+                  ? "0 0 0 1px rgba(201,162,74,0.15), 0 22px 50px -24px rgba(201,162,74,0.55), inset 0 1px 0 rgba(255,255,255,0.05)"
+                  : "inset 0 1px 0 rgba(255,255,255,0.03)",
+                transition: "transform .35s cubic-bezier(.2,.8,.2,1), border-color .35s ease, background .35s ease, box-shadow .35s ease",
               }}>
                 <div className="dp-pillar-ic" style={{
-                  width: 60, height: 60, margin: "0 auto 16px", borderRadius: "50%",
-                  border: "1px solid rgba(200,144,30,0.45)",
+                  width: 66, height: 66, margin: "0 auto 20px", borderRadius: "50%",
+                  border: p.featured ? "1px solid rgba(232,200,115,0.85)" : "1px solid rgba(201,162,74,0.4)",
                   display: "flex", alignItems: "center", justifyContent: "center",
-                  background: "radial-gradient(circle at 50% 35%, rgba(200,144,30,0.16), transparent 70%)",
-                  transition: "border-color .3s ease, box-shadow .3s ease",
+                  background: "radial-gradient(circle at 50% 32%, rgba(201,162,74,0.2), transparent 72%)",
+                  boxShadow: p.featured
+                    ? "0 0 0 6px rgba(201,162,74,0.08), 0 0 26px rgba(232,200,115,0.4)"
+                    : "none",
+                  transition: "border-color .35s ease, box-shadow .35s ease",
                 }}>
                   <ReassuranceIcon name={p.icon} />
                 </div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", fontWeight: 600, color: "var(--on-dark-strong)", marginBottom: 5, letterSpacing: "0.01em" }}>{p.title}</div>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", letterSpacing: "0.08em", textTransform: "uppercase", color: "var(--on-dark-muted)" }}>{p.sub}</div>
+                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.22rem", fontWeight: 600, color: p.featured ? "#F6ECD6" : "var(--on-dark-strong)", marginBottom: 8, letterSpacing: "0.01em" }}>{p.title}</div>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 500, letterSpacing: "0.14em", textTransform: "uppercase", color: p.featured ? "rgba(232,200,115,0.9)" : "var(--on-dark-muted)" }}>{p.sub}</div>
               </div>
             ))}
           </div>
         </div>
         <style>{`
-          .dp-pillar:hover { transform: translateY(-5px); border-color: rgba(200,144,30,0.35) !important; background: rgba(200,144,30,0.05) !important; }
-          .dp-pillar:hover .dp-pillar-ic { border-color: rgba(200,144,30,0.9) !important; box-shadow: 0 0 0 4px rgba(200,144,30,0.08), 0 8px 22px -8px rgba(200,144,30,0.5); }
+          .dp-pillar:hover { transform: translateY(-6px); border-color: rgba(201,162,74,0.45) !important; background: rgba(201,162,74,0.05) !important; }
+          .dp-pillar:hover .dp-pillar-ic { border-color: rgba(232,200,115,0.95) !important; box-shadow: 0 0 0 5px rgba(201,162,74,0.09), 0 10px 26px -8px rgba(201,162,74,0.55); }
+          .dp-pillar.is-featured:hover { transform: translateY(-8px); }
+          @media (max-width: 900px) { .dp-pillars-grid { grid-template-columns: repeat(2, 1fr) !important; } .dp-pillar.is-featured { grid-column: span 2; } }
+          @media (max-width: 520px) { .dp-pillars-grid { grid-template-columns: 1fr !important; } .dp-pillar.is-featured { grid-column: auto; } }
         `}</style>
       </section>
 

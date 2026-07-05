@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { Link } from "@/i18n/navigation";
 
 const ARTICLES: Record<string, { title: string; category: string; date: string; readTime: string; body: React.ReactNode; tags: string[] }> = {
   "l-oud-l-or-noir-de-la-parfumerie-orientale": {
@@ -64,7 +65,7 @@ export default async function ArticlePage({ params }: Props) {
     <main style={{ background: "var(--surface-page)", paddingTop: 40 }}>
       {/* Breadcrumb + meta */}
       <article style={{ maxWidth: 780, margin: "0 auto", padding: "48px 24px 0" }}>
-        <a href="/blog" style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-400)", textDecoration: "none" }}>‹ Retour au Journal</a>
+        <Link href="/blog" style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-400)", textDecoration: "none" }}>‹ Retour au Journal</Link>
         <div style={{ fontFamily: "var(--font-sans)", fontSize: "11px", letterSpacing: ".16em", textTransform: "uppercase", color: "var(--gold-700)", margin: "24px 0 14px" }}>{article.category}</div>
         <h1 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "clamp(2.4rem,4vw,3.4rem)", lineHeight: 1.08, color: "var(--ink-900)", margin: 0 }}>{article.title}</h1>
         <div style={{ display: "flex", alignItems: "center", gap: 12, marginTop: 22, fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-500)" }}>
@@ -88,7 +89,7 @@ export default async function ArticlePage({ params }: Props) {
         <div style={{ display: "flex", gap: 8, flexWrap: "wrap", margin: "32px 0" }}>
           <span style={{ fontFamily: "var(--font-sans)", fontSize: "11px", letterSpacing: ".1em", textTransform: "uppercase", color: "var(--ink-500)", alignSelf: "center" }}>Notes liées</span>
           {article.tags.map(tag => (
-            <a key={tag} href="/blog" style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-700)", background: "var(--surface-white)", border: "1px solid var(--line-200)", borderRadius: "999px", padding: "7px 14px", textDecoration: "none" }}>{tag}</a>
+            <Link key={tag} href="/blog" style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-700)", background: "var(--surface-white)", border: "1px solid var(--line-200)", borderRadius: "999px", padding: "7px 14px", textDecoration: "none" }}>{tag}</Link>
           ))}
         </div>
       </article>
@@ -99,7 +100,7 @@ export default async function ArticlePage({ params }: Props) {
           <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 500, fontSize: "1.8rem", color: "var(--ink-900)", margin: "0 0 28px", textAlign: "center" }}>Les oud à découvrir</h2>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 22 }}>
             {relatedProducts.map(p => (
-              <a key={p.name} href={`/produit/${p.name.toLowerCase().replace(/ /g, "-")}`} style={{ textDecoration: "none", background: "var(--surface-white)", border: "1px solid #e8dfd0", borderRadius: "var(--r-lg)", overflow: "hidden", display: "block" }}>
+              <Link key={p.name} href={`/produit/${p.name.toLowerCase().replace(/ /g, "-")}`} style={{ textDecoration: "none", background: "var(--surface-white)", border: "1px solid #e8dfd0", borderRadius: "var(--r-lg)", overflow: "hidden", display: "block" }}>
                 <div style={{ position: "relative", paddingBottom: "100%" }}>
                   <Image src={p.image} alt={p.name} fill sizes="33vw" style={{ objectFit: "cover" }} />
                 </div>
@@ -111,7 +112,7 @@ export default async function ArticlePage({ params }: Props) {
                     <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.8rem", color: "var(--ink-400)", textDecoration: "line-through" }}>{p.oldPrice.toFixed(2)} €</span>
                   </div>
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>

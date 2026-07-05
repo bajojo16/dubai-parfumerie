@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { QtyStepper } from "@/components/ui/QtyStepper";
@@ -55,7 +55,8 @@ export function ProductCardLuxe({
       ? Math.round((1 - product.price / product.oldPrice) * 100)
       : null;
 
-  const fmt = (n: number) => `${n.toFixed(2)} ${cur}`;
+  const fmt = (n: number) =>
+    `${n.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} ${cur}`;
 
   return (
     <div
@@ -80,9 +81,9 @@ export function ProductCardLuxe({
         {/* Badge promo — début (gauche LTR / droite RTL) */}
         {discount !== null && (
           <span
+            className="dp-luxe-badge-promo"
             style={{
               position: "absolute",
-              top: 22,
               insetInlineStart: 22,
               background: "rgba(201,162,74,0.22)",
               backdropFilter: "blur(4px)",
@@ -102,9 +103,9 @@ export function ProductCardLuxe({
         {/* Badge stock — fin (droite LTR / gauche RTL) */}
         {product.limitedStock && (
           <span
+            className="dp-luxe-badge-stock"
             style={{
               position: "absolute",
-              top: 22,
               insetInlineEnd: 22,
               background: "rgba(255,255,255,0.65)",
               backdropFilter: "blur(4px)",
@@ -120,15 +121,39 @@ export function ProductCardLuxe({
             {t("stock_limited")}
           </span>
         )}
+
+        <style>{`
+          .dp-luxe-badge-promo,
+          .dp-luxe-badge-stock {
+            top: 22px;
+          }
+          @media (max-width: 760px) {
+            .dp-luxe-badge-stock {
+              top: 52px;
+            }
+          }
+          /* Carte resserrée à ~158px dans la grille 2 colonnes mobile
+             (.dp-home-prod-grid, cf. globals.css) : le corps (titre 24px,
+             prix 22px, padding 18/20/22) était pensé pour ~280px et
+             débordait/serrait le texte à cette largeur. On réduit
+             typo + espacements en conservant les proportions. */
+          @media (max-width: 760px) {
+            .dp-luxe-body { padding: 12px 14px 14px !important; gap: 6px !important; }
+            .dp-luxe-brand { font-size: 9.5px !important; letter-spacing: 1px !important; }
+            .dp-luxe-title { font-size: 16px !important; }
+            .dp-luxe-price { font-size: 16px !important; }
+            .dp-luxe-oldprice { font-size: 11px !important; }
+          }
+        `}</style>
       </div>
 
       {/* Corps */}
-      <div style={{ padding: "18px 20px 22px", display: "flex", flexDirection: "column", gap: 8 }}>
+      <div className="dp-luxe-body" style={{ padding: "18px 20px 22px", display: "flex", flexDirection: "column", gap: 8 }}>
         <Link href={product.href} style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", gap: 6 }}>
-          <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", color: T.creamLabel }}>
+          <span className="dp-luxe-brand" style={{ fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", color: T.creamLabel }}>
             {product.brand}
           </span>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 500, lineHeight: 1.1, color: T.ink }}>
+          <span className="dp-luxe-title" style={{ fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 500, lineHeight: 1.1, color: T.ink }}>
             {product.title}
           </span>
         </Link>
@@ -150,21 +175,22 @@ export function ProductCardLuxe({
         )}
 
         {/* Ligne prix */}
-        <div style={{ display: "inline-flex", alignItems: "baseline", gap: 10, marginTop: 2 }}>
-          <span style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 600, color: T.inkPrice }}>
+        <div style={{ display: "inline-flex", flexWrap: "wrap", alignItems: "baseline", gap: 10, marginTop: 2 }}>
+          <span className="dp-luxe-price" style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 600, color: T.inkPrice, whiteSpace: "nowrap" }}>
             {fmt(product.price)}
           </span>
           {product.oldPrice && product.oldPrice > product.price && (
-            <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: T.muted, textDecoration: "line-through" }}>
+            <span className="dp-luxe-oldprice" style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: T.muted, textDecoration: "line-through", whiteSpace: "nowrap" }}>
               {fmt(product.oldPrice)}
             </span>
           )}
         </div>
 
         {/* Sélecteur quantité + bouton */}
-        <div style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
+        <div className="dp-cardluxe-actions" style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
         <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
         <button
+          className="dp-cardluxe-addbtn"
           type="button"
           aria-label={`${t("add_to_cart")} — ${product.title}`}
           onMouseEnter={() => setHover(true)}
@@ -174,12 +200,13 @@ export function ProductCardLuxe({
             flex: 1,
             border: "none",
             cursor: "pointer",
-            borderRadius: 24,
-            padding: "13px 16px",
+            borderRadius: 20,
+            padding: "9px 14px",
             fontFamily: "var(--font-sans)",
-            fontSize: 12,
+            fontSize: 11,
             fontWeight: 500,
-            letterSpacing: "1px",
+            letterSpacing: "0.6px",
+            lineHeight: 1.25,
             textTransform: "uppercase",
             color: "#fff",
             background: `linear-gradient(135deg, ${T.goldSoft}, ${T.goldDeep})`,

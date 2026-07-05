@@ -60,7 +60,7 @@ export default function PreviewWelcomePage() {
         </button>
       </div>
 
-      <WelcomeModal key={reopenKey} forceOpen />
+      <WelcomeModal key={reopenKey} forceOpen showLangCurrency={false} />
     </main>
   );
 }
