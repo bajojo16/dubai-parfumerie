@@ -1,44 +1,59 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import dynamic from "next/dynamic";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { AnimatedHero } from "@/components/sections/AnimatedHero";
-import { BestSellers } from "@/components/sections/BestSellers";
 import { RevealOnScroll } from "@/components/ui/RevealOnScroll";
 import { VideoPlaceholder } from "@/components/ui/VideoPlaceholder";
-import { QuizSignature } from "@/components/sections/QuizSignature";
 import { BackToTop } from "@/components/ui/BackToTop";
 import { ProductCardLuxe, type LuxeProduct } from "@/components/ui/ProductCardLuxe";
 import { BrandCard, type BrandCardData } from "@/components/ui/BrandCard";
-import { OlfactiveTwin } from "@/components/sections/OlfactiveTwin";
 import { OLFACTIVE_TWINS } from "@/data/olfactive-twins";
-import { ShoppableVideoCarousel } from "@/components/sections/ShoppableVideoCarousel";
 import { DEMO as SHOPPABLE_VIDEOS } from "@/data/shoppable-videos";
-import { JournalSection } from "@/components/sections/JournalSection";
 import { DEMO as JOURNAL_ARTICLES } from "@/data/journal-articles";
-import { NewsletterSection } from "@/components/sections/NewsletterSection";
-import { ShippingChecker } from "@/components/sections/ShippingChecker";
 import { DEMO_SHIPPING_COUNTRIES } from "@/data/shipping-countries";
-import { ScentWheelInteractive } from "@/components/sections/ScentWheelInteractive";
 import { DEMO_SCENT_FAMILIES } from "@/data/scent-families";
-import { TrendCarousel } from "@/components/sections/TrendCarousel";
 import { DEMO_TRENDS } from "@/data/trend-products";
-import { BestSellersRail } from "@/components/sections/best-sellers-rail";
 import { REEF_EDITORIAL, REEF_PRODUCTS } from "@/data/best-sellers";
 import { TOP_EDITORIAL, TOP_PRODUCTS } from "@/data/best-sellers-top";
-import { OilCardCarousel } from "@/components/sections/OilCardCarousel";
 import { DEMO as OIL_PRODUCTS } from "@/data/oil-products";
-import { PackGrid } from "@/components/sections/PackGrid";
 import { PackCard } from "@/components/sections/PackCard";
 import { DEMO as PACKS } from "@/data/packs";
-import { Faq } from "@/components/faq/Faq";
 import { CategoryRail } from "@/components/sections/CategoryRail";
 import { DEMO_CATEGORIES, DEMO_CATEGORIES_FORMATS } from "@/components/sections/category-rail-data";
-import { BundleBuilder } from "@/components/bundle/BundleBuilder";
 import { addItem } from "@/lib/cart";
 import { WelcomeModal } from "@/components/welcome/WelcomeModal";
 import { useLocale, useTranslations } from "next-intl";
+
+// ─── Code-splitting : sections lourdes hors above-the-fold ───────────────────
+// Le fichier _home-client.tsx montait auparavant ~20 sections (dont plusieurs
+// avec framer-motion / logique lourde) toutes en imports statiques : tout ce
+// JS devait être téléchargé + parsé + exécuté avant que React puisse attacher
+// le moindre onClick sur la page (y compris le bouton "Non merci" de la
+// WelcomeModal ou le burger du header). Sur un réseau/CPU mobile contraint,
+// ce temps avant hydration peut se compter en dizaines de secondes : TOUS les
+// boutons semblent alors morts, alors qu'aucun n'a de bug — l'app n'est
+// simplement pas encore interactive. On découpe donc ces sections en chunks
+// séparés via next/dynamic : elles restent SSR (mêmes contenu/SEO), mais leur
+// JS ne bloque plus le chunk critique (Header/Hero/WelcomeModal).
+const BestSellers = dynamic(() => import("@/components/sections/BestSellers").then(m => m.BestSellers));
+const QuizSignature = dynamic(() => import("@/components/sections/QuizSignature").then(m => m.QuizSignature));
+const OlfactiveTwin = dynamic(() => import("@/components/sections/OlfactiveTwin").then(m => m.OlfactiveTwin));
+const ShoppableVideoCarousel = dynamic(() => import("@/components/sections/ShoppableVideoCarousel").then(m => m.ShoppableVideoCarousel));
+const JournalSection = dynamic(() => import("@/components/sections/JournalSection").then(m => m.JournalSection));
+const NewsletterSection = dynamic(() => import("@/components/sections/NewsletterSection").then(m => m.NewsletterSection));
+const ShippingChecker = dynamic(() => import("@/components/sections/ShippingChecker").then(m => m.ShippingChecker));
+const ScentWheelInteractive = dynamic(() => import("@/components/sections/ScentWheelInteractive").then(m => m.ScentWheelInteractive));
+const TrendCarousel = dynamic(() => import("@/components/sections/TrendCarousel").then(m => m.TrendCarousel));
+const BestSellersRail = dynamic(() => import("@/components/sections/best-sellers-rail").then(m => m.BestSellersRail));
+const OilCardCarousel = dynamic(() => import("@/components/sections/OilCardCarousel").then(m => m.OilCardCarousel));
+const PackGrid = dynamic(() => import("@/components/sections/PackGrid").then(m => m.PackGrid));
+const Faq = dynamic(() => import("@/components/faq/Faq").then(m => m.Faq));
+// BundleBuilder : modale ouverte uniquement au clic (setBundleOpen) — jamais
+// nécessaire côté serveur, ssr:false évite même de l'inclure dans le rendu SSR.
+const BundleBuilder = dynamic(() => import("@/components/bundle/BundleBuilder").then(m => m.BundleBuilder), { ssr: false });
 
 const COFFRETS_HOME: LuxeProduct[] = [
   { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Coffret Découverte Oud", price: 39.9, oldPrice: 79.9, limitedStock: true, href: "/promo-flash", rating: 4.5, reviewCount: 97 },

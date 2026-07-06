@@ -72,7 +72,7 @@ export function WelcomeModal({
   ),
 
   eyebrow = "Offre de bienvenue",
-  title = <>-10% &amp; un échantillon offert</>,
+  title = <>-10% lors de votre première commande</>,
   description = "Rejoignez Le Cercle et recevez votre code de bienvenue, plus un échantillon surprise glissé dans votre première commande.",
   emailPlaceholder = "Votre adresse email",
   whatsappPlaceholder = "Votre numéro WhatsApp",

@@ -440,11 +440,17 @@ export function ScentWheelInteractive({
           </div>
         </div>
 
-        {/* Colonne panneau */}
+        {/* Colonne panneau — flex-column avec gap explicite : garantit que le
+            bloc titre/description, le CTA et les cartes produit occupent
+            chacun leur propre zone, sans jamais se chevaucher, quelle que
+            soit la largeur du texte (locale) ou la largeur du viewport. */}
         <div
           style={{
             flex: "1 1 300px",
             minWidth: 260,
+            display: "flex",
+            flexDirection: "column",
+            gap: 18,
             textAlign: isRTL ? "right" : "left",
           }}
         >
@@ -456,7 +462,6 @@ export function ScentWheelInteractive({
                     border: ".5px solid rgba(230,220,200,.7)",
                     borderRadius: 14,
                     padding: "20px 22px",
-                    marginBottom: 18,
                     boxShadow: "0 6px 22px rgba(44,38,32,.10)",
                     backdropFilter: "blur(2px)",
                   }
@@ -503,12 +508,15 @@ export function ScentWheelInteractive({
           </p>
           </div>
 
-          {/* CTA */}
+          {/* CTA — alignSelf empêche le flex-column parent de l'étirer en
+              pleine largeur (comportement stretch par défaut) : il garde sa
+              largeur "au contenu" (pilule), sur sa propre ligne. */}
           {active && (
             <Link
               href={`/collections/${active.collectionSlug}`}
               style={{
                 display: "inline-flex",
+                alignSelf: isRTL ? "flex-end" : "flex-start",
                 alignItems: "center",
                 gap: 8,
                 fontFamily: "var(--font-sans)",
@@ -521,7 +529,6 @@ export function ScentWheelInteractive({
                 borderRadius: 999,
                 padding: "10px 20px",
                 textDecoration: "none",
-                marginBottom: 20,
               }}
             >
               {L.cta} {isRTL ? "←" : "→"}
@@ -535,7 +542,6 @@ export function ScentWheelInteractive({
                 display: "flex",
                 flexWrap: "wrap",
                 gap: 12,
-                marginTop: 4,
               }}
             >
               {active.products.slice(0, 2).map((p) => (
