@@ -264,28 +264,11 @@ export default function ProductVideoStrip({
                 )}
               </button>
 
-              <span
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "10px",
-                  fontWeight: "var(--fw-semibold)",
-                  letterSpacing: "var(--ls-wide)",
-                  textTransform: "uppercase",
-                  color: clip ? "var(--ink-900)" : "var(--ink-400)",
-                }}
-              >
-                {category.label}
-              </span>
-              <span
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--t-xs)",
-                  lineHeight: "var(--lh-snug)",
-                  color: "var(--ink-400)",
-                }}
-              >
-                {category.caption}
-              </span>
+              {/* Libellé et légende retirés de l'affichage : les vignettes se
+                  lisent seules, et quatre paires de lignes sous des images
+                  déjà petites alourdissaient la colonne. Les intitulés
+                  survivent dans l'aria-label du bouton, où ils servent
+                  vraiment — un lecteur d'écran n'a que ça. */}
             </li>
           );
         })}
