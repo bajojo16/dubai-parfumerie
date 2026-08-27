@@ -1036,8 +1036,6 @@ export function Header() {
             <span style={{ color: "var(--ink-500)", display: "flex", alignItems: "center" }}>
               <IconCamera />
             </span>
-            {/* Le raccourci n'a de sens qu'au clavier : masqué sur les écrans tactiles. */}
-            <kbd className="dp-search-kbd">/</kbd>
           </button>
 
           {/* Right icons */}
@@ -1346,13 +1344,6 @@ export function Header() {
           from { opacity: 0; transform: translateY(6px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        /* Le raccourci clavier n'a de sens qu'au clavier : masqué sur tactile. */
-        .dp-search-kbd {
-          font-family: var(--font-sans); font-size: 11px; line-height: 1;
-          color: var(--ink-400); border: 1px solid var(--line-200);
-          border-radius: var(--r-xs); padding: 3px 6px; background: var(--surface-white);
-        }
-        @media (hover: none) { .dp-search-kbd { display: none; } }
       `}</style>
     </>
   );

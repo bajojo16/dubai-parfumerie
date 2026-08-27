@@ -143,7 +143,7 @@ export function RailProductCard({
       onMouseLeave={() => setHover(false)}
       style={{
         flex: "0 0 auto",
-        width: 300,
+        width: 248,
         background: "#fff",
         border: `1px solid ${C.lines}`,
         borderRadius: 18,
@@ -168,7 +168,9 @@ export function RailProductCard({
         style={{
           position: "relative",
           display: "block",
-          aspectRatio: "1 / 1.15",
+          // 4:5 plutôt que 1:1,15 : le visuel dominait la carte, on ne voyait
+          // ni le prix ni le bouton sans faire défiler
+          aspectRatio: "4 / 5",
           background: C.imageBg,
           overflow: "hidden",
           textDecoration: "none",

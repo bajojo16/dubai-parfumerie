@@ -72,9 +72,9 @@ export function ProductCardLuxe({
         textAlign: isRTL ? "right" : "left",
       }}
     >
-      {/* Zone image carrée (cadre crème) */}
+      {/* Zone image 4:5 (cadre crème) */}
       <div style={{ position: "relative", background: T.imageBg, padding: 14 }}>
-        <div style={{ position: "relative", width: "100%", aspectRatio: "1 / 1", borderRadius: 16, overflow: "hidden" }}>
+        <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 5", borderRadius: 16, overflow: "hidden" }}>
           <Image src={product.image} alt={product.title} fill sizes="(max-width:600px) 50vw, 280px" style={{ objectFit: "cover" }} />
         </div>
 
@@ -107,6 +107,12 @@ export function ProductCardLuxe({
             style={{
               position: "absolute",
               insetInlineEnd: 22,
+              // borné à la moitié de la carte : le libellé est long et sortait
+              // du cadre, coupé en plein mot
+              maxWidth: "calc(100% - 44px)",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              whiteSpace: "nowrap",
               background: "rgba(255,255,255,0.65)",
               backdropFilter: "blur(4px)",
               WebkitBackdropFilter: "blur(4px)",

@@ -7,6 +7,7 @@ import ProductGallery from "./ProductGallery";
 import { StoryBubbles } from "@/components/sections/StoryBubbles";
 import { DEMO_STORIES } from "@/data/product-stories";
 import { allProductSlugs, resolveProduct } from "@/data/product-resolve";
+import { ScentConstellation } from "./ScentConstellation";
 import { notFound } from "next/navigation";
 
 // ─── Static params ────────────────────────────────────────────────────────────
@@ -111,7 +112,6 @@ export default async function ProductPage({ params }: PageProps) {
     .filter((s) => s !== slug)
     .slice(0, 4);
 
-  const relatedImages = ["/assets/prod-3.jpg", "/assets/prod-4.jpg", "/assets/prod-5.jpg", "/assets/prod-6.jpg"];
 
   // La galerie montrait quatre visuels génériques /assets/prod-*.jpg identiques
   // pour toutes les fiches — et pas même le flacon du produit ouvert. On sert
@@ -454,83 +454,14 @@ export default async function ProductPage({ params }: PageProps) {
           >
             Pyramide olfactive
           </h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "1.5rem",
-            }}
-          >
-            {[
-              { label: "Tête", emoji: "🌟", notes: product.topNotes, bg: "var(--gold-100)" },
-              { label: "Cœur", emoji: "🌹", notes: product.heartNotes, bg: "var(--surface-cream)" },
-              { label: "Fond", emoji: "🌲", notes: product.baseNotes, bg: "var(--espresso-800)" },
-            ].map(({ label, emoji, notes, bg }) => {
-              const isDark = label === "Fond";
-              return (
-                <div
-                  key={label}
-                  style={{
-                    background: bg,
-                    borderRadius: "var(--r-lg)",
-                    padding: "1.75rem",
-                    boxShadow: "var(--shadow-sm)",
-                  }}
-                >
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "0.5rem",
-                      marginBottom: "1rem",
-                    }}
-                  >
-                    <span style={{ fontSize: "1.1rem" }} aria-hidden="true">
-                      {emoji}
-                    </span>
-                    <h3
-                      style={{
-                        margin: 0,
-                        fontFamily: "var(--font-sans)",
-                        fontSize: "var(--t-xs)",
-                        fontWeight: "var(--fw-bold)",
-                        letterSpacing: "var(--ls-widest)",
-                        textTransform: "uppercase",
-                        color: isDark ? "var(--on-dark-muted)" : "var(--gold-700)",
-                      }}
-                    >
-                      {label}
-                    </h3>
-                  </div>
-                  <ul
-                    style={{
-                      margin: 0,
-                      padding: 0,
-                      listStyle: "none",
-                      display: "flex",
-                      flexDirection: "column",
-                      gap: "0.5rem",
-                    }}
-                  >
-                    {notes.map((note) => (
-                      <li
-                        key={note}
-                        style={{
-                          fontFamily: "var(--font-display)",
-                          fontSize: "var(--t-serif-md)",
-                          fontStyle: "italic",
-                          color: isDark ? "var(--on-dark)" : "var(--ink-700)",
-                          lineHeight: "var(--lh-snug)",
-                        }}
-                      >
-                        {note}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              );
-            })}
-          </div>
+          <ScentConstellation
+            topNotes={product.topNotes}
+            heartNotes={product.heartNotes}
+            baseNotes={product.baseNotes}
+            productName={product.name}
+            brand={product.brand}
+            image={product.image}
+          />
         </section>
 
         {/* Description */}
@@ -582,7 +513,7 @@ export default async function ProductPage({ params }: PageProps) {
               gap: "1.25rem",
             }}
           >
-            {relatedSlugs.map((relSlug, idx) => {
+            {relatedSlugs.map((relSlug) => {
               const relProduct = resolveProduct(relSlug)!;
               const relDiscount = Math.round(
                 ((relProduct.oldPrice - relProduct.price) / relProduct.oldPrice) * 100
@@ -605,38 +536,41 @@ export default async function ProductPage({ params }: PageProps) {
                     <div
                       style={{
                         position: "relative",
-                        aspectRatio: "3/4",
-                        background: "var(--surface-cream)",
+                        aspectRatio: "1 / 1",
+                        background: "var(--surface-white)",
+                        padding: "0.75rem",
                       }}
                     >
                       <Image
-                        src={relatedImages[idx]}
+                        src={relProduct.image ?? "/assets/prod-3.jpg"}
                         alt={`${relProduct.name} — ${relProduct.brand}`}
                         fill
-                        style={{ objectFit: "cover" }}
+                        style={{ objectFit: "contain" }}
                         sizes="(max-width: 768px) 50vw, 25vw"
                       />
-                      <span
-                        style={{
-                          position: "absolute",
-                          top: "0.75rem",
-                          left: "0.75rem",
-                          padding: "0.2rem 0.5rem",
-                          background: "var(--badge-promo-bg)",
-                          color: "var(--badge-dark-fg)",
-                          fontSize: "var(--t-xs)",
-                          fontWeight: "var(--fw-bold)",
-                          borderRadius: "var(--r-xs)",
-                        }}
-                      >
-                        -{relDiscount}%
-                      </span>
+                      {relDiscount > 0 && (
+                        <span
+                          style={{
+                            position: "absolute",
+                            top: "0.5rem",
+                            left: "0.5rem",
+                            padding: "0.15rem 0.4rem",
+                            background: "var(--badge-promo-bg)",
+                            color: "var(--badge-dark-fg)",
+                            fontSize: "10px",
+                            fontWeight: "var(--fw-bold)",
+                            borderRadius: "var(--r-xs)",
+                          }}
+                        >
+                          -{relDiscount}%
+                        </span>
+                      )}
                     </div>
-                    <div style={{ padding: "0.875rem" }}>
+                    <div style={{ padding: "0.625rem 0.75rem 0.875rem" }}>
                       <p
                         style={{
-                          margin: "0 0 0.2rem",
-                          fontSize: "var(--t-xs)",
+                          margin: "0 0 0.15rem",
+                          fontSize: "10px",
                           fontWeight: "var(--fw-semibold)",
                           letterSpacing: "var(--ls-wider)",
                           textTransform: "uppercase",
@@ -647,9 +581,9 @@ export default async function ProductPage({ params }: PageProps) {
                       </p>
                       <p
                         style={{
-                          margin: "0 0 0.625rem",
+                          margin: "0 0 0.4rem",
                           fontFamily: "var(--font-display)",
-                          fontSize: "var(--t-serif-md)",
+                          fontSize: "var(--t-body)",
                           fontStyle: "italic",
                           color: "var(--ink-900)",
                           lineHeight: "var(--lh-snug)",
@@ -662,7 +596,7 @@ export default async function ProductPage({ params }: PageProps) {
                           style={{
                             fontWeight: "var(--fw-semibold)",
                             color: "var(--price-sale)",
-                            fontSize: "var(--t-body)",
+                            fontSize: "var(--t-sm)",
                           }}
                         >
                           {relProduct.price.toFixed(2).replace(".", ",")} €

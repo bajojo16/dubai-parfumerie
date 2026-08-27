@@ -267,13 +267,15 @@ function PromoOverlay({
           pointerEvents: "auto",
           fontFamily: "var(--font-display)",
           fontWeight: 600,
-          fontSize: "clamp(0.95rem, 1.4vw, 1.2rem)",
-          letterSpacing: "0.08em",
+          fontSize: "clamp(0.78rem, 1vw, 0.92rem)",
+          letterSpacing: "0.1em",
           textTransform: "uppercase",
           color: "var(--espresso-900)",
           background: "#ffffff",
           borderRadius: 999,
-          padding: "0.7em 2.2em",
+          // pilule resserrée : à 1,2rem et 2,2em de côtés, le bouton pesait
+          // plus lourd que le titre qu'il accompagne
+          padding: "0.62em 1.6em",
           textDecoration: "none",
         }}
       >

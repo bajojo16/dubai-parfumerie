@@ -720,11 +720,7 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────────
-           Masquée sur la page d'accueil (demande du 27/08/2026). Le code et
-           les données restent en place : remettre `false` à `true` pour la
-           rétablir. La section vit toujours sur /preview-twin-compact. */}
-      {false && (
+      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
       <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px 40px" }}>
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <SectionHeader
@@ -735,7 +731,6 @@ export default function HomePageClient() {
           <OlfactiveTwin matches={OLFACTIVE_TWINS} variant="compact" locale={locale} />
         </div>
       </section>
-      )}
 
       {/* ── ROUE DES SENTEURS interactive (sous Le catalogue) ─────── */}
       <section id="roue-senteurs" style={{ background: "var(--surface-cream)", padding: "0 0 24px" }}>
