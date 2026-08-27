@@ -39,7 +39,11 @@ import { useLocale, useTranslations } from "next-intl";
 // séparés via next/dynamic : elles restent SSR (mêmes contenu/SEO), mais leur
 // JS ne bloque plus le chunk critique (Header/Hero/WelcomeModal).
 const BestSellers = dynamic(() => import("@/components/sections/BestSellers").then(m => m.BestSellers));
-const QuizSignature = dynamic(() => import("@/components/sections/QuizSignature").then(m => m.QuizSignature));
+// Le quiz olfactif de la section « Trouvez votre parfum » : même composant que
+// celui du bouton flottant, servi ici en variante inline. Son moteur et son
+// catalogue restent derrière un import() interne, déclenché à l'approche de la
+// section — le dynamic() ci-dessous ne charge que le parcours.
+const FragranceFinderQuiz = dynamic(() => import("@/components/fragrance-finder/FragranceFinderModal").then(m => m.FragranceFinderModal));
 const OlfactiveTwin = dynamic(() => import("@/components/sections/OlfactiveTwin").then(m => m.OlfactiveTwin));
 const ShoppableVideoCarousel = dynamic(() => import("@/components/sections/ShoppableVideoCarousel").then(m => m.ShoppableVideoCarousel));
 const JournalSection = dynamic(() => import("@/components/sections/JournalSection").then(m => m.JournalSection));
@@ -927,19 +931,21 @@ export default function HomePageClient() {
 
       {/* ── 6. VENTES FLASH — retirée pour le moment ──────────────── */}
 
-      {/* ── 9. TROUVEZ VOTRE PARFUM — désactivée (remplacée par FragranceFinder flottant) ── */}
-      {false && (
+      {/* ── 9. TROUVEZ VOTRE PARFUM — le quiz olfactif, en section ── */}
+      {/* Même quiz que celui du bouton flottant, en variante inline. Les deux
+          instances peuvent coexister : chacune a son propre état, ce qui est le
+          comportement voulu — on ne veut pas qu'ouvrir la modale efface les
+          réponses déjà données plus bas dans la page. */}
       <section id="guide" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
             eyebrow="Notre expertise"
-            title="Trouvez votre parfum idéal"
-            subtitle="5 questions pour révéler votre signature olfactive et recevoir des recommandations sur mesure."
+            title={<>Trouvez votre <em>signature</em></>}
+            subtitle="Huit questions, deux minutes : nous composons un trio de parfums accordé à votre famille olfactive."
           />
-          <QuizSignature />
+          <FragranceFinderQuiz variant="inline" locale={locale} />
         </div>
       </section>
-      )}
 
       {/* ── 10. ROUE DES SENTEURS — retirée ───────────────────────── */}
       {false && (

@@ -951,6 +951,11 @@ const CSS = `
 }
 .dp-rch-input::placeholder { color: var(--ink-400); }
 .dp-rch-input::-webkit-search-cancel-button { display: none; }
+/* La règle globale :focus-visible de globals.css pose un anneau doré sur tout élément
+   focusé. Ici le champ occupe déjà toute la barre : l'anneau redessinait un
+   cadre par-dessus le cadre de la superposition. Le curseur clignotant suffit
+   à dire où l'on écrit, et le champ prend le focus dès l'ouverture. */
+.dp-rch-input:focus-visible, .dp-rch-input:focus { outline: none; box-shadow: none; }
 .dp-rch-icon {
   display: flex; align-items: center; justify-content: center;
   background: none; border: none; cursor: pointer;

@@ -1,22 +1,41 @@
 "use client";
 
 /**
- * FragranceFinderModal — le quiz olfactif, ouvert par le bouton flottant
- * « Choisir mon parfum ».
+ * FragranceFinderModal — le quiz olfactif, servi dans DEUX contextes.
  *
  * Réplique du quiz d'AD Parfumerie (archive `quiz-ad-parfumerie` : index.html,
  * js/quiz.js, css/quiz.css), habillée du design system Dubaï Parfumerie. Huit
  * questions au lieu de neuf : celle du parfum de référence en champ libre n'est
  * pas portée, faute de pouvoir en tirer quoi que ce soit sur ce catalogue.
  *
+ * ── Les deux variantes ──
+ *   `variant="modal"` (défaut) — ce que le bouton flottant « Choisir mon
+ *      parfum » ouvre : voile, `role="dialog"`, Échap, piège à focus, scroll de
+ *      page bloqué, parcours remis à zéro à chaque ouverture.
+ *   `variant="inline"` — la section « Trouvez votre parfum » de l'accueil. Le
+ *      panneau s'inscrit dans le flux de la page : aucune de ces mécaniques de
+ *      modale n'a alors de sens (rien à fermer, rien à piéger, rien à bloquer),
+ *      et `open` est ignoré — le quiz est toujours là.
+ *
+ * Un seul composant porte les deux : le parcours (progression, question,
+ * résultat, devise, toast, moteur) est rigoureusement le même, seule la coquille
+ * change. L'extraire dans un sous-composant n'aurait déplacé que ~25 lignes de
+ * JSX tout en obligeant à faire redescendre une douzaine d'états en props —
+ * plus de surface, pas moins de logique.
+ *
  * Le moteur de recommandation (`./lib/recommend`) est chargé en `import()`
- * dynamique à la première ouverture — il tire tout le catalogue agrégé avec lui,
- * qui n'a rien à faire dans le bundle du layout. Même montage que
- * `SearchOverlay` avec `./rank`.
+ * dynamique — il tire tout le catalogue agrégé avec lui, qui n'a rien à faire
+ * dans le bundle du layout ni dans celui de l'accueil. Même montage que
+ * `SearchOverlay` avec `./rank`. Le déclencheur diffère selon la variante :
+ * l'ouverture en modale ; l'entrée dans le viewport (IntersectionObserver) ou le
+ * premier clic sur une réponse en inline, parce que la section vit en bas de
+ * l'accueil et ne doit rien coûter tant qu'on ne l'a pas atteinte.
  *
  * Le bloc `CSS` en fin de fichier habille TOUT le sous-arbre du quiz
  * (ProgressHeader, QuestionScreen, ResultScreen) : un seul `<style>`, comme
- * dans SearchOverlay.
+ * dans SearchOverlay. Les deux variantes servent le MÊME bloc — si les deux
+ * instances coexistent (section visible + modale ouverte), les deux `<style>`
+ * sont identiques, donc sans contradiction possible.
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { QUESTIONS, QUESTION_COUNT, STEP } from "./data/questions";
@@ -47,15 +66,22 @@ function readCurrency(): string {
 }
 
 export function FragranceFinderModal({
-  open,
+  open = false,
   locale = "fr",
   onClose,
+  variant = "modal",
 }: {
-  open: boolean;
+  /** Ignoré en `variant="inline"` : la section est toujours « ouverte ». */
+  open?: boolean;
   locale?: string;
-  onClose: () => void;
+  /** Absent en inline — il n'y a rien à fermer. */
+  onClose?: () => void;
+  variant?: "modal" | "inline";
 }) {
   const isRTL = locale === "ar";
+  // `variant` ne change jamais pour une instance donnée : les branches qui en
+  // dépendent sont donc stables, y compris celle posée pendant le rendu plus bas.
+  const isModal = variant === "modal";
 
   const [index, setIndex] = useState(0);
   const [answers, setAnswers] = useState<QuizAnswers>({});
@@ -65,15 +91,27 @@ export function FragranceFinderModal({
   const [toast, setToast] = useState<string | null>(null);
   const reduced = useReducedMotion();
 
+  const rootRef = useRef<HTMLDivElement>(null);
   const dialogRef = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const advanceTimer = useRef<number | null>(null);
 
   const question = QUESTIONS[index];
 
-  // ── Moteur + catalogue, à la première ouverture seulement ─────────────────
+  /** Ferme — sans effet en inline, où aucun `onClose` n'est fourni. */
+  const close = useCallback(() => {
+    onClose?.();
+  }, [onClose]);
+
+  // ── Moteur + catalogue, jamais avant d'en avoir besoin ────────────────────
+  // En modale : à la première ouverture. En inline : quand la section approche
+  // du viewport, ou dès le premier clic sur une réponse si l'observateur n'a
+  // pas eu lieu d'être (navigateur sans IntersectionObserver, ancre directe…).
+  const [inlineArmed, setInlineArmed] = useState(false);
+  const needsEngine = isModal ? open : inlineArmed;
+
   useEffect(() => {
-    if (!open || engine) return;
+    if (!needsEngine || engine) return;
     let alive = true;
     import("./lib/recommend").then((m) => {
       if (alive) setEngine(m);
@@ -81,7 +119,26 @@ export function FragranceFinderModal({
     return () => {
       alive = false;
     };
-  }, [open, engine]);
+  }, [needsEngine, engine]);
+
+  // Amorce inline : la marge de 200px laisse au chunk le temps d'arriver avant
+  // que la section soit vraiment sous les yeux.
+  useEffect(() => {
+    if (isModal || inlineArmed) return;
+    const node = rootRef.current;
+    if (!node || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInlineArmed(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" },
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, [isModal, inlineArmed]);
 
   // ── Devise — synchronisée avec le header ──────────────────────────────────
   useEffect(() => {
@@ -118,8 +175,10 @@ export function FragranceFinderModal({
   // vieux d'une heure ne dit plus rien de ce qu'on cherche maintenant. La remise
   // à plat se fait PENDANT le rendu, à la bascule de `open` — la règle
   // `react-hooks/set-state-in-effect` du repo interdit de la poser dans l'effet.
+  // En inline il n'y a pas de bascule à observer : le quiz ne se ferme jamais,
+  // et repartir de zéro dans son dos serait une perte de réponses.
   const [wasOpen, setWasOpen] = useState(open);
-  if (wasOpen !== open) {
+  if (isModal && wasOpen !== open) {
     setWasOpen(open);
     if (open) {
       setIndex(0);
@@ -129,7 +188,7 @@ export function FragranceFinderModal({
   }
 
   useEffect(() => {
-    if (!open) return;
+    if (!isModal || !open) return;
     clearAdvance();
     previousFocus.current = document.activeElement as HTMLElement;
     document.body.style.overflow = "hidden";
@@ -139,15 +198,15 @@ export function FragranceFinderModal({
       document.body.style.overflow = "";
       previousFocus.current?.focus?.();
     };
-  }, [open]);
+  }, [isModal, open]);
 
-  // ── Échap + piège à focus ─────────────────────────────────────────────────
+  // ── Échap + piège à focus — mécaniques de modale, inline s'en passe ───────
   useEffect(() => {
-    if (!open) return;
+    if (!isModal || !open) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") {
         e.preventDefault();
-        onClose();
+        close();
         return;
       }
       if (e.key !== "Tab" || !dialogRef.current) return;
@@ -167,7 +226,7 @@ export function FragranceFinderModal({
     };
     document.addEventListener("keydown", onKey);
     return () => document.removeEventListener("keydown", onKey);
-  }, [open, onClose]);
+  }, [isModal, open, close]);
 
   // ── Toast ─────────────────────────────────────────────────────────────────
   useEffect(() => {
@@ -183,6 +242,11 @@ export function FragranceFinderModal({
   const answer = useCallback(
     (optionIndex: number | null) => {
       setAnswers((a) => ({ ...a, [index]: optionIndex }));
+      // Filet inline : répondre prouve que la section est sous les yeux, même si
+      // l'IntersectionObserver n'a pas pu jouer. Inutile mais inoffensif en
+      // modale (`needsEngine` y suit `open`), et React ne re-rend pas si la
+      // valeur ne change pas — d'où l'appel sans garde.
+      setInlineArmed(true);
       clearAdvance();
       advanceTimer.current = window.setTimeout(
         () => {
@@ -236,34 +300,40 @@ export function FragranceFinderModal({
     });
   }, [engine, family, done, optionAt]);
 
-  if (!open) return null;
+  if (isModal && !open) return null;
 
   return (
-    <div className="dp-ff" dir={isRTL ? "rtl" : "ltr"}>
+    <div ref={rootRef} className={`dp-ff${isModal ? "" : " is-inline"}`} dir={isRTL ? "rtl" : "ltr"}>
       <style>{CSS}</style>
 
-      <div className="dp-ff-veil" onMouseDown={onClose} />
+      {isModal && <div className="dp-ff-veil" onMouseDown={close} />}
 
       <div
         ref={dialogRef}
         className={`dp-ff-panel${done ? " is-result" : ""}`}
-        role="dialog"
-        aria-modal="true"
-        aria-label="Quiz olfactif — trouvez votre parfum"
-        tabIndex={-1}
+        role={isModal ? "dialog" : undefined}
+        aria-modal={isModal ? true : undefined}
+        aria-label={isModal ? "Quiz olfactif — trouvez votre parfum" : undefined}
+        tabIndex={isModal ? -1 : undefined}
       >
-        <button type="button" className="dp-ff-close" onClick={onClose} aria-label="Fermer le quiz">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
-        </button>
+        {isModal && (
+          <button type="button" className="dp-ff-close" onClick={close} aria-label="Fermer le quiz">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round">
+              <path d="M18 6 6 18M6 6l12 12" />
+            </svg>
+          </button>
+        )}
 
-        <div className="dp-ff-intro">
-          <span className="dp-ff-eyebrow">En 2 minutes</span>
-          <h2 className="dp-ff-title">
-            Quel parfum vous <em>correspond&nbsp;?</em>
-          </h2>
-        </div>
+        {/* En inline, le SectionHeader de la page porte déjà surtitre et titre :
+            ce chapeau ferait doublon, et deux <h2> pour une même section. */}
+        {isModal && (
+          <div className="dp-ff-intro">
+            <span className="dp-ff-eyebrow">En 2 minutes</span>
+            <h2 className="dp-ff-title">
+              Quel parfum vous <em>correspond&nbsp;?</em>
+            </h2>
+          </div>
+        )}
 
         {!done ? (
           <>
@@ -287,7 +357,7 @@ export function FragranceFinderModal({
             onReplay={replay}
             onRestart={restart}
             onToast={setToast}
-            onClose={onClose}
+            onClose={close}
           />
         )}
       </div>
@@ -774,6 +844,25 @@ const CSS = `
 
 @keyframes dp-ff-fade { from { opacity: 0 } to { opacity: 1 } }
 @keyframes dp-ff-rise { from { transform: translateY(22px); opacity: .4 } to { transform: none; opacity: 1 } }
+
+/* ── Variante « section de page » ── */
+/* Le quiz inline sert exactement le même habillage : on ne neutralise ici que
+   ce qui relève de la modale — couche plein écran, centrage, largeur bridée,
+   hauteur de viewport, animation d'entrée. La double classe (0,2,0) l'emporte
+   sur les regles de base ET sur celles du media portable, quel que soit l'ordre.
+   L'ombre passe de shadow-lg (une modale posee sur un voile) a shadow-sm, celle
+   des autres cartes de l'accueil ; le rayon reste r-lg, comme les sections
+   voisines. */
+.dp-ff.is-inline {
+  position: static; inset: auto; z-index: auto;
+  display: block; padding: 0;
+}
+.dp-ff.is-inline .dp-ff-panel {
+  max-width: none; max-height: none; overflow: visible;
+  box-shadow: var(--shadow-sm);
+  animation: none;
+}
+.dp-ff.is-inline .dp-ff-panel.is-result { max-width: none; }
 
 /* ── Écran de fin en deux colonnes ── */
 @media (min-width: 900px) {
