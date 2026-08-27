@@ -1,158 +1,59 @@
 "use client";
 
 /**
- * ProgressHeader — compteur « Question {i+1}/{n} » + barre de progression (i+1)/n.
- * Numérotation et barre TOUJOURS calculées (jamais en dur).
- * Inclut le bouton Retour discret (désactivé sur Q1) et la fermeture.
+ * En-tête de progression du quiz : retour, compteur « QUESTION n/8 » et barre
+ * fine. Reprise du bloc `.q-head` / `.q-bar` de l'archive.
+ *
+ * Les styles vivent dans le bloc `CSS` de `FragranceFinderModal.tsx` : la
+ * modale est le seul point de montage de ce composant, un seul `<style>` sert
+ * tout le sous-arbre.
  */
-import { FlaconIcon } from "./FlaconIcon";
-import { FF } from "./tokens";
-import type { FinderLabels } from "./types";
 
 export function ProgressHeader({
   index,
   total,
-  reduced,
-  labels,
   onBack,
-  onClose,
 }: {
-  index: number; // 0-based
+  /** numéro de l'étape courante, 0-based */
+  index: number;
   total: number;
-  reduced: boolean;
-  labels: FinderLabels;
   onBack: () => void;
-  onClose: () => void;
 }) {
   const current = index + 1;
-  const pct = (current / total) * 100;
-  const counter = labels.questionCounter
-    .replace("{current}", String(current))
-    .replace("{total}", String(total));
-  const atStart = index === 0;
+  const percent = Math.round((current / total) * 100);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          gap: 12,
-        }}
-      >
-        {/* Retour discret */}
+    <>
+      <div className="dp-ff-head">
+        {/* Le retour garde sa place au premier écran (visibility, pas display) :
+            sans ça le compteur sautait latéralement d'une question à l'autre. */}
         <button
           type="button"
+          className="dp-ff-back"
           onClick={onBack}
-          disabled={atStart}
-          aria-label={labels.back}
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 6,
-            background: "transparent",
-            border: "none",
-            padding: "6px 4px",
-            color: FF.muted,
-            fontFamily: FF.sans,
-            fontSize: "0.82rem",
-            cursor: atStart ? "default" : "pointer",
-            opacity: atStart ? 0 : 1,
-            pointerEvents: atStart ? "none" : "auto",
-            transition: "opacity .2s",
-          }}
+          disabled={index === 0}
+          aria-label="Question précédente"
         >
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            style={{ transform: "scaleX(var(--ff-dir, 1))" }}
-          >
-            <path d="M15 18l-6-6 6-6" />
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polyline points="15 5 8 12 15 19" />
           </svg>
-          {labels.back}
+          Retour
         </button>
-
-        {/* Compteur central */}
-        <span
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: 8,
-            fontFamily: FF.sans,
-            fontSize: "0.72rem",
-            fontWeight: 600,
-            letterSpacing: "0.14em",
-            textTransform: "uppercase",
-            color: FF.goldDeep,
-          }}
-        >
-          <FlaconIcon size={16} color={FF.goldDeep} />
-          {counter}
+        <span className="dp-ff-count">
+          Question {current}/{total}
         </span>
-
-        {/* Fermer */}
-        <button
-          type="button"
-          onClick={onClose}
-          aria-label="Fermer"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: 30,
-            height: 30,
-            borderRadius: "50%",
-            background: FF.cream2,
-            border: `1px solid ${FF.border}`,
-            color: FF.ink2,
-            cursor: "pointer",
-          }}
-        >
-          <svg
-            width="15"
-            height="15"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M18 6 6 18M6 6l12 12" />
-          </svg>
-        </button>
+        <span aria-hidden="true" />
       </div>
-
-      {/* Barre de progression */}
       <div
+        className="dp-ff-bar"
         role="progressbar"
-        aria-valuenow={current}
         aria-valuemin={1}
         aria-valuemax={total}
-        style={{
-          height: 4,
-          borderRadius: 999,
-          background: FF.cream2,
-          overflow: "hidden",
-        }}
+        aria-valuenow={current}
+        aria-valuetext={`Question ${current} sur ${total}`}
       >
-        <div
-          style={{
-            height: "100%",
-            width: `${pct}%`,
-            borderRadius: 999,
-            background: `linear-gradient(90deg, ${FF.goldDeep}, ${FF.goldLight})`,
-            transition: reduced ? "none" : "width .45s cubic-bezier(.4,0,.2,1)",
-          }}
-        />
+        <i style={{ width: `${percent}%` }} />
       </div>
-    </div>
+    </>
   );
 }

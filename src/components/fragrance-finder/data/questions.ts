@@ -1,181 +1,200 @@
 /**
- * Les 9 questions du FragranceFinder.
+ * Les huit questions du quiz olfactif.
  *
- * Chaque option porte un `value` slug STABLE consommé par le scoring
- * (full slug = `<id>:<value>` côté logique métier ; ici on stocke juste `<value>`).
- * Exemples : gender:women, level:beginner, intensity:3, family:amber,
- * season:summer, note:saffron, budget:low, format:travel.
+ * Intitulés, sous-titres et options repris **tels quels** du gabarit
+ * `index.html` de l'archive AD Parfumerie, moins la question « un parfum que
+ * vous aimez déjà » (champ libre + autocomplétion) : elle demandait au visiteur
+ * de nommer une référence extérieure au catalogue, ce que la maquette Dubaï ne
+ * sait pas exploiter. Sa suppression fait passer le parcours de 9 à 8 étapes.
  *
- * Les vignettes-matières (`image`) sont optionnelles (/quiz/materials/*.jpg) ;
- * en leur absence on utilise le `gradient` (dégradé radial façon mockup styleD).
- *
- * Les options `fullWidth: true` (« Je ne sais pas », value:"none") sont rendues
- * en pleine largeur sous la grille et n'appliquent AUCUN filtre (ignorées par le scoring).
+ * Trois questions votent pour une famille olfactive — univers (4), note (6) et
+ * saison (8) — exactement comme l'archive faisait voter ses questions 4, 7 et 9.
+ * Les autres calibrent la sélection sans peser sur la famille.
  */
-import type { Question } from "../types";
+import type { QuizQuestion } from "../types";
 
-/** Dégradés radiaux de repli (matières olfactives) — palette or/crème du mockup. */
-const G = {
-  // Q1 — genre
-  women: "radial-gradient(circle at 32% 28%, #F3D9E0, #C56B7A 78%)",
-  men: "radial-gradient(circle at 32% 28%, #C9B79A, #6B5D4E 80%)",
-  unisex: "radial-gradient(circle at 32% 28%, #E8D6A6, #A8801F 82%)",
-  gift: "radial-gradient(circle at 32% 28%, #F6EAC8, #C8901E 82%)",
+/* ────────────────────────────────────────────────────────────────────────────
+   TRANCHES DE BUDGET — recalibrées sur le catalogue Dubaï
 
-  // Q2 — niveau
-  beginner: "radial-gradient(circle at 30% 26%, #FBF1D6, #D8B560 82%)",
-  expert: "radial-gradient(circle at 30% 26%, #D9B872, #8A661B 84%)",
+   L'archive proposait ≤300 € / 300-600 € / 600 €+ : des totaux de trio tirés
+   d'un catalogue de niche à 209 références. Le catalogue Dubaï est bien moins
+   cher, ces bornes n'auraient jamais mis qu'une seule tranche en jeu.
 
-  // Q3 — intensité
-  light: "radial-gradient(circle at 30% 26%, #FCF4DD, #E4CE92 82%)",
-  medium: "radial-gradient(circle at 30% 26%, #EFD79B, #C8901E 82%)",
-  intense: "radial-gradient(circle at 30% 26%, #C99A3C, #6E4A12 84%)",
+   Relevé sur les 28 références de SEARCH_PRODUCTS (toutes ont un prix) :
+     min 16,90 €  ·  1er tercile 39,90 €  ·  médiane 49,90 €
+     2e tercile 59,00 €  ·  max 88,00 €  ·  moyenne 48,38 €
 
-  // Q4 — famille
-  amber: "radial-gradient(circle at 30% 26%, #F0C97A, #A8801F 80%)",
-  woody: "radial-gradient(circle at 30% 26%, #B79A6A, #6B4A2B 82%)",
-  floral: "radial-gradient(circle at 30% 26%, #F4CBD6, #C56B7A 80%)",
-  fresh: "radial-gradient(circle at 30% 26%, #CDE7E2, #4F8A8B 82%)",
+   Le budget porte sur le TRIO, pas sur le flacon (règle héritée de l'archive) :
+     trio le moins cher possible  = 16,90 + 16,90 + 17,90 =  51,70 €
+     trio médian                  = 3 × 49,90             = 149,70 €
+     trio le plus cher possible   = 78,00 + 79,90 + 88,00 = 245,90 €
 
-  // Q5 — saison
-  summer: "radial-gradient(circle at 30% 26%, #FCE9B8, #E0A93A 82%)",
-  winter: "radial-gradient(circle at 30% 26%, #D6E2EC, #5E7A92 82%)",
-  allseasons: "radial-gradient(circle at 30% 26%, #EFD79B, #C8901E 82%)",
-  noseason: "radial-gradient(circle at 30% 26%, #F2ECDD, #C9B98C 82%)",
+   On coupe aux terciles du prix unitaire, multipliés par trois — chaque tranche
+   couvre alors un tiers des flacons du catalogue :
+     3 × 39,90 = 119,70 → arrondi à 120 €
+     3 × 59,00 = 177,00 → arrondi à 180 €
 
-  // Q7 — note
-  oud: "radial-gradient(circle at 30% 26%, #8A6A45, #3A2415 84%)",
-  rose: "radial-gradient(circle at 30% 26%, #F0BFCB, #B5495E 80%)",
-  vanilla: "radial-gradient(circle at 30% 26%, #F7EACB, #C9A24A 80%)",
-  musk: "radial-gradient(circle at 30% 26%, #ECE3D2, #B9A88C 82%)",
-  saffron: "radial-gradient(circle at 30% 26%, #F4C66A, #C2641A 84%)",
-  sandalwood: "radial-gradient(circle at 30% 26%, #D8BE93, #8A6A3E 84%)",
+   D'où : ≤ 120 €  ·  120 – 180 €  ·  180 € et plus. Les trois bornes sont
+   atteignables (51,70 ≤ 120 et 245,90 ≥ 180), aucune tranche n'est vide.
+   Les libellés restent ceux de l'archive.
+   ──────────────────────────────────────────────────────────────────────────── */
+export const BUDGET_TIERS = [
+  { label: "Petit plaisir", hint: "Jusqu'à 120 €", min: 0, max: 120 },
+  { label: "Cœur de gamme", hint: "120 – 180 €", min: 120, max: 180 },
+  { label: "Premium", hint: "180 € et plus", min: 180, max: 99999 },
+] as const;
 
-  // Q8 — budget
-  low: "radial-gradient(circle at 30% 26%, #F6EAC8, #C8B27A 82%)",
-  mid: "radial-gradient(circle at 30% 26%, #EFD79B, #C8901E 82%)",
-  high: "radial-gradient(circle at 30% 26%, #E5C06A, #9C6A1A 84%)",
+/* ────────────────────────────────────────────────────────────────────────────
+   VISUELS
 
-  // Q9 — format
-  sample: "radial-gradient(circle at 30% 26%, #F6EAC8, #D8A63A 82%)",
-  bottle: "radial-gradient(circle at 30% 26%, #EFD79B, #C8901E 82%)",
-  giftbox: "radial-gradient(circle at 30% 26%, #F6EAC8, #C8901E 82%)",
-  travel: "radial-gradient(circle at 30% 26%, #E8D6A6, #A8801F 82%)",
-};
+   L'archive pointait /assets/img/quiz/… : ces fichiers n'existent pas ici. Le
+   repo Dubaï offre huit photos de matières dans public/assets/scents/, et rien
+   d'autre qui conviendrait. On les branche sur les deux questions « matière »
+   (univers et note) ; trois d'entre elles servent aux deux questions, faute de
+   huitième image dédiée — les deux écrans ne sont jamais visibles ensemble.
 
-export const QUESTIONS: Question[] = [
-  // Q1
+   « Frais » n'a pas de photo dédiée : musc.jpg (musc blanc & coton) est la seule
+   image claire et « propre » du jeu, c'est elle qui s'en approche le plus.
+
+   La question « occasion » (quotidien / événement / voyage / cadeau) n'a aucune
+   image plausible dans le repo : plutôt que d'inventer un visuel ou d'en
+   détourner un, elle reste en pastilles typographiques. Même parti pris pour le
+   budget et la saison, déjà typographiques dans l'archive.
+   ──────────────────────────────────────────────────────────────────────────── */
+const SCENT = "/assets/scents";
+
+export const QUESTIONS: QuizQuestion[] = [
   {
-    id: "gender",
+    id: "destinataire",
+    criterion: "Destinataire",
     title: "Ce parfum, c'est pour…",
     subtitle: "On adapte toute la sélection.",
-    kind: "tiles",
+    layout: "fill",
     options: [
-      { value: "women", label: "Pour elle", gradient: G.women },
-      { value: "men", label: "Pour lui", gradient: G.men },
-      { value: "unisex", label: "Mixte", gradient: G.unisex },
-      { value: "gift", label: "Un cadeau", gradient: G.gift },
+      // Les trois aplats de l'archive (rose / marine / doré) n'existent pas
+      // dans la palette Dubaï : on les rejoue en doré, brun-noir et taupe —
+      // trois valeurs bien distinctes, toutes assez sombres pour du texte clair.
+      { label: "Pour elle", gender: "Femme", fill: "var(--gold-700)" },
+      { label: "Pour lui", gender: "Homme", fill: "var(--espresso-900)" },
+      { label: "Mixte", gender: "Mixte", fill: "var(--ink-500)" },
     ],
   },
-  // Q2
   {
-    id: "level",
-    title: "C'est votre premier parfum oriental ?",
+    id: "experience",
+    criterion: "Expérience",
+    title: "C'est votre premier parfum de niche ?",
     subtitle: "Pour calibrer nos recommandations.",
-    kind: "tiles",
+    layout: "fill",
     options: [
-      { value: "beginner", label: "Oui, je découvre", gradient: G.beginner },
-      { value: "expert", label: "Non, j'en porte déjà", gradient: G.expert },
+      // L'archive teintait ces deux options en vert « succès » et rouge
+      // « danger » : un rouge d'erreur pour « non » se lit comme un reproche.
+      // On reste sur deux valeurs de la palette.
+      { label: "Oui, je découvre", fill: "var(--gold-700)" },
+      { label: "Non, j'en porte déjà", fill: "var(--espresso-800)" },
     ],
+    note: {
+      title: "Un parfum de niche, c'est quoi ?",
+      paragraphs: [
+        "Petites séries, hors grande distribution. Concentrations plus hautes, matières rares — oud, safran, ambre gris, rose de Taïf — et aucun test consommateur : le parti pris reste entier.",
+        "C'est la tradition des parfumeurs du Golfe : un sillage qu'on ne croise pas sur tout le monde.",
+      ],
+    },
   },
-  // Q3
   {
-    id: "intensity",
+    id: "intensite",
+    criterion: "Intensité",
     title: "Vous aimez les parfums plutôt…",
     subtitle: "Leur intensité, leur sillage.",
-    kind: "tiles",
+    layout: "gauge",
     options: [
-      { value: "1", label: "Légers", gradient: G.light },
-      { value: "2", label: "Moyens", gradient: G.medium },
-      { value: "3", label: "Intenses", gradient: G.intense },
+      { label: "Légers", gauge: 1, hint: "Discret, au creux du poignet" },
+      { label: "Moyens", gauge: 2, hint: "Présent sans s'imposer" },
+      { label: "Intenses", gauge: 3, hint: "Sillage qui tient la journée" },
     ],
   },
-  // Q4
   {
-    id: "family",
+    id: "univers",
+    criterion: "Univers",
     title: "Quel univers vous attire ?",
-    subtitle: "Touchez la matière qui vous parle.",
-    kind: "tiles",
+    subtitle: "La matière qui vous parle.",
+    layout: "art",
+    skip: "Je ne sais pas",
     options: [
-      { value: "amber", label: "Ambré", hint: "Ambre, vanille, tonka", gradient: G.amber },
-      { value: "woody", label: "Boisé / Oud", hint: "Oud, santal, cuir", gradient: G.woody },
-      { value: "floral", label: "Floral", hint: "Rose, jasmin", gradient: G.floral },
-      { value: "fresh", label: "Frais", hint: "Agrumes, marin", gradient: G.fresh },
-      { value: "none", label: "Je ne sais pas", fullWidth: true },
+      { label: "Ambré", hint: "Ambre, vanille, tonka", family: "ambre", image: `${SCENT}/ambre.jpg` },
+      { label: "Boisé / Oud", hint: "Oud, santal, cuir", family: "boise", image: `${SCENT}/boise.jpg` },
+      { label: "Floral", hint: "Rose, jasmin", family: "floral", image: `${SCENT}/floral.jpg` },
+      { label: "Frais", hint: "Agrumes, marin", family: "frais", image: `${SCENT}/musc.jpg` },
     ],
   },
-  // Q5
   {
-    id: "season",
-    title: "Pour quelle occasion cherchez-vous votre parfum ?",
+    id: "occasion",
+    criterion: "Occasion",
+    title: "Pour quelle occasion ?",
     subtitle: "Pour cibler le sillage adapté au moment.",
-    kind: "tiles",
+    layout: "pill",
     options: [
-      { value: "all", label: "Au quotidien", hint: "Un sillage discret qui vous accompagne chaque jour", gradient: G.allseasons },
-      { value: "winter", label: "Événement spécial", hint: "Soirée, mariage, occasion mémorable", gradient: G.winter },
-      { value: "summer", label: "Escapade / voyage", hint: "Un parfum qui évoque l'évasion et le soleil", gradient: G.summer },
-      { value: "none", label: "Cadeau", gradient: G.noseason },
+      { label: "Au quotidien" },
+      { label: "Événement spécial" },
+      { label: "Escapade / voyage" },
+      { label: "Cadeau" },
     ],
   },
-  // Q6
-  {
-    id: "loved",
-    title: "Un parfum que vous adorez déjà ?",
-    subtitle: "Tapez son nom, on s'en inspire pour viser juste.",
-    kind: "search",
-    allowSkip: true,
-  },
-  // Q7
   {
     id: "note",
+    criterion: "Note",
     title: "Une note qui vous fait craquer ?",
     subtitle: "La matière que vous adorez sentir.",
-    kind: "tiles",
+    layout: "art",
+    skip: "Je ne sais pas",
     options: [
-      { value: "rose", label: "Rose", gradient: G.rose },
-      { value: "oud", label: "Oud", gradient: G.oud },
-      { value: "vanilla", label: "Vanille", gradient: G.vanilla },
-      { value: "musk", label: "Musc", gradient: G.musk },
-      { value: "saffron", label: "Safran", gradient: G.saffron },
-      { value: "sandalwood", label: "Bois de santal", gradient: G.sandalwood },
-      { value: "none", label: "Je ne sais pas", fullWidth: true },
+      { label: "Rose", family: "floral", noteWords: ["rose"], image: `${SCENT}/rose.jpg` },
+      { label: "Oud", family: "boise", noteWords: ["oud"], image: `${SCENT}/oud.jpg` },
+      { label: "Vanille", family: "ambre", noteWords: ["vanille"], image: `${SCENT}/ambre.jpg` },
+      { label: "Musc", family: "frais", noteWords: ["musc"], image: `${SCENT}/musc.jpg` },
+      { label: "Safran", family: "ambre", noteWords: ["safran"], image: `${SCENT}/epice.jpg` },
+      // « Bois de santal » ne figure nulle part tel quel : le catalogue écrit
+      // « Santal blanc » et « Santal ». Le mot-clé est donc « santal ».
+      { label: "Bois de santal", family: "boise", noteWords: ["santal"], image: `${SCENT}/boise.jpg` },
     ],
   },
-  // Q8
   {
     id: "budget",
+    criterion: "Budget",
     title: "Quel budget ?",
-    subtitle: "Pour vous proposer le bon format.",
-    kind: "tiles",
-    options: [
-      { value: "low", label: "Accessible", hint: "< 30 €", gradient: G.low },
-      { value: "mid", label: "Cœur de gamme", hint: "30 – 60 €", gradient: G.mid },
-      { value: "high", label: "Premium", hint: "> 60 €", gradient: G.high },
-    ],
+    subtitle: "Le montant porte sur l'ensemble des trois flacons.",
+    layout: "pill",
+    options: BUDGET_TIERS.map((t) => ({ label: t.label, hint: t.hint, min: t.min, max: t.max })),
   },
-  // Q9
   {
-    id: "format",
-    title: "Quel format préférez-vous ?",
-    subtitle: "On finit sur le bon produit.",
-    kind: "tiles",
+    id: "saison",
+    criterion: "Saison",
+    title: "Enfin, pour quelle saison le voulez-vous ?",
+    subtitle: "Le climat change tout à la tenue d'un parfum.",
+    layout: "pill",
     options: [
-      { value: "sample", label: "Échantillon", hint: "Découverte", gradient: G.sample },
-      { value: "bottle", label: "Flacon", hint: "Format complet", gradient: G.bottle },
-      { value: "gift", label: "Coffret", hint: "À offrir", gradient: G.giftbox },
-      { value: "travel", label: "Voyage", hint: "Vaporisateur poche", gradient: G.travel },
+      { label: "Printemps", family: "floral" },
+      { label: "Été", family: "frais" },
+      { label: "Automne", family: "boise" },
+      { label: "Hiver", family: "ambre" },
+      { label: "Toute saison" },
     ],
   },
 ];
 
 export const QUESTION_COUNT = QUESTIONS.length;
+
+/**
+ * Repères d'étape — évite de semer des index magiques dans les composants
+ * (« la question du budget », pas « answers[6] »). Calculés depuis QUESTIONS :
+ * réordonner le parcours ne casse rien.
+ */
+export const STEP = {
+  destinataire: QUESTIONS.findIndex((q) => q.id === "destinataire"),
+  experience: QUESTIONS.findIndex((q) => q.id === "experience"),
+  intensite: QUESTIONS.findIndex((q) => q.id === "intensite"),
+  univers: QUESTIONS.findIndex((q) => q.id === "univers"),
+  occasion: QUESTIONS.findIndex((q) => q.id === "occasion"),
+  note: QUESTIONS.findIndex((q) => q.id === "note"),
+  budget: QUESTIONS.findIndex((q) => q.id === "budget"),
+  saison: QUESTIONS.findIndex((q) => q.id === "saison"),
+} as const;

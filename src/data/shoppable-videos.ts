@@ -77,4 +77,22 @@ export const DEMO: ShoppableVideo[] = [
       variantId: "reef-33-100ml",
     },
   },
+  {
+    // Le flacon en lévitation sous la pluie d'épices : le plan le plus « pub »
+    // de la banque, celui qui accroche le mieux dans un carrousel qui défile.
+    id: "khamrah",
+    videoUrl: "/assets/videos/khamrah-levitation.mp4",
+    posterUrl: "/assets/videos/khamrah-levitation-poster.webp",
+    productHandle: "lattafa-khamrah",
+    product: {
+      name: "Khamrah",
+      // Aligné sur la fiche rédigée (`product-details.ts`) : le prix de la carte
+      // et celui de la fiche qu'elle ouvre doivent être le même nombre.
+      price: 21.9,
+      thumbnailUrl: "/assets/products/khamrah/khamrah-packshot.webp",
+      available: true,
+      href: "/produit/lattafa-khamrah",
+      variantId: "lattafa-khamrah-100ml",
+    },
+  },
 ];

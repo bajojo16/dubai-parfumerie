@@ -23,6 +23,14 @@ export interface Product {
   baseNotes: string[];
   badges: string[];
   image?: string;
+  /**
+   * Visuels supplémentaires, quand la banque photo en fournit plusieurs pour CE
+   * flacon (packshot, coffret, mises en scène, gros plans matière). Optionnel :
+   * la fiche affiche une galerie à vignettes seulement si le tableau contient
+   * plus d'une image, sinon elle retombe sur le cadre simple. Par convention
+   * `gallery[0]` reprend `image` — c'est la vue ouverte par défaut.
+   */
+  gallery?: string[];
 }
 
 export const PRODUCTS: Record<string, Product> = {
@@ -138,5 +146,38 @@ export const PRODUCTS: Record<string, Product> = {
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-6.jpg",
+  },
+  "lattafa-khamrah": {
+    name: "Khamrah",
+    brand: "Lattafa",
+    // Prix aligné sur ce que le repo affiche déjà pour cette référence
+    // (`olfactive-twins.ts`, « dès 21,90 € ») : deux prix différents pour le
+    // même flacon sur deux pages du site, c'est le genre d'incohérence qu'on
+    // ne rattrape jamais. Prix barré calé sur le ratio des autres fiches (~-27 %).
+    price: 21.9,
+    oldPrice: 29.9,
+    rating: 4.8,
+    reviews: 891,
+    concentration: "EDP 30%",
+    volume: "100ml",
+    origin: "Fabriqué à Dubaï",
+    description:
+      "Khamrah — « l'ivresse » en arabe — est le gourmand oriental qui a fait basculer Lattafa dans une autre dimension depuis sa sortie en 2022. Tout commence sur une datte confite, réchauffée de cannelle et de muscade, que la bergamote empêche de tourner au sirop. Le cœur s'épaissit alors : praline, fève tonka et vanille se fondent en un accord de pâtisserie orientale, adouci d'une fleur d'oranger discrète. Puis vient le fond, et Khamrah cesse d'être un dessert : benjoin résineux, bois de santal, ambre gris et une volute de myrrhe et d'encens installent une profondeur presque cérémonielle, qui tient sur la peau — et surtout sur les vêtements — bien après la fin de la soirée.",
+    topNotes: ["Datte", "Cannelle", "Bergamote", "Muscade"],
+    heartNotes: ["Praline", "Fève tonka", "Vanille", "Fleur d'oranger"],
+    baseNotes: ["Benjoin", "Bois de santal", "Ambre gris", "Myrrhe", "Encens"],
+    badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
+    image: "/assets/products/khamrah/khamrah-packshot.webp",
+    // Six vues volontairement distinctes : flacon seul, coffret, mise en scène
+    // épicée, ambiance orientale, puis deux gros plans matière (dattes, encens)
+    // qui montrent la pyramide plutôt que de la décrire.
+    gallery: [
+      "/assets/products/khamrah/khamrah-packshot.webp",
+      "/assets/products/khamrah/khamrah-coffret.webp",
+      "/assets/products/khamrah/khamrah-dattes-epices.webp",
+      "/assets/products/khamrah/khamrah-plateau-laiton.webp",
+      "/assets/products/khamrah/khamrah-lit-dattes.webp",
+      "/assets/products/khamrah/khamrah-encens.webp",
+    ],
   },
 };

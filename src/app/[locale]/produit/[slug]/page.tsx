@@ -3,6 +3,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import VolumeSelector from "./VolumeSelector";
 import AddToCart from "./AddToCart";
+import ProductGallery from "./ProductGallery";
 import { StoryBubbles } from "@/components/sections/StoryBubbles";
 import { DEMO_STORIES } from "@/data/product-stories";
 import { allProductSlugs, resolveProduct } from "@/data/product-resolve";
@@ -112,6 +113,14 @@ export default async function ProductPage({ params }: PageProps) {
 
   const relatedImages = ["/assets/prod-3.jpg", "/assets/prod-4.jpg", "/assets/prod-5.jpg", "/assets/prod-6.jpg"];
 
+  // La galerie montrait quatre visuels génériques /assets/prod-*.jpg identiques
+  // pour toutes les fiches — et pas même le flacon du produit ouvert. On sert
+  // désormais les visuels de CE parfum : sa galerie si la fiche en déclare une,
+  // sinon son seul packshot (la galerie masque alors la bande de vignettes).
+  const galleryImages = product.gallery?.length
+    ? product.gallery
+    : [product.image ?? "/assets/prod-1.jpg"];
+
   return (
     <div
       style={{
@@ -161,55 +170,7 @@ export default async function ProductPage({ params }: PageProps) {
         >
           {/* ── Left: image gallery ── */}
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
-            {/* Main image */}
-            <div
-              style={{
-                position: "relative",
-                borderRadius: "var(--r-lg)",
-                overflow: "hidden",
-                background: "var(--surface-cream)",
-                boxShadow: "var(--shadow-md)",
-                aspectRatio: "4/5",
-              }}
-            >
-              <Image
-                src="/assets/prod-1.jpg"
-                alt={`${product.name} — ${product.brand}`}
-                fill
-                style={{ objectFit: "cover" }}
-                priority
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-            </div>
-
-            {/* Thumbnails */}
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0.625rem" }}>
-              {["/assets/prod-2.jpg", "/assets/prod-3.jpg", "/assets/prod-4.jpg", "/assets/prod-5.jpg"].map(
-                (src, i) => (
-                  <div
-                    key={src}
-                    style={{
-                      position: "relative",
-                      borderRadius: "var(--r-md)",
-                      overflow: "hidden",
-                      background: "var(--surface-cream)",
-                      border: i === 0 ? "2px solid var(--gold-500)" : "2px solid transparent",
-                      cursor: "pointer",
-                      aspectRatio: "1/1",
-                      transition: "border-color var(--dur-fast)",
-                    }}
-                  >
-                    <Image
-                      src={src}
-                      alt={`Vue ${i + 2} de ${product.name}`}
-                      fill
-                      style={{ objectFit: "cover" }}
-                      sizes="120px"
-                    />
-                  </div>
-                )
-              )}
-            </div>
+            <ProductGallery images={galleryImages} productName={product.name} brand={product.brand} />
 
             {/* 360 button */}
             <button

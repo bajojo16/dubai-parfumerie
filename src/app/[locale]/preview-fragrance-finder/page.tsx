@@ -1,12 +1,15 @@
 "use client";
 
 /**
- * Démo isolée du FragranceFinder (validation gate avant montage global).
- * Monte le bouton flottant fiole + modal, alimenté par le CATALOGUE LOCAL.
+ * Démo isolée du FragranceFinder — la page sert de banc d'essai au quiz, que le
+ * layout monte par ailleurs sur tout le site.
+ *
+ * Le quiz est la réplique de celui d'AD Parfumerie : huit questions, une famille
+ * olfactive, trois flacons pris dans le catalogue agrégé (`SEARCH_PRODUCTS`),
+ * leurs combinaisons et leurs remises.
  */
 import { useLocale } from "next-intl";
 import { FragranceFinderButton } from "@/components/fragrance-finder/FragranceFinderButton";
-import { LOCAL_CATALOG } from "@/components/fragrance-finder/data/productAttributes";
 import { QUESTION_COUNT } from "@/components/fragrance-finder/data/questions";
 
 export default function PreviewFragranceFinderPage() {
@@ -17,7 +20,7 @@ export default function PreviewFragranceFinderPage() {
     <main
       dir={isRTL ? "rtl" : "ltr"}
       style={{
-        background: "#FDFBF6",
+        background: "var(--surface-page)",
         minHeight: "100vh",
         padding: "60px 24px 140px",
       }}
@@ -26,11 +29,11 @@ export default function PreviewFragranceFinderPage() {
         <span
           style={{
             fontFamily: "var(--font-sans)",
-            fontSize: 12,
+            fontSize: "var(--t-xs)",
             fontWeight: 600,
-            letterSpacing: "0.18em",
+            letterSpacing: "var(--ls-wider)",
             textTransform: "uppercase",
-            color: "#A8801F",
+            color: "var(--gold-700)",
           }}
         >
           Conseiller olfactif
@@ -39,42 +42,41 @@ export default function PreviewFragranceFinderPage() {
           style={{
             fontFamily: "var(--font-display)",
             fontSize: 34,
-            color: "#2C2620",
+            color: "var(--ink-900)",
             margin: "8px 0 10px",
           }}
         >
-          FragranceFinder — quiz olfactif immersif
+          FragranceFinder — quiz olfactif
         </h1>
         <p
           style={{
             fontFamily: "var(--font-sans)",
             fontSize: 15,
-            color: "#6A655D",
+            color: "var(--ink-500)",
             lineHeight: 1.65,
             margin: "0 0 18px",
             maxWidth: 620,
           }}
         >
-          Cliquez sur la fiole dorée en bas {isRTL ? "à gauche" : "à droite"} pour lancer le
-          quiz en {QUESTION_COUNT} questions. À la fin, jusqu'à 3 parfums sur mesure sont recommandés depuis le
-          catalogue local, avec opt-in WhatsApp / e-mail (démo). Aperçu isolé — le bouton
-          n'est pas encore monté dans le layout global.
+          Cliquez sur la fiole dorée en bas {isRTL ? "à gauche" : "à droite"} pour lancer le quiz
+          en {QUESTION_COUNT} questions. À la fin : votre famille olfactive, trois flacons du
+          catalogue, leurs combinaisons et leurs remises.
         </p>
         <ul
           style={{
             fontFamily: "var(--font-sans)",
             fontSize: 14,
-            color: "#8a7a5c",
+            color: "var(--ink-400)",
             lineHeight: 1.8,
             margin: 0,
             paddingInlineStart: 18,
           }}
         >
-          <li>Validation immédiate au clic + auto-avance (halo or)</li>
-          <li>« Je ne sais pas » sur Ambiance et Note · « Passer » sur la recherche</li>
-          <li>Filtres durs genre + budget, score familles/notes/saison/intensité</li>
-          <li>Badges : Votre match · Coup de cœur · À découvrir</li>
-          <li>{LOCAL_CATALOG.length} parfums dans le catalogue de démo</li>
+          <li>Validation immédiate au clic + passage automatique à la question suivante</li>
+          <li>« Je ne sais pas » sur l&apos;univers et sur la note</li>
+          <li>Famille élue par les questions univers / note / saison, ambrée par défaut</li>
+          <li>Chaque critère de l&apos;écran de fin rejoue sa question sur place</li>
+          <li>2 parfums −10 %, 3 et plus −20 % — et le flacon vole jusqu&apos;au panier</li>
         </ul>
       </div>
 

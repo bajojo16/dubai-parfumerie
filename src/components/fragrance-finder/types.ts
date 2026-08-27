@@ -1,165 +1,75 @@
 /**
- * FragranceFinder — types partagés du quiz olfactif.
+ * FragranceFinder — types du quiz olfactif.
  *
- * Le projet n'est PAS Shopify : la recherche (Q6) et les recommandations
- * s'appuient sur le CATALOGUE LOCAL agrégé (voir data/productAttributes.ts).
+ * Portage du quiz d'AD Parfumerie (archive `quiz-ad-parfumerie`) : huit
+ * questions, une famille olfactive, trois flacons. La question « un parfum que
+ * vous aimez déjà » de l'archive n'est PAS reprise — d'où huit questions et non
+ * neuf, et d'où l'absence de toute notion de « parfum de référence » ici.
+ *
+ * Le catalogue n'est pas redéclaré : le quiz lit `SEARCH_PRODUCTS` de
+ * `@/data/search-catalog`, la même source que la recherche du header.
  */
 
-/** Genre ciblé d'un parfum / d'une réponse. */
-export type Gender = "women" | "men" | "unisex";
+/** Les quatre familles olfactives de `FAMILIES` (search-catalog). */
+export type FamilyKey = "frais" | "floral" | "ambre" | "boise";
 
-/** Tranches de budget (filtre dur). */
-export type BudgetTier = "low" | "mid" | "high";
+/** Comment une question dispose ses options. */
+export type OptionLayout =
+  /** pastilles typographiques (occasion, budget, saison) */
+  | "pill"
+  /** pastilles en aplat de couleur (destinataire, expérience) */
+  | "fill"
+  /** vignettes photo + voile sombre (univers, note) */
+  | "art"
+  /** jauge à trois barres (intensité) */
+  | "gauge";
 
-/**
- * Produit normalisé pour le moteur de reco.
- * Construit à partir des données catalogue existantes + attributs démo.
- */
-export interface CatalogProduct {
-  /** Identifiant panier stable (CartItem.id). */
-  id: string;
-  /** Slug page produit / clé d'attributs. */
-  slug: string;
-  name: string;
-  brand: string;
-  /** Prix TTC dans la devise du catalogue (EUR en démo). */
-  price: number;
-  /** Visuel principal (chemin local /assets/...). */
-  image: string;
-  /** Familles olfactives (slugs stables : amber, woody, floral, fresh, oud, musk, spicy, gourmand, rose). */
-  families: string[];
-  /** Notes saillantes (slugs : oud, rose, vanilla, musk, citrus, spicy, powdery, woody...). */
-  notes: string[];
-  /** Intensité du sillage : 1 = léger, 2 = modéré, 3 = puissant. */
-  intensity: 1 | 2 | 3;
-  /** Genre du parfum. */
-  gender: Gender;
-  /** Vrai si best-seller (bonus de score + badge possible). */
-  isBestseller: boolean;
-  /** Vrai si nouveauté (badge « À découvrir »). */
-  isNew: boolean;
-}
-
-/**
- * Réponses du quiz. Chaque clé = id de question, chaque valeur = slug d'option.
- * `null` = non répondu / passé / « Je ne sais pas ».
- */
-export interface QuizAnswers {
-  /** Q1 : women / men / unisex / gift. */
-  gender: string | null;
-  /** Q2 : niveau (beginner / expert). Pas de filtre dur — bonus de calibrage seulement. */
-  level: string | null;
-  /** Q3 : intensité cible ("1" léger, "2" moyen, "3" intense). */
-  intensity: string | null;
-  /** Q4 : famille olfactive (amber / woody / floral / fresh / none). */
-  family: string | null;
-  /** Q5 : saison (summer / winter / all / none). */
-  season: string | null;
-  /** Q6 : recherche libre d'un parfum aimé (slug catalogue OU texte saisi). */
-  loved: string | null;
-  /** Q7 : note signature (rose / oud / vanilla / musk / saffron / sandalwood / none). */
-  note: string | null;
-  /** Q8 : budget (low / mid / high) — filtre dur. */
-  budget: string | null;
-  /** Q9 : format (sample / bottle / gift / travel). */
-  format: string | null;
-}
-
-/** Clé d'une question (ordre stable). */
-export type QuestionId = keyof QuizAnswers;
-
-/** Une option de réponse (tuile). */
 export interface QuizOption {
-  /** Slug stable utilisé par le scoring (ex : women, amber, oud, summer, low, travel). */
-  value: string;
+  /** libellé affiché — sert aussi de valeur dans le récapitulatif */
   label: string;
-  /** Sous-légende optionnelle. */
+  /** sous-texte discret sous le libellé */
   hint?: string;
   /**
-   * Visuel « matière » optionnel (/quiz/materials/*).
-   * Si absent → fallback dégradé radial (voir Tile.tsx).
+   * Vote pour une famille olfactive. Absent ou "" = l'option ne vote pas
+   * (« Toute saison », destinataire, expérience, occasion, budget).
    */
+  family?: FamilyKey | "";
+  /** aplat de fond — TOUJOURS une variable du design system, jamais un hex */
+  fill?: string;
+  /** visuel de fond (layout "art") */
   image?: string;
-  /** Dégradé radial de repli (CSS background). */
-  gradient?: string;
+  /** nombre de barres allumées sur la jauge (layout "gauge") */
+  gauge?: 1 | 2 | 3;
+  /** Q1 — genre visé, confronté à `SearchProduct.gender` */
+  gender?: string;
   /**
-   * Rendue en pleine largeur, séparée, sous la grille de tuiles (ex. « Je ne sais pas »).
-   * value:"none" est volontairement ignorée par le scoring (aucun filtre).
+   * Q6 — mots-clés cherchés dans la composition. On ne se contente pas du
+   * libellé : « Bois de santal » ne se retrouve nulle part tel quel dans le
+   * catalogue, qui écrit « Santal blanc » — le mot-clé est donc « santal ».
    */
-  fullWidth?: boolean;
+  noteWords?: string[];
+  /** Q7 — bornes de budget, appliquées au TOTAL du trio (voir questions.ts) */
+  min?: number;
+  max?: number;
 }
 
-/** Type d'écran d'une question. */
-export type QuestionKind = "tiles" | "search";
-
-/** Définition d'une question du quiz. */
-export interface Question {
-  id: QuestionId;
-  /** Intitulé (FR par défaut). */
+export interface QuizQuestion {
+  /** clé stable, sert de `key` React et de repère de lecture */
+  id: string;
+  /** intitulé du critère dans le récapitulatif de l'écran de fin */
+  criterion: string;
   title: string;
-  /** Sous-titre / aide. */
   subtitle?: string;
-  kind: QuestionKind;
-  options?: QuizOption[];
-  /** Affiche une action « Passer » discrète (Q6 — recherche). */
-  allowSkip?: boolean;
+  layout: OptionLayout;
+  options: QuizOption[];
+  /** libellé du lien d'évitement (« Je ne sais pas ») — absent = pas de lien */
+  skip?: string;
+  /** encart explicatif posé à côté de la question (Q2) */
+  note?: { title: string; paragraphs: string[] };
 }
 
-/** Badge attribué à une recommandation. */
-export type ResultBadge = "match" | "coup_de_coeur" | "a_decouvrir";
-
-/** Une recommandation finale. */
-export interface Recommendation {
-  product: CatalogProduct;
-  score: number;
-  badge: ResultBadge;
-  /** Phrase « pourquoi ce parfum » (générée par recommend()). */
-  reason: string;
-}
-
-/** Libellés i18n (défauts FR). Passés en props pour rester hors des JSON de messages. */
-export interface FinderLabels {
-  /** Bouton flottant. */
-  openAria: string;
-  /** Étiquette pill visible à côté de la fiole (desktop). */
-  openLabel: string;
-  /** En-tête modal. */
-  eyebrow: string;
-  modalTitle: string;
-  /** Progression : doit contenir {current} et {total}. */
-  questionCounter: string;
-  back: string;
-  unsure: string;
-  skip: string;
-  /** SearchScreen. */
-  searchPlaceholder: string;
-  searchHint: string;
-  searchEmpty: string;
-  freeTextPrefix: string; // « Utiliser : »
-  /** ResultScreen. */
-  resultEyebrow: string;
-  /** Titre singulier (1 reco). */
-  resultTitleOne: string;
-  /** Titre pluriel — doit contenir {count}. */
-  resultTitleMany: string;
-  resultSubtitle: string;
-  badgeMatch: string;
-  badgeCoupDeCoeur: string;
-  badgeADecouvrir: string;
-  addToCart: string;
-  added: string;
-  viewProduct: string;
-  restart: string;
-  /** Opt-in. */
-  optInTitle: string;
-  optInText: string;
-  emailPlaceholder: string;
-  emailCta: string;
-  emailSuccess: string;
-  whatsappCta: string;
-  /** Séparateur entre WhatsApp (prioritaire) et e-mail (secondaire). */
-  optInOr: string;
-  rgpd: string;
-  /** Loading. */
-  loading: string;
-}
+/**
+ * Réponses : index de l'option retenue, par numéro d'étape (0-based).
+ * `null` = question passée (« Je ne sais pas »), clé absente = pas encore posée.
+ */
+export type QuizAnswers = Record<number, number | null>;

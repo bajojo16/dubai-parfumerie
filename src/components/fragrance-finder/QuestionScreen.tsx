@@ -1,108 +1,116 @@
 "use client";
 
 /**
- * QuestionScreen — écran de question à vignettes.
- * Clic sur une tuile = sélection immédiate (le parent gère l'auto-avance ~260ms).
- * Les options `fullWidth` (ex. « Je ne sais pas », value:"none") sont rendues
- * en pleine largeur, séparées, sous la grille — elles auto-avancent aussi mais
- * leur value:"none" est ignorée par le scoring (aucun filtre appliqué).
- * Bouton « Retour » : géré dans ProgressHeader (désactivé sur Q1).
+ * Une question du quiz et ses options — portage des `.q-step` de l'archive.
+ *
+ * Le même composant sert deux fois :
+ *  - en plein écran pendant le parcours (`compact` faux) ;
+ *  - replié dans le récapitulatif de l'écran de fin, quand un critère se rejoue
+ *    sur place (`compact` vrai). Les visuels, les jauges et les sous-textes
+ *    tombent alors, comme dans `.q-inline-opts` : à cette taille ils ne
+ *    montreraient plus rien.
+ *
+ * Styles : bloc `CSS` de `FragranceFinderModal.tsx`.
  */
-import type { Question, FinderLabels } from "./types";
-import { Tile } from "./Tile";
-import { FF } from "./tokens";
+import Image from "next/image";
+import type { QuizQuestion } from "./types";
 
 export function QuestionScreen({
   question,
   selected,
-  reduced,
+  compact = false,
   onSelect,
+  onSkip,
 }: {
-  question: Question;
-  selected: string | null;
-  reduced: boolean;
-  labels: FinderLabels;
-  onSelect: (value: string) => void;
+  question: QuizQuestion;
+  /** index de l'option retenue, `null` si la question a été passée */
+  selected: number | null | undefined;
+  compact?: boolean;
+  onSelect: (optionIndex: number) => void;
+  onSkip: () => void;
 }) {
-  const options = question.options ?? [];
-  const gridOptions = options.filter((o) => !o.fullWidth);
-  const fullWidthOptions = options.filter((o) => o.fullWidth);
-  // 3 colonnes pour 3 ou 6 tuiles (grille compacte sans scroll), 2 colonnes sinon.
-  const cols = gridOptions.length === 3 || gridOptions.length === 6 ? 3 : 2;
+  const withArt = question.layout === "art" && !compact;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
-      <header style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 6 }}>
-        <h2
-          style={{
-            fontFamily: FF.display,
-            fontWeight: 500,
-            fontSize: "clamp(1.7rem, 4.5vw, 2.1rem)",
-            color: FF.ink,
-            margin: 0,
-            lineHeight: 1.12,
-          }}
-        >
-          {question.title}
-        </h2>
-        {question.subtitle && (
-          <p
-            style={{
-              fontFamily: FF.sans,
-              fontWeight: 300,
-              fontSize: "0.92rem",
-              color: FF.muted,
-              margin: 0,
-            }}
-          >
-            {question.subtitle}
-          </p>
-        )}
-      </header>
+    <div className={compact ? "dp-ff-step is-compact" : "dp-ff-step"}>
+      {!compact && (
+        <>
+          <p className="dp-ff-q">{question.title}</p>
+          {question.subtitle && <p className="dp-ff-sub">{question.subtitle}</p>}
+        </>
+      )}
 
       <div
-        role="radiogroup"
+        className={`dp-ff-opts is-${compact ? "pill" : question.layout}`}
+        role="group"
         aria-label={question.title}
-        style={{
-          display: "grid",
-          gridTemplateColumns: `repeat(${cols}, 1fr)`,
-          gap: 12,
-        }}
       >
-        {gridOptions.map((opt) => (
-          <Tile
-            key={opt.value}
-            option={opt}
-            selected={selected === opt.value}
-            reduced={reduced}
-            onSelect={onSelect}
-          />
-        ))}
+        {question.options.map((option, i) => {
+          const on = selected === i;
+          return (
+            <button
+              key={option.label}
+              type="button"
+              className={`dp-ff-opt${on ? " on" : ""}${withArt ? " has-art" : ""}`}
+              aria-pressed={on}
+              onClick={() => onSelect(i)}
+              // L'aplat vient d'une variable du design system (voir questions.ts) :
+              // aucune couleur n'est écrite en dur ici.
+              style={!compact && option.fill ? { ["--dp-ff-fill" as string]: option.fill } : undefined}
+              data-fill={!compact && option.fill ? "" : undefined}
+            >
+              {withArt && option.image && (
+                <>
+                  <Image
+                    className="dp-ff-art"
+                    src={option.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 560px) 45vw, 160px"
+                    style={{ objectFit: "cover" }}
+                  />
+                  {/* Voile : le libellé doit rester lisible sur n'importe quelle
+                      photo. Seul rgba toléré hors tokens (c'est un voile). */}
+                  <span className="dp-ff-scrim" aria-hidden="true" />
+                </>
+              )}
+              <span className="dp-ff-opt-label">{option.label}</span>
+              {!compact && option.gauge && (
+                <span className="dp-ff-gauge" aria-hidden="true">
+                  <i className={option.gauge >= 1 ? "on" : undefined} />
+                  <i className={option.gauge >= 2 ? "on" : undefined} />
+                  <i className={option.gauge >= 3 ? "on" : undefined} />
+                </span>
+              )}
+              {!compact && option.hint && <small>{option.hint}</small>}
+            </button>
+          );
+        })}
+
+        {compact && (
+          // Rejouée depuis le récapitulatif, toute question peut être remise à
+          // « Peu importe » — y compris celles qui n'ont pas de lien d'évitement
+          // pendant le parcours : on ne repasse plus par là pour se corriger.
+          <button type="button" className="dp-ff-inline-skip" onClick={onSkip}>
+            Peu importe
+          </button>
+        )}
       </div>
 
-      {fullWidthOptions.map((opt) => (
-        <button
-          key={opt.value}
-          type="button"
-          role="radio"
-          aria-checked={selected === opt.value}
-          onClick={() => onSelect(opt.value)}
-          style={{
-            width: "100%",
-            padding: "13px 18px",
-            background: selected === opt.value ? FF.cream2 : "transparent",
-            border: `1px dashed ${selected === opt.value ? FF.gold : FF.border}`,
-            borderRadius: 14,
-            color: selected === opt.value ? FF.ink2 : FF.muted,
-            fontFamily: FF.sans,
-            fontSize: "0.88rem",
-            cursor: "pointer",
-            transition: reduced ? "none" : "background .2s, color .2s, border-color .2s",
-          }}
-        >
-          {opt.label}
+      {!compact && question.skip && (
+        <button type="button" className="dp-ff-skip" onClick={onSkip}>
+          {question.skip}
         </button>
-      ))}
+      )}
+
+      {!compact && question.note && (
+        <aside className="dp-ff-note">
+          <span className="dp-ff-note-title">{question.note.title}</span>
+          {question.note.paragraphs.map((p) => (
+            <p key={p}>{p}</p>
+          ))}
+        </aside>
+      )}
     </div>
   );
 }

@@ -4,46 +4,35 @@
  * FragranceFinderButton — bouton flottant fiole (animation respiration)
  * qui ouvre le FragranceFinderModal (quiz olfactif).
  *
- * Périmètre preview : on ne le monte PAS dans le layout global pour l'instant.
- * S'utilise via la page /preview-fragrance-finder.
+ * Apparence validée : ne rien changer ici au dessin du bouton. Seul ce qu'il
+ * ouvre a évolué — la modale porte désormais la réplique du quiz olfactif
+ * d'AD Parfumerie, et va chercher son catalogue elle-même (SEARCH_PRODUCTS,
+ * chargé en import() dynamique) : le bouton n'a plus ni catalogue ni libellés
+ * à lui passer.
  *
- * - Catalogue : LOCAL par défaut (LOCAL_CATALOG), surchargeable via prop `products`.
- * - i18n : labels en props (défauts FR).
- * - prefers-reduced-motion : désactive la respiration.
+ * Le français est écrit en dur, comme dans le reste du header.
+ * prefers-reduced-motion : désactive la respiration.
  */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLocale } from "next-intl";
-import type { CatalogProduct, FinderLabels } from "./types";
-import { LOCAL_CATALOG } from "./data/productAttributes";
-import { DEFAULT_LABELS } from "./labels";
 import { FragranceFinderModal } from "./FragranceFinderModal";
+import { useReducedMotion } from "./useReducedMotion";
 import { FlaconIcon } from "./FlaconIcon";
 import { FF } from "./tokens";
 
-export function FragranceFinderButton({
-  products,
-  labels: labelsProp,
-  locale: localeProp,
-}: {
-  products?: CatalogProduct[];
-  labels?: Partial<FinderLabels>;
-  locale?: string;
-}) {
+/** Libellés du bouton — inchangés, c'est l'étiquette validée par l'utilisateur. */
+const LABELS = {
+  openAria: "Ouvrir le conseiller olfactif",
+  openLabel: "Choisir mon parfum",
+};
+
+export function FragranceFinderButton({ locale: localeProp }: { locale?: string }) {
   const intlLocale = useLocale();
   const locale = localeProp ?? intlLocale;
-  const catalog = products ?? LOCAL_CATALOG;
-  const labels: FinderLabels = { ...DEFAULT_LABELS, ...labelsProp };
 
   const [open, setOpen] = useState(false);
   const [hover, setHover] = useState(false);
-  const [reduced, setReduced] = useState(false);
-
-  useEffect(() => {
-    setReduced(
-      typeof window !== "undefined" &&
-        window.matchMedia?.("(prefers-reduced-motion: reduce)").matches
-    );
-  }, []);
+  const reduced = useReducedMotion();
 
   return (
     <>
@@ -52,7 +41,7 @@ export function FragranceFinderButton({
         onClick={() => setOpen(true)}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}
-        aria-label={labels.openAria}
+        aria-label={LABELS.openAria}
         aria-haspopup="dialog"
         className="ff-btn"
         style={{
@@ -102,7 +91,7 @@ export function FragranceFinderButton({
             zIndex: 1,
           }}
         >
-          {labels.openLabel}
+          {LABELS.openLabel}
         </span>
 
         {/* Disque rond fiole (respiration + halo) à DROITE — au-dessus de la pastille */}
@@ -145,13 +134,7 @@ export function FragranceFinderButton({
         </span>
       </button>
 
-      <FragranceFinderModal
-        open={open}
-        products={catalog}
-        locale={locale}
-        labels={labelsProp}
-        onClose={() => setOpen(false)}
-      />
+      <FragranceFinderModal open={open} locale={locale} onClose={() => setOpen(false)} />
 
       <style>{`
         .ff-btn {

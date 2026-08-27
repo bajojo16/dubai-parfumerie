@@ -42,4 +42,24 @@ export const DEMO_STORIES: ProductStory[] = [
     shopProductHandle: "aurum",
     shop: { price: 49, href: "/promo-flash", name: "Aurum" },
   },
+  {
+    // Khamrah : la coulée d'ambre sur le flacon dit le côté gourmand du parfum
+    // mieux qu'une ligne de notes. Poster extrait de la vidéo elle-même, sur
+    // une image où l'étiquette dorée est lisible — la 1re frame est une macro
+    // sombre qui ne laisse pas reconnaître le produit dans la bulle.
+    id: "khamrah-nectar",
+    videoUrl: "/assets/videos/khamrah-nectar.mp4",
+    posterUrl: "/assets/videos/khamrah-nectar-poster.webp",
+    title: "Khamrah",
+    shopProductHandle: "lattafa-khamrah",
+    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+  },
+  {
+    id: "khamrah-dattes",
+    videoUrl: "/assets/videos/khamrah-dattes.mp4",
+    posterUrl: "/assets/videos/khamrah-dattes-poster.webp",
+    title: "Khamrah · Datte",
+    shopProductHandle: "lattafa-khamrah",
+    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+  },
 ];
