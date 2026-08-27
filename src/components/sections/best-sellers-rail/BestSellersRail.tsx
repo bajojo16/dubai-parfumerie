@@ -1,6 +1,6 @@
 "use client";
 
-import { useId } from "react";
+import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { addItem } from "@/lib/cart";
 import { RailProductCard, type RailProduct, type RailCardLabels } from "./RailProductCard";
 import {
@@ -16,6 +16,20 @@ const C = {
   lines: "#E4DBCB",
 };
 
+/** Libellés accessibles des flèches de défilement */
+export type RailNavLabels = {
+  prev: string;
+  next: string;
+};
+
+const DEFAULT_NAV_LABELS: RailNavLabels = {
+  prev: "Produits précédents",
+  next: "Produits suivants",
+};
+
+/** Largeur d'une carte produit (300) + gap du rail (18) */
+const SCROLL_STEP = 318;
+
 export type BestSellersRailProps = {
   eyebrow: string;
   heading: string;
@@ -27,6 +41,7 @@ export type BestSellersRailProps = {
   locale?: string;
   cardLabels?: Partial<RailCardLabels>;
   editorialLabels?: Partial<EditorialCardLabels>;
+  navLabels?: Partial<RailNavLabels>;
   /**
    * Position de la carte éditoriale vidéo dans le rail (propriété logique) :
    * - "start" (défaut) : au début → gauche en LTR / droite en RTL
@@ -61,12 +76,96 @@ export function BestSellersRail({
   locale = "fr",
   cardLabels,
   editorialLabels,
+  navLabels,
   editorialSide = "start",
 }: BestSellersRailProps) {
   const titleId = useId();
   // Logique RTL : la carte éditoriale passe à droite, le défilement démarre à droite,
   // le voile de bord et la flèche sont miroir via les propriétés logiques (insetInline*).
   const isRTL = locale === "ar";
+  const NAV = { ...DEFAULT_NAV_LABELS, ...navLabels };
+
+  // Rail scrollable (un seul mode rendu à la fois → une seule ref)
+  const railRef = useRef<HTMLDivElement>(null);
+  const [canPrev, setCanPrev] = useState(false);
+  const [canNext, setCanNext] = useState(false);
+
+  // En RTL, scrollLeft est négatif : on raisonne sur la valeur absolue
+  const syncEdges = useCallback(() => {
+    const el = railRef.current;
+    if (!el) return;
+    const max = el.scrollWidth - el.clientWidth;
+    const pos = Math.abs(el.scrollLeft);
+    setCanPrev(pos > 4);
+    setCanNext(pos < max - 4);
+  }, []);
+
+  useEffect(() => {
+    const el = railRef.current;
+    if (!el) return;
+    syncEdges();
+    el.addEventListener("scroll", syncEdges, { passive: true });
+    const ro = new ResizeObserver(syncEdges);
+    ro.observe(el);
+    return () => {
+      el.removeEventListener("scroll", syncEdges);
+      ro.disconnect();
+    };
+  }, [syncEdges, products.length, editorialSide]);
+
+  const scrollByDir = (dir: "prev" | "next") => {
+    const el = railRef.current;
+    if (!el) return;
+    const sign = dir === "next" ? 1 : -1;
+    const rtlSign = isRTL ? -1 : 1;
+    el.scrollBy({ left: sign * rtlSign * SCROLL_STEP, behavior: "smooth" });
+  };
+
+  const navBtn = (dir: "prev" | "next", enabled: boolean, offset: string) => (
+    <button
+      type="button"
+      className="bsr-nav"
+      aria-label={dir === "prev" ? NAV.prev : NAV.next}
+      disabled={!enabled}
+      onClick={() => scrollByDir(dir)}
+      style={{
+        position: "absolute",
+        top: "50%",
+        transform: "translateY(-50%)",
+        ...(dir === "prev" ? { insetInlineStart: offset } : { insetInlineEnd: offset }),
+        width: 44,
+        height: 44,
+        borderRadius: "50%",
+        border: `1px solid ${C.lines}`,
+        background: "#FFFFFF",
+        color: C.ink,
+        boxShadow: "0 2px 10px rgba(26,22,17,0.10)",
+        cursor: enabled ? "pointer" : "default",
+        opacity: enabled ? 1 : 0,
+        pointerEvents: enabled ? "auto" : "none",
+        transition: "opacity .2s ease, border-color .2s ease, color .2s ease",
+        zIndex: 3,
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      <svg
+        width="18"
+        height="18"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        aria-hidden
+        // Miroir en RTL : la flèche « prev » pointe vers la droite
+        style={{ transform: isRTL ? "scaleX(-1)" : "none" }}
+      >
+        <path d={dir === "prev" ? "m15 18-6-6 6-6" : "m9 18 6-6-6-6"} />
+      </svg>
+    </button>
+  );
 
   const add = onAddToCart
     ? onAddToCart
@@ -126,6 +225,7 @@ export function BestSellersRail({
       {editorialSide === "start" && (
         <div style={{ position: "relative", marginTop: 22 }}>
           <div
+            ref={railRef}
             className="bsr-scroll"
             style={{
               display: "flex",
@@ -175,6 +275,10 @@ export function BestSellersRail({
               pointerEvents: "none",
             }}
           />
+
+          {/* Flèches de navigation — alignées sur le conteneur centré */}
+          {navBtn("prev", canPrev, "max(6px, calc((100% - 1240px) / 2 + 2px))")}
+          {navBtn("next", canNext, "max(6px, calc((100% - 1240px) / 2 + 2px))")}
         </div>
       )}
 
@@ -195,6 +299,7 @@ export function BestSellersRail({
           {/* Zone scrollable produits (largeur restante) */}
           <div className="bsr-split-rail">
             <div
+              ref={railRef}
               className="bsr-scroll"
               style={{
                 display: "flex",
@@ -236,6 +341,10 @@ export function BestSellersRail({
                 zIndex: 2,
               }}
             />
+
+            {/* Flèches de navigation — aux bords de la zone produits */}
+            {navBtn("prev", canPrev, "6px")}
+            {navBtn("next", canNext, "6px")}
           </div>
 
           {/* Carte vidéo éditoriale ancrée (toujours visible, non scrollable) */}
@@ -253,6 +362,12 @@ export function BestSellersRail({
       {/* Masque la scrollbar (WebKit) + layout 2 zones du mode "end" */}
       <style>{`
         .bsr-scroll::-webkit-scrollbar { display: none; height: 0; }
+
+        /* Flèches : desktop uniquement (le swipe suffit sur mobile) */
+        .bsr-nav { display: none; }
+        @media (min-width: 768px) { .bsr-nav { display: inline-flex; } }
+        .bsr-nav:hover { border-color: ${C.gold}; color: ${C.gold}; }
+        .bsr-nav:focus-visible { outline: 2px solid ${C.gold}; outline-offset: 2px; }
 
         /* Mode "end" : produits (flex:1) à côté de la vidéo ancrée (largeur fixe) */
         .bsr-split {

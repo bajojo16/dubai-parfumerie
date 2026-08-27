@@ -25,8 +25,10 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useRouter } from "@/i18n/navigation";
 import { addItem } from "@/lib/cart";
 import { BUNDLE_PRODUCTS, type BundleProduct } from "@/data/bundle-products";
+import { SAMPLE_PRODUCTS } from "@/data/sample-selector-products";
 
 /* ── CONFIG (constantes ajustables) ── */
 const BUNDLE_SIZE = 3; // nombre de parfums dans le lot
@@ -44,6 +46,22 @@ const fmt = (n: number) =>
     maximumFractionDigits: 2,
   })}`;
 
+/** Longueur minimale de recherche avant d'afficher le bandeau « hors offre ». */
+const MIN_QUERY = 2;
+/** Nombre max de parfums hors offre listés dans le bandeau. */
+const MAX_INELIGIBLE_SHOWN = 4;
+const ALL_BRANDS = "Toutes";
+
+/** Normalisation recherche : minuscules, sans accents. */
+const norm = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "");
+
+/** Clé d'identité produit inter-catalogues (marque + nom). */
+const idKey = (brand: string, name: string) => `${norm(brand)}|${norm(name)}`;
+
 export type BundleBuilderProps = {
   variant?: "page" | "modal";
   onClose?: () => void;
@@ -59,6 +77,12 @@ export function BundleBuilder({
 }: BundleBuilderProps) {
   const isRTL = locale === "ar";
   const externalModal = variant === "modal";
+  const router = useRouter();
+
+  /* Recherche + filtres de la grille. */
+  const [query, setQuery] = useState("");
+  const [brandFilter, setBrandFilter] = useState<string>(ALL_BRANDS);
+  const [onlyAvailable, setOnlyAvailable] = useState(false);
 
   /* Lot : liste d'ids, doublons autorisés (comme la maquette). */
   const [bundle, setBundle] = useState<string[]>([]);
@@ -189,6 +213,54 @@ export function BundleBuilder({
     [bundle, priceOf]
   );
 
+  /* ── Retour : historique si possible, sinon accueil ── */
+  const goBack = useCallback(() => {
+    if (typeof window !== "undefined" && window.history.length > 1) router.back();
+    else router.push("/");
+  }, [router]);
+
+  /* ── Marques éligibles (chips de filtre) ── */
+  const brands = useMemo(
+    () => [ALL_BRANDS, ...Array.from(new Set(products.map((p) => p.brand))).sort()],
+    [products]
+  );
+
+  const q = norm(query.trim());
+
+  /* ── Grille filtrée : recherche (nom / marque / notes) + marque + stock ── */
+  const filteredProducts = useMemo(
+    () =>
+      products.filter((p) => {
+        if (brandFilter !== ALL_BRANDS && p.brand !== brandFilter) return false;
+        if (onlyAvailable && !p.available) return false;
+        if (!q) return true;
+        return norm(`${p.name} ${p.brand} ${p.notes}`).includes(q);
+      }),
+    [products, brandFilter, onlyAvailable, q]
+  );
+
+  /*
+   * Catalogue du site MOINS les parfums de l'offre : sert à détecter qu'un
+   * parfum cherché existe bien sur le site mais n'est pas éligible au lot.
+   * (`SAMPLE_PRODUCTS` agrège déjà tendances / best-sellers / niche / familles.)
+   */
+  const ineligibleCatalog = useMemo(() => {
+    const eligible = new Set(products.map((p) => idKey(p.brand, p.name)));
+    return SAMPLE_PRODUCTS.filter((p) => !eligible.has(idKey(p.brand, p.name)));
+  }, [products]);
+
+  /* Parfums du site correspondant à la recherche mais HORS offre. */
+  const ineligibleMatches = useMemo(() => {
+    if (q.length < MIN_QUERY) return [];
+    return ineligibleCatalog.filter((p) => norm(`${p.name} ${p.brand}`).includes(q));
+  }, [ineligibleCatalog, q]);
+
+  const resetFilters = useCallback(() => {
+    setQuery("");
+    setBrandFilter(ALL_BRANDS);
+    setOnlyAvailable(false);
+  }, []);
+
   /* ── Rendu d'un panneau (page ou modale) ── */
   const renderPanel = (modalMode: boolean) => {
     const titleId = `b3-title-${modalMode ? "modal" : "page"}`;
@@ -318,6 +390,15 @@ export function BundleBuilder({
         )}
 
         <div className="b3-panel-head">
+          {!modalMode && (
+            <button type="button" className="b3-back" onClick={goBack} aria-label="Revenir à la page précédente">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
+                <path d="M19 12H5" />
+                <path d="m12 19-7-7 7-7" />
+              </svg>
+              Retour
+            </button>
+          )}
           <div className="b3-eyebrow">Offre exclusive</div>
           <h1 id={titleId}>
             3 parfums pour le prix de <b>2</b>
@@ -328,9 +409,109 @@ export function BundleBuilder({
         {/* Barre de lot — collante en haut en variante page (sous le header) */}
         {!modalMode && tray}
 
+        {/* Recherche + filtres */}
+        <div className="b3-filters">
+          <div className="b3-search">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden>
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.2-3.2" />
+            </svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="Rechercher un parfum, une marque, une note…"
+              aria-label="Rechercher un parfum dans l'offre"
+            />
+            {query && (
+              <button type="button" onClick={() => setQuery("")} aria-label="Effacer la recherche">
+                ✕
+              </button>
+            )}
+          </div>
+
+          <div className="b3-chips" role="group" aria-label="Filtrer par marque">
+            {brands.map((b) => (
+              <button
+                key={b}
+                type="button"
+                className={`b3-chip${brandFilter === b ? " active" : ""}`}
+                aria-pressed={brandFilter === b}
+                onClick={() => setBrandFilter(b)}
+              >
+                {b}
+              </button>
+            ))}
+            <button
+              type="button"
+              className={`b3-chip stock${onlyAvailable ? " active" : ""}`}
+              aria-pressed={onlyAvailable}
+              onClick={() => setOnlyAvailable((v) => !v)}
+            >
+              En stock
+            </button>
+          </div>
+
+          <div className="b3-results" aria-live="polite">
+            {filteredProducts.length} parfum{filteredProducts.length > 1 ? "s" : ""} éligible
+            {filteredProducts.length > 1 ? "s" : ""}
+          </div>
+        </div>
+
+        {/* Bandeau : le parfum cherché existe sur le site mais est hors offre */}
+        {ineligibleMatches.length > 0 && (
+          <div className="b3-notice" role="status">
+            <div className="b3-notice-head">
+              <span className="ico" aria-hidden>
+                !
+              </span>
+              <p>
+                {ineligibleMatches.length === 1 ? (
+                  <>
+                    <b>{ineligibleMatches[0].name}</b> ({ineligibleMatches[0].brand}) est vendu sur
+                    le site mais <b>ne fait pas partie de l&apos;offre 3 pour 2</b>.
+                  </>
+                ) : (
+                  <>
+                    <b>{ineligibleMatches.length} parfums</b> correspondant à votre recherche sont
+                    vendus sur le site mais <b>ne font pas partie de l&apos;offre 3 pour 2</b>.
+                  </>
+                )}
+              </p>
+            </div>
+            <ul className="b3-notice-list">
+              {ineligibleMatches.slice(0, MAX_INELIGIBLE_SHOWN).map((p) => (
+                <li key={p.id}>
+                  <span className="thumb">
+                    <Image
+                      src={p.image || FALLBACK_IMAGE}
+                      alt=""
+                      aria-hidden
+                      fill
+                      sizes="36px"
+                      style={{ objectFit: "cover" }}
+                    />
+                  </span>
+                  <span className="txt">
+                    <b>{p.name}</b>
+                    <em>{p.brand}</em>
+                  </span>
+                  <span className="tag">Hors offre</span>
+                </li>
+              ))}
+            </ul>
+            {ineligibleMatches.length > MAX_INELIGIBLE_SHOWN && (
+              <div className="b3-notice-more">
+                + {ineligibleMatches.length - MAX_INELIGIBLE_SHOWN} autre
+                {ineligibleMatches.length - MAX_INELIGIBLE_SHOWN > 1 ? "s" : ""}
+              </div>
+            )}
+          </div>
+        )}
+
         {/* Grille produits */}
         <div className="b3-grid">
-          {products.map((p) => {
+          {filteredProducts.map((p) => {
             const qty = bundle.filter((x) => x === p.id).length;
             const inBundle = qty > 0;
             const soldOut = !p.available;
@@ -378,6 +559,15 @@ export function BundleBuilder({
             );
           })}
         </div>
+
+        {filteredProducts.length === 0 && (
+          <div className="b3-empty">
+            <p>Aucun parfum de l&apos;offre ne correspond à votre recherche.</p>
+            <button type="button" onClick={resetFilters}>
+              Réinitialiser les filtres
+            </button>
+          </div>
+        )}
 
         {/* Barre de lot — collante en bas en variante modale (comportement d'origine) */}
         {modalMode && tray}
@@ -504,6 +694,103 @@ function ScopedStyles() {
         border:1px solid rgba(0,0,0,.15); background:#fff; cursor:pointer;
         font-size:1.1rem; color:#555; display:grid; place-items:center; z-index:2;
       }
+
+      /* Bouton retour (variante page) */
+      .b3-back{
+        position:absolute; top:18px; inset-inline-start:20px;
+        display:inline-flex; align-items:center; gap:7px;
+        font-family:inherit; font-size:.78rem; letter-spacing:.06em;
+        color:#6f6a62; background:#fff; border:1px solid rgba(0,0,0,.12);
+        border-radius:999px; padding:9px 16px 9px 13px; cursor:pointer;
+        transition:.22s; z-index:2;
+      }
+      .b3-back:hover{ color:var(--charcoal); border-color:var(--gold); }
+      .b3-back:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+      @media(max-width:640px){
+        .b3-back{ position:static; margin:0 auto 16px; }
+      }
+
+      /* Recherche + filtres */
+      .b3-filters{
+        display:flex; flex-wrap:wrap; align-items:center; gap:12px;
+        padding:20px clamp(16px,3vw,30px) 4px;
+      }
+      .b3-search{
+        display:flex; align-items:center; gap:9px; flex:1 1 260px; min-width:0;
+        background:#fff; border:1px solid #e2d9c6; border-radius:10px;
+        padding:0 12px; height:44px; color:#9a938a;
+        transition:border-color .2s;
+      }
+      .b3-search:focus-within{ border-color:var(--gold); }
+      .b3-search input{
+        flex:1; min-width:0; border:none; outline:none; background:transparent;
+        font-family:inherit; font-size:.9rem; color:var(--charcoal);
+      }
+      .b3-search input::placeholder{ color:#b0a89b; }
+      .b3-search input::-webkit-search-cancel-button{ display:none; }
+      .b3-search button{
+        border:none; background:transparent; cursor:pointer;
+        color:#9a938a; font-size:.85rem; padding:4px;
+      }
+      .b3-search button:hover{ color:var(--charcoal); }
+
+      .b3-chips{ display:flex; flex-wrap:wrap; gap:7px; }
+      .b3-chip{
+        font-family:inherit; font-size:.74rem; letter-spacing:.04em;
+        color:#6f6a62; background:#fff; border:1px solid #e2d9c6;
+        border-radius:999px; padding:8px 14px; cursor:pointer; transition:.2s;
+      }
+      .b3-chip:hover{ border-color:var(--gold); color:var(--charcoal); }
+      .b3-chip.active{ background:var(--charcoal); border-color:var(--charcoal); color:var(--ivory); }
+      .b3-chip.stock.active{ background:var(--gold); border-color:var(--gold); color:var(--charcoal); }
+      .b3-chip:focus-visible{ outline:2px solid var(--gold); outline-offset:2px; }
+
+      .b3-results{ font-size:.76rem; color:#9a938a; margin-inline-start:auto; white-space:nowrap; }
+
+      /* Bandeau « parfum hors offre » */
+      .b3-notice{
+        margin:14px clamp(16px,3vw,30px) 0;
+        background:#fdf6e3; border:1px solid #e8d9a8;
+        border-inline-start:3px solid var(--gold);
+        border-radius:10px; padding:14px 16px;
+      }
+      .b3-notice-head{ display:flex; align-items:flex-start; gap:10px; }
+      .b3-notice-head .ico{
+        flex:0 0 auto; width:20px; height:20px; border-radius:50%;
+        background:var(--gold); color:var(--charcoal);
+        display:grid; place-items:center; font-weight:700; font-size:.76rem;
+      }
+      .b3-notice-head p{ margin:0; font-size:.86rem; color:#6b5a2b; line-height:1.5; }
+      .b3-notice-head b{ color:var(--charcoal); font-weight:600; }
+
+      .b3-notice-list{ list-style:none; margin:12px 0 0; padding:0; display:grid; gap:8px; }
+      .b3-notice-list li{
+        display:flex; align-items:center; gap:10px;
+        background:#fff; border:1px solid #efe4c9; border-radius:8px; padding:7px 10px;
+      }
+      .b3-notice-list .thumb{
+        position:relative; width:36px; height:36px; flex:0 0 auto;
+        border-radius:6px; overflow:hidden; background:#f3ece0;
+      }
+      .b3-notice-list .txt{ display:flex; flex-direction:column; min-width:0; }
+      .b3-notice-list .txt b{ font-size:.85rem; color:var(--charcoal); font-weight:600; }
+      .b3-notice-list .txt em{ font-style:normal; font-size:.72rem; color:#9a938a; }
+      .b3-notice-list .tag{
+        margin-inline-start:auto; font-size:.62rem; letter-spacing:.08em;
+        text-transform:uppercase; font-weight:600;
+        background:#f2e6c9; color:#8a6d10; padding:4px 9px; border-radius:6px; white-space:nowrap;
+      }
+      .b3-notice-more{ margin-top:8px; font-size:.75rem; color:#9a938a; }
+
+      /* État vide */
+      .b3-empty{ text-align:center; padding:34px 20px 10px; }
+      .b3-empty p{ margin:0 0 14px; color:#6f6a62; font-size:.92rem; }
+      .b3-empty button{
+        font-family:inherit; font-size:.78rem; letter-spacing:.08em; text-transform:uppercase;
+        background:var(--charcoal); color:var(--ivory); border:none;
+        border-radius:9px; padding:12px 22px; cursor:pointer;
+      }
+      .b3-empty button:hover{ background:#000; }
 
       /* Grille produits */
       .b3-grid{
