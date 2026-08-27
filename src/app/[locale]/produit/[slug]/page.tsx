@@ -4,6 +4,8 @@ import { Link } from "@/i18n/navigation";
 import VolumeSelector from "./VolumeSelector";
 import AddToCart from "./AddToCart";
 import ProductGallery from "./ProductGallery";
+import DeliveryEstimate from "./DeliveryEstimate";
+import ProductVideoStrip from "./ProductVideoStrip";
 import { StoryBubbles } from "@/components/sections/StoryBubbles";
 import { DEMO_STORIES } from "@/data/product-stories";
 import { allProductSlugs, resolveProduct } from "@/data/product-resolve";
@@ -351,28 +353,25 @@ export default async function ProductPage({ params }: PageProps) {
             {/* Add to cart (client) */}
             <AddToCart productName={product.name} price={product.price} />
 
+            {/* Estimateur de livraison — client, car la date dépend de l'heure
+                courante (voir le composant : rien n'est calculé au rendu serveur). */}
+            <DeliveryEstimate locale={locale} />
+
+            {/* Miniatures vidéo du produit (cases vides = « à venir ») */}
+            <ProductVideoStrip
+              productSlug={slug}
+              productName={product.name}
+              productImage={product.image}
+            />
+
             {/* Stories produit (bulles → lecteur plein écran) */}
             <StoryBubbles stories={DEMO_STORIES} locale={locale} />
 
 
-            {/* Delivery estimate */}
-            <div
-              style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-                fontSize: "var(--t-sm)",
-                color: "var(--ink-500)",
-              }}
-            >
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" strokeWidth="1.5" aria-hidden="true">
-                <path d="M5 12.5L8.5 16L19 8" strokeLinecap="round" strokeLinejoin="round"/>
-              </svg>
-              <span>
-                Livraison offerte dès 60 € · Expédié sous{" "}
-                <strong>24 h ouvrées</strong>
-              </span>
-            </div>
+            {/* L'ancienne ligne « Livraison offerte dès 60 € · Expédié sous 24 h
+                ouvrées » a été retirée : le bloc `DeliveryEstimate` ci-dessus dit
+                la même chose, en mieux, et lit le seuil depuis `src/data/carriers.ts`
+                au lieu de le répéter en dur. */}
 
             {/* Wishlist + Share */}
             <div style={{ display: "flex", gap: "0.75rem" }}>

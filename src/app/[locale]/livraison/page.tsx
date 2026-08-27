@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { CARRIERS } from "@/data/carriers";
 
 export const metadata: Metadata = {
   title: "Livraison & Retours",
@@ -18,7 +19,9 @@ const rows = [
   { zone: "International", delay: "5-7 jours", price: "dès 14,90 €" },
 ];
 
-const carriers = ["Colissimo", "Mondial Relay", "Chronopost", "DHL Express"];
+// La liste des transporteurs vit désormais dans `src/data/carriers.ts` : elle est
+// aussi lue par l'estimateur de livraison de la fiche produit, qui a en plus
+// besoin des délais. Une seule liste, donc, au lieu de deux qui divergent.
 
 export default function LivraisonPage() {
   return (
@@ -68,8 +71,8 @@ export default function LivraisonPage() {
       <section style={{ maxWidth: 1100, margin: "0 auto", padding: "16px 24px 32px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
           <span style={{ fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-400)", letterSpacing: ".08em", textTransform: "uppercase" }}>Transporteurs</span>
-          {carriers.map(c => (
-            <span key={c} style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-700)", background: "var(--surface-cream)", border: "1px solid var(--line-200)", borderRadius: "var(--r-sm)", padding: "6px 14px" }}>{c}</span>
+          {CARRIERS.map(c => (
+            <span key={c.id} style={{ fontFamily: "var(--font-sans)", fontSize: "13px", color: "var(--ink-700)", background: "var(--surface-cream)", border: "1px solid var(--line-200)", borderRadius: "var(--r-sm)", padding: "6px 14px" }}>{c.name}</span>
           ))}
         </div>
       </section>
