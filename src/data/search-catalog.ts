@@ -190,6 +190,20 @@ export function brandLogo(name: string): string | undefined {
   return BRAND_LOGOS[norm(name)];
 }
 
+// ─── Films « fiole fixe » ────────────────────────────────────────────────────
+// Le flacon reste net et immobile pendant que le décor bouge autour : c'est le
+// seul plan qui montre CE flacon-là de bout en bout. La recherche le préfère au
+// packshot quand il existe — un visuel fixe ne distingue pas deux références
+// d'une même maison, un film de la fiole si.
+// Clé = slug produit. Table explicite plutôt que dérivée des stories : toutes
+// les vidéos du site ne sont pas des fioles fixes, et seule celle-ci l'est.
+const FIOLE_FIXE: Record<string, { video: string; poster: string }> = {
+  "lattafa-khamrah": {
+    video: "/assets/videos/khamrah-fiole-fixe.mp4",
+    poster: "/assets/videos/khamrah-fiole-fixe-poster.webp",
+  },
+};
+
 // ─── Agrégation ──────────────────────────────────────────────────────────────
 
 type RawProduct = Omit<SearchProduct, "id" | "slug" | "keyName" | "keyBrand" | "keyNotes" | "keyAll">;
@@ -342,11 +356,16 @@ function dedupe(list: RawProduct[]): SearchProduct[] {
     // vers /promo-flash ou /offres/lot-3-pour-2 — une page de liste, pas la
     // fiche du produit cliqué : on leur en donne une.
     const slug = p.href.startsWith("/produit/") ? p.href.slice("/produit/".length) : id;
+    const fioleFixe = FIOLE_FIXE[slug];
     return {
     ...p,
     id,
     slug,
     href: `/produit/${slug}`,
+    // Le film de la fiole prime sur la vidéo de carte héritée des tendances.
+    // L'image reste le packshot : c'est lui qui sert de poster avant lecture et
+    // d'illustration dans le quiz, où un fond ambré chargé se lirait moins bien.
+    video: fioleFixe?.video ?? p.video,
     notes: p.notes.map(capitalize),
     keyName: norm(p.name),
     keyBrand: norm(p.brand),
