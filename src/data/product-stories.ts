@@ -27,12 +27,16 @@ export const DEMO_STORIES: ProductStory[] = [
     videoUrl: "/assets/videos/reef33.mp4",
     posterUrl: "/assets/videos/reef33-poster.webp",
     title: "Reef 33",
+    shopProductHandle: "reef-33",
+    shop: { price: 49.9, href: "/produit/reef-33", name: "Reef 33" },
   },
   {
     id: "oud-roses",
     videoUrl: "/assets/videos/oud-roses.mp4",
     posterUrl: "/assets/videos/oud-roses-poster.webp",
     title: "Oud & Roses",
+    shopProductHandle: "oud-roses",
+    shop: { price: 79.9, href: "/produit/oud-roses", name: "Oud & Roses" },
   },
   {
     id: "aurum",

@@ -289,8 +289,8 @@ export function StoryPlayer({
               aria-current={i === index}
               style={{
                 position: "relative",
-                width: 64,
-                height: 88,
+                width: 82,
+                height: 108,
                 borderRadius: 12,
                 overflow: "hidden",
                 cursor: "pointer",
@@ -302,22 +302,47 @@ export function StoryPlayer({
             >
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={s.posterUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: i === index ? 1 : 0.7 }} />
-              {s.shop && (
+              {/* Nom et prix sur un dégradé plutôt qu'une pastille opaque : le bas
+                  des posters est sombre, le texte y reste lisible sans masquer le
+                  flacon. Une vignette sans nom obligeait à ouvrir chaque story
+                  pour savoir de quel parfum il s'agissait. */}
+              {(s.title || s.shop) && (
                 <span
                   style={{
                     position: "absolute",
-                    bottom: 3,
-                    insetInline: 3,
+                    insetInline: 0,
+                    bottom: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 1,
+                    padding: "12px 4px 4px",
+                    background: "linear-gradient(to top, rgba(0,0,0,.82) 40%, transparent)",
                     fontFamily: "var(--font-sans)",
-                    fontSize: 9,
-                    fontWeight: 700,
-                    color: "#fff",
-                    background: "rgba(0,0,0,.6)",
-                    borderRadius: 6,
-                    padding: "1px 0",
                   }}
                 >
-                  {fmtPrice(s.shop.price)}
+                  {s.title && (
+                    <span
+                      style={{
+                        fontSize: 9,
+                        lineHeight: 1.15,
+                        fontWeight: 600,
+                        color: "#fff",
+                        // deux lignes au plus : « Réveil en Lusitanie » ne doit pas
+                        // pousser le prix hors de la vignette
+                        display: "-webkit-box",
+                        WebkitLineClamp: 2,
+                        WebkitBoxOrient: "vertical",
+                        overflow: "hidden",
+                      }}
+                    >
+                      {s.title}
+                    </span>
+                  )}
+                  {s.shop && (
+                    <span style={{ fontSize: 9, fontWeight: 700, color: "var(--gold-300)" }}>
+                      {fmtPrice(s.shop.price)}
+                    </span>
+                  )}
                 </span>
               )}
             </button>
