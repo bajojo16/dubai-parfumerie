@@ -70,8 +70,9 @@ export const DEMO_TRENDS: TrendProduct[] = [
     href: "/produit/oud-roses",
     variantId: "oud-roses-50",
     image: "/assets/products/oud-roses.webp",
-    cardVideo: "/assets/videos/grecia-trend.mp4",
-    video: "/assets/videos/grecia-trend.mp4",
+    // grecia-trend.mp4 montre Grecia, pas Oud & Roses.
+    cardVideo: "/assets/videos/oud-roses.mp4",
+    video: "/assets/videos/oud-roses.mp4",
     rank: 2,
     price: 72,
     rating: 4.9,
@@ -96,8 +97,10 @@ export const DEMO_TRENDS: TrendProduct[] = [
     href: "/produit/reef-33",
     variantId: "reef-33-50",
     image: "/assets/products/reef-33.webp",
-    cardVideo: "/assets/videos/marshmallow-trend.mp4",
-    video: "/assets/videos/marshmallow-trend.mp4",
+    // marshmallow-trend.mp4 montrait Marshmallow Blush (Paris Corner) : un autre
+    // flacon, dans un décor de bonbons, sous le nom « Reef 33 ».
+    cardVideo: "/assets/videos/reef33.mp4",
+    video: "/assets/videos/reef33.mp4",
     rank: 3,
     price: 64,
     rating: 4.7,
@@ -148,7 +151,8 @@ export const DEMO_TRENDS: TrendProduct[] = [
     variantId: "amber-nuit-50",
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-5.jpg",
-    video: "/assets/videos/aurum-v4.mp4",
+    // Pas de film propre à Amber Nuit : aurum-v4.mp4 montre le flacon d'Aurum.
+    // On préfère la carte sans vidéo à la vidéo d'un autre parfum.
     rank: 5,
     price: 69,
     rating: 4.5,

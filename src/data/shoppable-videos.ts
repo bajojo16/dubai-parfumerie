@@ -24,7 +24,7 @@ export const DEMO: ShoppableVideo[] = [
   {
     id: "vanilla-voyage",
     videoUrl: "/assets/videos/vanilla-voyage.mp4",
-    posterUrl: "/assets/prod-1.jpg",
+    posterUrl: "/assets/videos/vanilla-voyage-poster.webp",
     productHandle: "vanilla-voyage",
     product: {
       name: "Vanilla Voyage",
@@ -38,7 +38,7 @@ export const DEMO: ShoppableVideo[] = [
   {
     id: "oud-roses",
     videoUrl: "/assets/videos/oud-roses.mp4",
-    posterUrl: "/assets/prod-2.jpg",
+    posterUrl: "/assets/videos/oud-roses-poster.webp",
     productHandle: "oud-roses",
     product: {
       name: "Oud & Roses",
@@ -52,7 +52,7 @@ export const DEMO: ShoppableVideo[] = [
   {
     id: "aurum",
     videoUrl: "/assets/videos/aurum.mp4",
-    posterUrl: "/assets/prod-4.jpg",
+    posterUrl: "/assets/videos/aurum-poster.webp",
     productHandle: "aurum",
     product: {
       name: "Aurum",
@@ -66,7 +66,7 @@ export const DEMO: ShoppableVideo[] = [
   {
     id: "reef-33",
     videoUrl: "/assets/videos/reef33.mp4",
-    posterUrl: "/assets/reef/reef33.jpg",
+    posterUrl: "/assets/videos/reef33-poster.webp",
     productHandle: "reef-33",
     product: {
       name: "Reef 33",

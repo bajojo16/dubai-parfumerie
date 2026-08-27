@@ -17,7 +17,7 @@ export const DEMO_STORIES: ProductStory[] = [
   {
     id: "vanilla-voyage",
     videoUrl: "/assets/videos/vanilla-voyage.mp4",
-    posterUrl: "/assets/prod-1.jpg",
+    posterUrl: "/assets/videos/vanilla-voyage-poster.webp",
     title: "Vanilla Voyage",
     shopProductHandle: "vanilla-voyage",
     shop: { price: 59, href: "/promo-flash", name: "Vanilla Voyage" },
@@ -25,19 +25,19 @@ export const DEMO_STORIES: ProductStory[] = [
   {
     id: "reef-33",
     videoUrl: "/assets/videos/reef33.mp4",
-    posterUrl: "/assets/reef/reef33.jpg",
+    posterUrl: "/assets/videos/reef33-poster.webp",
     title: "Reef 33",
   },
   {
     id: "oud-roses",
     videoUrl: "/assets/videos/oud-roses.mp4",
-    posterUrl: "/assets/prod-2.jpg",
+    posterUrl: "/assets/videos/oud-roses-poster.webp",
     title: "Oud & Roses",
   },
   {
     id: "aurum",
     videoUrl: "/assets/videos/aurum-v4.mp4",
-    posterUrl: "/assets/prod-4.jpg",
+    posterUrl: "/assets/videos/aurum-poster.webp",
     title: "Aurum",
     shopProductHandle: "aurum",
     shop: { price: 49, href: "/promo-flash", name: "Aurum" },
