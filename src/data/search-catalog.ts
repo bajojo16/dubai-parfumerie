@@ -160,6 +160,34 @@ export function familyOf(p: SearchProduct): string {
   return winner;
 }
 
+// ─── Logos de maison ─────────────────────────────────────────────────────────
+// Les vrais logos vivent dans /public/brands/ (déjà utilisés par BrandCard sur la
+// page « Marques »). La recherche les réutilise : une vignette de produit à la
+// place d'un logo faisait se ressembler toutes les maisons — et les visuels
+// /assets/prod-*.jpg sont partagés entre plusieurs marques.
+// Les maisons sans fichier retombent sur leur monogramme (initiale).
+const BRAND_LOGOS: Record<string, string> = {
+  lattafa: "/brands/lattafa.jpg",
+  reef: "/brands/reef.jpg",
+  "al haramain": "/brands/alharamain.jpg",
+  "ahmed al maghribi": "/brands/ahmed.jpg",
+  "paris corner": "/brands/pariscorner.jpg",
+  "swiss arabian": "/brands/swissarabian.jpg",
+  "oud elite": "/brands/oudelite.jpg",
+  "maison asrar": "/brands/asrar.jpg",
+  asrar: "/brands/asrar.jpg",
+  rasasi: "/brands/rasasi.jpg",
+  afnan: "/brands/afnan.jpg",
+  "maison alhambra": "/brands/alhambra.jpg",
+  alhambra: "/brands/alhambra.jpg",
+  "ard al zaafaran": "/brands/ardalzaafaran.jpg",
+};
+
+/** Logo de la maison, ou undefined — l'appelant affiche alors l'initiale. */
+export function brandLogo(name: string): string | undefined {
+  return BRAND_LOGOS[norm(name)];
+}
+
 // ─── Agrégation ──────────────────────────────────────────────────────────────
 
 type RawProduct = Omit<SearchProduct, "id" | "keyName" | "keyBrand" | "keyNotes" | "keyAll">;
@@ -334,7 +362,8 @@ export const SEARCH_BRANDS: SearchBrand[] = (() => {
   const known = BRANDS.map((b) => ({
     name: b.name,
     city: b.city,
-    image: b.image,
+    // le logo d'abord ; `b.image` est un visuel produit, partagé entre marques
+    image: brandLogo(b.name),
     count: counts.get(norm(b.name)) || 0,
     keyAll: norm(`${b.name} ${b.city}`),
   }));
@@ -344,8 +373,7 @@ export const SEARCH_BRANDS: SearchBrand[] = (() => {
   const extra: SearchBrand[] = [];
   for (const [k, label] of labels) {
     if (knownKeys.has(k)) continue;
-    const first = SEARCH_PRODUCTS.find((p) => norm(p.brand) === k);
-    extra.push({ name: label, image: first?.image, count: counts.get(k) || 0, keyAll: k });
+    extra.push({ name: label, image: brandLogo(label), count: counts.get(k) || 0, keyAll: k });
   }
 
   return [...known, ...extra].sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, "fr"));

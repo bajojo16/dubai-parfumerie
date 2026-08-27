@@ -115,16 +115,19 @@ const olfactoryFamilies = [
 const brands: BrandCardData[] = [
   { name: "Lattafa", founded: 1980, origin: "Sharjah", count: "80+", logo: "/brands/lattafa.jpg", logoHover: "/brands/lattafa-hover.jpg", cover: true, coverBg: "#262626", coverBgHover: "#0A0A0A" },
   { name: "Reef", founded: 1995, origin: "UAE", count: "40+", logo: "/brands/reef.jpg", logoHover: "/brands/reef-hover.jpg", cover: true },
-  { name: "Al Haramain", founded: 1970, origin: "Dubaï", count: "60+", logo: "/brands/alharamain.jpg", logoHover: "/brands/alharamain-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#FCFBF9" },
+  { name: "Al Haramain", founded: 1970, origin: "Dubaï", count: "60+", logo: "/brands/alharamain.jpg", logoHover: "/brands/alharamain-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
   { name: "Ahmed Al Maghribi", founded: 2005, origin: "Dubaï", count: "30+", logo: "/brands/ahmed.jpg", logoHover: "/brands/ahmed-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
   { name: "Oud Elite", origin: "UAE", count: "40+", logo: "/brands/oudelite.jpg", logoHover: "/brands/oudelite-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
   { name: "Swiss Arabian", founded: 1974, origin: "Dubaï", count: "70+", logo: "/brands/swissarabian.jpg", logoHover: "/brands/swissarabian-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
   { name: "Paris Corner", founded: 2010, origin: "France/UAE", count: "35+", logo: "/brands/pariscorner.jpg", logoHover: "/brands/pariscorner-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
   { name: "Maison Asrar", origin: "Dubaï", count: "25+", logo: "/brands/asrar.jpg", logoHover: "/brands/asrar-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
-  { name: "Rasasi", founded: 1979, origin: "Dubaï", count: "50+" },
-  { name: "Afnan", founded: 1997, origin: "Sharjah", count: "45+" },
-  { name: "Maison Alhambra", origin: "UAE", count: "60+" },
-  { name: "Ard Al Zaafaran", founded: 2007, origin: "Dubaï", count: "40+" },
+  // Ces 4 maisons n'ont pas de variante survol : le logo officiel n'existe qu'en
+  // une seule version. BrandCard retombe sur `logo` (`logoHover ?? logo`), donc on
+  // garde le meme fond au repos et au survol pour eviter un clignotement.
+  { name: "Rasasi", founded: 1979, origin: "Dubaï", count: "50+", logo: "/brands/rasasi.jpg", logoHover: "/brands/rasasi-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
+  { name: "Afnan", founded: 1997, origin: "Sharjah", count: "45+", logo: "/brands/afnan.jpg", logoHover: "/brands/afnan-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
+  { name: "Maison Alhambra", origin: "UAE", count: "60+", logo: "/brands/alhambra.jpg", logoHover: "/brands/alhambra-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
+  { name: "Ard Al Zaafaran", founded: 2007, origin: "Dubaï", count: "40+", logo: "/brands/ardalzaafaran.jpg", logoHover: "/brands/ardalzaafaran-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
 ];
 
 const faqItems = [
@@ -717,7 +720,11 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
+      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────────
+           Masquée sur la page d'accueil (demande du 27/08/2026). Le code et
+           les données restent en place : remettre `false` à `true` pour la
+           rétablir. La section vit toujours sur /preview-twin-compact. */}
+      {false && (
       <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px 40px" }}>
         <div style={{ maxWidth: 1040, margin: "0 auto" }}>
           <SectionHeader
@@ -728,6 +735,7 @@ export default function HomePageClient() {
           <OlfactiveTwin matches={OLFACTIVE_TWINS} variant="compact" locale={locale} />
         </div>
       </section>
+      )}
 
       {/* ── ROUE DES SENTEURS interactive (sous Le catalogue) ─────── */}
       <section id="roue-senteurs" style={{ background: "var(--surface-cream)", padding: "0 0 24px" }}>

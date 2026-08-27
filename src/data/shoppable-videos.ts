@@ -29,7 +29,7 @@ export const DEMO: ShoppableVideo[] = [
     product: {
       name: "Vanilla Voyage",
       price: 59,
-      thumbnailUrl: "/assets/prod-1.jpg",
+      thumbnailUrl: "/assets/products/vanilla-voyage.webp",
       available: true,
       href: "/produit/vanilla-voyage",
       variantId: "vanilla-voyage-100ml",
@@ -43,7 +43,7 @@ export const DEMO: ShoppableVideo[] = [
     product: {
       name: "Oud & Roses",
       price: 79,
-      thumbnailUrl: "/assets/prod-2.jpg",
+      thumbnailUrl: "/assets/products/oud-roses.webp",
       available: false,
       href: "/produit/oud-roses",
       variantId: "oud-roses-100ml",
@@ -57,7 +57,7 @@ export const DEMO: ShoppableVideo[] = [
     product: {
       name: "Aurum",
       price: 49,
-      thumbnailUrl: "/assets/prod-4.jpg",
+      thumbnailUrl: "/assets/products/aurum.webp",
       available: true,
       href: "/produit/aurum",
       variantId: "aurum-100ml",
@@ -71,7 +71,7 @@ export const DEMO: ShoppableVideo[] = [
     product: {
       name: "Reef 33",
       price: 39,
-      thumbnailUrl: "/assets/reef/reef33.jpg",
+      thumbnailUrl: "/assets/products/reef-33.webp",
       available: true,
       href: "/produit/reef-33",
       variantId: "reef-33-100ml",

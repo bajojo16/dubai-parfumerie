@@ -1051,7 +1051,8 @@ const CSS = `
   background: var(--surface-image); flex: 0 0 auto;
   display: flex; align-items: center; justify-content: center;
 }
-.dp-rch-brand-vis img { width: 100%; height: 100%; object-fit: cover; }
+.dp-rch-brand-vis { background: var(--surface-white); }
+.dp-rch-brand-vis img { width: 100%; height: 100%; object-fit: contain; padding: 2px; }
 .dp-rch-brand-vis b { font-family: var(--font-display); color: var(--gold-500); }
 .dp-rch-brand-txt {
   font-size: var(--t-body); color: var(--ink-900);

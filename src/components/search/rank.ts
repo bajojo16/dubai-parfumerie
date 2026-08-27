@@ -93,10 +93,28 @@ export function search(query: string): SearchResults {
   };
 }
 
-/** Écran d'accueil : les références disponibles les mieux renseignées. */
+/**
+ * Références mises en avant sur l'écran d'accueil de la recherche, dans cet ordre.
+ * Clé = `norm(marque) + "|" + norm(nom)` — voir l'identité de déduplication du
+ * catalogue. En production ces vitrines viendraient du back-office ; ici la liste
+ * est explicite parce que « les mieux notées » ne donnait pas les flacons que la
+ * boutique veut montrer en premier.
+ */
+const FEATURED = ["reef|reef 33", "lattafa|yara"];
+
+/** Écran d'accueil : les vitrines d'abord, puis les références les mieux notées. */
 export function suggestions(limit = 10): SearchProduct[] {
-  return SEARCH_PRODUCTS.filter((p) => p.image && p.available)
+  const shown = SEARCH_PRODUCTS.filter((p) => p.image && p.available);
+  const rank = (p: SearchProduct) => FEATURED.indexOf(`${p.keyBrand}|${p.keyName}`);
+
+  return shown
     .slice()
-    .sort((a, b) => b.popularity - a.popularity || b.notes.length - a.notes.length)
+    .sort((a, b) => {
+      const ra = rank(a);
+      const rb = rank(b);
+      // une vitrine passe devant tout le reste, et elles gardent leur ordre déclaré
+      if (ra !== rb) return (ra < 0 ? Infinity : ra) - (rb < 0 ? Infinity : rb);
+      return b.popularity - a.popularity || b.notes.length - a.notes.length;
+    })
     .slice(0, limit);
 }

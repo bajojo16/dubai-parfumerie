@@ -5,6 +5,11 @@
  *
  * En production, `product` serait résolu depuis le catalogue via `productHandle`
  * (nom / prix / image / lien réels). Ici les champs sont fournis pour la preview.
+ *
+ * Visuels : seuls les parfums dont la photo existe en banque pointent vers leur
+ * propre packshot (/assets/products/*.webp). Les autres gardent volontairement un
+ * visuel générique /assets/prod-*.jpg — mieux vaut un flacon neutre qu'un flacon
+ * d'un AUTRE parfum sous le mauvais nom. À remplacer dès que la photo existe.
  */
 export type OlfactiveMatch = {
   key: string;
@@ -39,7 +44,7 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     productHandle: "lattafa-yara",
     family: "Ambré · Sucré · Floral",
     description: "Safran lumineux, ambre cristallin et fleurs poudrées — une signature addictive.",
-    product: { name: "Yara", brand: "Lattafa", price: 18.9, image: "/assets/prod-1.jpg", href: "/promo-flash" },
+    product: { name: "Yara", brand: "Lattafa", price: 18.9, image: "/assets/products/yara.webp", href: "/promo-flash" },
   },
   {
     key: "angels-share",

@@ -4,9 +4,13 @@
  *
  * En production : bottleImage / decorAccents pointeront vers des assets dédiés,
  * et le prix/stock/variante sont résolus côté serveur via `slug`.
- * Ici, données démo : on réutilise des visuels produit existants
- * (/assets/oils/*.png) comme flacon, et les icônes de familles
- * pointent vers /assets/scents/*.jpg (fallback pastille or si manquant).
+ * `bottleImage` doit être un PNG détouré (fond transparent) : la carte fait
+ * déborder le flacon hors du cadre avec un `drop-shadow`, un fond opaque
+ * découperait un rectangle visible. Chaque huile pointe donc vers SON propre
+ * détourage dans /assets/oils/ — jamais un flacon générique, sinon le nom
+ * affiché ne correspond pas au visuel.
+ * Les icônes de familles pointent vers /assets/scents/*.jpg
+ * (fallback pastille or si manquant).
  * decorAccents est optionnel : aucun asset "accent" décoratif n'existe
  * encore dans public/, donc on ne le renseigne pas (évite les 404).
  */
@@ -60,7 +64,7 @@ export const DEMO: OilProduct[] = [
     brand: "Al Haramain",
     href: "/produit/noora",
     variantId: "noora",
-    bottleImage: "/assets/oils/silk.png",
+    bottleImage: "/assets/oils/noora.png",
     volume: "12 ml",
     gender: "Femme",
     price: 27.9,

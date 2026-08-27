@@ -33,7 +33,7 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     collectionSlug: "oud",
     products: [
       { name: "Oud Mood", brand: "Lattafa", price: 32.9, image: "/assets/prod-1.jpg", href: "/produit/oud-mood" },
-      { name: "Shaghaf Oud", brand: "Swiss Arabian", price: 39.9, image: "/assets/prod-2.jpg", href: "/produit/shaghaf-oud" },
+      { name: "Shaghaf Oud", brand: "Swiss Arabian", price: 39.9, image: "/assets/products/shaghaf-oud.webp", href: "/produit/shaghaf-oud" },
     ],
   },
   {

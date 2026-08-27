@@ -10,16 +10,20 @@ import { useSyncExternalStore } from "react";
 // de la maquette, pas une fonctionnalité produit. On le coupe donc au build
 // (`process.env.NODE_ENV`), ce qui permet aussi au bundler de l'éliminer.
 //
-// LIMITE ASSUMÉE — les media queries : la contrainte est appliquée à un
-// conteneur (`.dp-viewport-frame`), pas à la fenêtre. Les `@media` du site
-// continuent donc de réagir à la largeur RÉELLE du navigateur, pas à celle du
-// cadre. Reproduire fidèlement les breakpoints imposerait une <iframe>, qui
-// remonterait tout l'arbre React et casserait la navigation : hors sujet pour
-// une maquette. Pour valider un breakpoint, réduire la vraie fenêtre.
-// Même raison pour les éléments `position: fixed` du site (bulle WhatsApp,
-// modales…) : ils restent ancrés au viewport réel et non au cadre, car ajouter
-// un `transform` au cadre pour créer un bloc conteneur les positionnerait par
-// rapport à toute la hauteur du document.
+// MOBILE et TABLETTE ouvrent une VRAIE fenêtre du navigateur à la taille de
+// l'appareil. C'est le seul moyen d'obtenir un aperçu fidèle : les `@media` du
+// site, `100vh`, et les éléments `position: fixed` réagissent tous à la largeur
+// de la fenêtre — un simple cadre à l'intérieur de la page ne les déclenche pas.
+// La fenêtre est nommée par appareil, donc un second clic la réutilise et la
+// redimensionne au lieu d'en empiler une nouvelle.
+//
+// Deux réserves :
+//   - `window.open` dimensionne la fenêtre entière, chrome du navigateur
+//     compris. On ajoute donc une marge (BROWSER_CHROME) pour que le viewport
+//     tombe juste ; l'ajustement reste approximatif selon le navigateur.
+//   - la fenêtre ouverte affiche elle aussi la barre. Elle s'y sait « fenêtre
+//     d'aperçu » (via `window.name`) et se contente d'y redimensionner la
+//     fenêtre courante, sans jamais en ouvrir une troisième.
 
 /** Clés de persistance : le choix survit aux rechargements pendant la relecture. */
 const STORAGE_MODE = "dp_viewport";
@@ -29,12 +33,35 @@ const IS_DEV = process.env.NODE_ENV === "development";
 
 type ViewportMode = "mobile" | "tablet" | "desktop";
 
-/** `null` = aucune contrainte : le site occupe toute la largeur disponible. */
-const MODES: ReadonlyArray<{ id: ViewportMode; label: string; width: number | null }> = [
-  { id: "mobile", label: "Mobile", width: 390 },
-  { id: "tablet", label: "Tablette", width: 834 },
-  { id: "desktop", label: "Ordinateur", width: null },
+/**
+ * `width: null` = ordinateur, aucune fenêtre dédiée : c'est la fenêtre normale.
+ * Les tailles sont celles du viewport visé (iPhone 14, iPad Air).
+ */
+const MODES: ReadonlyArray<{
+  id: ViewportMode;
+  label: string;
+  width: number | null;
+  height: number;
+}> = [
+  { id: "mobile", label: "Mobile", width: 390, height: 844 },
+  { id: "tablet", label: "Tablette", width: 834, height: 1112 },
+  { id: "desktop", label: "Ordinateur", width: null, height: 0 },
 ];
+
+/**
+ * Marge pour la barre d'onglets et la barre d'adresse : `window.open` fixe la
+ * taille extérieure de la fenêtre, alors qu'on vise celle du viewport. Valeur
+ * empirique — un aperçu à quelques pixels près suffit pour une relecture.
+ */
+const BROWSER_CHROME = { width: 0, height: 88 };
+
+/** Nom de la fenêtre d'aperçu : elle est réutilisée d'un clic à l'autre. */
+const previewWindowName = (mode: ViewportMode) => `dp-preview-${mode}`;
+
+/** Vrai quand ce document tourne DANS une fenêtre d'aperçu déjà ouverte. */
+function isPreviewWindow(): boolean {
+  return typeof window !== "undefined" && window.name.startsWith("dp-preview-");
+}
 
 function isViewportMode(value: string | null): value is ViewportMode {
   return value === "mobile" || value === "tablet" || value === "desktop";
@@ -136,6 +163,48 @@ export function ViewportSwitcher() {
   const mode: ViewportMode = isViewportMode(storedMode) ? storedMode : "desktop";
   const hidden = storedHidden === "1";
 
+  /**
+   * Ouvre (ou réutilise) la fenêtre d'aperçu de cet appareil. Dans une fenêtre
+   * d'aperçu, on redimensionne la fenêtre courante : ouvrir depuis un aperçu
+   * empilerait des fenêtres sans fin.
+   */
+  function openPreview(target: ViewportMode) {
+    const spec = MODES.find((m) => m.id === target);
+    if (!spec || spec.width === null) {
+      // Ordinateur : rien à ouvrir. Depuis une fenêtre d'aperçu, la refermer
+      // est le geste attendu — sinon on la laisse telle quelle.
+      if (isPreviewWindow()) window.close();
+      return;
+    }
+
+    const w = spec.width + BROWSER_CHROME.width;
+    const h = spec.height + BROWSER_CHROME.height;
+
+    if (isPreviewWindow()) {
+      window.resizeTo(w, h);
+      return;
+    }
+
+    const name = previewWindowName(target);
+    const win = window.open(window.location.href, name, `width=${w},height=${h}`);
+    if (!win) {
+      // Bloqueur de pop-up : le dire plutôt que de rester muet, l'utilisateur
+      // croirait à un bouton mort.
+      window.alert(
+        "Le navigateur a bloqué la fenêtre d'aperçu.\nAutorisez les pop-ups pour ce site, puis réessayez.",
+      );
+      return;
+    }
+    // La fenêtre peut déjà exister : `open` la réutilise sans la redimensionner.
+    win.resizeTo(w, h);
+    win.focus();
+  }
+
+  function selectMode(target: ViewportMode) {
+    writeStored(STORAGE_MODE, target);
+    openPreview(target);
+  }
+
   function close() {
     writeStored(STORAGE_HIDDEN, "1");
     // Fermer, c'est arrêter la simulation : on rend la pleine largeur, sinon
@@ -145,32 +214,13 @@ export function ViewportSwitcher() {
 
   if (!IS_DEV) return null;
 
-  const activeWidth = MODES.find((m) => m.id === mode)?.width ?? null;
-
   return (
     <>
-      {/* Contrainte du cadre : injectée en <style> global plutôt qu'en style
-          inline, car la cible est le wrapper du layout — un nœud que ce
-          composant ne rend pas lui-même. */}
-      {!hidden && activeWidth !== null && (
-        <style>{`
-          body { background: #0B0806; }
-          .dp-viewport-frame {
-            max-width: ${activeWidth}px;
-            margin-inline: auto;
-            min-height: 100vh;
-            background: var(--surface-page, #FDFBF6);
-            border-inline: 1px solid rgba(255,255,255,.14);
-            box-shadow: var(--shadow-lg);
-            /* Le contenu conçu pour le desktop peut déborder du cadre étroit :
-               on coupe horizontalement plutôt que d'ajouter une scrollbar
-               parasite à la page entière. */
-            overflow-x: hidden;
-            /* Dégage la barre flottante du bas de page. */
-            padding-block-end: 72px;
-            transition: max-width var(--dur, 240ms) var(--ease-out, ease);
-          }
-        `}</style>
+      {/* Aucun cadre à l'intérieur de la page : l'aperçu se fait dans une vraie
+          fenêtre, seule capable de déclencher les media queries du site. On
+          dégage seulement le bas de page pour que la barre ne masque rien. */}
+      {!hidden && (
+        <style>{`.dp-viewport-frame { padding-block-end: 72px; }`}</style>
       )}
 
       {!hidden && (
@@ -202,7 +252,7 @@ export function ViewportSwitcher() {
               <button
                 key={m.id}
                 type="button"
-                onClick={() => writeStored(STORAGE_MODE, m.id)}
+                onClick={() => selectMode(m.id)}
                 aria-pressed={active}
                 className="dp-vps-btn"
                 style={{

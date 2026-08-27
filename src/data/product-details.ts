@@ -42,6 +42,7 @@ export const PRODUCTS: Record<string, Product> = {
     heartNotes: ["Musc blanc", "Jasmin", "Iris"],
     baseNotes: ["Oud", "Ambre", "Santal blanc", "Vanille"],
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
+    // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-1.jpg",
   },
   "al-haramain-amber-oud": {
@@ -60,6 +61,7 @@ export const PRODUCTS: Record<string, Product> = {
     heartNotes: ["Oud royal", "Rose de Taïf", "Encens"],
     baseNotes: ["Ambre", "Résine de benjoin", "Musc chaud", "Vétiver"],
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
+    // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-2.jpg",
   },
   "reef-opulent-blue": {
@@ -78,6 +80,7 @@ export const PRODUCTS: Record<string, Product> = {
     heartNotes: ["Jasmin", "Muguet", "Patchouli"],
     baseNotes: ["Cèdre", "Ambre gris", "Musc bleu"],
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
+    // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-3.jpg",
   },
   "armaf-club-de-nuit": {
@@ -96,6 +99,7 @@ export const PRODUCTS: Record<string, Product> = {
     heartNotes: ["Rose", "Jasmin", "Patchouli"],
     baseNotes: ["Bouleau birch", "Musc", "Ambre", "Cèdre"],
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
+    // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-4.jpg",
   },
   "swiss-arabian-shaghaf": {
@@ -114,7 +118,7 @@ export const PRODUCTS: Record<string, Product> = {
     heartNotes: ["Oud cambodi", "Rose orientale", "Fleur d'oranger"],
     baseNotes: ["Santal crémeux", "Musc", "Résines", "Labdanum"],
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
-    image: "/assets/prod-5.jpg",
+    image: "/assets/products/shaghaf-oud.webp",
   },
   "ahmed-al-maghribi-lor": {
     name: "L'Or de Saba",
@@ -132,6 +136,7 @@ export const PRODUCTS: Record<string, Product> = {
     heartNotes: ["Oud précieux", "Fleurs de Saba", "Absolu de rose"],
     baseNotes: ["Résines dorées", "Encens", "Musc boisé", "Ambre"],
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
+    // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-6.jpg",
   },
 };
