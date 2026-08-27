@@ -6,6 +6,7 @@ import { Header } from '@/components/layout/Header';
 import { Footer } from '@/components/layout/Footer';
 import { WhatsAppBubble } from '@/components/ui/WhatsAppBubble';
 import { FragranceFinderButton } from '@/components/fragrance-finder/FragranceFinderButton';
+import { ViewportSwitcher } from '@/components/dev/ViewportSwitcher';
 
 export default async function LocaleLayout({
   children,
@@ -22,13 +23,17 @@ export default async function LocaleLayout({
 
   return (
     <NextIntlClientProvider messages={messages}>
-      <div dir={isRTL ? 'rtl' : 'ltr'} lang={locale}>
+      {/* `dp-viewport-frame` : cible du ViewportSwitcher (outil de maquette,
+          dev only). Sans lui la classe est inerte — aucun style par défaut. */}
+      <div className="dp-viewport-frame" dir={isRTL ? 'rtl' : 'ltr'} lang={locale}>
         <Header />
         <main>{children}</main>
         <Footer />
         <FragranceFinderButton locale={locale} />
         <WhatsAppBubble />
       </div>
+      {/* Hors du cadre : la barre pilote la contrainte, elle ne doit pas la subir. */}
+      <ViewportSwitcher />
     </NextIntlClientProvider>
   );
 }

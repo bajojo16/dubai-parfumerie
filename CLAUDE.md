@@ -3,9 +3,11 @@
 # Dubaï Parfumerie — Instructions projet
 
 ## Démarrage de session
-1. Vérifier si serveur tourne : `lsof -i :3000`
-2. Si non : lancer direct `cd app && npm run dev` (sert front office ET backend/API routes, même process Next.js — pas de serveur séparé)
-3. Attendre serveur ready (log "Ready" / "compiled"), puis ouvrir http://localhost:3000 dans **nouvel onglet**
+**Port du projet : 3003** — le port 3000 est interdit (occupé par un autre projet). Voir le registre des ports dans `~/.claude/CLAUDE.md`.
+
+1. Vérifier si serveur tourne : `lsof -i :3003`
+2. Si non : lancer direct `cd app && npm run dev -- -p 3003` (sert front office ET backend/API routes, même process Next.js — pas de serveur séparé)
+3. Attendre serveur ready (log "Ready" / "compiled"), puis ouvrir http://localhost:3003 dans **nouvel onglet**
 4. Vérifier remote GitHub existe : `git remote -v`
 5. Si pas de remote : demander à l'utilisateur de créer repo GitHub et fournir URL, puis `git remote add origin <url>`
 

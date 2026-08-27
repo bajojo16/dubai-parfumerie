@@ -5,6 +5,10 @@ import { useLocale } from "next-intl";
 import { Link, usePathname as useLocalePathname, useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { getCart, cartCount as getCartCount, removeItem, setQty, subscribe, type CartItem } from "@/lib/cart";
+import dynamic from "next/dynamic";
+
+// La superposition de recherche n'est ni rendue ni téléchargée tant qu'on ne l'ouvre pas.
+const SearchOverlay = dynamic(() => import("@/components/search/SearchOverlay"), { ssr: false });
 
 // Devise — état partagé simple (localStorage + event global), synchronisé avec Footer.tsx.
 const CURRENCY_KEY = "dp_currency";
@@ -703,15 +707,9 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [mega, setMega] = useState<string | null>(null);
 
-  // Recherche — texte (contrôlé), vocale (Web Speech API) et visuelle (sélection photo)
-  const [searchQuery, setSearchQuery] = useState("");
-  const [isListening, setIsListening] = useState(false);
-  const [searchToast, setSearchToast] = useState<{ message: string; icon: "mic" | "camera" } | null>(null);
-  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const recognitionRef = React.useRef<any>(null);
-  const fileInputRef = React.useRef<HTMLInputElement | null>(null);
-  const searchToastTimerRef = React.useRef<number | null>(null);
+  // Recherche — tout se passe dans la superposition (@/components/search/SearchOverlay) :
+  // texte, dictée, photo, résultats. Le header n'en garde que le déclencheur.
+  const [searchOpen, setSearchOpen] = useState(false);
 
   // Panier live — hydrate + s'abonne aux changements, ouvre le tiroir à l'ajout
   useEffect(() => {
@@ -760,87 +758,21 @@ export function Header() {
     window.setTimeout(() => setWishToast(false), 2200);
   }
 
-  // Recherche vocale / visuelle — feedback réel, pas de vraie recherche/ML en arrière-plan (maquette)
-  function showSearchToast(message: string, icon: "mic" | "camera", durationMs = 2600) {
-    if (searchToastTimerRef.current) window.clearTimeout(searchToastTimerRef.current);
-    setSearchToast({ message, icon });
-    searchToastTimerRef.current = window.setTimeout(() => {
-      setSearchToast(null);
-      setPhotoPreview(null);
-    }, durationMs);
-  }
-
-  function getRecognitionLang(loc: string): string {
-    const map: Record<string, string> = {
-      fr: "fr-FR", en: "en-US", es: "es-ES", de: "de-DE", it: "it-IT", ru: "ru-RU", ar: "ar-SA",
-    };
-    return map[loc] || "fr-FR";
-  }
-
-  function handleMicClick() {
-    // Toggle : re-clic pendant l'écoute = arrêt
-    if (isListening) {
-      recognitionRef.current?.stop();
-      return;
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const w = window as any;
-    const SpeechRecognitionCtor = w.SpeechRecognition || w.webkitSpeechRecognition;
-    if (!SpeechRecognitionCtor) {
-      showSearchToast("Reconnaissance vocale non supportée par ce navigateur", "mic");
-      return;
-    }
-
-    const recognition = new SpeechRecognitionCtor();
-    recognition.lang = getRecognitionLang(locale);
-    recognition.interimResults = false;
-    recognition.maxAlternatives = 1;
-    recognitionRef.current = recognition;
-
-    recognition.onstart = () => setIsListening(true);
-    recognition.onend = () => setIsListening(false);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onerror = (event: any) => {
-      setIsListening(false);
-      const reason = event?.error === "not-allowed" || event?.error === "permission-denied" || event?.error === "service-not-allowed"
-        ? "Micro non autorisé — vérifiez les permissions du navigateur"
-        : "Reconnaissance vocale indisponible";
-      showSearchToast(reason, "mic");
-    };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    recognition.onresult = (event: any) => {
-      const transcript: string = event?.results?.[0]?.[0]?.transcript ?? "";
-      if (transcript) {
-        setSearchQuery(transcript);
-        showSearchToast(`Recherche vocale : « ${transcript} »`, "mic");
+  // Raccourcis clavier attendus sur un site marchand : « / » et ⌘K / Ctrl+K ouvrent
+  // la recherche, sauf si l'utilisateur est déjà en train de saisir dans un champ.
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if (searchOpen) return;
+      const tag = (document.activeElement?.tagName || "").toUpperCase();
+      if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+      if (e.key === "/" || (e.key.toLowerCase() === "k" && (e.metaKey || e.ctrlKey))) {
+        e.preventDefault();
+        setSearchOpen(true);
       }
-    };
-
-    try {
-      recognition.start();
-    } catch {
-      setIsListening(false);
-      showSearchToast("Reconnaissance vocale indisponible", "mic");
     }
-  }
-
-  function handlePhotoClick() {
-    fileInputRef.current?.click();
-  }
-
-  function handlePhotoChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
-    e.target.value = ""; // permet de resélectionner le même fichier
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = () => {
-      setPhotoPreview(typeof reader.result === "string" ? reader.result : null);
-      showSearchToast("Recherche par image — bientôt disponible", "camera", 3200);
-    };
-    reader.readAsDataURL(file);
-  }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [searchOpen]);
 
   return (
     <>
@@ -1062,9 +994,14 @@ export function Header() {
             })}
           </nav>
 
-          {/* Search */}
-          <div
+          {/* Search — déclencheur : la saisie, la dictée et la photo vivent dans la
+              superposition, seule à connaître le catalogue. Un vrai <input> ici
+              aurait dupliqué l'état et laissé deux champs désynchronisés. */}
+          <button
+            type="button"
             className="dp-search"
+            onClick={() => setSearchOpen(true)}
+            aria-label="Rechercher un parfum, une maison ou une note"
             style={{
               flex: 1,
               maxWidth: 380,
@@ -1076,56 +1013,32 @@ export function Header() {
               padding: "0 12px",
               gap: 8,
               height: 40,
+              cursor: "text",
+              textAlign: "left",
             }}
           >
             <span style={{ color: "var(--ink-500)", display: "flex", alignItems: "center" }}>
               <IconSearch />
             </span>
-            <input
-              type="text"
-              placeholder="Rechercher…"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+            <span
               style={{
                 flex: 1,
-                background: "none",
-                border: "none",
-                outline: "none",
                 fontFamily: "var(--font-sans)",
                 fontSize: "14px",
-                color: "var(--ink-900)",
+                color: "var(--ink-400)",
               }}
-            />
-            <button
-              type="button"
-              onClick={handleMicClick}
-              className={isListening ? "dp-mic-active" : undefined}
-              aria-label={isListening ? "Arrêter l'écoute" : "Recherche vocale"}
-              aria-pressed={isListening}
-              style={{ background: "none", border: "none", cursor: "pointer", color: isListening ? "var(--gold-600)" : "var(--ink-500)", display: "flex", alignItems: "center", padding: 6, borderRadius: "var(--r-sm)" }}
-              title={isListening ? "Écoute en cours… (cliquer pour arrêter)" : "Recherche vocale"}
             >
+              Rechercher…
+            </span>
+            <span style={{ color: "var(--ink-500)", display: "flex", alignItems: "center" }}>
               <IconMic />
-            </button>
-            <button
-              type="button"
-              onClick={handlePhotoClick}
-              aria-label="Recherche par photo"
-              style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-500)", display: "flex", alignItems: "center", padding: 6, borderRadius: "var(--r-sm)" }}
-              title="Recherche visuelle"
-            >
+            </span>
+            <span style={{ color: "var(--ink-500)", display: "flex", alignItems: "center" }}>
               <IconCamera />
-            </button>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              style={{ display: "none" }}
-              aria-hidden="true"
-              tabIndex={-1}
-            />
-          </div>
+            </span>
+            {/* Le raccourci n'a de sens qu'au clavier : masqué sur les écrans tactiles. */}
+            <kbd className="dp-search-kbd">/</kbd>
+          </button>
 
           {/* Right icons */}
           <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: "auto" }}>
@@ -1357,12 +1270,20 @@ export function Header() {
             <IconClose />
           </button>
         </div>
-        {/* Mobile search */}
+        {/* Mobile search — même déclencheur ; on ferme le menu pour ne pas empiler
+            deux couches plein écran l'une sur l'autre. */}
         <div style={{ padding: "14px 20px", borderBottom: "1px solid rgba(0,0,0,.06)" }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 8, background: "var(--surface-cream)", border: "1px solid rgba(200,144,30,.2)", borderRadius: "var(--r-md)", padding: "0 12px", height: 40 }}>
+          <button
+            type="button"
+            onClick={() => { setMobileMenuOpen(false); setSearchOpen(true); }}
+            aria-label="Rechercher un parfum, une maison ou une note"
+            style={{ width: "100%", display: "flex", alignItems: "center", gap: 8, background: "var(--surface-cream)", border: "1px solid rgba(200,144,30,.2)", borderRadius: "var(--r-md)", padding: "0 12px", height: 40, cursor: "text", textAlign: "left" }}
+          >
             <span style={{ color: "var(--ink-500)", display: "flex" }}><IconSearch /></span>
-            <input type="text" placeholder="Rechercher…" style={{ flex: 1, background: "none", border: "none", outline: "none", fontFamily: "var(--font-sans)", fontSize: "14px", color: "var(--ink-900)" }} />
-          </div>
+            <span style={{ flex: 1, fontFamily: "var(--font-sans)", fontSize: "14px", color: "var(--ink-400)" }}>Rechercher…</span>
+            <span style={{ color: "var(--ink-500)", display: "flex" }}><IconMic /></span>
+            <span style={{ color: "var(--ink-500)", display: "flex" }}><IconCamera /></span>
+          </button>
         </div>
         <nav style={{ display: "flex", flexDirection: "column", padding: "8px 0" }}>
           {NAV_LINKS.map(({ label, href, highlight }) => (
@@ -1417,57 +1338,21 @@ export function Header() {
         </div>
       )}
 
-      {/* Toast recherche vocale / visuelle */}
-      {searchToast && (
-        <div
-          role="status"
-          aria-live="polite"
-          style={{
-            position: "fixed",
-            bottom: 24,
-            left: "50%",
-            transform: "translateX(-50%)",
-            zIndex: 1200,
-            background: "var(--espresso-900)",
-            color: "#fff",
-            fontFamily: "var(--font-sans)",
-            fontSize: 13,
-            fontWeight: 600,
-            padding: "12px 20px",
-            borderRadius: "var(--r-md)",
-            boxShadow: "0 12px 32px rgba(0,0,0,.25)",
-            display: "flex",
-            alignItems: "center",
-            gap: 10,
-            animation: "fadeSlideIn .25s ease",
-            maxWidth: "min(420px, 90vw)",
-          }}
-        >
-          {photoPreview && searchToast.icon === "camera" ? (
-            <img
-              src={photoPreview}
-              alt=""
-              style={{ width: 28, height: 28, borderRadius: "var(--r-xs)", objectFit: "cover", flexShrink: 0 }}
-            />
-          ) : searchToast.icon === "mic" ? (
-            <IconMic />
-          ) : (
-            <IconCamera />
-          )}
-          <span>{searchToast.message}</span>
-        </div>
-      )}
+      {/* Superposition de recherche — rendue seulement à l'ouverture. */}
+      <SearchOverlay open={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <style>{`
         @keyframes fadeSlideIn {
           from { opacity: 0; transform: translateY(6px); }
           to   { opacity: 1; transform: translateY(0); }
         }
-        @keyframes dp-mic-pulse {
-          0%, 100% { transform: scale(1); opacity: 1; }
-          50%      { transform: scale(1.2); opacity: .65; }
+        /* Le raccourci clavier n'a de sens qu'au clavier : masqué sur tactile. */
+        .dp-search-kbd {
+          font-family: var(--font-sans); font-size: 11px; line-height: 1;
+          color: var(--ink-400); border: 1px solid var(--line-200);
+          border-radius: var(--r-xs); padding: 3px 6px; background: var(--surface-white);
         }
-        .dp-mic-active { animation: dp-mic-pulse 1s ease-in-out infinite; }
+        @media (hover: none) { .dp-search-kbd { display: none; } }
       `}</style>
     </>
   );
