@@ -36,7 +36,9 @@ export interface SearchProduct {
   id: string;
   name: string;
   brand: string;
-  /** lien vers la fiche produit ; les sources qui en portent un le gardent */
+  /** identifiant d'URL de la fiche produit — `/produit/<slug>` */
+  slug: string;
+  /** lien vers la fiche produit ; toujours `/produit/<slug>` */
   href: string;
   image?: string;
   /** vidéo de carte quand la source en fournit une — elle montre CE flacon-là */
@@ -190,7 +192,7 @@ export function brandLogo(name: string): string | undefined {
 
 // ─── Agrégation ──────────────────────────────────────────────────────────────
 
-type RawProduct = Omit<SearchProduct, "id" | "keyName" | "keyBrand" | "keyNotes" | "keyAll">;
+type RawProduct = Omit<SearchProduct, "id" | "slug" | "keyName" | "keyBrand" | "keyNotes" | "keyAll">;
 
 function collect(): RawProduct[] {
   const out: RawProduct[] = [];
@@ -332,18 +334,76 @@ function dedupe(list: RawProduct[]): SearchProduct[] {
     kept.available = kept.available || p.available;
   }
 
-  return [...byKey.values()].map((p) => ({
+  return [...byKey.values()].map((p) => {
+    const id = `${slugify(p.brand)}-${slugify(p.name)}`;
+    // Les fiches détaillées portent déjà leur slug dans leur href : on le garde,
+    // sinon `swiss-arabian-shaghaf` deviendrait `swiss-arabian-shaghaf-oud` et
+    // la page ne trouverait plus sa fiche riche. Les autres sources renvoyaient
+    // vers /promo-flash ou /offres/lot-3-pour-2 — une page de liste, pas la
+    // fiche du produit cliqué : on leur en donne une.
+    const slug = p.href.startsWith("/produit/") ? p.href.slice("/produit/".length) : id;
+    return {
     ...p,
-    id: `${slugify(p.brand)}-${slugify(p.name)}`,
+    id,
+    slug,
+    href: `/produit/${slug}`,
     notes: p.notes.map(capitalize),
     keyName: norm(p.name),
     keyBrand: norm(p.brand),
     keyNotes: norm(p.notes.join(" ")),
     keyAll: norm([p.name, p.brand, p.family, p.gender, p.notes.join(" ")].join(" ")),
-  }));
+    };
+  });
 }
 
-export const SEARCH_PRODUCTS: SearchProduct[] = dedupe(collect());
+/**
+ * Seconde passe : fusion par slug.
+ *
+ * La déduplication travaille sur marque + nom, or les données de démo attribuent
+ * parfois le même parfum à deux maisons — « Reef 33 » est chez Reef dans les
+ * best-sellers et chez « Dubaï Parfumerie » dans les tendances. Résultat : deux
+ * entrées, deux fois la même carte dans les suggestions, et une fiche produit
+ * qui répondait au hasard puisque les deux visent `/produit/reef-33`.
+ *
+ * On garde l'entrée la mieux renseignée — celle qui porte des notes, une
+ * contenance, une concentration — et on complète ses trous avec l'autre.
+ */
+function mergeBySlug(list: SearchProduct[]): SearchProduct[] {
+  const richness = (p: SearchProduct) =>
+    p.notes.length +
+    (p.topNotes?.length ? 3 : 0) +
+    (p.volume ? 1 : 0) +
+    (p.concentration ? 1 : 0) +
+    (p.description ? 1 : 0);
+
+  const bySlug = new Map<string, SearchProduct>();
+  for (const p of list) {
+    const kept = bySlug.get(p.slug);
+    if (!kept) {
+      bySlug.set(p.slug, p);
+      continue;
+    }
+    const [winner, loser] = richness(p) > richness(kept) ? [p, kept] : [kept, p];
+    bySlug.set(p.slug, {
+      ...winner,
+      image: winner.image ?? loser.image,
+      video: winner.video ?? loser.video,
+      price: winner.price ?? loser.price,
+      compareAtPrice: winner.compareAtPrice ?? loser.compareAtPrice,
+      family: winner.family ?? loser.family,
+      volume: winner.volume ?? loser.volume,
+      concentration: winner.concentration ?? loser.concentration,
+      gender: winner.gender ?? loser.gender,
+      description: winner.description ?? loser.description,
+      notes: winner.notes.length ? winner.notes : loser.notes,
+      available: winner.available || loser.available,
+      popularity: Math.max(winner.popularity, loser.popularity),
+    });
+  }
+  return [...bySlug.values()];
+}
+
+export const SEARCH_PRODUCTS: SearchProduct[] = mergeBySlug(dedupe(collect()));
 
 /**
  * Maisons : celles de la page « Marques » d'abord (elles ont ville et visuel),

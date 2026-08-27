@@ -113,7 +113,7 @@ const olfactoryFamilies = [
 ];
 
 const brands: BrandCardData[] = [
-  { name: "Lattafa", founded: 1980, origin: "Sharjah", count: "80+", logo: "/brands/lattafa.jpg", logoHover: "/brands/lattafa-hover.jpg", cover: true, coverBg: "#262626", coverBgHover: "#0A0A0A" },
+  { name: "Lattafa", founded: 1980, origin: "Sharjah", count: "80+", logo: "/brands/lattafa.jpg", logoHover: "/brands/lattafa-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
   { name: "Reef", founded: 1995, origin: "UAE", count: "40+", logo: "/brands/reef.jpg", logoHover: "/brands/reef-hover.jpg", cover: true },
   { name: "Al Haramain", founded: 1970, origin: "Dubaï", count: "60+", logo: "/brands/alharamain.jpg", logoHover: "/brands/alharamain-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },
   { name: "Ahmed Al Maghribi", founded: 2005, origin: "Dubaï", count: "30+", logo: "/brands/ahmed.jpg", logoHover: "/brands/ahmed-hover.jpg", cover: true, coverBg: "#FCFBF9", coverBgHover: "#0A0A0A" },

@@ -111,8 +111,8 @@ const ICON = { width: 18, height: 18, viewBox: "0 0 24 24", fill: "none", stroke
 const IconLoupe = () => (<svg {...ICON}><circle cx="11" cy="11" r="7" /><line x1="21" y1="21" x2="16.5" y2="16.5" /></svg>);
 const IconMic = () => (<svg {...ICON}><rect x="9" y="3" width="6" height="11" rx="3" /><path d="M5 11a7 7 0 0 0 14 0M12 18v3" /></svg>);
 const IconCamera = () => (<svg {...ICON}><path d="M3 8.5h3.2L8 6h8l1.8 2.5H21v11H3z" /><circle cx="12" cy="13.6" r="3.4" /></svg>);
-const IconClose = () => (<svg {...ICON}><line x1="6" y1="6" x2="18" y2="18" /><line x1="18" y1="6" x2="6" y2="18" /></svg>);
 const IconChevron = () => (<svg {...ICON}><polyline points="9 6 15 12 9 18" /></svg>);
+const IconBack = () => (<svg {...ICON}><line x1="19" y1="12" x2="5" y2="12" /><polyline points="12 19 5 12 12 5" /></svg>);
 
 // ─── Composant ───────────────────────────────────────────────────────────────
 
@@ -820,9 +820,26 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
 
       <div className="dp-rch-panel" role="dialog" aria-modal="true" aria-label="Recherche">
         <div className="dp-rch-bar">
-          <span className="dp-rch-loupe" aria-hidden="true">
-            <IconLoupe />
-          </span>
+          {/* Une recherche en cours : la loupe cède la place à une flèche de retour.
+              Cliquer une note remplit le champ — il faut pouvoir en revenir sans
+              vider le champ caractère par caractère. */}
+          {query ? (
+            <button
+              type="button"
+              className="dp-rch-icon dp-rch-back"
+              aria-label="Revenir à l'accueil de la recherche"
+              onClick={() => {
+                setQuery("");
+                inputRef.current?.focus();
+              }}
+            >
+              <IconBack />
+            </button>
+          ) : (
+            <span className="dp-rch-loupe" aria-hidden="true">
+              <IconLoupe />
+            </span>
+          )}
 
           <input
             ref={inputRef}
@@ -841,20 +858,6 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             aria-autocomplete="list"
             aria-activedescendant={active >= 0 ? `dp-rch-opt-${active}` : undefined}
           />
-
-          {query && (
-            <button
-              type="button"
-              className="dp-rch-icon"
-              aria-label="Effacer"
-              onClick={() => {
-                setQuery("");
-                inputRef.current?.focus();
-              }}
-            >
-              <IconClose />
-            </button>
-          )}
 
           {speechSupported && (
             <button
@@ -939,6 +942,7 @@ const CSS = `
   background: var(--surface-white);
 }
 .dp-rch-loupe { display: flex; color: var(--gold-700); padding: 0 4px; }
+.dp-rch-back { color: var(--gold-700); }
 .dp-rch-input {
   flex: 1; min-width: 0;
   background: none; border: none; outline: none;

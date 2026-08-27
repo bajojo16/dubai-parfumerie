@@ -5,21 +5,17 @@ import VolumeSelector from "./VolumeSelector";
 import AddToCart from "./AddToCart";
 import { StoryBubbles } from "@/components/sections/StoryBubbles";
 import { DEMO_STORIES } from "@/data/product-stories";
-import { PRODUCTS } from "@/data/product-details";
+import { allProductSlugs, resolveProduct } from "@/data/product-resolve";
+import { notFound } from "next/navigation";
 
 // ─── Static params ────────────────────────────────────────────────────────────
 
 export async function generateStaticParams() {
   const locales = ['fr', 'en', 'es', 'de', 'it', 'ru', 'ar'];
-  const slugs = [
-    { slug: "lattafa-oud-pour-elle" },
-    { slug: "al-haramain-amber-oud" },
-    { slug: "reef-opulent-blue" },
-    { slug: "armaf-club-de-nuit" },
-    { slug: "swiss-arabian-shaghaf" },
-    { slug: "ahmed-al-maghribi-lor" },
-  ];
-  return locales.flatMap(locale => slugs.map(s => ({ locale, ...s })));
+  // Tout le catalogue, pas seulement les six fiches rédigées : les liens de la
+  // recherche pointent chaque référence, y compris celles composées à la volée.
+  const slugs = allProductSlugs();
+  return locales.flatMap(locale => slugs.map(slug => ({ locale, slug })));
 }
 
 // ─── Product data ─────────────────────────────────────────────────────────────
@@ -29,7 +25,7 @@ export async function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{locale: string, slug: string}> }): Promise<Metadata> {
   const { slug } = await params;
-  const product = PRODUCTS[slug];
+  const product = resolveProduct(slug);
   if (!product) return { title: 'Produit introuvable' };
   return {
     title: `${product.name} — ${product.brand} | Dubaï Parfumerie`,
@@ -101,13 +97,16 @@ interface PageProps {
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug, locale } = await params;
-  const product = PRODUCTS[slug] ?? PRODUCTS["lattafa-oud-pour-elle"];
+  // Un slug inconnu retombait sur « Oud Pour Elle » : la fiche s'affichait, mais
+  // ce n'était pas le parfum demandé. Mieux vaut un 404 franc.
+  const product = resolveProduct(slug);
+  if (!product) notFound();
 
   const discountPct = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
   const installment = (product.price / 4).toFixed(2).replace(".", ",");
 
   // Related products (cycle through images 3–6)
-  const relatedSlugs = Object.keys(PRODUCTS)
+  const relatedSlugs = allProductSlugs()
     .filter((s) => s !== slug)
     .slice(0, 4);
 
@@ -623,7 +622,7 @@ export default async function ProductPage({ params }: PageProps) {
             }}
           >
             {relatedSlugs.map((relSlug, idx) => {
-              const relProduct = PRODUCTS[relSlug];
+              const relProduct = resolveProduct(relSlug)!;
               const relDiscount = Math.round(
                 ((relProduct.oldPrice - relProduct.price) / relProduct.oldPrice) * 100
               );

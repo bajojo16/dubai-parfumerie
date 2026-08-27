@@ -100,11 +100,19 @@ export function search(query: string): SearchResults {
  * est explicite parce que « les mieux notées » ne donnait pas les flacons que la
  * boutique veut montrer en premier.
  */
-const FEATURED = ["reef|reef 33", "lattafa|yara"];
+const FEATURED = ["reef|reef 33", "lattafa|yara", "lattafa|khamrah"];
+
+/**
+ * Références écartées de l'écran d'accueil — elles restent trouvables par une
+ * recherche, elles ne sont simplement pas mises en vitrine.
+ */
+const NOT_FEATURED = ["armaf|club de nuit"];
 
 /** Écran d'accueil : les vitrines d'abord, puis les références les mieux notées. */
 export function suggestions(limit = 10): SearchProduct[] {
-  const shown = SEARCH_PRODUCTS.filter((p) => p.image && p.available);
+  const shown = SEARCH_PRODUCTS.filter(
+    (p) => p.image && p.available && !NOT_FEATURED.includes(`${p.keyBrand}|${p.keyName}`),
+  );
   const rank = (p: SearchProduct) => FEATURED.indexOf(`${p.keyBrand}|${p.keyName}`);
 
   return shown
