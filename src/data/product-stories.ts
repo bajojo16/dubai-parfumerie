@@ -59,6 +59,16 @@ export const DEMO_STORIES: ProductStory[] = [
     shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
   },
   {
+    // « Fiole fixe » : le flacon reste immobile et net pendant que dattes et
+    // cannelle tournent autour. C'est le plan qui montre le mieux CE flacon-là.
+    id: "khamrah-fiole-fixe",
+    videoUrl: "/assets/videos/khamrah-fiole-fixe.mp4",
+    posterUrl: "/assets/videos/khamrah-fiole-fixe-poster.webp",
+    title: "Khamrah · Fiole fixe",
+    shopProductHandle: "lattafa-khamrah",
+    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+  },
+  {
     id: "khamrah-dattes",
     videoUrl: "/assets/videos/khamrah-dattes.mp4",
     posterUrl: "/assets/videos/khamrah-dattes-poster.webp",

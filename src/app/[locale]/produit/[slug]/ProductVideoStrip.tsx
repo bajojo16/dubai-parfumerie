@@ -26,13 +26,16 @@ type Clip = {
   title?: string;
 };
 
-type CategoryId = "ugc" | "spot" | "hypermotion" | "coulisses";
+type CategoryId = "ugc" | "spot" | "hypermotion" | "fiole-fixe";
 
 const CATEGORIES: { id: CategoryId; label: string; caption: string }[] = [
   { id: "ugc", label: "UGC", caption: "Une cliente le porte" },
   { id: "spot", label: "Spot TV", caption: "Le film de marque" },
   { id: "hypermotion", label: "Hypermotion", caption: "Le décor en mouvement" },
-  { id: "coulisses", label: "Coulisses", caption: "La fabrication du flacon" },
+  // « Fiole fixe » : le flacon reste net pendant que le décor bouge autour. Ce
+  // qu'aucun packshot ne fait — on voit CE flacon-là, et il reste identifiable
+  // du début à la fin du plan.
+  { id: "fiole-fixe", label: "Fiole fixe", caption: "Le flacon net, le décor en mouvement" },
 ];
 
 /**
@@ -51,6 +54,7 @@ const CATEGORIES: { id: CategoryId; label: string; caption: string }[] = [
 const PINNED_CATEGORY: Record<string, CategoryId> = {
   "/assets/videos/khamrah-levitation.mp4": "spot",
   "/assets/videos/khamrah-nectar.mp4": "hypermotion",
+  "/assets/videos/khamrah-fiole-fixe.mp4": "fiole-fixe",
 };
 
 /**
