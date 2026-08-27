@@ -140,6 +140,19 @@ export default async function ProductPage({ params }: PageProps) {
         "brand": { "@type": "Brand", "name": product.brand },
         "image": product.image ?? "/assets/prod-1.jpg",
         "description": product.description,
+        // schema.org/Product n'a pas de propriété « perfumer » (ni `creator`,
+        // réservé aux CreativeWork) : `additionalProperty` est le seul porteur
+        // propre du vocabulaire. Omis quand le nez n'est pas documenté, pour ne
+        // pas publier une propriété vide.
+        ...(product.perfumer
+          ? {
+              "additionalProperty": {
+                "@type": "PropertyValue",
+                "name": "Parfumeur",
+                "value": product.perfumer,
+              },
+            }
+          : {}),
         "offers": {
           "@type": "Offer",
           "price": product.price,
@@ -291,6 +304,49 @@ export default async function ProductPage({ params }: PageProps) {
                 </span>
               ))}
             </div>
+
+            {/* Signature du nez — rendue seulement quand l'attribution est
+                documentée : une maison qui ne communique pas son parfumeur ne
+                doit laisser ni libellé ni ligne vide. Volontairement traitée
+                comme une mention d'auteur (filet doré, nom en display) et non
+                comme un badge de spécification à côté de « EDP 30 % ». */}
+            {product.perfumer && (
+              <p
+                style={{
+                  margin: 0,
+                  display: "flex",
+                  alignItems: "baseline",
+                  gap: "0.5rem",
+                  paddingLeft: "0.75rem",
+                  borderLeft: "2px solid var(--gold-500)",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--t-sm)",
+                  color: "var(--ink-700)",
+                }}
+              >
+                <span
+                  style={{
+                    fontSize: "var(--t-xs)",
+                    fontWeight: "var(--fw-semibold)",
+                    letterSpacing: "var(--ls-widest)",
+                    textTransform: "uppercase",
+                    color: "var(--ink-400)",
+                  }}
+                >
+                  Le nez
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-display)",
+                    fontSize: "var(--t-body)",
+                    fontStyle: "italic",
+                    color: "var(--ink-900)",
+                  }}
+                >
+                  {product.perfumer}
+                </span>
+              </p>
+            )}
 
             {/* Divider */}
             <hr style={{ border: "none", borderTop: "1px solid var(--line-100)", margin: 0 }} />

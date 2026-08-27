@@ -12,7 +12,7 @@
  * ils dépendent du produit, donc restent stables d'un rendu à l'autre.
  */
 
-import { PRODUCTS, type Product } from "@/data/product-details";
+import { PERFUMERS, PRODUCTS, type Product } from "@/data/product-details";
 import { FAMILIES, SEARCH_PRODUCTS, familyOf, type SearchProduct } from "@/data/search-catalog";
 
 /** Tous les slugs servis par `/produit/[slug]`, fiches rédigées comprises. */
@@ -70,8 +70,14 @@ function describe(p: SearchProduct): string {
 
 /** La fiche du slug demandé, ou `null` — l'appelant rend alors un 404. */
 export function resolveProduct(slug: string): Product | null {
+  // Le parfumeur, quand il est documenté pour CE slug. Le catalogue agrégé ne
+  // porte pas l'information : elle vient de la table dédiée, jamais d'une
+  // déduction. Absent = champ absent, la fiche n'affiche alors aucune ligne.
+  const perfumer = PERFUMERS[slug];
+
   const detailed = PRODUCTS[slug];
-  if (detailed) return detailed;
+  // La fiche rédigée peut porter son nez en propre ; sinon la table complète.
+  if (detailed) return perfumer && !detailed.perfumer ? { ...detailed, perfumer } : detailed;
 
   const p = SEARCH_PRODUCTS.find((x) => x.slug === slug);
   if (!p) return null;
@@ -105,5 +111,9 @@ export function resolveProduct(slug: string): Product | null {
       "Authenticité garantie",
     ],
     image: p.image,
+    // Spread conditionnel : sans attribution vérifiée, la clé n'existe pas —
+    // `perfumer: undefined` suffirait à l'affichage mais laisserait croire que
+    // l'information a été cherchée et vaut « non communiqué ».
+    ...(perfumer ? { perfumer } : {}),
   };
 }

@@ -31,7 +31,32 @@ export interface Product {
    * `gallery[0]` reprend `image` — c'est la vue ouverte par défaut.
    */
   gallery?: string[];
+  /**
+   * Le « nez » qui signe la composition. Optionnel, et il le restera pour la
+   * quasi-totalité du catalogue : les maisons du Golfe ne créditent presque
+   * jamais leurs parfumeurs. Un nom n'entre ici que s'il est explicitement
+   * attribué À CE parfum par une source publique — voir `PERFUMERS`.
+   */
+  perfumer?: string;
 }
+
+/**
+ * Parfumeurs attribués, par slug de fiche.
+ *
+ * Table séparée parce que la seule attribution vérifiée concerne une référence
+ * composée depuis le catalogue (`search-catalog.ts`), pas une des fiches
+ * rédigées ci-dessous : `product-resolve.ts` la consulte pour les deux chemins.
+ *
+ * Règle : aucun nom déduit d'une habitude de la maison ou d'une ressemblance
+ * olfactive. Il faut une attribution nominale pour CE parfum, avec sa source.
+ */
+export const PERFUMERS: Record<string, string> = {
+  // Reef 33 (Reef Perfumes, 2020) — nez crédité par Fragrantica :
+  // https://www.fragrantica.com/perfume/Reef-Perfumes/Reef-33-89358.html
+  // Recoupé par sa fiche de parfumeur (CPL Aromas Dubaï), qui liste Reef :
+  // https://www.fragrantica.com/noses/Kevin_Mathys.html
+  "reef-33": "Kevin Mathys",
+};
 
 export const PRODUCTS: Record<string, Product> = {
   "lattafa-oud-pour-elle": {
