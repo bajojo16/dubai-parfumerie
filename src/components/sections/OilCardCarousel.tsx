@@ -51,7 +51,7 @@ export function OilCardCarousel({
           className="dp-oils-arrow"
           style={{ ...arrowBase, insetInlineStart: -16 }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C2620" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C2620" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
             <path d="M15 18l-6-6 6-6" />
           </svg>
         </button>
@@ -63,12 +63,12 @@ export function OilCardCarousel({
         className="dp-oils-track"
         style={{
           display: "flex",
-          gap: 16,
+          gap: 14,
           overflowX: few ? "visible" : "auto",
           justifyContent: few ? "center" : "flex-start",
           scrollSnapType: few ? "none" : "x mandatory",
           scrollbarWidth: "none",
-          paddingTop: 64,
+          paddingTop: 54,
           paddingBottom: 8,
           paddingInline: 4,
           WebkitOverflowScrolling: "touch",
@@ -80,8 +80,8 @@ export function OilCardCarousel({
             className="dp-oils-item"
             style={
               few
-                ? { flex: "1 1 0", minWidth: 0, maxWidth: 300 }
-                : { flex: "0 0 auto", scrollSnapAlign: "start", width: "var(--dp-oils-card-w, 200px)" }
+                ? { flex: "1 1 0", minWidth: 0, maxWidth: 264 }
+                : { flex: "0 0 auto", scrollSnapAlign: "start", width: "var(--dp-oils-card-w, 180px)" }
             }
           >
             <OilProductCard product={p} locale={locale} labels={labels} />
@@ -98,7 +98,7 @@ export function OilCardCarousel({
           className="dp-oils-arrow"
           style={{ ...arrowBase, insetInlineEnd: -16 }}
         >
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2C2620" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2C2620" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden style={{ transform: isRTL ? "scaleX(-1)" : "none" }}>
             <path d="M9 18l6-6-6-6" />
           </svg>
         </button>
@@ -118,8 +118,8 @@ const arrowBase: React.CSSProperties = {
   position: "absolute",
   top: "52%",
   zIndex: 4,
-  width: 38,
-  height: 38,
+  width: 34,
+  height: 34,
   borderRadius: "50%",
   border: "1px solid rgba(80,60,30,.10)",
   background: "rgba(255,255,255,.94)",

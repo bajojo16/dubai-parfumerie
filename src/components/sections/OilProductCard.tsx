@@ -171,9 +171,9 @@ export function OilProductCard({
         textDecoration: "none",
         background: `linear-gradient(160deg, ${T.cardFrom}, ${T.cardTo})`,
         border: `.5px solid ${T.border}`,
-        borderRadius: 18,
-        padding: "0 16px 16px",
-        marginTop: 42,
+        borderRadius: 16,
+        padding: "0 14px 14px",
+        marginTop: 36,
         transform: lift ? "translateY(-4px)" : "translateY(0)",
         boxShadow: lift ? "0 18px 40px rgba(120,90,40,.16)" : "0 6px 18px rgba(120,90,40,.06)",
         transition: "transform 240ms ease, box-shadow 240ms ease",
@@ -182,8 +182,8 @@ export function OilProductCard({
     >
       {/* Motif géométrique or discret (coin haut-fin) */}
       <svg
-        width="120"
-        height="120"
+        width="104"
+        height="104"
         viewBox="0 0 120 120"
         aria-hidden
         style={{
@@ -192,8 +192,8 @@ export function OilProductCard({
           insetInlineEnd: 0,
           opacity: 0.32,
           pointerEvents: "none",
-          borderTopRightRadius: isRTL ? 0 : 18,
-          borderTopLeftRadius: isRTL ? 18 : 0,
+          borderTopRightRadius: isRTL ? 0 : 16,
+          borderTopLeftRadius: isRTL ? 16 : 0,
           transform: isRTL ? "scaleX(-1)" : "none",
         }}
       >
@@ -208,8 +208,8 @@ export function OilProductCard({
       <div
         style={{
           position: "absolute",
-          top: 10,
-          insetInlineEnd: 10,
+          top: 8,
+          insetInlineEnd: 8,
           display: "flex",
           alignItems: "flex-start",
           justifyContent: "flex-end",
@@ -225,8 +225,8 @@ export function OilProductCard({
           aria-label={wished ? L.removeFromWishlist : L.addToWishlist}
           style={{
             pointerEvents: "auto",
-            width: 32,
-            height: 32,
+            width: 28,
+            height: 28,
             borderRadius: "50%",
             border: "none",
             background: "rgba(255,255,255,.92)",
@@ -237,8 +237,8 @@ export function OilProductCard({
           }}
         >
           <svg
-            width="16"
-            height="16"
+            width="14"
+            height="14"
             viewBox="0 0 24 24"
             fill={wished ? T.ctaGold : "none"}
             stroke={wished ? T.ctaGold : "#9A8E74"}
@@ -257,8 +257,8 @@ export function OilProductCard({
         className="dp-oilcard-bottle"
         style={{
           position: "relative",
-          height: 160,
-          marginTop: -56,
+          height: 140,
+          marginTop: -48,
           display: "flex",
           alignItems: "flex-end",
           justifyContent: "center",
@@ -280,10 +280,10 @@ export function OilProductCard({
             <SafeImage
               src={src}
               alt=""
-              width={30}
-              height={30}
-              fallbackSize={20}
-              imgStyle={{ width: 30, height: 30, objectFit: "contain" }}
+              width={26}
+              height={26}
+              fallbackSize={18}
+              imgStyle={{ width: 26, height: 26, objectFit: "contain" }}
             />
           </span>
         ))}
@@ -294,8 +294,8 @@ export function OilProductCard({
           style={{
             position: "absolute",
             bottom: 0,
-            width: 70,
-            height: 14,
+            width: 62,
+            height: 12,
             borderRadius: "50%",
             background: "radial-gradient(ellipse, rgba(120,90,40,.28), transparent 70%)",
             filter: "blur(2px)",
@@ -303,15 +303,15 @@ export function OilProductCard({
           }}
         />
 
-        <span className="dp-oilcard-flacon" style={{ position: "relative", zIndex: 2, transform: "translateY(-12px)", filter: "drop-shadow(0 10px 14px rgba(120,90,40,.28))" }}>
+        <span className="dp-oilcard-flacon" style={{ position: "relative", zIndex: 2, transform: "translateY(-10px)", filter: "drop-shadow(0 10px 14px rgba(120,90,40,.28))" }}>
           <SafeImage
             src={product.bottleImage}
             alt={`${product.name} ${product.brand}`}
-            width={144}
-            height={160}
-            fallbackSize={120}
-            sizes="160px"
-            imgStyle={{ height: 160, width: "auto", objectFit: "contain" }}
+            width={126}
+            height={140}
+            fallbackSize={104}
+            sizes="140px"
+            imgStyle={{ height: 140, width: "auto", objectFit: "contain" }}
           />
         </span>
 
@@ -323,10 +323,10 @@ export function OilProductCard({
             zIndex: 3,
             display: "inline-flex",
             alignItems: "center",
-            gap: 4,
+            gap: 3,
             background: "rgba(255,255,255,.94)",
             borderRadius: 999,
-            padding: "4px 10px",
+            padding: "3px 9px",
             fontFamily: "var(--font-sans)",
             fontSize: 11,
             fontWeight: 600,
@@ -343,12 +343,12 @@ export function OilProductCard({
       </div>
 
       {/* Texte */}
-      <div className="dp-oilcard-txt" style={{ textAlign: "center", marginTop: 10 }}>
+      <div className="dp-oilcard-txt" style={{ textAlign: "center", marginTop: 8 }}>
         <div
           style={{
             fontFamily: "var(--font-sans)",
             fontSize: 11,
-            letterSpacing: "2px",
+            letterSpacing: "1.8px",
             textTransform: "uppercase",
             color: T.brand,
             fontWeight: 600,
@@ -359,7 +359,7 @@ export function OilProductCard({
         <div
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: 22,
+            fontSize: 19,
             fontWeight: 600,
             lineHeight: 1.15,
             color: T.ink,
@@ -373,7 +373,7 @@ export function OilProductCard({
             fontFamily: "var(--font-sans)",
             fontSize: 13,
             color: T.meta,
-            marginTop: 4,
+            marginTop: 3,
           }}
         >
           {L.oil} · {product.volume} · {product.gender}
@@ -384,11 +384,11 @@ export function OilProductCard({
           style={{
             display: "inline-flex",
             alignItems: "baseline",
-            gap: 7,
-            marginTop: 6,
+            gap: 6,
+            marginTop: 5,
           }}
         >
-          <span style={{ fontFamily: "var(--font-display)", fontSize: 19, fontWeight: 600, color: T.priceGold }}>
+          <span style={{ fontFamily: "var(--font-display)", fontSize: 17, fontWeight: 600, color: T.priceGold }}>
             {fmtPrice(product.price)}
           </span>
           {product.compareAtPrice && product.compareAtPrice > product.price && (
@@ -412,9 +412,9 @@ export function OilProductCard({
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
-          gap: 8,
-          marginTop: 14,
-          paddingTop: 12,
+          gap: 7,
+          marginTop: 12,
+          paddingTop: 10,
           borderTop: `1px solid ${T.rule}`,
         }}
       >
@@ -425,14 +425,14 @@ export function OilProductCard({
               display: "flex",
               flexDirection: "column",
               alignItems: "center",
-              gap: 6,
+              gap: 5,
             }}
           >
             <span
               className="dp-oilcard-fam-ic"
               style={{
-                width: 46,
-                height: 46,
+                width: 40,
+                height: 40,
                 borderRadius: "50%",
                 overflow: "hidden",
                 background: "rgba(255,255,255,.6)",
@@ -444,9 +444,9 @@ export function OilProductCard({
               <SafeImage
                 src={f.icon}
                 alt=""
-                width={46}
-                height={46}
-                fallbackSize={46}
+                width={40}
+                height={40}
+                fallbackSize={40}
                 imgStyle={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }}
               />
             </span>
@@ -454,7 +454,7 @@ export function OilProductCard({
               className="dp-oilcard-fam-lbl"
               style={{
                 fontFamily: "var(--font-sans)",
-                fontSize: 12,
+                fontSize: 11,
                 fontWeight: 500,
                 color: T.ink,
                 textAlign: "center",
@@ -471,17 +471,17 @@ export function OilProductCard({
         className="dp-oilcard-actions"
         onClick={(e) => e.stopPropagation()}
         style={{
-          marginTop: 12,
+          marginTop: 10,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          gap: 8,
+          gap: 7,
         }}
       >
         {product.available ? (
-          <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
+          <QtyStepper value={qty} onChange={setQty} size="xs" locale={locale} />
         ) : (
-          <span aria-hidden style={{ height: 32 }} />
+          <span aria-hidden style={{ height: 28 }} />
         )}
         <button
           type="button"
@@ -497,11 +497,11 @@ export function OilProductCard({
             width: "100%",
           border: "none",
           borderRadius: 999,
-          padding: "11px 16px",
+          padding: "9px 14px",
           fontFamily: "var(--font-sans)",
-          fontSize: 11,
+          fontSize: 10.5,
           fontWeight: 600,
-          letterSpacing: "1px",
+          letterSpacing: "0.8px",
           textTransform: "uppercase",
           color: product.available ? "#fff" : "#8A8278",
           cursor: product.available ? "pointer" : "not-allowed",

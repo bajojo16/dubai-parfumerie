@@ -76,7 +76,6 @@ const NAV_LINKS = [
   { label: "Sur commande", href: "/commande-a-la-demande" },
   { label: "Bons Plans", href: "/promo-flash", highlight: true },
   { label: "Coffrets & Lots", href: "/promo-flash" },
-  { label: "Blog", href: "/blog" },
 ];
 
 interface MegaData {

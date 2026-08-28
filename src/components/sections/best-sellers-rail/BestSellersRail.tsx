@@ -37,7 +37,7 @@ export type BestSellersRailProps = {
   boldKeyword?: string;
   editorial: EditorialCard;
   products: RailProduct[];
-  onAddToCart?: (id: string) => void;
+  onAddToCart?: (id: string, qty: number) => void;
   locale?: string;
   cardLabels?: Partial<RailCardLabels>;
   editorialLabels?: Partial<EditorialCardLabels>;
@@ -169,16 +169,19 @@ export function BestSellersRail({
 
   const add = onAddToCart
     ? onAddToCart
-    : (id: string) => {
+    : (id: string, qty: number) => {
         const p = products.find((x) => x.id === id);
         if (p)
-          addItem({
-            id: p.id,
-            name: p.name,
-            brand: p.brand,
-            price: p.price.amount,
-            image: p.image,
-          });
+          addItem(
+            {
+              id: p.id,
+              name: p.name,
+              brand: p.brand,
+              price: p.price.amount,
+              image: p.image,
+            },
+            qty
+          );
       };
 
   return (
@@ -376,14 +379,29 @@ export function BestSellersRail({
           align-items: stretch;
           padding-block: 8px;
         }
+        /* La hauteur de la rangée est dictée par les cartes produit ; la carte
+           vidéo (contenu en position absolue) s'y aligne au lieu de l'étirer. */
+        .bsr-split > .bsr-split-editorial > * { height: 100%; }
         .bsr-split-rail {
           position: relative;
           flex: 1 1 auto;
           min-width: 0;
         }
         .bsr-split-editorial {
-          flex: 0 0 380px;
+          /* 380px écrasait le rail : la carte vidéo pesait presque deux cartes
+             produit. On la resserre pour qu'elle reste un accent, pas le sujet. */
+          flex: 0 0 300px;
           display: flex;
+          align-self: stretch;
+          /* Sans min-height:0, un enfant flex ne peut pas descendre sous sa
+             hauteur de contenu : la carte dépassait la hauteur du rail. */
+          min-height: 0;
+        }
+
+        /* Palier tablette : à 380px comme à 300px, la carte vidéo laissait
+           moins d'une carte produit et demie visible dans le rail. */
+        @media (max-width: 1023px) {
+          .bsr-split-editorial { flex: 0 0 250px; }
         }
 
         /* Repli mobile : vidéo en haut, produits scrollables dessous */

@@ -38,6 +38,24 @@ export interface Product {
    * attribué À CE parfum par une source publique — voir `PERFUMERS`.
    */
   perfumer?: string;
+  /**
+   * Une phrase — et une seule — rappelant la viralité du flacon sur les
+   * réseaux sociaux et la ressemblance recherchée par les visiteurs.
+   *
+   * Champ séparé plutôt que concaténé dans `description` pour trois raisons :
+   * la description reste un texte purement olfactif (réutilisé tronqué dans le
+   * JSON-LD et la meta `description`, où une accroche sociale n'a rien à
+   * faire) ; la fiche peut donner à cette phrase son propre traitement
+   * typographique et sa mention légale ; et une entrée sans note documentée
+   * n'affiche simplement rien.
+   *
+   * RÈGLE : un original de luxe n'est NOMMÉ que si `olfactive-twins.ts`
+   * établit le rapprochement pour CE slug (`productHandle`). Sinon la phrase
+   * parle d'« un grand classique » sans le nommer. Vocabulaire imposé —
+   * « inspiré de », « rappelle », « dans le sillage de » ; jamais « copie »,
+   * « identique » ou « même parfum que ».
+   */
+  viralNote?: string;
 }
 
 /**
@@ -71,6 +89,8 @@ export const PRODUCTS: Record<string, Product> = {
     origin: "Fabriqué à Dubaï",
     description:
       "Oud Pour Elle est une ode à la féminité orientale. Dès les premières secondes, la rose damascène déploie ses pétales sur un accord de safran précieux, avant de laisser place à un cœur velouté de musc blanc et de jasmin. En fond, le bois de oud sombre et l'ambre crémeux assurent une tenue exceptionnelle, laissant sur la peau un sillage envoûtant pendant plus de vingt-quatre heures.",
+    viralNote:
+      "Régulièrement partagé sur les réseaux sociaux, il y est recherché pour sa ressemblance avec un grand classique de la rose orientale, dont il rappelle le sillage sans jamais s'en réclamer.",
     topNotes: ["Rose damascène", "Safran", "Bergamote"],
     heartNotes: ["Musc blanc", "Jasmin", "Iris"],
     baseNotes: ["Oud", "Ambre", "Santal blanc", "Vanille"],
@@ -90,6 +110,8 @@ export const PRODUCTS: Record<string, Product> = {
     origin: "Fabriqué à Dubaï",
     description:
       "Amber Oud est l'expression pure du luxe arabe. L'ouverture explosive de cardamome et de poivre noir cède rapidement la place à un cœur riche en oud royal et en rose de Taïf. La base ambrée, généreusement chargée de résines précieuses et de musc chaud, fait de ce parfum une signature olfactive inoubliable, portée par des personnalités qui revendiquent leur singularité.",
+    viralNote:
+      "Largement relayé sur les réseaux sociaux, Amber Oud y est recherché pour sa parenté avec Tom Ford · Oud Wood, dans le sillage duquel il inscrit son oud fumé, son santal et son poivre.",
     topNotes: ["Cardamome", "Poivre noir", "Citron"],
     heartNotes: ["Oud royal", "Rose de Taïf", "Encens"],
     baseNotes: ["Ambre", "Résine de benjoin", "Musc chaud", "Vétiver"],
@@ -109,6 +131,8 @@ export const PRODUCTS: Record<string, Product> = {
     origin: "Fabriqué à Dubaï",
     description:
       "Opulent Blue s'ouvre sur une fraîcheur marine iodée, comme une brise venue du Golfe Persique. Des accords aquatiques de concombre et de menthe poivrée évoluent vers un cœur floral délicat — jasmin et muguet — avant de plonger dans une base boisée de cèdre et d'ambre gris. Un parfum à la fois contemporain et ancré dans la tradition des maisons du Golfe.",
+    viralNote:
+      "Très commenté sur les réseaux sociaux, il doit une part de son succès à sa ressemblance avec un grand classique aquatique, dont il rappelle la fraîcheur sans prétendre s'y substituer.",
     topNotes: ["Marine", "Concombre", "Menthe poivrée"],
     heartNotes: ["Jasmin", "Muguet", "Patchouli"],
     baseNotes: ["Cèdre", "Ambre gris", "Musc bleu"],
@@ -128,6 +152,8 @@ export const PRODUCTS: Record<string, Product> = {
     origin: "Fabriqué à Dubaï",
     description:
       "Club de Nuit est un fougère oriental d'une intensité rare. Son ouverture hespéridée et fruitée — ananas, citron bergamote — se mue rapidement en un bouquet floral masculin de rose et de jasmin. La base boisée et fumée, portée par le bouleau birch et le musc, confère à ce parfum une personnalité affirmée, idéale pour les soirées où l'on veut marquer les esprits durablement.",
+    viralNote:
+      "Porté par les réseaux sociaux depuis plusieurs saisons, il y est recherché pour sa ressemblance avec un grand classique fruité-fumé de la parfumerie occidentale, dont il rappelle l'ouverture à l'ananas sans jamais s'en réclamer.",
     topNotes: ["Ananas", "Citron bergamote", "Pomme"],
     heartNotes: ["Rose", "Jasmin", "Patchouli"],
     baseNotes: ["Bouleau birch", "Musc", "Ambre", "Cèdre"],
@@ -147,6 +173,8 @@ export const PRODUCTS: Record<string, Product> = {
     origin: "Fabriqué à Dubaï",
     description:
       "Shaghaf Oud incarne l'héritage olfactif des grandes maisons arabes fondées à Dubaï. Une ouverture de safran et d'épices rares introduit un cœur dense en oud cambodi et rose orientale. La base de santal crémeux, de musc et de résines anciennes crée un fond enveloppant et sensuel qui évolue merveilleusement sur la peau au fil des heures, révélant des facettes toujours plus profondes.",
+    viralNote:
+      "Devenu un habitué des vidéos de parfumerie sur les réseaux sociaux, il y est recherché pour sa ressemblance avec un grand classique de l'accord oud-rose, dont il rappelle la profondeur sans prétendre l'égaler.",
     topNotes: ["Safran", "Épices", "Rose"],
     heartNotes: ["Oud cambodi", "Rose orientale", "Fleur d'oranger"],
     baseNotes: ["Santal crémeux", "Musc", "Résines", "Labdanum"],
@@ -165,6 +193,8 @@ export const PRODUCTS: Record<string, Product> = {
     origin: "Fabriqué à Dubaï",
     description:
       "L'Or de Saba est un joyau de parfumerie orientale qui rend hommage à la Route des épices. Dès l'ouverture, le safran royal et le poivre de Sichuan créent une explosion épicée et lumineuse. Le cœur révèle un oud précieux rehaussé de fleurs sauvages de Saba, tandis que la base de résines dorées, d'encens et de musc boisé dépose un voile somptueux, digne des palais du Golfe.",
+    viralNote:
+      "Repéré puis largement relayé sur les réseaux sociaux, il y est recherché pour sa ressemblance avec un grand classique boisé-épicé, dont il rappelle l'ampleur sans jamais s'en réclamer.",
     topNotes: ["Safran royal", "Poivre de Sichuan", "Bergamote"],
     heartNotes: ["Oud précieux", "Fleurs de Saba", "Absolu de rose"],
     baseNotes: ["Résines dorées", "Encens", "Musc boisé", "Ambre"],
@@ -188,6 +218,8 @@ export const PRODUCTS: Record<string, Product> = {
     origin: "Fabriqué à Dubaï",
     description:
       "Khamrah — « l'ivresse » en arabe — est le gourmand oriental qui a fait basculer Lattafa dans une autre dimension depuis sa sortie en 2022. Tout commence sur une datte confite, réchauffée de cannelle et de muscade, que la bergamote empêche de tourner au sirop. Le cœur s'épaissit alors : praline, fève tonka et vanille se fondent en un accord de pâtisserie orientale, adouci d'une fleur d'oranger discrète. Puis vient le fond, et Khamrah cesse d'être un dessert : benjoin résineux, bois de santal, ambre gris et une volute de myrrhe et d'encens installent une profondeur presque cérémonielle, qui tient sur la peau — et surtout sur les vêtements — bien après la fin de la soirée.",
+    viralNote:
+      "Devenu l'un des flacons les plus commentés des réseaux sociaux, Khamrah y est aussi recherché pour son sillage inspiré de Kilian · Angels' Share, dont il rappelle l'accord cognac, cannelle et fève tonka.",
     topNotes: ["Datte", "Cannelle", "Bergamote", "Muscade"],
     heartNotes: ["Praline", "Fève tonka", "Vanille", "Fleur d'oranger"],
     baseNotes: ["Benjoin", "Bois de santal", "Ambre gris", "Myrrhe", "Encens"],

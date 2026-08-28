@@ -544,18 +544,63 @@ export default async function ProductPage({ params }: PageProps) {
           >
             Description
           </h2>
+          {/* Un cran de moins que `--t-lead` : le paragraphe pesait autant que
+              les titres et aplatissait la hiérarchie. `--t-body` (15px) reste
+              confortable, l'interligne descend de 1.7 à 1.6 et la colonne est
+              bornée en `ch` — au-delà de ~70 signes, l'œil perd sa ligne. */}
           <p
+            className="dp-product-desc"
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: "var(--t-lead)",
-              lineHeight: "var(--lh-relaxed)",
+              fontSize: "var(--t-body)",
+              lineHeight: "var(--lh-comfort)",
               color: "var(--ink-700)",
-              maxWidth: "720px",
+              maxWidth: "68ch",
               margin: 0,
             }}
           >
             {product.description}
           </p>
+          {/* Note « viralité + ressemblance ». Séparée de la description pour
+              qu'elle ne parte pas dans le JSON-LD ni dans la meta, et pour
+              porter sa mention légale : la fiche nomme parfois une maison
+              tierce, l'usage doit rester nominatif et non affilié. */}
+          {product.viralNote && (
+            <div
+              className="dp-viral-note"
+              style={{
+                maxWidth: "68ch",
+                marginBlockStart: "1.25rem",
+                paddingInlineStart: "0.875rem",
+                borderInlineStart: "2px solid var(--gold-500)",
+              }}
+            >
+              <p
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--t-body)",
+                  lineHeight: "var(--lh-comfort)",
+                  color: "var(--ink-700)",
+                  margin: 0,
+                }}
+              >
+                {product.viralNote}
+              </p>
+              <p
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--t-xs)",
+                  lineHeight: "var(--lh-normal)",
+                  letterSpacing: "var(--ls-normal)",
+                  color: "var(--ink-400)",
+                  margin: "0.5rem 0 0",
+                }}
+              >
+                Parfums inspirés, jamais des copies : aucune affiliation avec les
+                marques citées.
+              </p>
+            </div>
+          )}
         </section>
 
         {/* Related products */}

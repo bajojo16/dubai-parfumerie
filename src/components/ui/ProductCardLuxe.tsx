@@ -39,10 +39,15 @@ export function ProductCardLuxe({
   product,
   onAddToCart,
   locale,
+  showStockBadge = true,
 }: {
   product: LuxeProduct;
   onAddToCart?: (p: LuxeProduct, qty: number) => void;
   locale?: string;
+  /** Bandeau « stock limité » sur l'image. Les sections qui ne veulent aucun
+   *  libellé promotionnel sur la carte (ex. « Les parfums de l'été ») passent
+   *  false : le badge remise reste le seul badge affiché. */
+  showStockBadge?: boolean;
 }) {
   const t = useTranslations("common");
   const [hover, setHover] = useState(false);
@@ -81,8 +86,8 @@ export function ProductCardLuxe({
       }}
     >
       {/* Zone image portrait (cadre crème) */}
-      <div className="dp-luxe-media" style={{ position: "relative", background: T.imageBg, padding: 10 }}>
-        <div className="dp-luxe-frame" style={{ position: "relative", width: "100%", aspectRatio: "1 / 1.1", borderRadius: 12, overflow: "hidden" }}>
+      <div className="dp-luxe-media" style={{ position: "relative", background: T.imageBg, padding: 6, overflow: "hidden" }}>
+        <div className="dp-luxe-frame" style={{ position: "relative", width: "100%", aspectRatio: "1 / 1.15", borderRadius: 16, overflow: "hidden" }}>
           <Image src={product.image} alt={product.title} fill sizes="(max-width:760px) 50vw, 260px" style={{ objectFit: "cover" }} />
         </div>
 
@@ -92,8 +97,12 @@ export function ProductCardLuxe({
             className="dp-luxe-badge-promo"
             style={{
               position: "absolute",
-              insetInlineStart: 16,
-              background: "rgba(201,162,74,0.22)",
+              insetInlineStart: 12,
+              // aucun badge ne doit pouvoir sortir du cadre, quelle que soit
+              // la longueur du libellé
+              maxWidth: "calc(100% - 24px)",
+              whiteSpace: "nowrap",
+              background: "rgba(255,251,243,0.92)",
               backdropFilter: "blur(4px)",
               WebkitBackdropFilter: "blur(4px)",
               color: T.goldDark,
@@ -109,18 +118,21 @@ export function ProductCardLuxe({
         )}
 
         {/* Badge stock — fin (droite LTR / gauche RTL) */}
-        {product.limitedStock && (
+        {showStockBadge && product.limitedStock && (
           <span
             className="dp-luxe-badge-stock"
             style={{
               position: "absolute",
-              insetInlineEnd: 16,
+              insetInlineEnd: 12,
               // borné à la largeur utile de la carte : le libellé est long et
               // sortait du cadre, coupé en plein mot
-              maxWidth: "calc(100% - 32px)",
-              overflow: "hidden",
-              textOverflow: "ellipsis",
-              whiteSpace: "nowrap",
+              maxWidth: "calc(100% - 24px)",
+              // le libellé passe à la ligne plutôt que d'être coupé : aucun
+              // texte de badge ne doit plus être tronqué, quelle que soit sa
+              // longueur (i18n : « Ограниченный запас », « Begrenzter Vorrat »…)
+              whiteSpace: "normal",
+              lineHeight: 1.25,
+              textAlign: "center",
               background: "rgba(255,255,255,0.65)",
               backdropFilter: "blur(4px)",
               WebkitBackdropFilter: "blur(4px)",
@@ -139,7 +151,7 @@ export function ProductCardLuxe({
         <style>{`
           .dp-luxe-badge-promo,
           .dp-luxe-badge-stock {
-            top: 16px;
+            top: 12px;
           }
           /* Le rendu mobile a été calibré séparément et doit rester intact :
              on y rétablit toutes les valeurs d'avant le resserrement desktop
@@ -154,7 +166,10 @@ export function ProductCardLuxe({
               font-size: 11px !important;
               padding: 5px 11px !important;
             }
-            .dp-luxe-badge-promo { inset-inline-start: 22px !important; }
+            .dp-luxe-badge-promo {
+              inset-inline-start: 22px !important;
+              max-width: calc(100% - 44px) !important;
+            }
             .dp-luxe-badge-stock {
               top: 52px;
               inset-inline-end: 22px !important;
@@ -164,7 +179,7 @@ export function ProductCardLuxe({
             .dp-luxe-reviews { font-size: 11px !important; }
             .dp-luxe-titleblock { gap: 6px !important; }
             .dp-luxe-pricerow { gap: 10px !important; margin-top: 2px !important; }
-            .dp-cardluxe-actions { margin-top: 6px !important; }
+            .dp-cardluxe-actions { margin-top: auto !important; padding-top: 6px !important; }
             /* Le stepper repasse en taille sm via ses variables : ses styles
                sont inline, seul un !important sur les variables les atteint. */
             .dp-cardluxe-actions .dp-qty {
@@ -195,7 +210,7 @@ export function ProductCardLuxe({
       </div>
 
       {/* Corps */}
-      <div className="dp-luxe-body" style={{ padding: "11px 13px 13px", display: "flex", flexDirection: "column", gap: 5 }}>
+      <div className="dp-luxe-body" style={{ padding: "11px 13px 13px", display: "flex", flexDirection: "column", gap: 5, flex: "1 1 auto" }}>
         <Link href={product.href} className="dp-luxe-titleblock" style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", gap: 4 }}>
           <span className="dp-luxe-brand" style={{ fontFamily: "var(--font-sans)", fontSize: 9.5, letterSpacing: "1.2px", textTransform: "uppercase", color: T.creamLabel }}>
             {product.brand}
@@ -234,7 +249,7 @@ export function ProductCardLuxe({
         </div>
 
         {/* Sélecteur quantité + bouton */}
-        <div className="dp-cardluxe-actions" style={{ marginTop: 5, display: "flex", alignItems: "center", gap: 7 }}>
+        <div className="dp-cardluxe-actions" style={{ marginTop: "auto", paddingTop: 5, display: "flex", alignItems: "center", gap: 7 }}>
         <QtyStepper value={qty} onChange={setQty} size="xs" locale={locale} />
         <button
           className="dp-cardluxe-addbtn"

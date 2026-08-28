@@ -947,4 +947,58 @@ const CSS = `
   .dp-ff-crit li > button { padding-block: 8px; padding-inline: 11px 58px; }
   .dp-ff-crit li > button i { opacity: 1; }
 }
+
+/* ────────────────────────────────────────────────────────────────────────────
+   Question « intensite » (layout gauge) — rangee resserree
+   ────────────────────────────────────────────────────────────────────────────
+   Les trois options tenaient toute la largeur du panneau (~820px en section) et
+   ~90px de haut : trois cartes pour trois mots. On borne la rangee, on rend le
+   rembourrage et la jauge a leur echelle, et on remonte la legende de 10 a 12px
+   — elle etait sous le seuil de lisibilite.
+
+   L'etat survol/selection heritait du brun quasi noir commun a toutes les
+   options (--espresso-900), qui se lit comme un aplat gris terne a cote du
+   creme du panneau. Il passe ici sur la palette maison : creme doree au survol,
+   aplat or a la selection, texte encre dans les deux cas.
+   Contrastes : #1C1611 sur #F6EAC8 ~ 15:1, #15100B sur #C8901E ~ 7,9:1,
+   #241A12 (legende) sur #C8901E ~ 7,2:1.
+   Bloc place en fin de feuille : il doit passer apres le bloc portable ci-dessus,
+   qui porte la meme specificite. */
+.dp-ff-opts.is-gauge {
+  max-width: 600px; margin-inline: auto; gap: 8px;
+}
+.dp-ff-opts.is-gauge .dp-ff-opt {
+  gap: 5px; padding: 9px 10px; min-height: 44px;
+}
+/* La variante inline reduit deja le rembourrage vertical de toutes les options :
+   on la reprend explicitement pour ne pas dependre de l'ordre de la feuille. */
+.dp-ff.is-inline .dp-ff-opts.is-gauge .dp-ff-opt { padding-block: 9px; }
+.dp-ff-opts.is-gauge .dp-ff-opt small { font-size: 12px; line-height: var(--lh-snug); }
+.dp-ff-opts.is-gauge .dp-ff-gauge { height: 11px; gap: 3px; }
+.dp-ff-opts.is-gauge .dp-ff-gauge i { width: 4px; }
+.dp-ff-opts.is-gauge .dp-ff-gauge i:nth-child(1) { height: 5px; }
+.dp-ff-opts.is-gauge .dp-ff-gauge i:nth-child(2) { height: 8px; }
+.dp-ff-opts.is-gauge .dp-ff-gauge i:nth-child(3) { height: 11px; }
+
+.dp-ff-opts.is-gauge .dp-ff-opt:hover {
+  background: var(--gold-100); color: var(--ink-900); border-color: var(--gold-500);
+}
+.dp-ff-opts.is-gauge .dp-ff-opt:hover small { color: var(--ink-500); }
+.dp-ff-opts.is-gauge .dp-ff-opt:hover .dp-ff-gauge i { background: var(--line-300); }
+.dp-ff-opts.is-gauge .dp-ff-opt:hover .dp-ff-gauge i.on { background: var(--gold-700); }
+
+.dp-ff-opts.is-gauge .dp-ff-opt.on {
+  background: var(--gold-500); color: var(--espresso-900); border-color: var(--gold-700);
+  box-shadow: var(--shadow-gold);
+}
+.dp-ff-opts.is-gauge .dp-ff-opt.on small { color: var(--espresso-700); }
+.dp-ff-opts.is-gauge .dp-ff-opt.on .dp-ff-gauge i { background: var(--gold-200); }
+.dp-ff-opts.is-gauge .dp-ff-opt.on .dp-ff-gauge i.on { background: var(--espresso-900); }
+
+@media (max-width: 760px) {
+  /* En portable la legende est masquee (regle du bloc portable) : la rangee
+     reprend toute la largeur disponible et garde une cible de 44px. */
+  .dp-ff-opts.is-gauge { max-width: none; gap: 6px; }
+  .dp-ff-opts.is-gauge .dp-ff-opt { padding: 9px 6px; min-height: 44px; }
+}
 `;

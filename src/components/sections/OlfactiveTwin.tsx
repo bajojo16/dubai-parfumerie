@@ -6,14 +6,20 @@
  * Le CHAMP DE RECHERCHE est le point d'entrée : on tape le parfum qu'on aime
  * (nom ou maison, accents et casse indifférents) et la section propose le
  * produit oriental au profil le plus proche, avec son niveau de proximité.
- * Les pastilles restent, mais comme suggestions — une poignée de références
- * très connues, celles dont la correspondance a été relue par l'équipe.
+ * Les pastilles restent, mais comme suggestions — une poignée de références très
+ * connues DONT LE JUMEAU EXISTE. Elles ne sont plus écrites dans le composant :
+ * elles viennent de `resolveSuggestions()`, qui filtre l'ordre de priorité de
+ * `TWIN_SUGGESTIONS` par ce que le moteur certifie réellement (voir l'invariant
+ * dans `olfactive-twins.ts`). Une pastille qui ne mène nulle part ne peut donc
+ * plus apparaître — c'était le défaut d'avant : la moitié des suggestions
+ * renvoyait vers un visuel de remplissage et une page de liste.
  *
- * Chargement différé obligatoire : la base des références (700+ parfums) et le
+ * Chargement différé obligatoire : la base des références (3 952 parfums) et le
  * moteur d'appariement arrivent en `import()` dynamique au PREMIER usage du
- * champ, jamais au chargement de la page — même motif que `SearchOverlay` avec
- * `search-catalog`. Tant que le module n'est pas là, les pastilles suffisent :
- * elles s'appuient sur la prop `matches`, déjà dans le bundle.
+ * champ OU au premier clic sur une pastille, jamais au chargement de la page —
+ * même motif que `SearchOverlay` avec `search-catalog`. Tant que le module n'est
+ * pas là, les pastilles sont peintes depuis l'amorçage `TWIN_SUGGESTIONS`, qui
+ * ne pèse que huit libellés.
  *
  * Cadre légal inchangé : usage nominatif des marques, texte seul, vocabulaire
  * « inspiré de » / « jumeau olfactif » — jamais « clone », « copie », « dupe ».
@@ -29,9 +35,10 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
-import type { OlfactiveMatch } from "@/data/olfactive-twins";
+import { TWIN_SUGGESTIONS, TWIN_SUGGESTION_COUNT, type OlfactiveMatch } from "@/data/olfactive-twins";
 import type { MatchStrength, TwinResult } from "@/data/olfactive-match";
 import type { ReferencePerfume } from "@/data/reference-perfumes";
+import { QtyStepper } from "@/components/ui/QtyStepper";
 import { addItem } from "@/lib/cart";
 
 /** Module chargé à la première interaction avec le champ — pas avant. */
@@ -99,8 +106,10 @@ function rememberAlert(email: string, reference: string) {
  * appariement calculé n'ont pas la même forme, l'affichage n'a pas à le savoir.
  */
 type ResultView = {
-  /** clé stable — sert d'identifiant panier et de clé React */
+  /** clé stable — clé React et identifiant de la pastille active */
   key: string;
+  /** id de la référence dans la base — dit quelle pastille est active */
+  referenceId: string;
   /** parfum de référence, en toutes lettres (usage nominatif) */
   targetName: string;
   /** famille commune aux deux profils */
@@ -109,31 +118,39 @@ type ResultView = {
   strength: MatchStrength;
   /** notes de la référence réellement retrouvées dans le produit */
   sharedAccords: string[];
-  product: { name: string; brand: string; price: number; image: string; href: string };
+  /**
+   * `id` est le handle du PRODUIT, pas celui de la référence : deux originaux
+   * différents peuvent mener au même flacon, et le panier doit alors compter
+   * une seule ligne — pas deux fois le même parfum sous deux noms.
+   */
+  product: { id: string; name: string; brand: string; price: number; image: string; href: string };
 };
 
 function viewFromCurated(m: OlfactiveMatch): ResultView {
   return {
     key: m.key,
+    referenceId: m.referenceId,
     targetName: m.targetName,
     familyLabel: m.family,
     description: m.description,
     // Relue et validée par l'équipe : c'est le plus haut niveau de proximité.
     strength: "tres-proche",
     sharedAccords: [],
-    product: m.product,
+    product: { id: m.productHandle, ...m.product },
   };
 }
 
 function viewFromTwin(t: TwinResult): ResultView {
   return {
     key: t.reference.id,
+    referenceId: t.reference.id,
     targetName: `${t.reference.house} · ${t.reference.name}`,
     familyLabel: t.catalogFamilyLabel,
     description: t.curated?.description || t.product.description || t.catalogFamilyText,
     strength: t.strength,
     sharedAccords: t.sharedAccords,
     product: {
+      id: t.product.slug,
       name: t.product.name,
       brand: t.product.brand,
       price: t.product.price ?? 0,
@@ -162,8 +179,33 @@ export function OlfactiveTwin({
   const [highlight, setHighlight] = useState(0);
   const [mod, setMod] = useState<MatchModule | null>(null);
   const [loading, setLoading] = useState(false);
-  const [view, setView] = useState<ResultView | null>(() => (matches[0] ? viewFromCurated(matches[0]) : null));
   const [addedKey, setAddedKey] = useState("");
+  const [qty, setQty] = useState(1);
+
+  /**
+   * Pastilles = suggestions par défaut. La liste vient de la base (voir
+   * l'invariant dans `olfactive-twins.ts`) : tant que le module lourd n'est pas
+   * là, on peint l'amorçage `TWIN_SUGGESTIONS` — déjà dans le bundle — puis on
+   * repasse sur la liste que le moteur certifie réellement. Les deux sont
+   * identiques tant que la base ne bouge pas ; le jour où elle bouge, c'est
+   * elle qui a raison, pas la copie d'amorçage.
+   */
+  const pills = useMemo(
+    () =>
+      mod
+        ? mod.resolveSuggestions(TWIN_SUGGESTION_COUNT).map((s) => ({ referenceId: s.referenceId, label: s.label }))
+        : TWIN_SUGGESTIONS.slice(0, TWIN_SUGGESTION_COUNT).map((s) => ({ referenceId: s.referenceId, label: s.label })),
+    [mod]
+  );
+
+  // Premier résultat affiché : la paire relue qui correspond à la première
+  // pastille. `matches[0]` ne sert plus que de secours — la vitrine et les
+  // pastilles doivent désigner le même parfum, sinon aucune n'apparaît active.
+  const [view, setView] = useState<ResultView | null>(() => {
+    const first = TWIN_SUGGESTIONS[0]?.referenceId;
+    const seed = matches.find((m) => m.referenceId === first) ?? matches[0];
+    return seed ? viewFromCurated(seed) : null;
+  });
 
   // Référence choisie pour laquelle nous n'avons PAS de jumeau. Un état à part
   // de `view` : les deux ne coexistent jamais, mais confondre les deux ferait
@@ -179,13 +221,24 @@ export function OlfactiveTwin({
   // ── Chargement différé, au premier usage du champ ──────────────────────────
   // Déclenché par le focus autant que par la frappe : le temps de lire le
   // placeholder, le module est là et la première lettre répond déjà.
+  const ensureModule = useCallback(async (): Promise<MatchModule> => {
+    if (mod) return mod;
+    setLoading(true);
+    try {
+      // `import()` est mémorisé par le bundler : deux appels concurrents ne
+      // téléchargent qu'une fois, la garde n'a donc pas à sérialiser.
+      const m = await import("@/data/olfactive-match");
+      setMod(m);
+      return m;
+    } finally {
+      setLoading(false);
+    }
+  }, [mod]);
+
   const loadModule = useCallback(() => {
     if (mod || loading) return;
-    setLoading(true);
-    import("@/data/olfactive-match")
-      .then((m) => setMod(m))
-      .finally(() => setLoading(false));
-  }, [mod, loading]);
+    void ensureModule();
+  }, [mod, loading, ensureModule]);
 
   // ── Propositions ───────────────────────────────────────────────────────────
   const suggestions: ReferencePerfume[] = useMemo(() => {
@@ -228,9 +281,40 @@ export function OlfactiveTwin({
       // déclinaisons de la même référence (Sauvage, Sauvage Elixir…).
       setQuery(ref.name);
       setOpen(false);
+      setQty(1);
       inputRef.current?.blur();
     },
     [mod]
+  );
+
+  /**
+   * Clic sur une pastille. La pastille ne porte QUE l'identifiant de la
+   * référence : le jumeau est relu dans la base, jamais recopié dans le
+   * composant — c'est ce qui garantit qu'une pastille et une recherche au
+   * clavier donnent exactement le même résultat.
+   */
+  const choosePill = useCallback(
+    async (referenceId: string) => {
+      const m = await ensureModule();
+      const ref = m.getReference(referenceId);
+      // L'invariant des suggestions garantit que la référence existe ; si la
+      // base bougeait, `resolveSuggestions` retirerait la pastille au prochain
+      // rendu — on ne casse rien en attendant.
+      if (!ref) return;
+      const twin = m.findTwin(ref);
+      if (twin) {
+        setView(viewFromTwin(twin));
+        setMissing("");
+      } else {
+        setView(null);
+        setMissing(`${ref.house} · ${ref.name}`);
+      }
+      setAlertSent(false);
+      setAlertError("");
+      setQty(1);
+      setOpen(false);
+    },
+    [ensureModule]
   );
 
   const submitAlert = (e: React.FormEvent) => {
@@ -429,28 +513,21 @@ export function OlfactiveTwin({
     </div>
   );
 
-  // Pastilles = suggestions de parfums très connus (correspondances relues)
+  // Pastilles = suggestions par défaut, dérivées de la base : chacune a un
+  // jumeau certifié, aucune ne mène à l'écran « pas encore de jumeau ».
   const pillsEl = (
     <div className="otw-pills" role="group" aria-label={t("suggestions")}>
-      {matches.map((m) => {
-        const active = view?.key === m.key;
+      {pills.map((p) => {
+        const active = view?.referenceId === p.referenceId;
         return (
           <button
-            key={m.key}
+            key={p.referenceId}
             type="button"
             aria-pressed={active}
-            onClick={() => {
-              // Paire relue à la main : c'est un jumeau certain, on efface
-              // l'éventuel écran « pas encore de jumeau » affiché juste avant.
-              setView(viewFromCurated(m));
-              setMissing("");
-              setAlertSent(false);
-              setAlertError("");
-              setOpen(false);
-            }}
+            onClick={() => void choosePill(p.referenceId)}
             className={active ? "otw-pill otw-pill-on" : "otw-pill"}
           >
-            {m.targetName}
+            {p.label}
           </button>
         );
       })}
@@ -519,7 +596,7 @@ export function OlfactiveTwin({
   );
 
   const resultEl = (
-    <div aria-live="polite">
+    <div aria-live="polite" className="otw-result">
       {missing ? (
         missingEl
       ) : (
@@ -529,12 +606,13 @@ export function OlfactiveTwin({
           style={{
             background: "#fff",
             border: `0.5px solid ${C.border}`,
-            borderRadius: compact ? 12 : 14,
-            padding: compact ? 12 : 18,
+            borderRadius: compact ? 14 : 16,
+            padding: compact ? 14 : 20,
           }}
         >
+          {/* Deux colonnes de même nature : un surtitre, un nom. La flèche dit
+              le sens de lecture — l'original à gauche, le jumeau à droite. */}
           <div className="otw-row">
-            {/* Vous aimez */}
             <div className="otw-target">
               <div className="otw-eyebrow">{t("you_like")}</div>
               <div className="otw-target-name">{view.targetName}</div>
@@ -543,8 +621,8 @@ export function OlfactiveTwin({
             {/* Flèche : sens de lecture, elle bascule à la verticale en mobile */}
             <svg
               className={isRTL ? "otw-arrow otw-arrow-rtl" : "otw-arrow"}
-              width={compact ? 26 : 34}
-              height={compact ? 18 : 22}
+              width="34"
+              height="22"
               viewBox="0 0 34 22"
               fill="none"
               stroke={C.gold}
@@ -559,47 +637,36 @@ export function OlfactiveTwin({
               <path d="M22 10l7 5-7 5" />
             </svg>
 
-            {/* Le jumeau oriental */}
             <div className="otw-twin">
+              {/* Cadre crème + `contain` : les packshots n'ont ni le même
+                  cadrage ni le même format, un `cover` en coupait la moitié. */}
               <div className="otw-thumb">
-                <Image src={view.product.image} alt={view.product.name} fill sizes="84px" style={{ objectFit: "cover" }} />
+                <Image
+                  src={view.product.image}
+                  alt={view.product.name}
+                  fill
+                  sizes="(max-width: 760px) 96px, 116px"
+                  style={{ objectFit: "contain" }}
+                />
               </div>
               <div className="otw-twin-text">
                 <div className="otw-eyebrow otw-eyebrow-gold">{t("the_twin")}</div>
                 <div className="otw-twin-name">
                   {view.product.brand} · {view.product.name}
                 </div>
+                <div className="otw-price">{t("from_price", { price: fmt(view.product.price) })}</div>
+                {/* Une seule et même pastille pour la famille et la proximité :
+                    deux styles différents laissaient croire à deux natures
+                    d'information. Seule la proximité est pleine. */}
                 <div className="otw-meta">
-                  <span className="otw-price">{t("from_price", { price: fmt(view.product.price) })}</span>
-                  <span className="otw-tag">{view.familyLabel}</span>
-                  <span className={`otw-strength otw-strength-${view.strength}`}>{strengthLabel[view.strength]}</span>
+                  <span className="otw-chip">{view.familyLabel}</span>
+                  <span className="otw-chip otw-chip-solid">{strengthLabel[view.strength]}</span>
                 </div>
               </div>
             </div>
-
-            {compact && (
-              <div className="otw-actions">
-                <button
-                  type="button"
-                  className="otw-add"
-                  onClick={() => {
-                    addItem({
-                      id: view.key,
-                      name: view.product.name,
-                      brand: view.product.brand,
-                      price: view.product.price,
-                      image: view.product.image,
-                    });
-                    setAddedKey(view.key);
-                  }}
-                >
-                  {addedKey === view.key ? t("added") : t("add_to_cart")}
-                </button>
-              </div>
-            )}
           </div>
 
-          {/* Description + accords partagés + accès à la fiche */}
+          {/* Description + accords partagés, puis l'achat */}
           <div className="otw-foot" style={{ borderTop: `1px solid ${C.border}` }}>
             <div className="otw-foot-text">
               <p className="otw-desc">{view.description}</p>
@@ -609,9 +676,33 @@ export function OlfactiveTwin({
                 </p>
               )}
             </div>
-            <Link href={view.product.href} className="otw-cta">
-              {t("see_product")} →
-            </Link>
+            {/* Une seule action pleine — l'ajout au panier. La fiche produit
+                passe en bouton de contour : même hauteur, même axe. */}
+            <div className="otw-buy">
+              <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
+              <button
+                type="button"
+                className="otw-btn otw-btn-primary"
+                onClick={() => {
+                  addItem(
+                    {
+                      id: view.product.id,
+                      name: view.product.name,
+                      brand: view.product.brand,
+                      price: view.product.price,
+                      image: view.product.image,
+                    },
+                    qty
+                  );
+                  setAddedKey(view.key);
+                }}
+              >
+                {addedKey === view.key ? t("added") : t("add_to_cart")}
+              </button>
+              <Link href={view.product.href} className="otw-btn otw-btn-ghost">
+                {t("see_product")}
+              </Link>
+            </div>
           </div>
         </div>
         )
@@ -656,8 +747,12 @@ export function OlfactiveTwin({
     .otwin-root { box-sizing: border-box; max-width: 100%; }
     .otwin-root *, .otwin-root *::before, .otwin-root *::after { box-sizing: border-box; }
     .otwin-q { animation: otwin-pulse 2.4s ease-in-out infinite; }
-    .otwin-grid { display: grid; grid-template-columns: minmax(0, 45fr) minmax(0, 55fr); gap: 18px; align-items: start; }
-    .otwin-grid > * { min-width: 0; }
+    /* Les deux colonnes partagent la meme hauteur : la carte de resultat
+       s'etire pour finir sur la meme ligne que les pastilles. */
+    .otwin-grid { display: grid; grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); gap: 20px; align-items: stretch; }
+    .otwin-grid > * { min-width: 0; display: flex; flex-direction: column; }
+    .otwin-grid .otw-result { flex: 1 1 auto; display: flex; }
+    .otwin-grid .otw-card, .otwin-grid .otw-none { flex: 1 1 auto; }
 
     .otw-combo { position: relative; }
     .otw-list { position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; right: 0; margin: 0; padding: 6px; list-style: none;
@@ -679,44 +774,59 @@ export function OlfactiveTwin({
     .otw-pill-on { border-color: ${C.pillSelBg}; background: ${C.pillSelBg}; color: ${C.pillSelText}; }
     .otw-pill-on:hover { background: ${C.pillSelBg}; border-color: ${C.pillSelBg}; }
 
-    .otw-card { max-width: 100%; overflow: hidden; }
-    .otw-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .otw-card { max-width: 100%; display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(58,44,20,.05); }
+    /* Rangee principale : original | fleche | jumeau. Les deux colonnes de
+       texte ont le meme gabarit, la fleche ne prend que sa largeur. */
+    .otw-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
     .otw-row > * { min-width: 0; }
-    .otw-target { flex: 1 1 150px; min-width: 0; }
-    .otw-eyebrow { font-family: var(--font-sans); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: ${C.muted}; margin-bottom: 2px; }
+    .otw-target { flex: 1 1 190px; min-width: 0; }
+    .otw-eyebrow { font-family: var(--font-sans); font-size: 9.5px; letter-spacing: 1.3px; text-transform: uppercase;
+      color: ${C.muted}; margin-bottom: 5px; }
     .otw-eyebrow-gold { color: ${C.goldLabel}; }
-    .otw-target-name { font-family: var(--font-display); font-size: 17px; color: ${C.muted}; line-height: 1.15; overflow-wrap: anywhere; }
-    .otw-arrow { flex: 0 0 auto; }
+    /* text-wrap balance repartit les mots sur les lignes : « Carolina Herrera
+       · Good Girl » ne se coupe plus entre Good et Girl. overflow-wrap anywhere
+       a ete retire — c'est lui qui autorisait la coupure au milieu d'un nom
+       propre ; le min-width 0 du parent suffit a contenir le debordement. */
+    .otw-target-name { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: ${C.ink};
+      line-height: 1.2; text-wrap: balance; overflow-wrap: break-word; }
+    .otw-arrow { flex: 0 0 auto; opacity: .85; }
     /* Sens de lecture inverse en arabe — en classe, pas en style inline : la
        media query mobile doit pouvoir la faire pivoter, ce qu'un style inline
        empecherait (il l'emporte sur la feuille de styles). */
     .otw-arrow-rtl { transform: scaleX(-1); }
-    .otw-twin { display: flex; align-items: center; gap: 12px; flex: 2 1 240px; min-width: 0; }
-    .otw-thumb { position: relative; width: 72px; height: 72px; flex: 0 0 auto; border-radius: 10px; overflow: hidden; background: #F7F3EE; }
+    .otw-twin { display: flex; align-items: center; gap: 14px; flex: 1 1 260px; min-width: 0; }
+    /* Cadre creme a coins arrondis : le packshot respire au lieu d'etre
+       recadre. object-fit contain + fond neutre = tous les flacons au meme gabarit,
+       quel que soit leur format d'origine. */
+    .otw-thumb { position: relative; width: 116px; height: 116px; flex: 0 0 auto; border-radius: 14px;
+      overflow: hidden; background: ${C.stage}; border: 1px solid ${C.border}; padding: 8px; }
     .otw-twin-text { min-width: 0; flex: 1 1 auto; }
-    .otw-twin-name { font-family: var(--font-display); font-size: 17px; color: ${C.ink}; line-height: 1.15; overflow-wrap: anywhere; }
-    .otw-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 4px; }
-    .otw-price { font-family: var(--font-sans); font-size: 13px; color: ${C.goldLabel}; }
-    .otw-tag { font-family: var(--font-sans); font-size: 10.5px; color: ${C.goldDark}; background: ${C.tagBg};
-      border: 1px solid ${C.tagBorder}; border-radius: 20px; padding: 2px 8px; }
-    .otw-strength { font-family: var(--font-sans); font-size: 10.5px; border-radius: 20px; padding: 2px 8px; border: 1px solid transparent; }
-    .otw-strength-tres-proche { background: ${C.pillSelBg}; color: ${C.pillSelText}; }
-    .otw-strength-proche { background: transparent; color: ${C.goldDark}; border-color: ${C.goldCta}; }
-    .otw-strength-apparente { background: transparent; color: ${C.muted}; border-color: ${C.border}; }
+    .otw-twin-name { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: ${C.ink};
+      line-height: 1.2; text-wrap: balance; overflow-wrap: break-word; }
+    .otw-price { font-family: var(--font-sans); font-size: 13.5px; color: ${C.goldLabel}; margin-top: 4px; }
+    .otw-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    /* Une seule pastille pour les deux informations. La proximite est la seule
+       remplie : c'est le verdict, la famille n'est qu'un rappel de profil. */
+    .otw-chip { font-family: var(--font-sans); font-size: 10px; letter-spacing: .3px; line-height: 1.6;
+      border-radius: 999px; padding: 3px 10px; border: 1px solid ${C.tagBorder}; background: ${C.tagBg}; color: ${C.goldDark}; }
+    .otw-chip-solid { background: ${C.pillSelBg}; border-color: ${C.pillSelBg}; color: ${C.pillSelText}; }
 
-    .otw-actions { margin-inline-start: auto; flex: 0 0 auto; }
-    .otw-add { border: none; cursor: pointer; border-radius: 999px; padding: 8px 14px; font-family: var(--font-sans);
-      font-size: 10.5px; font-weight: 600; letter-spacing: .4px; text-transform: uppercase; color: #fff; background: ${C.goldCta}; }
-    .otw-add:hover { background: ${C.goldDark}; }
-
-    .otw-foot { margin-top: 12px; padding-top: 12px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .otw-foot { margin-top: 16px; padding-top: 14px; display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
     .otw-foot-text { flex: 1 1 220px; min-width: 0; }
-    .otw-desc { font-family: var(--font-sans); font-size: 12px; color: ${C.muted}; margin: 0; line-height: 1.5; }
-    .otw-accords { font-family: var(--font-sans); font-size: 11px; color: ${C.goldLabel}; margin: 4px 0 0; line-height: 1.4; overflow-wrap: anywhere; }
-    .otw-cta { flex: 0 0 auto; display: inline-block; text-align: center; text-decoration: none; background: ${C.goldCta}; color: #fff;
-      font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase;
-      border-radius: 999px; padding: 10px 18px; }
-    .otw-cta:hover { background: ${C.goldDark}; }
+    .otw-desc { font-family: var(--font-sans); font-size: 12.5px; color: ${C.muted}; margin: 0; line-height: 1.55; }
+    .otw-accords { font-family: var(--font-sans); font-size: 11px; color: ${C.goldLabel}; margin: 5px 0 0; line-height: 1.4; overflow-wrap: anywhere; }
+    /* Un seul plein : l'ajout au panier. La fiche produit passe en contour, a
+       la meme hauteur, sur le meme axe — les deux boutons ne se disputent plus
+       le regard. */
+    .otw-buy { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .otw-btn { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; height: 40px;
+      padding: 0 18px; border-radius: 999px; cursor: pointer; text-decoration: none; white-space: nowrap;
+      font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase;
+      transition: background .2s, border-color .2s, color .2s; }
+    .otw-btn-primary { border: 1px solid ${C.goldCta}; background: ${C.goldCta}; color: #fff; }
+    .otw-btn-primary:hover { background: ${C.goldDark}; border-color: ${C.goldDark}; }
+    .otw-btn-ghost { border: 1px solid ${C.tagBorder}; background: transparent; color: ${C.goldDark}; }
+    .otw-btn-ghost:hover { border-color: ${C.gold}; background: ${C.tagBg}; }
 
     /* ── Ecran « pas encore de jumeau » ─────────────────────────────────────
        Meme carte creme que le resultat, filet dore, titre en Cormorant : cet
@@ -756,15 +866,18 @@ export function OlfactiveTwin({
       .otw-none-title { font-size: 19px; }
       .otw-none-form { max-width: none; }
       .otw-none-input, .otw-none-submit { flex: 1 1 100%; width: 100%; }
-      .otw-row { flex-direction: column; align-items: stretch; gap: 10px; }
+      .otwin-grid > *, .otwin-grid .otw-result { display: block; }
+      .otw-row { flex-direction: column; align-items: stretch; gap: 12px; }
       .otw-arrow, .otw-arrow-rtl { align-self: center; transform: rotate(90deg); }
       .otw-twin { flex: 1 1 auto; }
-      .otw-thumb { width: 64px; height: 64px; }
-      .otw-actions { margin-inline-start: 0; width: 100%; }
-      .otw-add { width: 100%; }
+      .otw-thumb { width: 96px; height: 96px; }
       .otw-foot { flex-direction: column; align-items: stretch; }
-      .otw-cta { width: 100%; }
-      .otw-target-name, .otw-twin-name { font-size: 16px; }
+      /* 375 px : le stepper garde sa largeur, l'ajout prend le reste, la fiche
+         passe dessous sur toute la largeur. */
+      .otw-buy { width: 100%; }
+      .otw-btn-primary { flex: 1 1 auto; }
+      .otw-btn-ghost { flex: 1 1 100%; }
+      .otw-target-name, .otw-twin-name { font-size: 18px; }
     }
     @media (prefers-reduced-motion: reduce) { .otwin-q { animation: none; } }
   `;

@@ -1,9 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import type { ScentFamily } from "@/data/scent-families";
+import type { ScentFamily, ScentProduct } from "@/data/scent-families";
+import { QtyStepper } from "@/components/ui/QtyStepper";
+import { addItem } from "@/lib/cart";
 
 export type ScentWheelLabels = {
   eyebrow: string; // sur-titre
@@ -16,6 +18,11 @@ export type ScentWheelLabels = {
   wheelAria: string; // aria-label de la roue
   priceFrom: string; // préfixe prix ("dès")
   clickHint: string; // incitation au repos ("Cliquez sur une note")
+  addToCart: string; // CTA carte produit au repos
+  adding: string; // pendant l'ajout
+  added: string; // feedback après ajout
+  decreaseQty: string; // aria-label « − » du stepper
+  increaseQty: string; // aria-label « + » du stepper
 };
 
 const DEFAULT_LABELS: ScentWheelLabels = {
@@ -30,6 +37,11 @@ const DEFAULT_LABELS: ScentWheelLabels = {
   wheelAria: "Roue des familles olfactives",
   priceFrom: "",
   clickHint: "Cliquez sur une note",
+  addToCart: "Ajouter au panier",
+  adding: "Ajout…",
+  added: "Ajouté ✓",
+  decreaseQty: "Diminuer la quantité",
+  increaseQty: "Augmenter la quantité",
 };
 
 // Tracés SVG des 6 segments (ordre : Oud, Rose, Ambré, Boisé, Musc, Épicé)
@@ -151,12 +163,15 @@ export function ScentWheelInteractive({
               style={{ objectFit: "cover" }}
             />
           )}
-          {/* Très léger voile pour homogénéiser sans masquer (fond quasi pleine opacité) */}
+          {/* Voile dégradé : franc en haut (zone du bandeau de titre, dont le
+              texte est en encre foncée) puis quasi nul plus bas, pour laisser
+              la photo d'ingrédient visible derrière la roue et les cartes. */}
           <div
             style={{
               position: "absolute",
               inset: 0,
-              background: "rgba(250,246,238,.05)",
+              background:
+                "linear-gradient(180deg, rgba(250,246,238,.62) 0%, rgba(250,246,238,.28) 38%, rgba(250,246,238,.05) 70%)",
             }}
           />
         </div>
@@ -175,6 +190,22 @@ export function ScentWheelInteractive({
           maxWidth: 760,
           marginInline: "auto",
           marginBottom: 26,
+          // Bandeau crème translucide : le fond de la section est une PHOTO
+          // d'ingrédient (souvent sombre) et le titre est en encre foncée.
+          // Ce voile garantit le contraste quelle que soit la famille active,
+          // et reste cohérent au repos (fond crème uni, pas d'image).
+          background:
+            "linear-gradient(180deg, rgba(250,246,238,.95) 0%, rgba(250,246,238,.88) 100%)",
+          backdropFilter: "blur(6px)",
+          WebkitBackdropFilter: "blur(6px)",
+          border: ".5px solid rgba(230,220,200,.7)",
+          borderRadius: 16,
+          boxShadow: "0 6px 22px rgba(44,38,32,.08)",
+          // Padding vertical généreux : les jambages et accents de Cormorant
+          // (« p » de Épicé, accent aigu du « É ») débordent la boîte de ligne.
+          padding: "20px 26px 24px",
+          // Aucun rognage : ni hauteur fixe, ni overflow:hidden sur ce bandeau.
+          overflow: "visible",
         }}
       >
         <div
@@ -183,24 +214,42 @@ export function ScentWheelInteractive({
             fontSize: 11,
             letterSpacing: ".22em",
             textTransform: "uppercase",
-            color: "#A8915F",
+            color: "#8A6E2E",
             marginBottom: 10,
+            lineHeight: 1.5,
           }}
         >
           {L.eyebrow}
         </div>
         <h2
+          className="dp-wheel-title"
           style={{
             fontFamily: "var(--font-display)",
             fontWeight: 400,
-            fontSize: "clamp(2rem,3.6vw,2.9rem)",
+            fontSize: "clamp(1.75rem,3.6vw,2.9rem)",
             color: "#2C2620",
-            lineHeight: 1.1,
+            // 1.1 coupait accents et jambages ; 1.28 laisse le demi-interligne
+            // nécessaire au-dessus et au-dessous des glyphes.
+            lineHeight: 1.28,
             margin: 0,
+            // Le titre peut passer sur deux lignes : pas de nowrap, pas de
+            // hauteur imposée, et un retour propre si la locale est longue.
+            whiteSpace: "normal",
+            overflowWrap: "break-word",
+            textWrap: "balance",
+            overflow: "visible",
           }}
         >
           {L.title}
-          {active ? ` : ${active.label}` : ""}
+          {active ? (
+            // display:inline-block → «&nbsp;: Épicé » bascule d'un bloc sur la
+            // 2e ligne au lieu d'être scindé ; couleur explicite (identique au
+            // reste du titre) pour que la partie dynamique ne paraisse pas plus
+            // pâle que le reste.
+            <span style={{ display: "inline-block", color: "#2C2620" }}>
+              &nbsp;: {active.label}
+            </span>
+          ) : null}
         </h2>
       </div>
 
@@ -488,77 +537,101 @@ export function ScentWheelInteractive({
         </div>
 
         {/* Colonne panneau — flex-column avec gap explicite : garantit que le
-            bloc titre/description, le CTA et les cartes produit occupent
-            chacun leur propre zone, sans jamais se chevaucher, quelle que
-            soit la largeur du texte (locale) ou la largeur du viewport. */}
+            bandeau description+CTA et les cartes produit occupent chacun leur
+            propre zone, sans jamais se chevaucher, quelle que soit la largeur
+            du texte (locale) ou la largeur du viewport.
+            Gap resserré de 18 à 12 : la hauteur récupérée va aux cartes. */}
         <div
           style={{
             flex: "1 1 380px",
             minWidth: 260,
             display: "flex",
             flexDirection: "column",
-            gap: 18,
+            gap: 12,
             textAlign: isRTL ? "right" : "left",
           }}
         >
+          {/* Bandeau description + CTA sur UNE SEULE ligne.
+              Avant : la description (bandeau pleine largeur, padding 20/22)
+              puis, 18px plus bas, le CTA sur sa propre ligne (~36px), puis
+              encore 18px avant la grille produit — soit ~72px pris sur la
+              hauteur utile des cartes. Ici le bouton se cale en fin de ligne
+              dans le même bandeau : la description garde toute sa lisibilité,
+              le CTA reste visible, et les cartes récupèrent la hauteur.
+              La description reste dans cette colonne (et non en en-tête) :
+              son contenu change à chaque famille cliquée, il doit rester
+              collé à la carte produit qu'il justifie. */}
           <div
-            style={
-              active
+            className="dp-wheel-panel"
+            style={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              // columnGap large (respiration texte/bouton), rowGap court
+              // pour le repli mobile où le bouton passe sous le texte.
+              columnGap: 18,
+              rowGap: 12,
+              ...(active
                 ? {
                     background: "rgba(250,246,238,.85)",
                     border: ".5px solid rgba(230,220,200,.7)",
                     borderRadius: 14,
-                    padding: "20px 22px",
+                    // Padding vertical resserré (20 → 14) : le bandeau n'a
+                    // plus qu'une ligne de contenu à porter.
+                    padding: "14px 18px",
                     boxShadow: "0 6px 22px rgba(44,38,32,.10)",
                     backdropFilter: "blur(2px)",
                   }
-                : undefined
-            }
-          >
-          {/* La description reste dans la colonne de droite : son contenu change à
-              chaque famille cliquée. Remontée en en-tête, elle ferait sauter la
-              hauteur de tout le bloc à chaque clic et éloignerait le texte de la
-              carte produit qu'il justifie. */}
-          <p
-            style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: 14,
-              color: "#6A655D",
-              lineHeight: 1.7,
-              margin: 0,
-              transition: reduced ? "none" : "opacity .4s ease",
+                : {}),
             }}
           >
-            {active ? active.description : L.intro}
-          </p>
-          </div>
-
-          {/* CTA — alignSelf empêche le flex-column parent de l'étirer en
-              pleine largeur (comportement stretch par défaut) : il garde sa
-              largeur "au contenu" (pilule), sur sa propre ligne. */}
-          {active && (
-            <Link
-              href={`/collections/${active.collectionSlug}`}
+            <p
               style={{
-                display: "inline-flex",
-                alignSelf: isRTL ? "flex-end" : "flex-start",
-                alignItems: "center",
-                gap: 8,
+                // flex-basis généreuse : sous ~520px de colonne, le bouton
+                // repasse sous le texte au lieu de l'étrangler.
+                flex: "1 1 300px",
+                minWidth: 0,
                 fontFamily: "var(--font-sans)",
-                fontSize: 12,
-                fontWeight: 700,
-                letterSpacing: ".04em",
-                textTransform: "uppercase",
-                color: "#fff",
-                background: "#C4A24F",
-                borderRadius: 999,
-                padding: "10px 20px",
-                textDecoration: "none",
+                fontSize: 14,
+                color: "#6A655D",
+                lineHeight: 1.6,
+                margin: 0,
+                transition: reduced ? "none" : "opacity .4s ease",
               }}
             >
-              {L.cta} {isRTL ? "←" : "→"}
-            </Link>
-          )}
+              {active ? active.description : L.intro}
+            </p>
+
+            {/* CTA — flexShrink:0 : il garde sa largeur "au contenu"
+                (pilule) sur la même ligne que la description. Aucun
+                alignSelf directionnel : le dir du conteneur gère le RTL. */}
+            {active && (
+              <Link
+                href={`/collections/${active.collectionSlug}`}
+                className="dp-wheel-cta"
+                style={{
+                  display: "inline-flex",
+                  flexShrink: 0,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: 8,
+                  fontFamily: "var(--font-sans)",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: ".04em",
+                  textTransform: "uppercase",
+                  color: "#fff",
+                  background: "#C4A24F",
+                  borderRadius: 999,
+                  padding: "10px 20px",
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {L.cta} {isRTL ? "←" : "→"}
+              </Link>
+            )}
+          </div>
 
           {/* Cartes produits */}
           {active && (
@@ -570,86 +643,14 @@ export function ScentWheelInteractive({
               }}
             >
               {active.products.slice(0, 2).map((p) => (
-                <Link
-                  key={p.name}
-                  href={p.href}
-                  className="dp-wheel-card"
-                  style={{
-                    // minWidth:0 obligatoire : sans lui, le contenu (nom long)
-                    // impose sa largeur minimale et fait déborder la carte sous 760px.
-                    flex: "1 1 260px",
-                    minWidth: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 18,
-                    textDecoration: "none",
-                    background: "#fff",
-                    border: ".5px solid #E6DCC8",
-                    borderRadius: 18,
-                    padding: 16,
-                    transition: reduced
-                      ? "none"
-                      : "transform .2s ease, box-shadow .2s ease",
-                  }}
-                >
-                  <div
-                    style={{
-                      position: "relative",
-                      width: 84,
-                      height: 124,
-                      flexShrink: 0,
-                      borderRadius: 12,
-                      overflow: "hidden",
-                      background: "#F7F1E6",
-                    }}
-                  >
-                    <Image
-                      src={p.image}
-                      alt={p.name}
-                      fill
-                      sizes="84px"
-                      style={{ objectFit: "contain" }}
-                    />
-                  </div>
-                  <div style={{ minWidth: 0, flex: 1 }}>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-sans)",
-                        fontSize: 11,
-                        letterSpacing: ".14em",
-                        textTransform: "uppercase",
-                        color: "#A8915F",
-                        marginBottom: 6,
-                      }}
-                    >
-                      {p.brand}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        fontSize: 25,
-                        lineHeight: 1.15,
-                        color: "#2C2620",
-                        marginBottom: 7,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                    >
-                      {p.name}
-                    </div>
-                    <div
-                      style={{
-                        fontFamily: "var(--font-sans)",
-                        fontSize: 17,
-                        fontWeight: 700,
-                        color: "#A8801F",
-                      }}
-                    >
-                      {L.priceFrom ? `${L.priceFrom} ` : ""}{fmtPrice(p.price)}
-                    </div>
-                  </div>
-                </Link>
+                <WheelProductCard
+                  key={p.href}
+                  product={p}
+                  locale={locale}
+                  reduced={reduced}
+                  labels={L}
+                  formatPrice={fmtPrice}
+                />
               ))}
             </div>
           )}
@@ -697,6 +698,233 @@ export function ScentWheelInteractive({
           .dp-wheel-card:hover { transform: none; }
         }
       `}</style>
+    </div>
+  );
+}
+
+/* ── Carte produit de la Roue ──────────────────────────────────────────
+   Sous-composant obligatoire : chaque carte porte SON propre état
+   (quantité, feedback d'ajout). Un état unique remonté dans la section
+   ferait bouger les deux cartes ensemble à chaque clic.
+   Le lien produit et le bloc d'actions sont FRÈRES : jamais un <button>
+   imbriqué dans un <a>. */
+function WheelProductCard({
+  product,
+  locale,
+  reduced,
+  labels,
+  formatPrice,
+}: {
+  product: ScentProduct;
+  locale: string;
+  reduced: boolean;
+  labels: ScentWheelLabels;
+  formatPrice: (n: number) => string;
+}) {
+  const [qty, setQty] = useState(1);
+  const [adding, setAdding] = useState(false);
+  const [added, setAdded] = useState(false);
+  const [hover, setHover] = useState(false);
+  const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => () => timers.current.forEach(clearTimeout), []);
+
+  // Identifiant panier : dernier segment du href produit (le slug), déjà
+  // unique dans le catalogue. Repli sur le nom si le href est atypique.
+  const id = product.href.split("/").filter(Boolean).pop() || product.name;
+
+  const handleAdd = useCallback(
+    (e: React.MouseEvent) => {
+      // La carte contient un lien : on neutralise toute navigation parasite.
+      e.stopPropagation();
+      e.preventDefault();
+      if (adding) return;
+      setAdding(true);
+      addItem(
+        {
+          id,
+          name: product.name,
+          brand: product.brand,
+          price: product.price,
+          image: product.image,
+        },
+        qty
+      );
+      timers.current.push(
+        setTimeout(() => {
+          setAdding(false);
+          setAdded(true);
+          timers.current.push(setTimeout(() => setAdded(false), 1600));
+        }, 500)
+      );
+    },
+    [adding, id, product, qty]
+  );
+
+  return (
+    <div
+      className="dp-wheel-card"
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      style={{
+        // 320px de base (au lieu de 260) : la colonne d'actions occupe
+        // désormais l'espace laissé vide à droite de la bande.
+        position: "relative",
+        flex: "1 1 320px",
+        minWidth: 0,
+        display: "flex",
+        flexWrap: "wrap",
+        alignItems: "center",
+        gap: 18,
+        background: "#fff",
+        border: ".5px solid #E6DCC8",
+        borderRadius: 18,
+        padding: 16,
+        transition: reduced
+          ? "none"
+          : "transform .2s ease, box-shadow .2s ease",
+      }}
+    >
+      <Link
+        href={product.href}
+        style={{
+          // minWidth:0 obligatoire : sans lui, le contenu (nom long)
+          // impose sa largeur minimale et fait déborder la carte sous 760px.
+          flex: "1 1 180px",
+          minWidth: 0,
+          display: "flex",
+          alignItems: "center",
+          gap: 18,
+          textDecoration: "none",
+        }}
+      >
+        {/* Visuel flacon agrandi : 84×124 → 124×184 (+48 % de hauteur utile),
+            rendu possible par la hauteur libérée en fusionnant le CTA dans le
+            bandeau de description. Ratio d'origine conservé (0,68). */}
+        <div
+          className="dp-wheel-card-media"
+          style={{
+            position: "relative",
+            width: 124,
+            height: 184,
+            flexShrink: 0,
+            borderRadius: 12,
+            overflow: "hidden",
+            background: "#F7F1E6",
+          }}
+        >
+          <Image
+            src={product.image}
+            alt={product.name}
+            fill
+            sizes="(max-width: 560px) 96px, 124px"
+            style={{ objectFit: "contain" }}
+          />
+        </div>
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div
+            style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: 11,
+              letterSpacing: ".14em",
+              textTransform: "uppercase",
+              color: "#A8915F",
+              marginBottom: 6,
+            }}
+          >
+            {product.brand}
+          </div>
+          <div
+            style={{
+              fontFamily: "var(--font-display)",
+              fontSize: 25,
+              lineHeight: 1.15,
+              color: "#2C2620",
+              marginBottom: 7,
+              // Plus d'ellipse : la carte étant plus haute, un nom long
+              // passe sur deux lignes au lieu d'être tronqué.
+              whiteSpace: "normal",
+              overflowWrap: "break-word",
+            }}
+          >
+            {product.name}
+          </div>
+          <div
+            style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: 17,
+              fontWeight: 700,
+              color: "#A8801F",
+            }}
+          >
+            {labels.priceFrom ? `${labels.priceFrom} ` : ""}
+            {formatPrice(product.price)}
+          </div>
+        </div>
+      </Link>
+
+      {/* Zone d'actions — poussée vers la fin de ligne par une marge logique
+          (droite en LTR, gauche en RTL), sans casser la bande horizontale. */}
+      <div
+        className="dp-wheel-card-actions"
+        style={{
+          marginInlineStart: "auto",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: 8,
+          flexShrink: 0,
+        }}
+      >
+        <QtyStepper
+          value={qty}
+          onChange={setQty}
+          size="xs"
+          locale={locale}
+          labels={{ decrease: labels.decreaseQty, increase: labels.increaseQty }}
+        />
+        <button
+          type="button"
+          onClick={handleAdd}
+          aria-label={`${labels.addToCart} — ${product.name} (×${qty})`}
+          className="dp-wheel-card-addbtn"
+          style={{
+            minWidth: 132,
+            border: "none",
+            cursor: "pointer",
+            borderRadius: 999,
+            padding: "9px 16px",
+            fontFamily: "var(--font-sans)",
+            fontSize: 12,
+            fontWeight: 600,
+            lineHeight: 1.3,
+            letterSpacing: ".04em",
+            textTransform: "uppercase",
+            color: hover ? "#2C2620" : "#FBF6EC",
+            background: hover ? "#C9A24A" : "#2C2620",
+            transition: reduced
+              ? "none"
+              : "background 220ms ease, color 220ms ease",
+          }}
+        >
+          {adding ? labels.adding : added ? labels.added : labels.addToCart}
+        </button>
+      </div>
+
+      {/* Retour accessible (lecteurs d'écran) */}
+      <span
+        aria-live="polite"
+        style={{
+          position: "absolute",
+          width: 1,
+          height: 1,
+          overflow: "hidden",
+          clip: "rect(0 0 0 0)",
+          whiteSpace: "nowrap",
+        }}
+      >
+        {added ? `${labels.added} — ${product.name}` : ""}
+      </span>
     </div>
   );
 }

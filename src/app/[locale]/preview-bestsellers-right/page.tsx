@@ -11,16 +11,19 @@ const PRODUCTS = TOP_PRODUCTS;
 export default function PreviewBestSellersRightPage() {
   const locale = useLocale();
 
-  const handleAddToCart = (id: string) => {
+  const handleAddToCart = (id: string, qty: number) => {
     const p = PRODUCTS.find((x) => x.id === id);
     if (!p) return;
-    addItem({
-      id: p.id,
-      name: p.name,
-      brand: p.brand,
-      price: p.price.amount,
-      image: p.image,
-    });
+    addItem(
+      {
+        id: p.id,
+        name: p.name,
+        brand: p.brand,
+        price: p.price.amount,
+        image: p.image,
+      },
+      qty
+    );
   };
 
   return (

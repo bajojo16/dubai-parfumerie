@@ -46,16 +46,16 @@ function Check() {
       aria-hidden
       style={{
         flex: "0 0 auto",
-        width: 18,
-        height: 18,
+        width: 16,
+        height: 16,
         borderRadius: "50%",
         background: "rgba(196,162,79,.16)",
         display: "grid",
         placeItems: "center",
-        marginTop: 1,
+        marginTop: 2,
       }}
     >
-      <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+      <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke={C.gold} strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
         <path d="M5 12l5 5L19 7" />
       </svg>
     </span>
@@ -81,7 +81,7 @@ export function OilSection({
       style={{
         background: C.bg,
         borderRadius: 20,
-        padding: 32,
+        padding: 28,
       }}
     >
       <div className="dp-oil-grid">
@@ -102,11 +102,11 @@ export function OilSection({
           <h2
             style={{
               fontFamily: "var(--font-display)",
-              fontSize: 38,
+              fontSize: 33,
               fontWeight: 600,
               lineHeight: 1.1,
               color: C.ink,
-              margin: "10px 0 14px",
+              margin: "8px 0 12px",
             }}
           >
             {L.titleLead}{" "}
@@ -115,26 +115,26 @@ export function OilSection({
           <p
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: 14.5,
-              lineHeight: 1.65,
+              fontSize: 13.5,
+              lineHeight: 1.6,
               color: C.body,
-              margin: "0 0 18px",
-              maxWidth: 440,
+              margin: "0 0 16px",
+              maxWidth: 400,
             }}
           >
             {L.description}
           </p>
 
-          <ul style={{ listStyle: "none", margin: "0 0 24px", padding: 0, display: "flex", flexDirection: "column", gap: 11 }}>
+          <ul style={{ listStyle: "none", margin: "0 0 20px", padding: 0, display: "flex", flexDirection: "column", gap: 9 }}>
             {L.bullets.map((b) => (
               <li
                 key={b}
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
-                  gap: 10,
+                  gap: 9,
                   fontFamily: "var(--font-sans)",
-                  fontSize: 13.5,
+                  fontSize: 13,
                   color: C.ink,
                 }}
               >
@@ -149,16 +149,16 @@ export function OilSection({
             style={{
               display: "inline-flex",
               alignItems: "center",
-              gap: 8,
+              gap: 7,
               textDecoration: "none",
               background: C.ctaDark,
               color: C.ctaText,
               fontFamily: "var(--font-sans)",
-              fontSize: 13,
+              fontSize: 12.5,
               fontWeight: 600,
               letterSpacing: ".5px",
               borderRadius: 999,
-              padding: "13px 24px",
+              padding: "11px 21px",
             }}
           >
             {L.cta}
@@ -178,7 +178,7 @@ export function OilSection({
         [data-dp-oil-section] .dp-oil-grid {
           display: grid;
           grid-template-columns: 1fr;
-          gap: 28px;
+          gap: 24px;
           align-items: center;
         }
         @media (min-width: 900px) {

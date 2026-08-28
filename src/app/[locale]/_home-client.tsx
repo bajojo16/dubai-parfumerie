@@ -90,6 +90,17 @@ const products = [
   { id: 6, image: "/assets/prod-6.jpg", brand: "Ahmed Al Maghribi", name: "L'Or Intense", price: 36.90, oldPrice: 64.90, rating: 4.8, reviews: 134, badge: "-43%", notes: "Épices · Ambre · Encens" },
 ];
 
+// Sélection « Les parfums de l'été » — liste dédiée : `products` alimente aussi
+// bestSellers et oilItems, la modifier changerait ces deux sections.
+const summerProducts: (LuxeProduct & { id: number })[] = [
+  // TODO visuel : aucun packshot « My Perfumes · Blueberry » dans public/assets.
+  // prod-3.jpg (flacon bleu) tient lieu de repère en attendant le vrai fichier.
+  { id: 101, image: "/assets/prod-3.jpg", brand: "My Perfumes", title: "Blueberry", price: 20, oldPrice: 25, href: "/promo-flash" },
+  { id: 102, image: "/assets/products/reef-33.webp", brand: "Reef Perfumes", title: "Reef 33", price: 70, href: "/promo-flash" },
+  { id: 103, image: "/assets/products/marshmallow-blush.webp", brand: "Paris Corner", title: "Marshmallow Blush", price: 39.5, href: "/promo-flash" },
+  { id: 104, image: "/assets/products/khamrah/khamrah-packshot.webp", brand: "Lattafa", title: "Khamrah", price: 29, href: "/produit/lattafa-khamrah", rating: 5, reviewCount: 1 },
+];
+
 const bestSellers = products.slice(2, 6);
 const oilItems = products.slice(0, 3);
 
@@ -405,6 +416,7 @@ function SectionHeader({
 export default function HomePageClient() {
   const locale = useLocale();
   const tTwin = useTranslations("olfactiveTwin");
+  const tCommon = useTranslations("common");
   const [selectedScent, setSelectedScent] = useState<string | null>(null);
   const [bundleOpen, setBundleOpen] = useState(false);
   const [hoveredScent, setHoveredScent] = useState<string | null>(null);
@@ -461,6 +473,29 @@ export default function HomePageClient() {
 
       {/* Promo strip — VENTES FLASH retiré pour le moment */}
 
+      {/* ── LIVRAISON MONDE ───────────────────────────────────────── */}
+      <section id="livraison" style={{ background: "var(--surface-page)", padding: "0" }}>
+        <div style={{ width: "100%" }}>
+          <ShippingChecker
+            countries={DEMO_SHIPPING_COUNTRIES}
+            detectedCode="FR"
+            locale={locale}
+          />
+        </div>
+      </section>
+
+      {/* ── VIDÉOS SHOPPABLES (après Dernières arrivées) ──────────── */}
+      <section id="shoppable" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
+        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow="Shopping vidéo"
+            title={<>Vu en <em>vidéo</em>, ajouté au panier</>}
+            subtitle="Découvrez nos parfums en mouvement et commandez en un clic."
+          />
+          <ShoppableVideoCarousel videos={SHOPPABLE_VIDEOS} locale={locale} />
+        </div>
+      </section>
+
       {/* ── LES PARFUMS DE L'ÉTÉ (sous le slider) ─────────────────── */}
       <section
         id="nouveautes"
@@ -478,11 +513,14 @@ export default function HomePageClient() {
             subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
           />
           <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 280px))", justifyContent: "center", gap: 20 }}>
-            {products.slice(0, 4).map(p => (
+            {summerProducts.map(p => (
               <ProductCardLuxe
                 key={p.id}
-                product={toLuxe(p)}
+                product={p}
                 locale={locale}
+                /* Aucun libellé promotionnel sur ces cartes : la remise
+                   calculée est le seul badge affiché. */
+                showStockBadge={false}
                 onAddToCart={(prod, qty) => addItem({ id: String(p.id), name: prod.title, brand: prod.brand, price: prod.price, image: prod.image }, qty)}
               />
             ))}
@@ -490,17 +528,6 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── VIDÉOS SHOPPABLES (après Dernières arrivées) ──────────── */}
-      <section id="shoppable" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow="Shopping vidéo"
-            title={<>Vu en <em>vidéo</em>, ajouté au panier</>}
-            subtitle="Découvrez nos parfums en mouvement et commandez en un clic."
-          />
-          <ShoppableVideoCarousel videos={SHOPPABLE_VIDEOS} locale={locale} />
-        </div>
-      </section>
 
       {/* ── COFFRETS & PACKS D'ÉCHANTILLONS — désactivée ──────────── */}
       {false && (
@@ -557,9 +584,9 @@ export default function HomePageClient() {
           boldKeyword="Reef"
           editorial={REEF_EDITORIAL}
           products={REEF_PRODUCTS}
-          onAddToCart={(id) => {
+          onAddToCart={(id, qty) => {
             const p = REEF_PRODUCTS.find((x) => x.id === id);
-            if (p) addItem({ id: p.id, name: p.name, brand: p.brand, price: p.price.amount, image: p.image });
+            if (p) addItem({ id: p.id, name: p.name, brand: p.brand, price: p.price.amount, image: p.image }, qty);
           }}
           locale={locale}
         />
@@ -657,9 +684,9 @@ export default function HomePageClient() {
           editorial={TOP_EDITORIAL}
           products={TOP_PRODUCTS}
           editorialSide="end"
-          onAddToCart={(id) => {
+          onAddToCart={(id, qty) => {
             const p = TOP_PRODUCTS.find((x) => x.id === id);
-            if (p) addItem({ id: p.id, name: p.name, brand: p.brand, price: p.price.amount, image: p.image });
+            if (p) addItem({ id: p.id, name: p.name, brand: p.brand, price: p.price.amount, image: p.image }, qty);
           }}
           locale={locale}
         />
@@ -716,68 +743,43 @@ export default function HomePageClient() {
         <TrendCarousel products={DEMO_TRENDS} locale={locale} />
       </section>
 
-      {/* ── 12. CATÉGORIES (Nos univers, au-dessus de jumeau) ───────
-           Masquée en version mobile : quatre vignettes plein cadre y
-           occupaient deux écrans pour dire ce que le menu dit déjà. */}
-      <section id="categories" className="dp-hide-mobile" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader eyebrow="Nos univers" title="Pour elle, pour lui, pour tous" />
-          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
-            {[
-              { img: "/assets/cat-femme.jpg", label: "Pour Elle", count: "320 parfums", href: "/parfums-femme" },
-              { img: "/assets/cat-homme.jpg", label: "Pour Lui", count: "280 parfums", href: "/parfums-homme" },
-              { img: "/assets/cat-mixte.jpg", label: "Mixte", count: "420 parfums", href: "/marques" },
-              { img: "/assets/coffrets.jpg", label: "Coffrets", count: "85 coffrets", href: "/promo-flash" },
-            ].map(cat => (
-              <Link key={cat.label} href={cat.href} style={{
-                textDecoration: "none", display: "block",
-                position: "relative", paddingBottom: "125%",
-                borderRadius: "var(--r-lg)", overflow: "hidden",
-              }}>
-                <Image src={cat.img} alt={cat.label} fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
-                <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(21,16,11,0.8) 0%, transparent 55%)" }} />
-                <div style={{ position: "absolute", bottom: 20, left: 20, right: 20 }}>
-                  <div style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", color: "#fff", marginBottom: 4 }}>{cat.label}</div>
-                  <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.72rem", color: "var(--on-dark-muted)" }}>{cat.count}</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
 
       {/* ── ROUE DES SENTEURS interactive (sous Le catalogue) ─────── */}
       <section id="roue-senteurs" style={{ background: "var(--surface-cream)", padding: "0 0 24px" }}>
         <div style={{ width: "100%" }}>
-          <ScentWheelInteractive families={DEMO_SCENT_FAMILIES} locale={locale} />
+          <ScentWheelInteractive
+            families={DEMO_SCENT_FAMILIES}
+            locale={locale}
+            labels={{ addToCart: tCommon("add_to_cart") }}
+          />
         </div>
       </section>
 
 
 
       {/* ── HUILES DE PARFUM (sous Shopping vidéo) ────────────────── */}
-      <section id="huiles" style={{ background: "var(--surface-cream)", padding: "24px 20px 80px" }}>
+      <section id="huiles" style={{ background: "var(--surface-cream)", padding: "20px 20px 64px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 52, alignItems: "center" }}>
             <div>
-              <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-700)", marginBottom: 12 }}>Exclusif</div>
-              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", color: "var(--ink-900)", margin: "0 0 18px", lineHeight: 1.1 }}>
+              <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-700)", marginBottom: 10 }}>Exclusif</div>
+              <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(1.75rem, 3vw, 2.4rem)", color: "var(--ink-900)", margin: "0 0 14px", lineHeight: 1.12 }}>
                 Huiles de parfum<br /><em>concentrées</em>
               </h2>
-              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.92rem", color: "var(--ink-500)", lineHeight: 1.78, marginBottom: 24 }}>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", color: "var(--ink-500)", lineHeight: 1.65, marginBottom: 20 }}>
                 Les huiles de parfum orientales sont la quintessence de la tradition olfactive arabe. Sans alcool, ultra-concentrées, elles tiennent 12 à 24 heures et créent une signature olfactive unique à chaque individu.
               </p>
-              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 28px", display: "flex", flexDirection: "column", gap: 10 }}>
+              <ul style={{ listStyle: "none", padding: 0, margin: "0 0 22px", display: "flex", flexDirection: "column", gap: 8 }}>
                 {["Sans alcool — idéal peaux sensibles", "Concentration supérieure à 30%", "Longévité 12–24h", "Voyage autorisé en cabine"].map(item => (
-                  <li key={item} style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", color: "var(--ink-700)", display: "flex", alignItems: "center", gap: 10 }}>
-                    <span style={{ color: "var(--gold-500)", fontSize: "1rem", flexShrink: 0 }}>✓</span> {item}
+                  <li key={item} style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--ink-700)", display: "flex", alignItems: "center", gap: 9 }}>
+                    <span style={{ color: "var(--gold-500)", fontSize: "0.9rem", flexShrink: 0 }}>✓</span> {item}
                   </li>
                 ))}
               </ul>
               <Link href="/huile-de-parfum" style={{
                 display: "inline-block", background: "var(--ink-900)", color: "var(--on-dark-strong)",
-                textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)",
-                fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 600,
+                textDecoration: "none", padding: "11px 24px", borderRadius: "var(--r-pill)",
+                fontFamily: "var(--font-sans)", fontSize: "0.82rem", fontWeight: 600,
               }}>Découvrir les huiles →</Link>
             </div>
             <OilCardCarousel products={OIL_PRODUCTS} locale={locale} />
@@ -912,16 +914,6 @@ export default function HomePageClient() {
       </section>
       )}
 
-      {/* ── LIVRAISON MONDE ───────────────────────────────────────── */}
-      <section id="livraison" style={{ background: "var(--surface-page)", padding: "0" }}>
-        <div style={{ width: "100%" }}>
-          <ShippingChecker
-            countries={DEMO_SHIPPING_COUNTRIES}
-            detectedCode="FR"
-            locale={locale}
-          />
-        </div>
-      </section>
 
       {/* ── TRUST MARQUEE — bande déroulante désactivée ───────────── */}
       {false && (

@@ -22,7 +22,12 @@
  */
 
 import { SEARCH_PRODUCTS, familyOf, norm, FAMILIES, type SearchProduct } from "@/data/search-catalog";
-import { OLFACTIVE_TWINS, type OlfactiveMatch } from "@/data/olfactive-twins";
+import {
+  OLFACTIVE_TWINS,
+  TWIN_SUGGESTIONS,
+  TWIN_SUGGESTION_COUNT,
+  type OlfactiveMatch,
+} from "@/data/olfactive-twins";
 import { REFERENCE_PERFUMES, FAMILY_LABELS, type ReferenceFamily, type ReferencePerfume } from "@/data/reference-perfumes";
 
 // ─── Vocabulaire de notes ────────────────────────────────────────────────────
@@ -190,19 +195,16 @@ const PRODUCT_PROFILES: ProductProfile[] = SEARCH_PRODUCTS.map((product) => {
 });
 
 // ─── Correspondances validées à la main ──────────────────────────────────────
-// Les 8 entrées de `OLFACTIVE_TWINS` ont été relues et portent une description
+// Les entrées de `OLFACTIVE_TWINS` ont été relues et portent une description
 // rédigée. Elles priment sur le calcul : quand la référence choisie est l'une
 // d'elles, on sert le produit validé et son texte, pas le gagnant du score.
-const CURATED_BY_REFERENCE: Record<string, string> = {
-  "creed-aventus": "aventus",
-  "mfk-baccarat-rouge-540": "br540",
-  "kilian-angels-share": "angels-share",
-  "tom-ford-oud-wood": "oud-wood",
-  "ysl-black-opium": "black-opium",
-  "dior-sauvage": "sauvage",
-  "carolina-herrera-good-girl": "good-girl",
-  "paco-rabanne-1-million": "1-million",
-};
+//
+// La table était recopiée à la main ici, et les deux fichiers ont divergé une
+// fois de trop. Elle est désormais DÉRIVÉE de `referenceId` : ajouter une paire
+// relue dans `olfactive-twins.ts` suffit, il n'y a plus rien à tenir à jour.
+const CURATED_BY_REFERENCE: Record<string, string> = Object.fromEntries(
+  OLFACTIVE_TWINS.map((m) => [m.referenceId, m.key])
+);
 
 const CURATED_BY_KEY = new Map(OLFACTIVE_TWINS.map((m) => [m.key, m]));
 
@@ -513,6 +515,86 @@ export function getSuggestedReferences(): ReferencePerfume[] {
   return SUGGESTED_REFERENCE_IDS.map((id) => REFERENCE_BY_ID.get(id)).filter(
     (r): r is ReferencePerfume => Boolean(r)
   );
+}
+
+// ─── Suggestions par défaut, dérivées de la base ─────────────────────────────
+/**
+ * Les pastilles du module. Elles ne sont PAS une liste écrite en dur : elles
+ * sont le résultat d'un filtre sur `TWIN_SUGGESTIONS` (l'ordre de priorité
+ * éditorial) par ce que le moteur sait réellement servir.
+ *
+ * Trois conditions, toutes nécessaires — c'est l'invariant documenté dans
+ * `olfactive-twins.ts` :
+ *   1. la référence existe dans la base ;
+ *   2. `findTwin` lui rend un jumeau (paire relue à la main OU seuil du moteur
+ *      franchi) — sans quoi la pastille mènerait à l'écran « pas encore de
+ *      jumeau », ce qui n'a aucun sens pour une SUGGESTION ;
+ *   3. le produit jumeau porte un visuel qui LUI appartient. Les visuels de
+ *      remplissage `/assets/prod-N.jpg` sont des captures d'écran avec une
+ *      pastille « Promo » incrustée et, la moitié du temps, un tout autre
+ *      flacon : les mettre en vitrine dessert le produit plus qu'il ne l'aide.
+ *      La marque de la maison (`/brands/*.jpg`) est en revanche acceptée
+ *      lorsqu'aucun packshot n'existe encore : elle n'attribue pas au produit
+ *      le flacon d'un autre, ce qui est exactement ce que cette condition
+ *      cherche à empêcher.
+ */
+
+/**
+ * Un visuel de remplissage, par opposition à un visuel qui appartient au
+ * produit (son packshot, ou la marque de sa maison).
+ */
+function isPlaceholderImage(image: string | undefined): boolean {
+  return !image || /\/assets\/prod-\d+\.[a-z]+$/i.test(image);
+}
+
+export type ResolvedSuggestion = {
+  /** id de la référence — identifiant stable de la pastille */
+  referenceId: string;
+  /** « maison · nom », relu depuis la base (le `label` d'amorçage peut dater) */
+  label: string;
+  reference: ReferencePerfume;
+  twin: TwinResult;
+};
+
+/**
+ * Les suggestions réellement servables, dans l'ordre de priorité éditorial.
+ * `limit` cale le nombre de pastilles ; la réserve de `TWIN_SUGGESTIONS` prend
+ * automatiquement la place d'une entrée qui ne satisfait plus l'invariant.
+ */
+export function resolveSuggestions(limit = TWIN_SUGGESTION_COUNT): ResolvedSuggestion[] {
+  const out: ResolvedSuggestion[] = [];
+  for (const s of TWIN_SUGGESTIONS) {
+    if (out.length >= limit) break;
+    const reference = REFERENCE_BY_ID.get(s.referenceId);
+    if (!reference) continue;
+    const twin = findTwin(reference);
+    if (!twin || isPlaceholderImage(twin.product.image)) continue;
+    out.push({
+      referenceId: reference.id,
+      label: `${reference.house} · ${reference.name}`,
+      reference,
+      twin,
+    });
+  }
+  return out;
+}
+
+// Filet de développement : la liste d'amorçage peinte avant le chargement de la
+// base doit être exactement celle que le moteur certifie. Un écart signifie
+// qu'une pastille change sous les yeux du visiteur — on le dit tout de suite
+// plutôt que de le découvrir en vitrine. Muet en production.
+if (process.env.NODE_ENV !== "production") {
+  const resolved = resolveSuggestions();
+  const seeded = TWIN_SUGGESTIONS.slice(0, TWIN_SUGGESTION_COUNT);
+  const drift = seeded.filter(
+    (s, i) => resolved[i]?.referenceId !== s.referenceId || resolved[i]?.label !== s.label
+  );
+  if (resolved.length < TWIN_SUGGESTION_COUNT || drift.length > 0) {
+    console.warn(
+      "[olfactive-match] suggestions par défaut : l'amorçage de TWIN_SUGGESTIONS diverge de la base.",
+      { certifiees: resolved.length, attendues: TWIN_SUGGESTION_COUNT, ecarts: drift.map((s) => s.referenceId) }
+    );
+  }
 }
 
 export { REFERENCE_PERFUMES, FAMILY_LABELS };

@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { addItem } from "@/lib/cart";
+import { QtyStepper } from "@/components/ui/QtyStepper";
 
 /* ── Palette éditoriale (hex inline, façon ProductCardLuxe) ── */
 const C = {
@@ -41,6 +42,8 @@ export type RailCardLabels = {
   adding: string; // pendant l'ajout
   added: string; // feedback après ajout
   viewProduct: string; // aria-label lien (inclut {name})
+  decreaseQty?: string; // aria-label « − »
+  increaseQty?: string; // aria-label « + »
 };
 
 const DEFAULT_LABELS: RailCardLabels = {
@@ -49,6 +52,8 @@ const DEFAULT_LABELS: RailCardLabels = {
   adding: "Ajout…",
   added: "Ajouté ✓",
   viewProduct: "Voir le produit",
+  decreaseQty: "Diminuer la quantité",
+  increaseQty: "Augmenter la quantité",
 };
 
 export function RailProductCard({
@@ -58,7 +63,7 @@ export function RailProductCard({
   labels,
 }: {
   product: RailProduct;
-  onAddToCart?: (id: string) => void;
+  onAddToCart?: (id: string, qty: number) => void;
   locale?: string;
   labels?: Partial<RailCardLabels>;
 }) {
@@ -67,6 +72,7 @@ export function RailProductCard({
 
   const [hover, setHover] = useState(false);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const [qty, setQty] = useState(1);
   const [adding, setAdding] = useState(false);
   const [added, setAdded] = useState(false);
   const timers = useRef<ReturnType<typeof setTimeout>[]>([]);
@@ -114,15 +120,18 @@ export function RailProductCard({
     if (adding) return;
     setAdding(true);
     // onAddToCart fourni par le parent, sinon fallback panier local (addItem)
-    if (onAddToCart) onAddToCart(product.id);
+    if (onAddToCart) onAddToCart(product.id, qty);
     else
-      addItem({
-        id: product.id,
-        name: product.name,
-        brand: product.brand,
-        price: product.price.amount,
-        image: product.image,
-      });
+      addItem(
+        {
+          id: product.id,
+          name: product.name,
+          brand: product.brand,
+          price: product.price.amount,
+          image: product.image,
+        },
+        qty
+      );
     timers.current.push(
       setTimeout(() => {
         setAdding(false);
@@ -130,7 +139,7 @@ export function RailProductCard({
         timers.current.push(setTimeout(() => setAdded(false), 1600));
       }, 500)
     );
-  }, [adding, onAddToCart, product]);
+  }, [adding, onAddToCart, product, qty]);
 
   const productHref = `/produit/${product.slug}`;
   const lift = hover && !reduceMotion;
@@ -325,6 +334,21 @@ export function RailProductCard({
             )}
         </div>
 
+        {/* Sélecteur de quantité — ligne dédiée : la carte est étroite (216px),
+            un stepper côte à côte du CTA réduirait le libellé à deux lignes. */}
+        <div
+          className="dp-rail-card-qty"
+          style={{ marginTop: 6, display: "flex", justifyContent: "flex-start" }}
+        >
+          <QtyStepper
+            value={qty}
+            onChange={setQty}
+            size="xs"
+            locale={locale}
+            labels={{ decrease: L.decreaseQty, increase: L.increaseQty }}
+          />
+        </div>
+
         {/* Bouton ajout — séparé du lien (pas d'imbrication) */}
         <button
           type="button"
@@ -333,10 +357,10 @@ export function RailProductCard({
             e.preventDefault();
             handleAdd();
           }}
-          aria-label={`${L.addToCart} — ${product.name}`}
+          aria-label={`${L.addToCart} — ${product.name} (×${qty})`}
           className="dp-rail-card-addbtn"
           style={{
-            marginTop: 6,
+            marginTop: 5,
             width: "100%",
             border: "none",
             cursor: "pointer",
