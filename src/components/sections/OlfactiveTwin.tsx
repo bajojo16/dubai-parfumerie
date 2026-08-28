@@ -40,6 +40,46 @@ import type { MatchStrength, TwinResult } from "@/data/olfactive-match";
 import type { ReferencePerfume } from "@/data/reference-perfumes";
 import { QtyStepper } from "@/components/ui/QtyStepper";
 import { addItem } from "@/lib/cart";
+import { useVideoAutoplay } from "@/hooks/useVideoAutoplay";
+
+/**
+ * Vignette animée du jumeau : le film du flacon quand la fiche en porte un.
+ *
+ * `useVideoAutoplay` fait tout le travail délicat — muet et `playsInline` posés
+ * côté propriété avant chaque `play()`, `preload` ouvert seulement à l'entrée
+ * dans le champ, promesse de lecture interceptée, pause à la sortie. Ici la
+ * vidéo est purement décorative : pas de bouton de repli si le navigateur
+ * refuse, le poster tient alors le rôle du packshot qu'il était.
+ */
+function TwinThumbVideo({
+  src,
+  poster,
+  name,
+}: {
+  src: string;
+  poster: string;
+  name: string;
+}) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  useVideoAutoplay(videoRef, wrapRef);
+
+  return (
+    <div ref={wrapRef} style={{ position: "absolute", inset: 0 }}>
+      <video
+        ref={videoRef}
+        src={src}
+        poster={poster}
+        muted
+        loop
+        playsInline
+        preload="none"
+        aria-label={name}
+        style={{ width: "100%", height: "100%", objectFit: "contain" }}
+      />
+    </div>
+  );
+}
 
 /** Module chargé à la première interaction avec le champ — pas avant. */
 type MatchModule = typeof import("@/data/olfactive-match");
@@ -137,7 +177,16 @@ type ResultView = {
    * différents peuvent mener au même flacon, et le panier doit alors compter
    * une seule ligne — pas deux fois le même parfum sous deux noms.
    */
-  product: { id: string; name: string; brand: string; price: number; image: string; href: string };
+  product: {
+    id: string;
+    name: string;
+    brand: string;
+    price: number;
+    image: string;
+    /** Film du flacon, quand la fiche relue en porte un (voir `TwinThumbVideo`). */
+    video?: string;
+    href: string;
+  };
 };
 
 function viewFromCurated(m: OlfactiveMatch): ResultView {
@@ -168,7 +217,14 @@ function viewFromTwin(t: TwinResult): ResultView {
       name: t.product.name,
       brand: t.product.brand,
       price: t.product.price ?? 0,
-      image: t.product.image || "/assets/prod-1.jpg",
+      // Le film — et le poster qui va avec — ne vit que sur la fiche relue :
+      // `t.product` vient du catalogue de recherche, qui ne porte pas ce champ.
+      // Sans cette reprise, une paire validée perdait sa vidéo dès que le
+      // moteur différé arrivait, et la vignette retombait sur l'image fixe.
+      image: t.curated?.product.video
+        ? t.curated.product.image
+        : t.product.image || "/assets/prod-1.jpg",
+      video: t.curated?.product.video,
       href: t.product.href,
     },
   };
@@ -680,13 +736,21 @@ export function OlfactiveTwin({
               {/* Cadre crème + `contain` : les packshots n'ont ni le même
                   cadrage ni le même format, un `cover` en coupait la moitié. */}
               <div className="otw-thumb">
-                <Image
-                  src={view.product.image}
-                  alt={view.product.name}
-                  fill
-                  sizes="(max-width: 760px) 96px, 116px"
-                  style={{ objectFit: "contain" }}
-                />
+                {view.product.video ? (
+                  <TwinThumbVideo
+                    src={view.product.video}
+                    poster={view.product.image}
+                    name={view.product.name}
+                  />
+                ) : (
+                  <Image
+                    src={view.product.image}
+                    alt={view.product.name}
+                    fill
+                    sizes="(max-width: 760px) 96px, 116px"
+                    style={{ objectFit: "contain" }}
+                  />
+                )}
               </div>
               <div className="otw-twin-text">
                 <div className="otw-eyebrow otw-eyebrow-gold">{t("the_twin")}</div>

@@ -35,6 +35,13 @@ export type OlfactiveMatch = {
     brand: string;
     price: number; // « dès X € »
     image: string;
+    /**
+     * Film court du flacon, optionnel. Quand il est là, la vignette le joue à
+     * l'entrée dans le champ (muet, en boucle) et `image` sert de poster : un
+     * flacon qui tourne se lit mieux qu'un packshot dans un cadre de 116 px.
+     * Sans lui, la vignette reste une image fixe — le cas de la plupart.
+     */
+    video?: string;
     href: string;
   };
 };
@@ -50,18 +57,28 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     description: "Ananas, bouleau, mousse de chêne. Un sillage masculin charismatique et tenace.",
     product: { name: "Club de Nuit Intense Man", brand: "Armaf", price: 19.9, image: "/assets/prod-4.jpg", href: "/produit/armaf-club-de-nuit-intense-man" },
   },
-  {
-    key: "br540",
-    referenceId: "mfk-baccarat-rouge-540",
-    // « maison · nom », comme la base : la pastille et la carte doivent nommer
-    // le parfum de la même façon, sinon on croit à deux références.
-    targetName: "Maison Francis Kurkdjian · Baccarat Rouge 540",
-    targetPriceHint: "≈ 300 €",
-    productHandle: "lattafa-yara",
-    family: "Ambré · Sucré · Floral",
-    description: "Safran lumineux, ambre cristallin et fleurs poudrées — une signature addictive.",
-    product: { name: "Yara", brand: "Lattafa", price: 18.9, image: "/assets/products/yara.webp", href: "/produit/lattafa-yara" },
-  },
+  // ─── Baccarat Rouge 540 : paire RETIRÉE, faute de jumeau défendable ──────────
+  // Elle affirmait Lattafa Yara « profil très proche ». Deux choses clochaient.
+  //
+  // La description — « safran lumineux, ambre cristallin et fleurs poudrées » —
+  // décrivait le Baccarat, pas Yara : le safran et l'ambre gris sont les accords
+  // de la RÉFÉRENCE. Yara est un floral gourmand vanillé (orchidée, héliotrope,
+  // vanille, santal) ; elle n'a ni safran ni ambre gris. La carte prêtait donc
+  // au jumeau les notes du parfum qu'il était censé remplacer.
+  //
+  // Et le moteur ne la soutenait pas : `rankTwins` la classe SIXIÈME (0,765,
+  // « proche »), derrière Tanasuk, Amber Oud, Khamrah, L'Or de Saba et The Tux.
+  // Comme les paires relues à la main priment sur le calcul, l'entrée écrasait
+  // ce classement ET remontait le badge à « très proche ». Personne ne la
+  // relisait plus : c'est le propre d'une valeur écrite en dur.
+  //
+  // Aucun des candidats du catalogue n'est `verified` pour cette référence —
+  // les alternatives reconnues au Baccarat dans ces maisons (Maison Alhambra
+  // Jean Lowe Ombre, Lattafa Ansaam Gold) n'y figurent pas. Plutôt qu'un jumeau
+  // affirmé sans preuve, on applique la règle du module : pas de jumeau
+  // certifié, pas de jumeau montré. `resolveSuggestions` retire la pastille
+  // d'elle-même et la réserve prend sa place. Rétablir cette entrée dès qu'un
+  // vrai jumeau entre au catalogue.
   {
     key: "angels-share",
     referenceId: "kilian-angels-share",
@@ -110,13 +127,17 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     productHandle: "maison-alhambra-salvo",
     family: "Aromatique · Frais · Ambré",
     description: "Bergamote de Calabre, poivre de Sichuan et ambroxan sur fond vanillé — la fraîcheur épicée, en plus chaude.",
-    // Aucun packshot de Salvo en banque (voir /public/assets/products/). Plutôt
-    // qu'un visuel de remplissage /assets/prod-N.jpg — qui montre un TOUT AUTRE
-    // flacon, pastille « Promo » incrustée — on sert la marque de la maison :
-    // elle est exacte, elle ne fait passer aucun autre parfum pour celui-ci, et
-    // elle se lit dans le cadre crème du module. À remplacer dès que la photo
-    // du flacon existe.
-    product: { name: "Salvo", brand: "Maison Alhambra", price: 16.9, image: "/brands/alhambra.jpg", href: "/produit/maison-alhambra-salvo" },
+    // La marque de la maison tenait lieu de visuel faute de packshot ; le film
+    // du flacon la remplace, avec sa première image pour poster.
+    //
+    // RÉSERVE, à trancher : le flacon filmé porte « SALVO ELIXIR ». C'est le
+    // seul visuel de Salvo en banque — tout le dossier de la maison est de
+    // l'Elixir. Or la carte annonce « Salvo » à 16,90 €, et la base distingue
+    // bien les deux (`alhambra-salvo` / `alhambra-salvo-elixir`). Le libellé
+    // sur le verre contredit donc le nom affiché. Deux issues : renommer la
+    // carte en « Salvo Elixir » (et reprendre son prix), ou obtenir un visuel
+    // du Salvo simple.
+    product: { name: "Salvo", brand: "Maison Alhambra", price: 16.9, image: "/assets/products/salvo/salvo-poster.jpg", video: "/assets/videos/salvo-hf-01.mp4", href: "/produit/maison-alhambra-salvo" },
   },
   {
     key: "good-girl",
@@ -186,7 +207,11 @@ export const TWIN_SUGGESTIONS: readonly TwinSuggestion[] = [
   // deux jumeaux distincts, et le visiteur qui cherche « Sauvage » veut voir
   // les deux.
   { referenceId: "dior-sauvage", label: "Dior · Sauvage" },
-  { referenceId: "mfk-baccarat-rouge-540", label: "Maison Francis Kurkdjian · Baccarat Rouge 540" },
+  // Baccarat Rouge 540 retiré : sa paire ne tenait pas (voir le bloc supprimé
+  // dans OLFACTIVE_TWINS). Il fallait l'ôter D'ICI aussi, pas seulement de la
+  // table des paires — les pastilles sont peintes depuis cette liste tant que
+  // le moteur n'est pas chargé, si bien qu'elle serait apparue puis aurait
+  // disparu sous les yeux du visiteur. À remettre avec sa paire.
   { referenceId: "dior-sauvage-elixir", label: "Dior · Sauvage Elixir" },
   { referenceId: "prada-paradoxe", label: "Prada · Paradoxe" },
   { referenceId: "armani-stronger-with-you", label: "Giorgio Armani · Stronger With You" },

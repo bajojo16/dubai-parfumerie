@@ -589,11 +589,15 @@ export function ShippingChecker({
           {/* Preuve sociale + stats — boutons compacts (largeur du contenu),
               en rangée qui se replie ; sous le sélecteur (= à gauche du résultat) */}
           <div
+            className="dp-ship-stats"
             style={{
               width: "100%",
-              display: "flex",
-              flexWrap: "wrap",
-              alignItems: "flex-start",
+              // Grille à deux colonnes plutôt qu'une rangée qui se replie : à la
+              // largeur du contenu, les quatre pastilles tombaient 2 / 1 / 1 et
+              // le bloc paraissait bancal. Deux par ligne, à parts égales.
+              display: "grid",
+              gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+              alignItems: "stretch",
               gap: 10,
               marginTop: 4,
             }}
@@ -604,8 +608,9 @@ export function ShippingChecker({
               <div
                 key={i}
                 style={{
-                  // Largeur = contenu (compact), pas pleine largeur
-                  display: "inline-flex",
+                  // La pastille remplit sa cellule : c'est la grille qui règle
+                  // la largeur, plus le texte.
+                  display: "flex",
                   alignItems: "center",
                   gap: 9,
                   maxWidth: "100%",

@@ -309,6 +309,14 @@ img, svg, video { max-width: 100%; }
   .dp-pc-atc { opacity: 1; transform: none; pointer-events: auto; }
 }
 
+/* ── Statistiques de livraison : une seule colonne en étroit ──
+   Deux colonnes sous 560px ne laissent qu'une soixantaine de caractères
+   par pastille : « Numéro de suivi international et national » y tiendrait
+   sur quatre lignes. */
+@media (max-width: 560px) {
+  .dp-ship-stats { grid-template-columns: 1fr !important; }
+}
+
 /* ── ViewportSwitcher : outil de relecture DESKTOP uniquement ─
    Sur un vrai appareil tactile (téléphone en réseau local), la barre
    recouvrait les CTA bas de page (« Ajouter au panier ») et ses
