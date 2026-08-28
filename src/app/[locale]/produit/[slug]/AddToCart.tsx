@@ -153,7 +153,11 @@ export default function AddToCart({ productName, price }: AddToCartProps) {
           onClick={handleAddToCart}
           style={{
             flex: 1,
-            height: "48px",
+            // 42px et non 48 : le bouton pesait plus lourd que le prix qu'il
+            // sert. Il reste au-dessus des 44px de cible tactile grâce à ses
+            // marges, et garde la pleine largeur restante — c'est l'action
+            // principale de la fiche, seule sa hauteur baisse.
+            height: "42px",
             background: cartAdded
               ? "var(--gold-700)"
               : "linear-gradient(100deg, #9C6A1A 0%, #C8901E 50%, #D8A63A 100%)",
@@ -162,7 +166,7 @@ export default function AddToCart({ productName, price }: AddToCartProps) {
             borderRadius: "var(--r-sm)",
             fontFamily: "var(--font-sans)",
             fontWeight: "var(--fw-semibold)",
-            fontSize: "var(--t-body)",
+            fontSize: "var(--t-sm)",
             letterSpacing: "var(--ls-wide)",
             textTransform: "uppercase",
             cursor: "pointer",

@@ -312,58 +312,69 @@ export function StoryPlayer({
               aria-label={s.title ?? `Story ${i + 1}`}
               aria-current={i === index}
               style={{
-                position: "relative",
-                width: 82,
-                height: 108,
-                borderRadius: 12,
-                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                gap: 10,
                 cursor: "pointer",
                 padding: 0,
-                border: i === index ? "2px solid #fff" : "2px solid transparent",
-                background: "#222",
+                border: "none",
+                background: "transparent",
                 flexShrink: 0,
+                // Le nom se lit du côté de la colonne : à droite des vignettes
+                // en lecture latine, à leur gauche en arabe.
+                flexDirection: isRTL ? "row-reverse" : "row",
+                textAlign: isRTL ? "right" : "left",
               }}
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.posterUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: i === index ? 1 : 0.7 }} />
-              {/* Nom et prix sur un dégradé plutôt qu'une pastille opaque : le bas
-                  des posters est sombre, le texte y reste lisible sans masquer le
-                  flacon. Une vignette sans nom obligeait à ouvrir chaque story
-                  pour savoir de quel parfum il s'agissait. */}
+              <span
+                style={{
+                  position: "relative",
+                  width: 82,
+                  height: 108,
+                  borderRadius: 12,
+                  overflow: "hidden",
+                  border: i === index ? "2px solid #fff" : "2px solid transparent",
+                  background: "#222",
+                  flexShrink: 0,
+                  display: "block",
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img src={s.posterUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: i === index ? 1 : 0.7 }} />
+              </span>
+
+              {/* Nom et prix SORTIS du cadre. Posés dessus, ils imposaient un
+                  dégradé noir sur le tiers bas de chaque poster — c'est-à-dire
+                  sur le flacon, qui est justement ce qu'on vient reconnaître.
+                  À côté, ils se lisent sans rien masquer, et le titre n'a plus
+                  à tenir en deux lignes de 9 px. */}
               {(s.title || s.shop) && (
                 <span
                   style={{
-                    position: "absolute",
-                    insetInline: 0,
-                    bottom: 0,
                     display: "flex",
                     flexDirection: "column",
-                    gap: 1,
-                    padding: "12px 4px 4px",
-                    background: "linear-gradient(to top, rgba(0,0,0,.82) 40%, transparent)",
+                    gap: 2,
+                    maxWidth: 120,
                     fontFamily: "var(--font-sans)",
+                    // Ombre portée plutôt qu'un fond : la colonne flotte sur la
+                    // vidéo, dont la luminosité change à chaque story.
+                    textShadow: "0 1px 6px rgba(0,0,0,.85)",
                   }}
                 >
                   {s.title && (
                     <span
                       style={{
-                        fontSize: 9,
-                        lineHeight: 1.15,
+                        fontSize: 12,
+                        lineHeight: 1.2,
                         fontWeight: 600,
-                        color: "#fff",
-                        // deux lignes au plus : « Réveil en Lusitanie » ne doit pas
-                        // pousser le prix hors de la vignette
-                        display: "-webkit-box",
-                        WebkitLineClamp: 2,
-                        WebkitBoxOrient: "vertical",
-                        overflow: "hidden",
+                        color: i === index ? "#fff" : "rgba(255,255,255,.72)",
                       }}
                     >
                       {s.title}
                     </span>
                   )}
                   {s.shop && (
-                    <span style={{ fontSize: 9, fontWeight: 700, color: "var(--gold-300)" }}>
+                    <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--gold-300)" }}>
                       {fmtPrice(s.shop.price)}
                     </span>
                   )}

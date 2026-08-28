@@ -602,9 +602,16 @@ export function ShippingChecker({
               marginTop: 4,
             }}
           >
-            {[otherServedText, L.statPrep, L.statTracking, ordersText]
-              .filter((t): t is string => Boolean(t))
-              .map((text, i) => (
+            {/* La preuve sociale monte en haut à droite, à côté du compteur de
+                pays : les deux chiffres qui rassurent se lisent alors d'une
+                seule traite, et les deux modalités d'expédition — délai et
+                suivi — occupent la rangée du bas. Sans pays vérifié il n'y a
+                pas de compteur, et les trois pastilles gardent l'ordre
+                d'origine. */}
+            {(ordersText
+              ? [otherServedText, ordersText, L.statTracking, L.statPrep]
+              : [otherServedText, L.statPrep, L.statTracking]
+            ).map((text, i) => (
               <div
                 key={i}
                 style={{
