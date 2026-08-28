@@ -145,6 +145,7 @@ export function NewsletterSection({
         }}
       >
         <div
+          className="np-inner"
           style={{
             width: "100%",
             maxWidth: 560,
@@ -367,9 +368,22 @@ export function NewsletterSection({
 
       <style>{`
         .np-section { flex-direction: row; }
+        /* Le repli en colonne existait deja mais ne prenait jamais : la section
+           porte flex-direction:row en style inline, qui l'emporte sur une regle
+           CSS sans !important. Resultat sur 390px : la colonne de texte gardait
+           ses 57% de large, soit ~140px utiles une fois le padding retire, et le
+           titre tombait sur quatre lignes contre l'image. */
         @media (max-width: 700px) {
-          .np-section { flex-direction: column; }
-          .np-media { flex: 0 0 auto; min-height: 0; height: 150px; }
+          .np-section { flex-direction: column !important; }
+          .np-media { flex: 0 0 auto !important; min-height: 0 !important; height: 150px !important; }
+          /* 40px de padding lateral sur 390px mangeaient un quart de la largeur. */
+          .np-inner { padding: 22px 18px !important; }
+        }
+        /* globals.css force padding-left/right:16px sur tout <section> sous
+           760px. Ce bloc est un <section> pleine largeur voulu bord a bord :
+           le padding herite le decollait des deux cotes. */
+        @media (max-width: 760px) {
+          .np-section { padding-inline: 0 !important; }
         }
         .np-submit { transition: background .2s ease, transform .15s ease; }
         .np-submit:not(:disabled):hover {

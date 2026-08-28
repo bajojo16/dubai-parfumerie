@@ -456,31 +456,49 @@ img, svg, video { max-width: 100%; }
   .dp-editorial-content { padding: 12px 16px 14px !important; }
 }
 
-/* ── #maisons (BrandCard) — carrousel horizontal sur mobile ──
-   La grille auto-fill(minmax(180px,1fr)) ne laisse plus qu'1 colonne
-   sous ~375px de large (180*2+gap > largeur dispo) : 12 BrandCard
-   empilées en 1 colonne = ~3400px de scroll vertical. On bascule en
-   carrousel horizontal scroll-snap (même pattern "peek" que
-   TrendCarousel / rails best-sellers) sous 760px uniquement — le
-   rendu desktop en grille est déjà satisfaisant. */
+/* ── #maisons (BrandCard) — ruban défilant sur mobile ──
+   La grille auto-fill(minmax(180px,1fr)) ne laissait plus qu'1 colonne sous
+   ~375px (180*2+gap > largeur dispo) : 12 BrandCard empilées = ~3400px de
+   scroll vertical. Le carrousel scroll-snap qui corrigeait ça laissait des
+   logos de 46vw (~180px) et demandait un geste pour découvrir les marques
+   suivantes. On passe à un marquee : logos deux fois plus petits, défilement
+   continu. Le doublon de la liste est rendu par _home-client.tsx — sans lui la
+   translation de -50% ferait apparaître du vide à mi-course. Le desktop garde
+   la grille : le doublon y est simplement retiré du flux. */
+.dp-maisons-dup { display: none; }
+
 @media (max-width: 760px) {
+  /* Le viewport masque ce qui dépasse : c'est lui qui empêche le ruban
+     (largeur max-content, ~3400px) de créer un scroll horizontal de page. */
+  .dp-maisons-viewport { overflow: hidden; }
+  .dp-maisons-dup { display: block; }
   .dp-maisons-grid {
     display: flex !important;
     grid-template-columns: none !important;
-    overflow-x: auto !important;
-    scroll-snap-type: x mandatory !important;
-    -webkit-overflow-scrolling: touch !important;
-    scrollbar-width: none !important;
-    gap: 12px !important;
-    padding-bottom: 4px !important;
+    width: max-content !important;
+    /* gap:0 + marge portée par l'item : avec un gap, la moitié de la piste ne
+       tombe pas sur une frontière d'item (24 largeurs mais 23 gouttières) et la
+       boucle sautait d'un demi-gap à chaque tour. */
+    gap: 0 !important;
+    animation: dp-marquee 52s linear infinite;
   }
-  .dp-maisons-grid::-webkit-scrollbar { display: none; }
   .dp-maisons-item {
     flex: 0 0 auto !important;
-    width: 46vw !important;
-    max-width: 210px !important;
-    scroll-snap-align: start !important;
+    width: 132px !important;
+    margin-inline-end: 10px !important;
   }
+  /* Pause au survol et au focus clavier. */
+  .dp-maisons-viewport:hover .dp-maisons-grid,
+  .dp-maisons-viewport:focus-within .dp-maisons-grid { animation-play-state: paused; }
+}
+
+/* Sans animation (réglage système), un ruban large de max-content dans un
+   conteneur overflow:hidden rendrait tout ce qui suit la 3e marque inatteignable.
+   On redonne alors le geste de scroll et on retire le doublon, devenu inutile. */
+@media (max-width: 760px) and (prefers-reduced-motion: reduce) {
+  .dp-maisons-viewport { overflow-x: auto; scrollbar-width: none; }
+  .dp-maisons-viewport::-webkit-scrollbar { display: none; }
+  .dp-maisons-dup { display: none; }
 }
 
 /* Sections retirées du parcours mobile : elles y coûtaient plus d'écran
@@ -500,4 +518,128 @@ img, svg, video { max-width: 100%; }
 }
 @media (max-width: 620px) {
   .dp-grid-auto { grid-template-columns: 1fr !important; gap: 16px !important; }
+}
+
+
+/* ════════════════════════════════════════════════════════════
+   PASSE RESPONSIVE — page d'accueil et composants partagés
+   Les défauts corrigés ici viennent tous du même endroit : des valeurs
+   dessinées pour 1240px (paddings, gouttières, diamètres, hauteurs de
+   visuel) laissées telles quelles sous 760px. On ne change rien au
+   desktop : tout passe par des media queries.
+   ════════════════════════════════════════════════════════════ */
+
+/* ── 1. Rythme vertical des sections ──────────────────────────
+   Presque toutes les sections de l'accueil portent leur padding en style
+   inline, en "80px 20px". Sur 390px cela creuse 160px de vide entre la fin
+   d'une section et le titre de la suivante — les deux tiers d'un écran rien
+   qu'en respiration. Le sélecteur vise la valeur inline elle-même plutôt
+   qu'une classe : une section écrite plus tard avec le même idiome hérite de
+   la règle sans qu'on y pense, et celles réglées à 0 ou 20px (bandeaux pleine
+   largeur, rails, newsletter) ne sont pas touchées du tout. */
+@media (max-width: 760px) {
+  section[style*="80px 20px"],
+  section[style*="84px 20px"],
+  section[style*="60px 20px"],
+  section[style*="56px 20px"],
+  section[style*="52px 20px"] {
+    padding-top: 40px !important;
+    padding-bottom: 40px !important;
+  }
+  /* Sections déjà dissymétriques en desktop : on conserve la dissymétrie. */
+  section[style*="80px 20px 40px"] { padding-bottom: 20px !important; }
+  section[style*="24px 20px 80px"] { padding-top: 12px !important; padding-bottom: 40px !important; }
+}
+
+/* ── 2. Pied de page — densité mobile ─────────────────────────
+   Le footer gardait sur 390px un rythme dessiné pour 1400px : trois blocs de
+   tête séparés par 40px de gouttière que le flex-wrap empile, cinq colonnes de
+   liens rabattues en deux (donc trois rangées), et 10px de gap entre chaque
+   lien EN PLUS des 11px de padding posés pour la cible tactile. Bout à bout,
+   près de 1900px de pied de page. La cible tactile de 40px n'est pas touchée :
+   on retire le vide autour d'elle. */
+@media (max-width: 760px) {
+  .dp-footer-top { padding: 30px 16px 26px !important; gap: 22px !important; }
+  .dp-footer-logo { height: 24px !important; }
+  .dp-footer-blocktitle { font-size: 15px !important; }
+  /* Les trois mini-stats se partagent 340px : sans wrap, "articles commandés"
+     cassait mot par mot dans sa colonne. */
+  .dp-footer-stats { gap: 16px !important; flex-wrap: wrap !important; }
+  .dp-footer-cols { padding: 24px 16px !important; gap: 18px 14px !important; }
+  .dp-footer-cols h3 { font-size: 14px !important; margin-bottom: 6px !important; }
+  /* Le gap de la liste doublait l'interligne : les 11px de padding du lien
+     assurent déjà la séparation visuelle ET la cible tactile. */
+  .dp-footer-cols ul { gap: 0 !important; }
+  .dp-footer-bottom { padding: 16px 16px 22px !important; gap: 12px !important; }
+  /* Huit pastilles de 62px + 10px de gap tenaient sur trois rangées ; à 50px
+     elles tiennent sur deux. height:auto empêche le SVG de s'écraser quand le
+     max-width:100% global lui rogne la largeur. */
+  .dp-footer-pay { gap: 6px !important; }
+  .dp-footer-paycard { width: 50px !important; height: 32px !important; padding-inline: 5px !important; }
+  .dp-footer-paycard svg { height: auto !important; }
+}
+
+/* ── 3. Cartes d'avis ─────────────────────────────────────────
+   28px de padding vertical + une citation en serif 1.05rem interlignée à 1.65
+   donnaient des cartes de ~260px là où le texte n'en occupe que 110. */
+@media (max-width: 760px) {
+  .dp-avis-card { padding: 18px 16px !important; }
+  .dp-avis-quote { font-size: 0.95rem !important; line-height: 1.5 !important; margin-bottom: 12px !important; }
+  /* Les quatre tuiles de chiffres (4.9/5, 98%…) n'ont pas besoin d'une ligne
+     chacune : deux colonnes divisent leur emprise par deux. Placée après la
+     règle .dp-grid-auto pour la primer (même spécificité, ordre de source). */
+  .dp-avis-stats { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  .dp-avis-stats > div { padding: 16px 10px !important; }
+}
+
+/* ── 4. Cartes « huile de parfum » ────────────────────────────
+   Trois produits seulement : le carrousel bascule en mode "few", où chaque
+   carte est flex:1 1 0 dans une piste centrée. Sous 620px la colonne du bloc
+   #huiles passe à 1fr, la piste tombe à ~350px et les trois cartes à ~106px
+   chacune — largeur sous laquelle la pastille de famille (46px) débordait de
+   sa colonne et le bouton d'ajout cassait en trois lignes. On repasse en
+   carrousel à cartes de largeur fixe, comme .dp-rail-card, et on dégonfle ce
+   qui porte la hauteur : l'amplitude du flacon, les pastilles de famille, et
+   l'empilement stepper/bouton. */
+@media (max-width: 760px) {
+  .dp-oils-track {
+    overflow-x: auto !important;
+    justify-content: flex-start !important;
+    scroll-snap-type: x mandatory !important;
+    gap: 12px !important;
+    /* Le flacon remonte au-dessus de la carte ; overflow-x:auto force
+       overflow-y à auto, donc ce padding est ce qui l'empêche d'être rogné. */
+    padding-top: 44px !important;
+    scrollbar-width: none;
+  }
+  .dp-oils-track::-webkit-scrollbar { display: none; }
+  .dp-oils-item {
+    flex: 0 0 auto !important;
+    width: 248px !important;
+    max-width: 248px !important;
+    scroll-snap-align: start !important;
+  }
+  .dp-oilcard { margin-top: 30px !important; padding: 0 12px 12px !important; }
+  /* Débordement du flacon ramené de 56px à 38px : le parti pris reste lisible,
+     il coûte 18px de moins en haut et 48px de moins en visuel. */
+  .dp-oilcard-bottle { height: 112px !important; margin-top: -38px !important; }
+  .dp-oilcard-flacon img { height: 112px !important; }
+  /* La grille des familles est déclarée repeat(3,1fr) en inline : elle était
+     capturée par la règle générique [style*="repeat(3,"] plus haut, qui la
+     rabattait à 2 colonnes et lui faisait donc deux rangées de pastilles.
+     Le sélecteur descendant (0,2,0) reprend la main sur cette règle (0,1,0). */
+  [data-dp-oils] .dp-oilcard-fam {
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 4px !important;
+    margin-top: 10px !important;
+    padding-top: 8px !important;
+  }
+  .dp-oilcard-fam-ic { width: 34px !important; height: 34px !important; }
+  .dp-oilcard-fam-lbl { font-size: 10px !important; }
+  /* Stepper et bouton côte à côte : la colonne coûtait 32 + 8 + 38 = 78px de
+     haut, la ligne en coûte 40. Le bouton porte width:100% en inline, ce qui
+     dans une ligne flex l'étendrait à toute la largeur et éjecterait le
+     stepper : on lui rend une largeur auto et on le laisse absorber le reste. */
+  .dp-oilcard-actions { flex-direction: row !important; align-items: center !important; gap: 8px !important; margin-top: 10px !important; }
+  .dp-oilcard-cta { width: auto !important; flex: 1 1 auto !important; min-width: 0 !important; padding: 11px 6px !important; font-size: 10px !important; letter-spacing: 0.4px !important; }
 }

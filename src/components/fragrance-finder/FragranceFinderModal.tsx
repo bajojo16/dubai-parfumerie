@@ -938,9 +938,19 @@ const CSS = `
   .dp-ff-qty { justify-content: center; }
   .dp-ff-pick { margin: 8px 8px 0; }
   .dp-ff-pick span { display: none; }
-  .dp-ff-buttons { flex-direction: column; padding: 8px; }
-  .dp-ff-sheet { justify-content: center; }
-  .dp-ff-crit li > button { grid-template-columns: 5.5rem 1fr auto; padding: 8px 10px; }
+  /* La rangee de boutons passe en colonne ici. En colonne, le main axis est la
+     hauteur : le flex-basis 6rem de .dp-ff-add devenait une hauteur de 96px, et
+     son flex-grow:1 lui faisait avaler tout le reste de la rangee subgrid — d'ou
+     les ovales de ~180px de haut. align-items:end (axe croise = horizontal en
+     colonne) collait en plus FICHE contre le bord. On rend leur base aux deux
+     boutons : hauteur fixe, pas d'etirement, pleine largeur. */
+  .dp-ff-buttons { flex-direction: column; flex-wrap: nowrap; align-items: stretch; padding: 8px; }
+  .dp-ff-add, .dp-ff-sheet { flex: 0 0 auto; width: 100%; height: 40px; }
+  .dp-ff-sheet { justify-content: center; padding: 0 10px; }
+  /* Le libelle MODIFIER est en absolu contre le bord inline-end et devient
+     visible sur mobile (pas de survol) : sans reserve de padding de ce cote, il
+     se superposait a la valeur du critere. */
+  .dp-ff-crit li > button { padding-block: 8px; padding-inline: 11px 58px; }
   .dp-ff-crit li > button i { opacity: 1; }
 }
 `;

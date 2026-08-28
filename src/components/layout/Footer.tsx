@@ -266,6 +266,7 @@ export function Footer() {
     >
       {/* Top row: logo + newsletter */}
       <div
+        className="dp-footer-top"
         style={{
           maxWidth: 1400,
           margin: "0 auto",
@@ -279,7 +280,7 @@ export function Footer() {
         }}
       >
         <div style={{ maxWidth: 280 }}>
-          <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 32, width: "auto", display: "block", marginBottom: 14, filter: "brightness(0) invert(1)" }} />
+          <img src="/assets/logo.png" alt="Dubaï Parfumerie" className="dp-footer-logo" style={{ height: 32, width: "auto", display: "block", marginBottom: 14, filter: "brightness(0) invert(1)" }} />
           <p
             style={{
               fontFamily: "var(--font-sans)",
@@ -292,7 +293,7 @@ export function Footer() {
             Parfumerie orientale authentique depuis 2016
           </p>
           {/* Mini stats de confiance */}
-          <div style={{ display: "flex", gap: 22 }}>
+          <div className="dp-footer-stats" style={{ display: "flex", gap: 22 }}>
             {[
               { k: "10 ans", v: "d'expertise" },
               { k: "+7000", v: "articles commandés" },
@@ -308,7 +309,7 @@ export function Footer() {
 
         {/* Bloc milieu — Service client (comble l'espace vide) */}
         <div style={{ maxWidth: 280, flex: "0 1 auto" }}>
-          <p style={{ fontFamily: "var(--font-display)", fontSize: "18px", fontWeight: 600, color: "var(--on-dark-strong)", margin: "0 0 14px" }}>
+          <p className="dp-footer-blocktitle" style={{ fontFamily: "var(--font-display)", fontSize: "18px", fontWeight: 600, color: "var(--on-dark-strong)", margin: "0 0 14px" }}>
             Service client
           </p>
           <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
@@ -333,6 +334,7 @@ export function Footer() {
 
         <div style={{ maxWidth: 380, flex: "1 1 280px" }}>
           <p
+            className="dp-footer-blocktitle"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: "18px",
@@ -416,6 +418,7 @@ export function Footer() {
 
       {/* 5 columns */}
       <div
+        className="dp-footer-cols"
         style={{
           maxWidth: 1400,
           margin: "0 auto",
@@ -449,6 +452,7 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div
+        className="dp-footer-bottom"
         style={{
           borderTop: "1px solid rgba(255,255,255,.07)",
           padding: "22px 24px",
@@ -473,12 +477,13 @@ export function Footer() {
         </span>
 
         {/* Payment logos */}
-        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+        <div className="dp-footer-pay" style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
           {PaymentLogos.map(({ name, svg }) => (
             <span
               key={name}
               title={name}
               aria-label={name}
+              className="dp-footer-paycard"
               style={{
                 display: "inline-flex",
                 alignItems: "center",

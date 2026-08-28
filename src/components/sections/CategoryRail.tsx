@@ -114,7 +114,7 @@ function CategoryDisc({ category }: { category: Category }) {
             src={category.image as string}
             alt={category.name}
             fill
-            sizes="(max-width: 600px) 120px, 148px"
+            sizes="(max-width: 760px) 170px, 210px"
             style={{ objectFit: "cover", objectPosition: category.imagePosition ?? "center", transform: `scale(${category.imageScale ?? 1.28})` }}
           />
         </span>
@@ -158,7 +158,7 @@ export function CategoryRail({
   const isRTL = locale === "ar";
 
   return (
-    <section style={{ paddingBlock: 28 }}>
+    <section className="dp-catrail-section" style={{ paddingBlock: 28 }}>
       <style>{CSS}</style>
 
       {heading && (
@@ -281,10 +281,13 @@ const CSS = `
 }
 
 .dp-catrail-scroller {
-  --dp-disc: 116px;
-  --dp-gap: 28px;
+  /* Les rails sont limites a trois vignettes : a 116px les disques flottaient au
+     milieu d'une ligne pleine largeur. On les laisse respirer proportionnellement
+     a la fenetre, borne haute pour ne pas devenir des affiches. */
+  --dp-disc: clamp(150px, 14vw, 200px);
+  --dp-gap: 36px;
   --dp-pad-x: 24px;
-  --dp-meta-fs: 11px;
+  --dp-meta-fs: 12px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   scroll-padding-inline: 24px;
@@ -304,7 +307,7 @@ const CSS = `
 .dp-catrail-name {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 18px;
+  font-size: 20px;
   line-height: 1.1;
   color: ${T.ink};
 }
@@ -328,18 +331,28 @@ const CSS = `
   box-shadow: 0 0 0 3px ${T.goldDeep};
 }
 
-@media (max-width: 600px) {
+/* Seuil mobile du repo (760px), aligne sur globals.css. */
+@media (max-width: 760px) {
+  /* globals.css force padding-left/right:16px sur TOUT <section> sous 760px.
+     Ce composant est un <section> imbrique dans le <section> de la page : les
+     deux marges s'additionnaient et volaient 32px de large au rail avant meme
+     son propre padding. On rend cette largeur au rail. */
+  .dp-catrail-section { padding-inline: 0 !important; }
   .dp-catrail-scroller {
-    --dp-disc: 72px;
-    --dp-gap: 12px;
+    /* Trois disques + deux gouttieres + le padding du scroller + les 32px de
+       marge de la section parente : le disque prend tout ce qui reste, sans
+       jamais depasser 160px. A 390px cela donne ~100px au lieu de 72px. */
+    --dp-disc: min(160px, calc((100vw - 88px) / 3));
+    --dp-gap: 14px;
     --dp-pad-x: 16px;
-    --dp-meta-fs: 9px;
+    --dp-meta-fs: 9.5px;
   }
-  .dp-catrail-name { font-size: 13px; }
-  /* Contraint la largeur du libellé (autrement le texte non wrappé, ex.
-     « 3 pour 2 acheté », dépasse la largeur du disque et annule le gain
-     de place obtenu en réduisant --dp-disc). */
-  .dp-catrail-label { max-width: 88px; }
+  .dp-catrail-name { font-size: 14px; }
+  /* Borne le libellé à la largeur du disque : sans cela un texte non coupable
+     (« 3 pour 2 acheté ») élargit l'item et annule le calcul ci-dessus. */
+  .dp-catrail-label { max-width: var(--dp-disc); }
+  /* gap est declare en inline sur le lien : il faut !important pour l'atteindre. */
+  .dp-catrail-item { gap: 10px !important; }
 }
 
 @media (prefers-reduced-motion: reduce) {

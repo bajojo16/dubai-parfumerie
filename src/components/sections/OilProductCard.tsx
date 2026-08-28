@@ -162,6 +162,7 @@ export function OilProductCard({
       href={product.href}
       aria-label={`${product.name} — ${product.brand}`}
       dir={isRTL ? "rtl" : "ltr"}
+      className="dp-oilcard"
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}
       style={{
@@ -253,6 +254,7 @@ export function OilProductCard({
 
       {/* Flacon qui déborde au-dessus du haut de carte */}
       <div
+        className="dp-oilcard-bottle"
         style={{
           position: "relative",
           height: 160,
@@ -301,7 +303,7 @@ export function OilProductCard({
           }}
         />
 
-        <span style={{ position: "relative", zIndex: 2, transform: "translateY(-12px)", filter: "drop-shadow(0 10px 14px rgba(120,90,40,.28))" }}>
+        <span className="dp-oilcard-flacon" style={{ position: "relative", zIndex: 2, transform: "translateY(-12px)", filter: "drop-shadow(0 10px 14px rgba(120,90,40,.28))" }}>
           <SafeImage
             src={product.bottleImage}
             alt={`${product.name} ${product.brand}`}
@@ -341,7 +343,7 @@ export function OilProductCard({
       </div>
 
       {/* Texte */}
-      <div style={{ textAlign: "center", marginTop: 10 }}>
+      <div className="dp-oilcard-txt" style={{ textAlign: "center", marginTop: 10 }}>
         <div
           style={{
             fontFamily: "var(--font-sans)",
@@ -406,6 +408,7 @@ export function OilProductCard({
 
       {/* Familles olfactives — 3 colonnes, filet or au-dessus */}
       <div
+        className="dp-oilcard-fam"
         style={{
           display: "grid",
           gridTemplateColumns: "repeat(3, 1fr)",
@@ -426,6 +429,7 @@ export function OilProductCard({
             }}
           >
             <span
+              className="dp-oilcard-fam-ic"
               style={{
                 width: 46,
                 height: 46,
@@ -447,6 +451,7 @@ export function OilProductCard({
               />
             </span>
             <span
+              className="dp-oilcard-fam-lbl"
               style={{
                 fontFamily: "var(--font-sans)",
                 fontSize: 12,
@@ -463,6 +468,7 @@ export function OilProductCard({
 
       {/* Sélecteur quantité + bouton ajout panier / épuisé (colonne — bouton toujours aligné) */}
       <div
+        className="dp-oilcard-actions"
         onClick={(e) => e.stopPropagation()}
         style={{
           marginTop: 12,
@@ -486,6 +492,7 @@ export function OilProductCard({
           }
           onMouseEnter={() => setCtaHover(true)}
           onMouseLeave={() => setCtaHover(false)}
+          className="dp-oilcard-cta"
           style={{
             width: "100%",
           border: "none",

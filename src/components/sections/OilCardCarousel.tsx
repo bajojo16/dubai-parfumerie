@@ -60,6 +60,7 @@ export function OilCardCarousel({
       {/* Piste — padding-top pour ne pas rogner le flacon débordant. Peu de produits → remplit la largeur */}
       <div
         ref={trackRef}
+        className="dp-oils-track"
         style={{
           display: "flex",
           gap: 16,
@@ -76,6 +77,7 @@ export function OilCardCarousel({
         {products.map((p) => (
           <div
             key={p.slug}
+            className="dp-oils-item"
             style={
               few
                 ? { flex: "1 1 0", minWidth: 0, maxWidth: 300 }

@@ -1145,12 +1145,26 @@ export default function HomePageClient() {
             title="Les grandes maisons orientales"
             subtitle="Parmi les plus belles maisons de parfumerie orientale et du Golfe. Des flacons 100 % authentiques, sans contrefaçon et au juste prix, donc sans compromis."
           />
-          <div className="dp-maisons-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14 }}>
-            {brands.map((b) => (
-              <div key={b.name} className="dp-maisons-item">
-                <BrandCard brand={{ ...b, href: "/marques" }} locale={locale} />
-              </div>
-            ))}
+          {/* Sous 760px la grille devient un ruban qui defile tout seul (regles
+              .dp-maisons-* dans globals.css). Un marquee CSS translate la piste
+              de -50% : il faut donc que la liste y figure deux fois, sinon la
+              boucle repart sur du vide. Le second exemplaire est retire du flux
+              en desktop, ou la grille reste une grille. */}
+          <div className="dp-maisons-viewport">
+            <div className="dp-maisons-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(180px, 1fr))", gap: 14 }}>
+              {[0, 1].map((pass) =>
+                brands.map((b) => (
+                  <div
+                    key={`${pass}-${b.name}`}
+                    className={pass === 0 ? "dp-maisons-item" : "dp-maisons-item dp-maisons-dup"}
+                    aria-hidden={pass === 1 ? true : undefined}
+                    inert={pass === 1 ? true : undefined}
+                  >
+                    <BrandCard brand={{ ...b, href: "/marques" }} locale={locale} />
+                  </div>
+                )),
+              )}
+            </div>
           </div>
         </div>
       </section>
@@ -1170,7 +1184,7 @@ export default function HomePageClient() {
             title="+7000 articles commandés"
             subtitle="Authentiques, vérifiés, non modifiés."
           />
-          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 18, marginBottom: 48 }}>
+          <div className="dp-grid-auto dp-avis-stats" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 18, marginBottom: 48 }}>
             {[
               { n: "4.9/5", l: "Note globale", sub: "Sur 8 400 avis" },
               { n: "98%", l: "Recommandent", sub: "à leur entourage" },
@@ -1186,9 +1200,9 @@ export default function HomePageClient() {
           </div>
           <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
             {testimonials.map((t, i) => (
-              <div key={i} style={{ background: "var(--surface-white)", border: "1px solid var(--line-200)", borderRadius: "var(--r-lg)", padding: "28px 24px" }}>
+              <div key={i} className="dp-avis-card" style={{ background: "var(--surface-white)", border: "1px solid var(--line-200)", borderRadius: "var(--r-lg)", padding: "28px 24px" }}>
                 <div style={{ color: "var(--star)", fontSize: "1rem", marginBottom: 14, letterSpacing: "0.05em" }}>{"★".repeat(t.stars)}</div>
-                <p style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", color: "var(--ink-700)", lineHeight: 1.65, margin: "0 0 18px", fontStyle: "italic" }}>"{t.text}"</p>
+                <p className="dp-avis-quote" style={{ fontFamily: "var(--font-display)", fontSize: "1.05rem", color: "var(--ink-700)", lineHeight: 1.65, margin: "0 0 18px", fontStyle: "italic" }}>"{t.text}"</p>
                 <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
                   <div style={{ width: 36, height: 36, borderRadius: "50%", background: "var(--gold-100)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-display)", fontSize: "1rem", color: "var(--gold-700)", flexShrink: 0 }}>
                     {t.name[0]}
@@ -1292,8 +1306,8 @@ export default function HomePageClient() {
                 }}>
                   <ReassuranceIcon name={p.icon} />
                 </div>
-                <div style={{ fontFamily: "var(--font-display)", fontSize: "1.22rem", fontWeight: 600, color: p.featured ? "#F6ECD6" : "var(--on-dark-strong)", marginBottom: 8, letterSpacing: "0.01em" }}>{p.title}</div>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 500, letterSpacing: "0.14em", textTransform: "uppercase", color: p.featured ? "rgba(232,200,115,0.9)" : "var(--on-dark-muted)" }}>{p.sub}</div>
+                <div className="dp-pillar-title" style={{ fontFamily: "var(--font-display)", fontSize: "1.22rem", fontWeight: 600, color: p.featured ? "#F6ECD6" : "var(--on-dark-strong)", marginBottom: 8, letterSpacing: "0.01em" }}>{p.title}</div>
+                <div className="dp-pillar-sub" style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", fontWeight: 500, letterSpacing: "0.14em", textTransform: "uppercase", color: p.featured ? "rgba(232,200,115,0.9)" : "var(--on-dark-muted)" }}>{p.sub}</div>
               </div>
             ))}
           </div>
@@ -1303,7 +1317,19 @@ export default function HomePageClient() {
           .dp-pillar:hover .dp-pillar-ic { border-color: rgba(232,200,115,0.95) !important; box-shadow: 0 0 0 5px rgba(201,162,74,0.09), 0 10px 26px -8px rgba(201,162,74,0.55); }
           .dp-pillar.is-featured:hover { transform: translateY(-8px); }
           @media (max-width: 900px) { .dp-pillars-grid { grid-template-columns: repeat(2, 1fr) !important; } .dp-pillar.is-featured { grid-column: span 2; } }
-          @media (max-width: 520px) { .dp-pillars-grid { grid-template-columns: 1fr !important; } .dp-pillar.is-featured { grid-column: auto; } }
+          /* Le repli en une colonne sous 520px faisait ~200px par pilier, soit
+             cinq ecrans de reassurance : la hauteur venait de la pastille de
+             66px et des 38px de padding haut, pas du texte. On garde donc deux
+             colonnes et on degonfle la pastille et les paddings. Seuil aligne
+             sur les 760px du repo. */
+          @media (max-width: 760px) {
+            .dp-pillars-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+            .dp-pillar { padding: 18px 10px 16px !important; border-radius: 14px !important; }
+            .dp-pillar-ic { width: 44px !important; height: 44px !important; margin: 0 auto 10px !important; }
+            .dp-pillar-ic svg { width: 21px !important; height: 21px !important; }
+            .dp-pillar-title { font-size: 0.98rem !important; margin-bottom: 4px !important; }
+            .dp-pillar-sub { font-size: 0.6rem !important; letter-spacing: 0.07em !important; }
+          }
         `}</style>
       </section>
 
