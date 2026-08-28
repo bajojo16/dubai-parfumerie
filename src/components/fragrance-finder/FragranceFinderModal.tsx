@@ -893,10 +893,20 @@ const CSS = `
   display: block; padding: 0;
 }
 .dp-ff.is-inline .dp-ff-panel {
-  max-width: none; max-height: none; overflow: visible;
+  /* En section de page, un panneau pleine largeur etirait les trois options sur
+     plus de 1700px : des pilules de 500px de large pour deux mots. La modale,
+     elle, est deja bornee par sa propre largeur maximale. */
+  max-width: 820px; margin-inline: auto;
+  max-height: none; overflow: visible;
   box-shadow: var(--shadow-sm);
   animation: none;
 }
+/* Options resserrees : elles n'ont pas besoin de toute la largeur disponible
+   pour rester lisibles, et la question se lit mieux au-dessus d'une rangee
+   compacte que d'une barre continue. */
+.dp-ff.is-inline .dp-ff-opt { padding-block: 11px; }
+.dp-ff.is-inline .dp-ff-question { margin-top: 6px; }
+/* L'ecran de fin porte trois colonnes : il lui faut toute la largeur. */
 .dp-ff.is-inline .dp-ff-panel.is-result { max-width: none; }
 
 /* ── Écran de fin en deux colonnes ── */

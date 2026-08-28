@@ -338,6 +338,12 @@ const CSS = `
      deux marges s'additionnaient et volaient 32px de large au rail avant meme
      son propre padding. On rend cette largeur au rail. */
   .dp-catrail-section { padding-inline: 0 !important; }
+  /* Trois vignettes au plus sur mobile : au-dela la quatrieme etait coupee par
+     le bord au lieu d'inviter au defilement. Coupe en CSS et non en JS, pour
+     que desktop et tablette gardent la liste entiere -- un slice() dans le
+     rendu l'aurait amputee partout. Les items caches restent dans le DOM,
+     donc lisibles par un moteur d'indexation. */
+  .dp-catrail-scroller > li:nth-of-type(n + 4) { display: none; }
   .dp-catrail-scroller {
     /* Trois disques + deux gouttieres + le padding du scroller + les 32px de
        marge de la section parente : le disque prend tout ce qui reste, sans

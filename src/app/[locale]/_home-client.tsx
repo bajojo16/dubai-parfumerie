@@ -447,7 +447,7 @@ export default function HomePageClient() {
       {/* ── CATÉGORIES (rail circulaire, sous la bannière) ────────── */}
       <section id="categories-rail" style={{ background: "var(--surface-page)", padding: "44px 0 16px" }}>
         <CategoryRail
-          categories={DEMO_CATEGORIES.slice(0, 3)}
+          categories={DEMO_CATEGORIES}
           locale={locale}
           onCategoryClick={(cat) => {
             if (cat.slug === "offre-duo") {
@@ -645,7 +645,7 @@ export default function HomePageClient() {
       {/* ── CATEGORY RAIL (2e occurrence, après la bannière Yara) ──── */}
       <section id="category-rail-2" style={{ background: "var(--surface-page)", padding: "20px 0" }}>
         {/* Jeu de données indépendant (anciens libellés formats) */}
-        <CategoryRail categories={DEMO_CATEGORIES_FORMATS.slice(0, 3)} locale={locale} />
+        <CategoryRail categories={DEMO_CATEGORIES_FORMATS} locale={locale} />
       </section>
 
       {/* ── BEST-SELLERS (au-dessus de Le catalogue) ──────────────── */}
