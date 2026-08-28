@@ -128,6 +128,9 @@ function PromoOverlay({
         /* Condition avec filets latéraux */
         const conditionEl = (
           <div
+            /* classe nécessaire pour recentrer les filets latéraux sous 760px :
+               la colonne passe de l'alignement droite au centrage */
+            className="dp-promo-condition"
             style={{
               display: "flex",
               alignItems: "center",
@@ -298,24 +301,58 @@ function PromoOverlay({
         />
       </motion.a>
 
-      {/* Responsive : offset droit + taille du focal réduits sur mobile pour éviter
-          tout débordement/chevauchement (voir breakpoints 760/420 déjà en place
-          ailleurs dans ce fichier, ex. vignettes / barre de progression).
+      {/* Responsive (breakpoints 760/420, convention déjà en place dans ce fichier).
+
+          Sous 760px, le bloc promo QUITTE le positionnement absolu et redevient
+          une boîte du flux normal (position: relative, top/right neutralisés).
+          Pourquoi : en absolu, il partageait le bord droit de la section avec le
+          rail de vignettes (lui aussi en absolu, right + top:50%) — deux boîtes
+          hors flux dont rien ne garantit qu'elles ne se croisent pas, et qui se
+          superposaient effectivement dès que la largeur tombait à ~390px (le
+          bloc texte était alors bridé à max-width: 42vw ≈ 164px, donc très haut,
+          et retombait pile sur la colonne de vignettes). Dans le flux, le bloc
+          texte et le rail sont deux boîtes successives : le navigateur leur
+          interdit par construction de se recouvrir.
+
+          !important obligatoire : ces propriétés sont posées en style inline sur
+          l'élément (spécificité maximale), une règle de classe ne les écraserait
+          pas. Même idiome que WhatsAppBubble / FragranceFinderButton.
+          NB : on ne touche PAS à transform — framer-motion l'écrit lui-même pour
+          l'animation d'entrée/sortie (y: 16 → 0 → -12).
+
           Le justify du titre (dp-promo-title) et du focal (dp-promo-focal-justify)
-          est neutralisé sous 760px : sur mobile, une ligne courte issue d'un
-          wrap ("VOS", "TOP 10"…) devient la dernière/seule ligne et se retrouve
-          étirée lettre par lettre par text-align-last: justify. */}
+          reste neutralisé : sur mobile, une ligne courte issue d'un wrap ("VOS",
+          "TOP 10"…) devient la dernière/seule ligne et se retrouve étirée lettre
+          par lettre par text-align-last: justify. Il passe en center puisque la
+          colonne est désormais centrée et non plus alignée à droite. */}
       <style>{`
         @media (max-width: 760px) {
-          [data-dp-promo] { --dp-promo-right: clamp(16px, 5vw, 48px); --dp-promo-focal-size: clamp(2.4rem, 10vw, 4.2rem); }
+          [data-dp-promo] {
+            --dp-promo-focal-size: clamp(2.2rem, 9vw, 3.6rem);
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            inset-inline-end: auto !important;
+            max-width: min(92vw, 440px) !important;
+            margin-inline: auto !important;
+            align-items: center !important;
+            justify-content: center !important;
+            text-align: center !important;
+            padding: 16px 18px !important;
+          }
           .dp-promo-title, .dp-promo-focal-justify {
-            text-align: right !important;
+            text-align: center !important;
             text-align-last: auto !important;
             text-justify: auto !important;
           }
+          .dp-promo-condition { justify-content: center !important; }
         }
         @media (max-width: 420px) {
-          [data-dp-promo] { --dp-promo-right: clamp(12px, 4vw, 24px); --dp-promo-focal-size: clamp(1.8rem, 12vw, 3rem); }
+          [data-dp-promo] {
+            --dp-promo-focal-size: clamp(1.8rem, 12vw, 3rem);
+            max-width: min(94vw, 380px) !important;
+            padding: 14px 14px !important;
+          }
         }
       `}</style>
     </motion.div>
@@ -337,6 +374,7 @@ export function AnimatedHero() {
 
   return (
     <section
+      className="dp-hero-section"
       style={{
         position: "relative",
         background: "var(--espresso-900)",
@@ -394,6 +432,7 @@ export function AnimatedHero() {
 
       {/* Content */}
       <div
+        className="dp-hero-content"
         style={{
           position: "relative",
           zIndex: 2,
@@ -616,8 +655,14 @@ export function AnimatedHero() {
           dynamique, traductions plus longues, arrondis de rendu). Le "max()"
           ci-dessous ne remonte le rail que lorsque 100vh < 710px (aucun
           effet sur les écrans hauts, où le centrage à 50% reste inchangé),
-          ce qui redonne une marge de sécurité réelle avec le bouton flottant. */}
+          ce qui redonne une marge de sécurité réelle avec le bouton flottant.
+
+          Sous 760px, tout ce positionnement absolu est abandonné (voir le
+          bloc <style> en fin de section) : le rail redevient une boîte du
+          flux, placée APRÈS le bloc promo, et les vignettes s'y rangent en
+          rangée horizontale centrée. */}
       <div
+        className="dp-hero-rail"
         style={{
           position: "absolute",
           zIndex: 3,
@@ -644,29 +689,42 @@ export function AnimatedHero() {
             {" "}/ {String(SLIDES.length).padStart(2, "0")}
           </span>
         </div>
-        {SLIDES.map((s, n) => (
-          <button
-            key={s.img}
-            onClick={() => go(n)}
-            aria-label={`Slide ${n + 1}`}
-            style={{
-              position: "relative",
-              width: 58,
-              height: 58,
-              borderRadius: "var(--r-xs)",
-              overflow: "hidden",
-              padding: 0,
-              cursor: "pointer",
-              border: n === i ? "2px solid var(--gold-400)" : "1px solid rgba(255,255,255,.25)",
-              boxShadow: n === i ? "var(--shadow-gold)" : "none",
-              opacity: n === i ? 1 : 0.6,
-              transition: "opacity .3s, border-color .3s",
-              background: "transparent",
-            }}
-          >
-            <Image src={s.thumb} alt="" fill style={{ objectFit: "cover" }} sizes="58px" />
-          </button>
-        ))}
+        {/* Conteneur dédié aux vignettes : sur desktop il reproduit exactement
+            l'empilement précédent (colonne, gap 14 — le rail parent gardait
+            déjà ce gap entre le compteur et chaque vignette). Sous 760px il
+            bascule en rangée, sans que le compteur ne rejoigne la rangée : il
+            reste au-dessus, centré, donc il ne peut plus « coller au titre ». */}
+        <div
+          className="dp-hero-thumbs"
+          style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 14 }}
+        >
+          {SLIDES.map((s, n) => (
+            <button
+              key={s.img}
+              onClick={() => go(n)}
+              aria-label={`Slide ${n + 1}`}
+              aria-current={n === i ? "true" : undefined}
+              className="dp-hero-thumb"
+              style={{
+                position: "relative",
+                width: 58,
+                height: 58,
+                borderRadius: "var(--r-xs)",
+                overflow: "hidden",
+                padding: 0,
+                cursor: "pointer",
+                flexShrink: 0,
+                border: n === i ? "2px solid var(--gold-400)" : "1px solid rgba(255,255,255,.25)",
+                boxShadow: n === i ? "var(--shadow-gold)" : "none",
+                opacity: n === i ? 1 : 0.6,
+                transition: "opacity .3s, border-color .3s",
+                background: "transparent",
+              }}
+            >
+              <Image src={s.thumb} alt="" fill style={{ objectFit: "cover" }} sizes="58px" />
+            </button>
+          ))}
+        </div>
       </div>
 
       {/* Barre de progression */}
@@ -689,6 +747,99 @@ export function AnimatedHero() {
           style={{ height: "100%", background: "var(--gold-500)" }}
         />
       </div>
+
+      {/* Bascule mobile du hero (même seuil 760px que le bloc promo).
+
+          Trois choses seulement changent :
+
+          1) Hauteur. Le conteneur de contenu est vide (tous ses enfants sont
+             derrière un false &&) : il ne servait qu'à imposer 70vh + 130px
+             de padding, soit un hero qui mangeait la quasi-totalité d'un écran
+             de 844px et repoussait le reste de la page. On le réduit à une
+             simple marge haute et on confie le plancher de hauteur à la
+             section : clamp(400px, 60vh, 560px).
+
+          2) Ordre. La section devient une colonne flex avec
+             justify-content: space-between. Ses trois enfants DU FLUX se
+             suivent donc verticalement, sans chevauchement possible :
+             marge haute → bloc promo (texte) → rail de vignettes, ce dernier
+             collé au bas. Les enfants en position absolue (images de fond,
+             particules, barre de progression) sortent du flux flex et ne
+             perturbent rien. space-between plutôt que flex:1 sur le promo :
+             pendant le fondu enchaîné (AnimatePresence mode="wait"), le bloc
+             promo est démonté ~0,7s ; avec space-between le rail reste collé
+             en bas et rien ne saute.
+
+          3) Sens de lecture des vignettes : rangée horizontale centrée.
+             Centrée, c'est décisif — les boutons flottants occupent les COINS
+             bas du viewport (WhatsApp bas-gauche, largeur ≤ 60px depuis le
+             bord ; conseiller olfactif bas-droite, ≤ 64px depuis le bord) et
+             la barre d'aperçu dev est centrée mais très basse (20px du bas).
+             Une rangée de 3 vignettes de 52px + 2 gaps de 12px = 180px de
+             large, centrée, laisse ~33px de marge de chaque côté sur 375px.
+             Sous 420px les vignettes descendent à 48px et le gap à 10px
+             (= 164px de rangée), pendant que les deux bulles rétrécissent
+             elles aussi (44/48px à 16px du bord) : la marge reste positive
+             jusqu'à 320px de large, la plus petite largeur réaliste.
+             La séparation est donc HORIZONTALE, donc indépendante de la
+             hauteur du hero — c'est ce qui la rend fiable.
+             Cible tactile : 48px minimum, au-dessus des 40px requis.
+
+          !important : les propriétés visées sont posées en style inline
+          (spécificité maximale). Aucune de ces règles ne s'applique au-dessus
+          de 760px, le rendu desktop est donc strictement inchangé. */}
+      <style>{`
+        @media (max-width: 760px) {
+          .dp-hero-section {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            min-height: clamp(400px, 60vh, 560px) !important;
+          }
+          .dp-hero-content {
+            flex: 0 0 auto;
+            min-height: 0 !important;
+            padding: 28px 16px 0 !important;
+          }
+          .dp-hero-rail {
+            position: relative !important;
+            top: auto !important;
+            right: auto !important;
+            inset-inline-end: auto !important;
+            transform: none !important;
+            flex: 0 0 auto;
+            width: 100%;
+            gap: 10px !important;
+            padding-bottom: 22px;
+          }
+          .dp-hero-thumbs {
+            flex-direction: row !important;
+            gap: 12px !important;
+          }
+          .dp-hero-thumb {
+            width: 52px !important;
+            height: 52px !important;
+          }
+        }
+        @media (max-width: 420px) {
+          .dp-hero-section {
+            min-height: clamp(360px, 56vh, 520px) !important;
+          }
+          .dp-hero-content {
+            padding: 22px 14px 0 !important;
+          }
+          .dp-hero-rail {
+            padding-bottom: 26px;
+          }
+          .dp-hero-thumbs {
+            gap: 10px !important;
+          }
+          .dp-hero-thumb {
+            width: 48px !important;
+            height: 48px !important;
+          }
+        }
+      `}</style>
     </section>
   );
 }
