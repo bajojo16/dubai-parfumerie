@@ -1047,3 +1047,16 @@ img, svg, video { max-width: 100%; }
     letter-spacing: 0.03em !important;
   }
 }
+
+/* ── Hero : bannière verticale sur mobile ──────────────────────────────
+   Les visuels paysage du slider, recadrés en `cover` sur un écran étroit,
+   perdaient les flacons sur les côtés. Trois bannières composées pour le
+   portrait prennent le relais sous 760px ; le desktop est inchangé.
+   Les deux <Image> sont rendues, une seule est affichée : `display:none`
+   suffit à empêcher le chargement des variantes non affichées par
+   next/image (l'attribut `loading` reste géré par le navigateur). */
+.dp-hero-img-mobile { display: none !important; }
+@media (max-width: 760px) {
+  .dp-hero-img-desktop { display: none !important; }
+  .dp-hero-img-mobile { display: block !important; }
+}

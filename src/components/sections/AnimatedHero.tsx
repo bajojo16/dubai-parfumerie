@@ -8,6 +8,10 @@ const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
 
 type Slide = {
   img: string;
+  /* Variante portrait : le cadrage paysage du desktop, recadré en 3/4 sur
+     mobile, coupait les flacons sur les côtés. Ces visuels sont composés
+     pour le format vertical. */
+  imgMobile?: string;
   eyebrow: string;
   title: string;
   em: string;
@@ -19,6 +23,7 @@ type Slide = {
 const SLIDES: Slide[] = [
   {
     img: "/assets/slider-1.jpg",
+    imgMobile: "/assets/slider-1-mobile.jpg",
     thumb: "/assets/slider-1.jpg",
     eyebrow: "Parfumerie Orientale Authentique · Depuis 2016",
     title: "L'authentique,",
@@ -28,6 +33,7 @@ const SLIDES: Slide[] = [
   },
   {
     img: "/assets/slider-2-reef-v2.jpg",
+    imgMobile: "/assets/slider-2-mobile.jpg",
     thumb: "/assets/slider-2-reef-v2.jpg",
     eyebrow: "Coffrets Prestige · Édition Cabinet",
     title: "L'art du",
@@ -37,6 +43,7 @@ const SLIDES: Slide[] = [
   },
   {
     img: "/assets/slider-3-oud.jpg",
+    imgMobile: "/assets/slider-3-mobile.jpg",
     thumb: "/assets/slider-3-oud.jpg",
     eyebrow: "Oud & Boisés Rares · Sourcés au Golfe",
     title: "La profondeur",
@@ -399,6 +406,7 @@ export function AnimatedHero() {
             style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
           >
             <Image
+              className="dp-hero-img-desktop"
               src={slide.img}
               alt={slide.title}
               fill
@@ -406,6 +414,17 @@ export function AnimatedHero() {
               sizes="100vw"
               style={{ objectFit: "cover", opacity: 1 }}
             />
+            {slide.imgMobile && (
+              <Image
+                className="dp-hero-img-mobile"
+                src={slide.imgMobile}
+                alt={slide.title}
+                fill
+                priority={i === 0}
+                sizes="100vw"
+                style={{ objectFit: "cover", opacity: 1 }}
+              />
+            )}
           </motion.div>
         </motion.div>
       </AnimatePresence>
