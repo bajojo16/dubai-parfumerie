@@ -290,6 +290,38 @@ body {
 html, body { max-width: 100%; overflow-x: hidden; }
 img, svg, video { max-width: 100%; }
 
+/* ── ProductCard : bouton « Ajouter au panier » ──────────────
+   Desktop (hover possible) : révélé au survol via data-hovered.
+   Tactile (hover: none) : toujours visible et cliquable — un état
+   piloté par onMouseEnter ne se déclenche jamais au doigt. */
+.dp-pc-atc {
+  opacity: 0;
+  transform: translateY(6px);
+  pointer-events: none;
+  transition: opacity .2s, transform .2s;
+}
+.dp-pc-atc[data-hovered] {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+@media (hover: none), (pointer: coarse), (max-width: 760px) {
+  .dp-pc-atc { opacity: 1; transform: none; pointer-events: auto; }
+}
+
+/* ── ViewportSwitcher : outil de relecture DESKTOP uniquement ─
+   Sur un vrai appareil tactile (téléphone en réseau local), la barre
+   recouvrait les CTA bas de page (« Ajouter au panier ») et ses
+   window.open sont inutilisables — on la retire entièrement. */
+/* `max-width` en plus des deux media queries tactiles : Brave Android répond
+   `false` à `pointer: coarse` (protections anti-empreinte), la barre restait
+   donc affichée sur téléphone, par-dessus les CTA. La largeur, elle, ne ment
+   jamais. */
+@media (hover: none), (pointer: coarse), (max-width: 760px) {
+  .dp-vps { display: none !important; }
+  .dp-viewport-frame { padding-block-end: 0 !important; }
+}
+
 /* Header — burger caché desktop, nav visible */
 .dp-burger { display: none !important; }
 

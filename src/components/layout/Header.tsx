@@ -516,7 +516,7 @@ function AuthModal({ open, onClose }: AuthModalProps) {
         transition: "opacity .25s, transform .25s",
       }}>
         {/* Close */}
-        <button onClick={onClose} style={{ position: "absolute", top: 14, right: 14, background: "rgba(0,0,0,.06)", border: "none", borderRadius: "50%", width: 30, height: 30, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ink-500)" }}>
+        <button onClick={onClose} aria-label="Fermer" style={{ position: "absolute", top: 8, right: 8, background: "rgba(0,0,0,.06)", border: "none", borderRadius: "50%", width: 44, height: 44, cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", color: "var(--ink-500)" }}>
           <IconClose />
         </button>
 
@@ -563,7 +563,7 @@ function AuthModal({ open, onClose }: AuthModalProps) {
 
         {mode === "login" && (
           <div style={{ textAlign: "right", marginBottom: 16 }}>
-            <button style={{ background: "none", border: "none", fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-500)", textDecoration: "underline", cursor: "pointer" }}>Mot de passe oublié ?</button>
+            <button style={{ background: "none", border: "none", fontFamily: "var(--font-sans)", fontSize: "12px", color: "var(--ink-500)", textDecoration: "underline", cursor: "pointer", padding: "12px 8px", margin: "-12px -8px" }}>Mot de passe oublié ?</button>
           </div>
         )}
 

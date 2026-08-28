@@ -666,32 +666,15 @@ export function OlfactiveTwin({
             padding: compact ? 14 : 20,
           }}
         >
-          {/* Deux colonnes de même nature : un surtitre, un nom. La flèche dit
-              le sens de lecture — l'original à gauche, le jumeau à droite. */}
+          {/* Deux colonnes de même nature : un surtitre, un nom. Les surtitres
+              (« Vous aimez » / « Le jumeau oriental ») disent déjà le sens de
+              lecture ; la double flèche qui les séparait faisait doublon et
+              mangeait une ligne entière en colonne sur mobile. */}
           <div className="otw-row">
             <div className="otw-target">
               <div className="otw-eyebrow">{t("you_like")}</div>
               <div className="otw-target-name">{view.targetName}</div>
             </div>
-
-            {/* Flèche : sens de lecture, elle bascule à la verticale en mobile */}
-            <svg
-              className={isRTL ? "otw-arrow otw-arrow-rtl" : "otw-arrow"}
-              width="34"
-              height="22"
-              viewBox="0 0 34 22"
-              fill="none"
-              stroke={C.gold}
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              aria-hidden
-            >
-              <path d="M2 7h22" />
-              <path d="M18 2l7 5-7 5" />
-              <path d="M2 15h26" />
-              <path d="M22 10l7 5-7 5" />
-            </svg>
 
             <div className="otw-twin">
               {/* Cadre crème + `contain` : les packshots n'ont ni le même
@@ -851,11 +834,6 @@ export function OlfactiveTwin({
        propre ; le min-width 0 du parent suffit a contenir le debordement. */
     .otw-target-name { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: ${C.ink};
       line-height: 1.2; text-wrap: balance; overflow-wrap: break-word; }
-    .otw-arrow { flex: 0 0 auto; opacity: .85; }
-    /* Sens de lecture inverse en arabe — en classe, pas en style inline : la
-       media query mobile doit pouvoir la faire pivoter, ce qu'un style inline
-       empecherait (il l'emporte sur la feuille de styles). */
-    .otw-arrow-rtl { transform: scaleX(-1); }
     .otw-twin { display: flex; align-items: center; gap: 14px; flex: 1 1 260px; min-width: 0; }
     /* Cadre creme a coins arrondis : le packshot respire au lieu d'etre
        recadre. object-fit contain + fond neutre = tous les flacons au meme gabarit,
@@ -959,7 +937,6 @@ export function OlfactiveTwin({
       .otw-none-input, .otw-none-submit { flex: 1 1 100%; width: 100%; }
       .otwin-grid > *, .otwin-grid .otw-result { display: block; }
       .otw-row { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; }
-      .otw-arrow, .otw-arrow-rtl { align-self: center; transform: rotate(90deg); }
       .otw-thumb { width: 96px; height: 96px; }
       .otw-foot { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; }
       /* ── LE VIDE DE LA CARTE EN VUE ETROITE VENAIT D'ICI ──────────────────

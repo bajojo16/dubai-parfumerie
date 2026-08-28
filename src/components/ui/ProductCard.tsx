@@ -198,14 +198,13 @@ export function ProductCard({
           )}
         </div>
       )}
+      {/* Tactile (hover: none) : le CSS global `.dp-pc-atc` force le bouton
+          visible et cliquable — sans quoi il resterait opacity:0 +
+          pointer-events:none à jamais (aucun hover sur mobile). */}
       <div
-        style={{
-          padding: "0 16px 16px",
-          opacity: hovered ? 1 : 0,
-          transform: hovered ? "translateY(0)" : "translateY(6px)",
-          transition: "opacity .2s, transform .2s",
-          pointerEvents: hovered ? "auto" : "none",
-        }}
+        className="dp-pc-atc"
+        data-hovered={hovered || undefined}
+        style={{ padding: "0 16px 16px" }}
       >
         <Button
           variant="primary"

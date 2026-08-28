@@ -127,13 +127,35 @@ export function ShippingChecker({
   );
 
   // Détection tactile (après montage → aucun risque de mismatch d'hydratation).
+  //
+  // Quatre signaux, pas un seul : `pointer: coarse` est la bonne question mais
+  // pas une réponse fiable. Brave Android (protections anti-empreinte) et
+  // plusieurs WebViews répondent `false` — le combobox de recherche revenait
+  // alors sur téléphone, avec clavier logiciel devant la liste : il fallait
+  // TAPER le nom du pays. `hover: none`, `maxTouchPoints` et la largeur du
+  // viewport rattrapent chacun ce cas ; il suffit qu'un seul soit vrai.
   useEffect(() => {
-    const mq = window.matchMedia?.("(pointer: coarse)");
-    if (!mq) return;
-    const apply = () => setCoarse(mq.matches);
+    const apply = () => {
+      const touchLike =
+        window.matchMedia?.("(pointer: coarse)").matches ||
+        window.matchMedia?.("(hover: none)").matches ||
+        (navigator.maxTouchPoints ?? 0) > 0 ||
+        "ontouchstart" in window ||
+        window.innerWidth <= 760;
+      setCoarse(Boolean(touchLike));
+    };
     apply();
-    mq.addEventListener("change", apply);
-    return () => mq.removeEventListener("change", apply);
+    // `resize` couvre la rotation et le passage en fenêtre étroite ; les media
+    // queries changent aussi (souris branchée sur tablette), d'où les deux.
+    const mqs = ["(pointer: coarse)", "(hover: none)"]
+      .map((q) => window.matchMedia?.(q))
+      .filter(Boolean) as MediaQueryList[];
+    mqs.forEach((mq) => mq.addEventListener("change", apply));
+    window.addEventListener("resize", apply);
+    return () => {
+      mqs.forEach((mq) => mq.removeEventListener("change", apply));
+      window.removeEventListener("resize", apply);
+    };
   }, []);
 
   // Détection : prop detectedCode, sinon navigator.language (région), sinon rien.
