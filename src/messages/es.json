@@ -56,6 +56,15 @@
     "from_price": "desde {price}",
     "see_product": "Ver este perfume",
     "legal": "Sugerencias basadas en la proximidad de familia olfativa. Perfumes inspirados, nunca copias: sin afiliación con las marcas citadas.",
-    "no_result": "Sin coincidencias para esta búsqueda."
+    "no_result": "Sin coincidencias para esta búsqueda.",
+    "loading": "Cargando la base…",
+    "strength_very_close": "Perfil muy cercano",
+    "strength_close": "Perfil cercano",
+    "strength_related": "Perfil afín",
+    "shared_accords": "Acordes compartidos",
+    "search_label": "Buscar un perfume de referencia",
+    "suggestions": "Sugerencias",
+    "add_to_cart": "Añadir al carrito",
+    "added": "Añadido ✓"
   }
 }

@@ -56,6 +56,15 @@
     "from_price": "ab {price}",
     "see_product": "Diesen Duft ansehen",
     "legal": "Vorschläge basierend auf der Nähe der Duftfamilie. Inspirierte Düfte, niemals Kopien: keine Verbindung zu den genannten Marken.",
-    "no_result": "Keine Übereinstimmung für diese Suche."
+    "no_result": "Keine Übereinstimmung für diese Suche.",
+    "loading": "Datenbank wird geladen…",
+    "strength_very_close": "Sehr ähnliches Profil",
+    "strength_close": "Ähnliches Profil",
+    "strength_related": "Verwandtes Profil",
+    "shared_accords": "Gemeinsame Akkorde",
+    "search_label": "Referenzduft suchen",
+    "suggestions": "Vorschläge",
+    "add_to_cart": "In den Warenkorb",
+    "added": "Hinzugefügt ✓"
   }
 }

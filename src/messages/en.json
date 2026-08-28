@@ -56,6 +56,15 @@
     "from_price": "from {price}",
     "see_product": "View this fragrance",
     "legal": "Suggestions based on olfactive family proximity. Inspired fragrances, never copies: no affiliation with the brands mentioned.",
-    "no_result": "No match for this search."
+    "no_result": "No match for this search.",
+    "loading": "Loading the library…",
+    "strength_very_close": "Very close profile",
+    "strength_close": "Close profile",
+    "strength_related": "Related profile",
+    "shared_accords": "Shared accords",
+    "search_label": "Search a reference fragrance",
+    "suggestions": "Suggestions",
+    "add_to_cart": "Add to cart",
+    "added": "Added ✓"
   }
 }
