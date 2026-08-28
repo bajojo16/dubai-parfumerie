@@ -276,11 +276,14 @@ export function ScentWheelInteractive({
           }}
         >
           <div
+            className="dp-wheel-disc"
             style={{
               position: "relative",
               width: "100%",
               // Roue réduite de 360 à 280 (-22%) : le viewBox carré 300x300 garde
               // le cercle parfait, seule l'échelle de rendu change.
+              // Sous 560px, .dp-wheel-disc la ramène à 208px (voir globals.css) :
+              // la roue cesse alors de manger tout l'écran avant les cartes.
               maxWidth: 280,
             }}
           >
@@ -389,6 +392,7 @@ export function ScentWheelInteractive({
                     />
                   )}
                   <text
+                    className="dp-wheel-seg-label"
                     x={LABEL_POS[i].x}
                     y={LABEL_POS[i].y}
                     textAnchor="middle"
@@ -396,6 +400,9 @@ export function ScentWheelInteractive({
                     fontFamily="var(--font-sans)"
                     // Remonté de 12 à 14 unités SVG : la roue ayant rétréci de 22 %,
                     // ça restitue au libellé sa taille rendue d'origine (~13px).
+                    // Unité = user unit du viewBox 300 : le rendu vaut
+                    // fontSize × largeur/300. Sous 560px la roue tombe à 208px,
+                    // .dp-wheel-seg-label remonte donc à 17 (≈11,8px rendus).
                     fontSize={14}
                     fontWeight={600}
                     letterSpacing=".06em"
@@ -460,6 +467,7 @@ export function ScentWheelInteractive({
               </text>
             )}
             <text
+              className="dp-wheel-center-sub"
               x={150}
               y={163}
               textAnchor="middle"
@@ -636,6 +644,7 @@ export function ScentWheelInteractive({
           {/* Cartes produits */}
           {active && (
             <div
+              className="dp-wheel-cards"
               style={{
                 display: "flex",
                 flexWrap: "wrap",
@@ -787,6 +796,7 @@ function WheelProductCard({
     >
       <Link
         href={product.href}
+        className="dp-wheel-card-link"
         style={{
           // minWidth:0 obligatoire : sans lui, le contenu (nom long)
           // impose sa largeur minimale et fait déborder la carte sous 760px.
@@ -817,12 +827,13 @@ function WheelProductCard({
             src={product.image}
             alt={product.name}
             fill
-            sizes="(max-width: 560px) 96px, 124px"
+            sizes="(max-width: 560px) 45vw, 124px"
             style={{ objectFit: "contain" }}
           />
         </div>
         <div style={{ minWidth: 0, flex: 1 }}>
           <div
+            className="dp-wheel-card-brand"
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: 11,
@@ -835,6 +846,7 @@ function WheelProductCard({
             {product.brand}
           </div>
           <div
+            className="dp-wheel-card-name"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 25,
@@ -850,6 +862,7 @@ function WheelProductCard({
             {product.name}
           </div>
           <div
+            className="dp-wheel-card-price"
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: 17,

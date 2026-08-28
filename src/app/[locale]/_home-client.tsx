@@ -596,7 +596,7 @@ export default function HomePageClient() {
       {false && <BestSellers />}
 
       {/* ── BANNIÈRE PROMO YARA (roll-on) ─────────────────────────── */}
-      <section className="dp-yara-banner" style={{ position: "relative", width: "100%", overflow: "hidden", height: "clamp(170px, 18vw, 260px)" }}>
+      <section className="dp-yara-banner" style={{ position: "relative", width: "100%", overflow: "hidden", minHeight: "clamp(170px, 18vw, 260px)" }}>
         <Image
           src="/assets/banner-yara.jpg"
           alt="Yara & Mousuf Wardi — roll-on de voyage"
@@ -606,12 +606,14 @@ export default function HomePageClient() {
           priority={false}
         />
         {/* Voile léger pour lisibilité texte (côté droit) */}
-        <div style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(255,245,247,0) 45%, rgba(255,240,243,0.35) 100%)", pointerEvents: "none" }} />
+        <div className="dp-yara-veil" style={{ position: "absolute", inset: 0, background: "linear-gradient(90deg, rgba(255,245,247,0) 45%, rgba(255,240,243,0.35) 100%)", pointerEvents: "none" }} />
         <div
+          className="dp-yara-inner"
           style={{
-            position: "absolute", inset: 0, zIndex: 2,
+            position: "relative", zIndex: 2,
+            minHeight: "clamp(170px, 18vw, 260px)",
             display: "flex", alignItems: "center", justifyContent: "space-between",
-            gap: 24, padding: "0 clamp(24px, 6vw, 96px)",
+            gap: 24, padding: "clamp(18px, 2vw, 24px) clamp(24px, 6vw, 96px)",
           }}
         >
           {/* Bouton (gauche) */}
@@ -632,7 +634,7 @@ export default function HomePageClient() {
           </Link>
 
           {/* Texte (droite) */}
-          <div style={{ textAlign: "right", maxWidth: "min(56%, 620px)" }}>
+          <div className="dp-yara-text" style={{ textAlign: "end", maxWidth: "min(56%, 620px)" }}>
             <h2
               style={{
                 fontFamily: "var(--font-display)", margin: 0,
@@ -640,7 +642,7 @@ export default function HomePageClient() {
                 color: "#4A2230", textShadow: "0 1px 14px rgba(255,250,250,.6)",
               }}
             >
-              Vous aimez <em>Yara</em> ?<br />Emportez-le partout.
+              Vous aimez <em>Yara</em> ?<br />Emportez-le partout.
             </h2>
             <p
               style={{
@@ -659,13 +661,6 @@ export default function HomePageClient() {
           .dp-yara-cta::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.7) 50%,transparent 70%);transform:translateX(-130%)}
           .dp-yara-cta:hover::after{transform:translateX(130%);transition:transform .7s cubic-bezier(.2,.8,.2,1)}
           .dp-yara-cta:hover{background:#fff;animation-play-state:paused}
-          /* Mobile : la hauteur plancher (220px) est trop grande vs le contenu réel (~90px) → on la resserre */
-          @media (max-width: 760px) {
-            .dp-yara-banner { height: clamp(140px, 34vw, 190px) !important; }
-          }
-          @media (max-width: 420px) {
-            .dp-yara-banner { height: 150px !important; }
-          }
         `}</style>
       </section>
 

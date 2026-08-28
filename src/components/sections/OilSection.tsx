@@ -44,6 +44,7 @@ function Check() {
   return (
     <span
       aria-hidden
+      className="dp-oil-check"
       style={{
         flex: "0 0 auto",
         width: 16,
@@ -88,6 +89,7 @@ export function OilSection({
         {/* Bloc éditorial */}
         <div className="dp-oil-editorial" style={{ textAlign: isRTL ? "right" : "left" }}>
           <span
+            className="dp-oil-eyebrow"
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: 12,
@@ -100,6 +102,7 @@ export function OilSection({
             {L.eyebrow}
           </span>
           <h2
+            className="dp-oil-title"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 33,
@@ -113,6 +116,7 @@ export function OilSection({
             <em style={{ fontStyle: "italic", color: C.goldDeep }}>{L.titleAccent}</em>
           </h2>
           <p
+            className="dp-oil-desc"
             style={{
               fontFamily: "var(--font-sans)",
               fontSize: 13.5,
@@ -125,10 +129,11 @@ export function OilSection({
             {L.description}
           </p>
 
-          <ul style={{ listStyle: "none", margin: "0 0 20px", padding: 0, display: "flex", flexDirection: "column", gap: 9 }}>
+          <ul className="dp-oil-list" style={{ listStyle: "none", margin: "0 0 20px", padding: 0, display: "flex", flexDirection: "column", gap: 9 }}>
             {L.bullets.map((b) => (
               <li
                 key={b}
+                className="dp-oil-bullet"
                 style={{
                   display: "flex",
                   alignItems: "flex-start",
@@ -146,6 +151,7 @@ export function OilSection({
 
           <Link
             href="/huile-de-parfum"
+            className="dp-oil-cta"
             style={{
               display: "inline-flex",
               alignItems: "center",

@@ -136,6 +136,7 @@ export function TrendCard({
       role="button"
       tabIndex={0}
       aria-label={product.name}
+      className="dp-trend-card"
       dir={isRTL ? "rtl" : "ltr"}
       onClick={() => onOpen?.()}
       onKeyDown={(e) => {
@@ -189,7 +190,7 @@ export function TrendCard({
           src={product.image}
           alt={product.name}
           fill
-          sizes="(max-width:600px) 70vw, 240px"
+          sizes="(max-width:420px) 54vw, (max-width:600px) 58vw, 300px"
           style={{
             objectFit: "cover",
             objectPosition: product.cardObjectPosition ?? "center",
@@ -213,6 +214,7 @@ export function TrendCard({
 
       {/* Haut : badge rang + handle (début) */}
       <div
+        className="dp-trend-top"
         style={{
           position: "absolute",
           top: 12,
@@ -223,6 +225,7 @@ export function TrendCard({
         }}
       >
         <span
+          className="dp-trend-rank"
           style={{
             background: "rgba(0,0,0,0.5)",
             backdropFilter: "blur(6px)",
@@ -239,6 +242,7 @@ export function TrendCard({
           {rankLabel}
         </span>
         <span
+          className="dp-trend-handle"
           style={{
             color: "rgba(255,255,255,0.92)",
             fontFamily: "var(--font-sans)",
@@ -256,6 +260,7 @@ export function TrendCard({
       {/* Haut fin : badge promo (jamais sur le rang) */}
       {hasPromo && (
         <span
+          className="dp-trend-promo"
           style={{
             position: "absolute",
             top: 12,
@@ -278,6 +283,7 @@ export function TrendCard({
 
       {/* Colonne sociale (côté fin, façon TikTok) */}
       <div
+        className="dp-trend-social-col"
         style={{
           position: "absolute",
           insetInlineEnd: 10,
@@ -288,12 +294,12 @@ export function TrendCard({
           alignItems: "center",
         }}
       >
-        <button type="button" onClick={onLike} aria-label={L.like} aria-pressed={liked} style={socialBtn}>
+        <button type="button" onClick={onLike} aria-label={L.like} aria-pressed={liked} className="dp-trend-socialbtn" style={socialBtn}>
           <svg width="17" height="17" viewBox="0 0 24 24" fill={liked ? "#FF4D6D" : "none"} stroke={liked ? "#FF4D6D" : "currentColor"} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.6l-1-1a5.5 5.5 0 0 0-7.8 7.8l1 1L12 21l7.8-7.6 1-1a5.5 5.5 0 0 0 0-7.8z" />
           </svg>
         </button>
-        <button type="button" onClick={onShare} aria-label={L.share} style={socialBtn}>
+        <button type="button" onClick={onShare} aria-label={L.share} className="dp-trend-socialbtn" style={socialBtn}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
             <circle cx="18" cy="5" r="3" /><circle cx="6" cy="12" r="3" /><circle cx="18" cy="19" r="3" />
             <path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4" />
@@ -303,6 +309,7 @@ export function TrendCard({
 
       {/* Bas : marque + nom + prix + bouton panier (surimpression) */}
       <div
+        className="dp-trend-body"
         style={{
           position: "absolute",
           insetInline: 0,
@@ -314,6 +321,7 @@ export function TrendCard({
         }}
       >
         <span
+          className="dp-trend-brand"
           style={{
             fontFamily: "var(--font-sans)",
             fontSize: 9,
@@ -325,6 +333,7 @@ export function TrendCard({
           {product.brand}
         </span>
         <span
+          className="dp-trend-name"
           style={{
             fontFamily: "var(--font-display)",
             fontSize: 21,
@@ -337,8 +346,9 @@ export function TrendCard({
           {product.name}
         </span>
 
-        <div style={{ display: "inline-flex", alignItems: "baseline", gap: 8, marginTop: 2 }}>
+        <div className="dp-trend-pricerow" style={{ display: "inline-flex", alignItems: "baseline", gap: 8, marginTop: 2 }}>
           <span
+            className="dp-trend-price"
             style={{
               fontFamily: "var(--font-display)",
               fontSize: 18,
@@ -350,6 +360,7 @@ export function TrendCard({
           </span>
           {hasPromo && (
             <span
+              className="dp-trend-struck"
               style={{
                 fontFamily: "var(--font-sans)",
                 fontSize: 12,
@@ -363,6 +374,7 @@ export function TrendCard({
         </div>
 
         <div
+          className="dp-trend-actions"
           onClick={(e) => e.stopPropagation()}
           style={{ marginTop: 8, display: "flex", alignItems: "center", gap: 6 }}
         >
@@ -373,6 +385,7 @@ export function TrendCard({
           type="button"
           disabled={!product.available}
           onClick={onAdd}
+          className="dp-trend-addbtn"
           aria-label={product.available ? `${L.addToCart} — ${product.name}` : L.soldOut}
           style={{
             flex: 1,

@@ -22,6 +22,14 @@ export type ScentFamily = {
   products: ScentProduct[];
 };
 
+/**
+ * Visuels : n'utiliser QUE des packshots nus (/assets/products, /assets/oils).
+ * Les fichiers /assets/prod-1..6.jpg portent une pastille promotionnelle
+ * INCRUSTÉE DANS LE PIXEL (« Victime de son succès », « Promo »), rognée au
+ * bord de l'image : elle débordait de la vignette des cartes de la Roue. Ces
+ * fichiers restent utilisés ailleurs (grilles où le cadrage l'absorbe), on ne
+ * les touche pas — on ne les référence simplement plus ici.
+ */
 export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
   {
     key: "oud",
@@ -32,7 +40,7 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     ingredientImage: "/assets/scents/oud.jpg",
     collectionSlug: "oud",
     products: [
-      { name: "Oud Mood", brand: "Lattafa", price: 32.9, image: "/assets/prod-1.jpg", href: "/produit/oud-mood" },
+      { name: "Oud Mood", brand: "Lattafa", price: 32.9, image: "/assets/products/oud-roses.webp", href: "/produit/oud-mood" },
       { name: "Shaghaf Oud", brand: "Swiss Arabian", price: 39.9, image: "/assets/products/shaghaf-oud.webp", href: "/produit/shaghaf-oud" },
     ],
   },
@@ -45,8 +53,8 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     ingredientImage: "/assets/scents/rose.jpg",
     collectionSlug: "rose",
     products: [
-      { name: "Rose pour Elle", brand: "Lattafa", price: 28.9, image: "/assets/prod-4.jpg", href: "/produit/rose-pour-elle" },
-      { name: "Rose de Taïf", brand: "Swiss Arabian", price: 42.9, image: "/assets/prod-5.jpg", href: "/produit/rose-de-taif" },
+      { name: "Rose pour Elle", brand: "Lattafa", price: 28.9, image: "/assets/products/yara.webp", href: "/produit/rose-pour-elle" },
+      { name: "Rose de Taïf", brand: "Swiss Arabian", price: 42.9, image: "/assets/products/summer.webp", href: "/produit/rose-de-taif" },
     ],
   },
   {
@@ -58,8 +66,8 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     ingredientImage: "/assets/scents/ambre.jpg",
     collectionSlug: "ambre",
     products: [
-      { name: "Amber Oud", brand: "Al Haramain", price: 34.9, image: "/assets/prod-2.jpg", href: "/produit/amber-oud" },
-      { name: "Ambar Gold", brand: "Rasasi", price: 37.9, image: "/assets/prod-5.jpg", href: "/produit/ambar-gold" },
+      { name: "Amber Oud", brand: "Al Haramain", price: 34.9, image: "/assets/products/aurum.webp", href: "/produit/amber-oud" },
+      { name: "Ambar Gold", brand: "Rasasi", price: 37.9, image: "/assets/oils/noora.png", href: "/produit/ambar-gold" },
     ],
   },
   {
@@ -71,8 +79,8 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     ingredientImage: "/assets/scents/boise.jpg",
     collectionSlug: "boise",
     products: [
-      { name: "Sandal Wood", brand: "Al Haramain", price: 36.9, image: "/assets/prod-6.jpg", href: "/produit/sandal-wood" },
-      { name: "Santal Royal", brand: "Lattafa", price: 33.9, image: "/assets/prod-3.jpg", href: "/produit/santal-royal" },
+      { name: "Sandal Wood", brand: "Al Haramain", price: 36.9, image: "/assets/products/khamrah/khamrah-packshot.webp", href: "/produit/sandal-wood" },
+      { name: "Santal Royal", brand: "Lattafa", price: 33.9, image: "/assets/products/vanilla-voyage.webp", href: "/produit/santal-royal" },
     ],
   },
   {
@@ -84,8 +92,8 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     ingredientImage: "/assets/scents/musc.jpg",
     collectionSlug: "musc",
     products: [
-      { name: "Musk Mood", brand: "Lattafa", price: 24.9, image: "/assets/prod-3.jpg", href: "/produit/musk-mood" },
-      { name: "White Musk", brand: "Swiss Arabian", price: 28.9, image: "/assets/prod-6.jpg", href: "/produit/white-musk" },
+      { name: "Musk Mood", brand: "Lattafa", price: 24.9, image: "/assets/products/volcano.webp", href: "/produit/musk-mood" },
+      { name: "White Musk", brand: "Swiss Arabian", price: 28.9, image: "/assets/products/reef-33.webp", href: "/produit/white-musk" },
     ],
   },
   {

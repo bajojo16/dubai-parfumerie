@@ -187,6 +187,7 @@ export function BestSellersRail({
   return (
     <section
       aria-labelledby={titleId}
+      className="bsr-section"
       dir={isRTL ? "rtl" : "ltr"}
       style={{
         background: C.cream,
@@ -197,6 +198,7 @@ export function BestSellersRail({
       {/* En-tête */}
       <div style={{ maxWidth: 1240, marginInline: "auto", paddingInline: 24 }}>
         <span
+          className="bsr-eyebrow"
           style={{
             fontFamily: "var(--font-sans)",
             fontSize: 12,
@@ -210,6 +212,7 @@ export function BestSellersRail({
         </span>
         <h2
           id={titleId}
+          className="bsr-title"
           style={{
             margin: "10px 0 0",
             fontFamily: "var(--font-display)",
@@ -226,7 +229,7 @@ export function BestSellersRail({
 
       {/* ── Mode "start" (défaut) : rail unique scrollable, carte vidéo en tête ── */}
       {editorialSide === "start" && (
-        <div style={{ position: "relative", marginTop: 22 }}>
+        <div className="bsr-rail-wrap" style={{ position: "relative", marginTop: 22 }}>
           <div
             ref={railRef}
             className="bsr-scroll"
@@ -402,6 +405,28 @@ export function BestSellersRail({
            moins d'une carte produit et demie visible dans le rail. */
         @media (max-width: 1023px) {
           .bsr-split-editorial { flex: 0 0 250px; }
+        }
+
+        /* Titre de section en vue étroite : à 38px le titre tombait sur 4 lignes
+           (~165px) et l'en-tête mangeait près de 300px avant la première carte.
+           On resserre police, interligne et marges — les valeurs de base restent
+           inchangées, d'où le !important (styles inline dans le composant).
+           Propriétés logiques uniquement : valable aussi en RTL (locale ar). */
+        @media (max-width: 560px) {
+          .bsr-section { padding-block: 24px 32px !important; }
+          .bsr-eyebrow {
+            font-size: 10.5px !important;
+            letter-spacing: 1.4px !important;
+          }
+          .bsr-title {
+            font-size: 26px !important;
+            line-height: 1.15 !important;
+            margin-block-start: 6px !important;
+            /* Répartit les mots au lieu de laisser une dernière ligne orpheline */
+            text-wrap: balance;
+          }
+          /* Vaut pour les deux modes : rail unique ("start") et 2 zones ("end") */
+          .bsr-rail-wrap, .bsr-split { margin-block-start: 14px !important; }
         }
 
         /* Repli mobile : vidéo en haut, produits scrollables dessous */

@@ -746,3 +746,304 @@ img, svg, video { max-width: 100%; }
     height: 142px !important;
   }
 }
+
+/* ── Bannière promo Yara (roll-on) — vue étroite ──────────────────────
+   Ajout postérieur : la bannière avait une hauteur FIXE (clamp + overrides
+   mobiles) avec overflow:hidden, calibrée sur le desktop ; en étroit le
+   texte dépassait et la dernière ligne était tranchée. Le contenu est
+   désormais dans le flux et la hauteur n'est plus qu'un plancher.
+   !important obligatoire, les valeurs de base étant en style inline. */
+@media (max-width: 760px) {
+  /* Colonne : le texte prend toute la largeur (plus de « ? » orphelin
+     ni de ferrage à droite sur une colonne de 190px), le CTA passe dessous. */
+  .dp-yara-inner {
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 16px !important;
+    min-height: clamp(150px, 38vw, 200px) !important;
+    padding-block: 20px !important;
+    padding-inline: clamp(18px, 5vw, 32px) !important;
+  }
+  .dp-yara-text {
+    max-width: 100% !important;
+    text-align: center !important;
+    order: -1; /* titre + accroche au-dessus du bouton */
+  }
+  /* Le dégradé latéral ne protège plus le texte une fois celui-ci centré :
+     voile uniforme très léger, la lisibilité tient sur le text-shadow. */
+  .dp-yara-veil {
+    background: linear-gradient(
+      180deg,
+      rgba(255, 245, 247, 0.18) 0%,
+      rgba(255, 240, 243, 0.42) 100%
+    ) !important;
+  }
+}
+
+/* ── Huiles de parfum concentrées — ordre + densité mobile ─────────
+   Ajout en fin de fichier, aucune règle existante réécrite.
+   Le composant OilSection pose ses valeurs en style inline : tout
+   override de feuille doit être en !important pour primer.
+
+   Borne à 899px : la grille deux colonnes du composant démarre à
+   900px (min-width: 900px), donc le desktop n'est jamais touché. */
+@media (max-width: 899px) {
+  /* 1. Inversion visuelle : les cartes produit d'abord, le bloc
+     éditorial en dessous. On garde l'ordre du DOM (titre h2 avant son
+     contenu) pour les lecteurs d'écran et on ne déplace que le rendu,
+     via `order` sur les items de la grille. */
+  .dp-oil-grid { gap: 18px !important; }
+  .dp-oil-carousel { order: 1 !important; }
+  .dp-oil-editorial { order: 2 !important; }
+
+  /* 2. Compactage du bloc de texte : il occupait un écran entier avant
+     d'atteindre les produits. Le corps de texte reste à 13px, plancher
+     de lisibilité ; le gain vient des interlignes et des espacements. */
+  .dp-oil-eyebrow { font-size: 11.5px !important; letter-spacing: 2px !important; }
+  .dp-oil-title {
+    font-size: 27px !important;
+    line-height: 1.15 !important;
+    margin: 6px 0 8px !important;
+  }
+  .dp-oil-desc {
+    font-size: 13px !important;
+    line-height: 1.5 !important;
+    margin: 0 0 12px !important;
+    max-width: 100% !important;
+  }
+  /* La liste à coches portait 9px de gouttière EN PLUS de l'interligne
+     par défaut des items : on resserre les deux. */
+  .dp-oil-list { gap: 6px !important; margin: 0 0 14px !important; }
+  .dp-oil-bullet { line-height: 1.35 !important; gap: 8px !important; }
+  .dp-oil-check { width: 14px !important; height: 14px !important; margin-top: 1px !important; }
+  .dp-oil-cta { font-size: 12px !important; padding: 9px 17px !important; gap: 6px !important; }
+}
+
+/* ── Page d'accueil, section #huiles — ordre + densité mobile ──────
+   Ajout en fin de fichier, aucune règle existante réécrite.
+
+   Cette section est écrite en JSX inline dans _home-client.tsx (elle
+   n'utilise pas le composant OilSection, qui ne sert qu'à /preview-oils) :
+   ses deux colonnes n'ont pas de classe propre. On les vise donc par leur
+   position dans la grille .dp-grid-auto, elle-même repliée en une colonne
+   sous 620px par la règle générique plus haut — d'où cette borne, qui
+   laisse le desktop et la tablette (deux colonnes) strictement intacts.
+
+   Tout est en !important : les valeurs de base sont posées en style inline
+   par le JSX, qui primerait sinon sur n'importe quelle règle de feuille. */
+@media (max-width: 620px) {
+  /* 1. Inversion visuelle : les cartes produit d'abord, le bloc éditorial
+     en dessous. L'ordre du DOM ne bouge pas (le h2 reste annoncé avant le
+     contenu de sa section pour un lecteur d'écran), seul le rendu change. */
+  #huiles [data-dp-oils] { order: 1 !important; }
+  #huiles .dp-grid-auto > div:first-child { order: 2 !important; }
+
+  /* 2. Compactage du bloc éditorial. Le corps de texte et les items de la
+     liste restent à 0.82rem (≈13.1px), plancher de lisibilité : le gain
+     vient des interlignes et des espacements verticaux. */
+  #huiles .dp-grid-auto > div:first-child > div:first-child {
+    margin-bottom: 6px !important;
+  }
+  #huiles .dp-grid-auto > div:first-child h2 {
+    font-size: 1.5rem !important;
+    line-height: 1.15 !important;
+    margin: 0 0 8px !important;
+  }
+  #huiles .dp-grid-auto > div:first-child p {
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+    margin-bottom: 12px !important;
+  }
+  /* La liste portait 8px de gouttière EN PLUS de l'interligne par défaut
+     des items : on resserre les deux. */
+  #huiles .dp-grid-auto > div:first-child ul {
+    gap: 6px !important;
+    margin: 0 0 14px !important;
+  }
+  #huiles .dp-grid-auto > div:first-child li {
+    line-height: 1.35 !important;
+    gap: 8px !important;
+  }
+  #huiles .dp-grid-auto > div:first-child a {
+    font-size: 0.78rem !important;
+    padding: 9px 18px !important;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────
+   « Tendances du moment » (TrendCarousel / TrendCard) — compactage mobile
+   Ajout en fin de fichier : aucune règle existante n'est réécrite.
+   Les valeurs de base sont posées en style inline par les composants, donc
+   !important est obligatoire ici. Rien ne s'applique au-dessus de 600px :
+   le rendu desktop est inchangé.
+   Les largeurs de carte elles-mêmes (.trend-item) restent pilotées par le
+   <style> du composant, seul endroit où elles étaient déjà définies.
+   ───────────────────────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  /* Gouttière resserrée : le bord de la carte suivante ("peek") gagne 4px. */
+  .dp-trend-scroll { gap: 12px !important; }
+
+  /* En-tête : les pilules TikTok / Instagram tenaient chacune sur sa propre
+     ligne (label + 2 pilules ≈ 327px pour ~327px utiles à 375px de large).
+     On garde min-height 40px (cible tactile) et on ne rogne que le gras. */
+  .dp-trend-follow-row { gap: 8px !important; margin-top: 12px !important; }
+  .dp-trend-follow-label { letter-spacing: 1px !important; }
+  .dp-trend-follow {
+    padding: 0 12px !important;
+    font-size: 11.5px !important;
+    gap: 6px !important;
+  }
+  .dp-trend-follow svg { width: 14px !important; height: 14px !important; }
+
+  /* Carte : rayon et marges des surimpressions proportionnés à la largeur. */
+  .dp-trend-card { border-radius: 14px !important; }
+  .dp-trend-top {
+    top: 9px !important;
+    inset-inline-start: 9px !important;
+    gap: 6px !important;
+  }
+  /* Les fontes des badges restent à leur taille (11px / 9px) : c'est le
+     rembourrage qui porte la réduction, le texte n'étant déjà pas gros. */
+  .dp-trend-rank { padding: 3px 7px !important; }
+  .dp-trend-promo {
+    top: 9px !important;
+    inset-inline-end: 9px !important;
+    padding: 3px 6px !important;
+    letter-spacing: 0.3px !important;
+  }
+
+  /* Cœur / partage : le disque reste à 34px — le réduire descendrait encore
+     sous la cible tactile recommandée. L'allègement visuel passe par
+     l'icône et par le resserrement de la colonne. */
+  .dp-trend-social-col {
+    inset-inline-end: 8px !important;
+    bottom: 88px !important;
+    gap: 8px !important;
+  }
+  .dp-trend-socialbtn svg { width: 15px !important; height: 15px !important; }
+
+  /* Bloc bas : marque / nom / prix. */
+  .dp-trend-body { padding: 10px 10px 12px !important; gap: 3px !important; }
+  .dp-trend-brand { letter-spacing: 1.6px !important; }
+  .dp-trend-name { font-size: 17px !important; }
+  .dp-trend-pricerow { gap: 6px !important; }
+  .dp-trend-price { font-size: 16px !important; }
+  .dp-trend-struck { font-size: 11px !important; }
+
+  /* Rangée d'action. QtyStepper n'est pas modifié : on repasse uniquement ses
+     variables CSS, en les posant sur .dp-qty lui-même (elles y sont déclarées
+     inline, un parent ne suffirait pas). --qty-dim 34px ⇒ hauteur totale
+     34 + 2×2 (padding) + 2×1 (bordure) = 40px, la cible tactile est tenue. */
+  .dp-trend-actions { gap: 5px !important; margin-top: 6px !important; }
+  .dp-trend-actions .dp-qty {
+    --qty-dim: 34px !important;
+    --qty-fbtn: 15px !important;
+    --qty-fval: 12px !important;
+    --qty-valw: 20px !important;
+  }
+  .dp-trend-addbtn {
+    min-height: 40px !important;
+    padding: 0 10px !important;
+    gap: 4px !important;
+    letter-spacing: 0.3px !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+  }
+  .dp-trend-addbtn svg { width: 12px !important; height: 12px !important; }
+}
+
+/* Sous ~400px la place restante à droite du stepper (~50px) ne suffit plus
+   pour l'icône + le libellé : on sacrifie l'icône, le libellé étant porteur
+   de sens et traduit dans les 7 langues. */
+@media (max-width: 400px) {
+  .dp-trend-addbtn { padding: 0 6px !important; }
+  .dp-trend-addbtn svg { display: none !important; }
+}
+
+/* ── Roue des Senteurs — vue étroite : roue compacte + cartes 2 colonnes ──
+   Bloc ajouté en fin de fichier ; il complète (sans les réécrire) les blocs
+   « Roue des Senteurs » précédents, dont il durcit quelques valeurs par
+   simple ordre de cascade. !important obligatoire : ScentWheelInteractive
+   pose ses valeurs de base en style inline. */
+@media (max-width: 560px) {
+  /* 1 — La roue : 280px → 208px de diamètre. Le viewBox 300×300 ne bouge pas,
+     seule l'échelle de rendu change (facteur 0,693). */
+  .dp-wheel-disc {
+    max-width: 208px !important;
+  }
+  /* Les libellés de familles sont exprimés en unités de viewBox : 17 × 208/300
+     ≈ 11,8px rendus, au-dessus du plancher de lisibilité de 11px. La couronne
+     cliquable conserve ~50px d'épaisseur (rayons 130 → 58, × 0,693), bien
+     au-delà de la cible tactile de 44px. */
+  .dp-wheel-seg-label {
+    font-size: 17px !important;
+  }
+  .dp-wheel-center-sub {
+    font-size: 13px !important;
+    letter-spacing: 1.4px !important;
+  }
+
+  /* 2 — Les cartes produit : grille de deux colonnes, carte verticale.
+     grid plutôt que flex : les pistes 1fr 1fr donnent deux cartes de largeur
+     égale, et la rangée les étire à la même hauteur. */
+  .dp-wheel-cards {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+  }
+  .dp-wheel-card {
+    flex-direction: column !important;
+    flex-wrap: nowrap !important;
+    align-items: stretch !important;
+    gap: 10px !important;
+    padding: 10px !important;
+    border-radius: 14px !important;
+  }
+  /* Le lien (visuel + texte) absorbe la hauteur libre de la carte : les blocs
+     d'actions — donc les boutons — se calent au même niveau dans les deux
+     cartes, même si un nom passe sur deux lignes et l'autre non. */
+  .dp-wheel-card-link {
+    flex: 1 1 auto !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    gap: 8px !important;
+  }
+  .dp-wheel-card-media {
+    width: 100% !important;
+    height: 132px !important;
+  }
+  .dp-wheel-card-brand {
+    font-size: 10px !important;
+    letter-spacing: 0.1em !important;
+    margin-bottom: 4px !important;
+  }
+  .dp-wheel-card-name {
+    font-size: 17px !important;
+    line-height: 1.18 !important;
+    margin-bottom: 4px !important;
+  }
+  .dp-wheel-card-price {
+    font-size: 14px !important;
+  }
+  /* Stepper au-dessus, bouton pleine largeur dessous : sur ~140px de colonne,
+     la ligne « stepper + bouton » du bloc précédent n'est plus lisible. */
+  .dp-wheel-card-actions {
+    width: 100% !important;
+    margin-inline-start: 0 !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+  }
+  .dp-wheel-card-addbtn {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex: none !important;
+    padding: 9px 6px !important;
+    font-size: 10px !important;
+    letter-spacing: 0.03em !important;
+  }
+}

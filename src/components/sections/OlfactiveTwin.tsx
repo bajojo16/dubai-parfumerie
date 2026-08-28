@@ -818,7 +818,12 @@ export function OlfactiveTwin({
     /* Un seul plein : l'ajout au panier. La fiche produit passe en contour, a
        la meme hauteur, sur le meme axe — les deux boutons ne se disputent plus
        le regard. */
-    .otw-buy { flex: 0 0 auto; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    /* flex-shrink 1 + min-width 0 : quand le pied passe a la ligne, le bloc
+       d'achat se contente de la largeur disponible et fait passer ses propres
+       boutons a la ligne. Avec un flex-shrink 0 il gardait sa largeur
+       max-content (417 px) et debordait de la carte des que celle-ci
+       descendait sous ~420 px — c'etait le cas entre 761 et ~900 px. */
+    .otw-buy { flex: 0 1 auto; min-width: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .otw-btn { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; height: 40px;
       padding: 0 18px; border-radius: 999px; cursor: pointer; text-decoration: none; white-space: nowrap;
       font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase;
@@ -867,11 +872,22 @@ export function OlfactiveTwin({
       .otw-none-form { max-width: none; }
       .otw-none-input, .otw-none-submit { flex: 1 1 100%; width: 100%; }
       .otwin-grid > *, .otwin-grid .otw-result { display: block; }
-      .otw-row { flex-direction: column; align-items: stretch; gap: 12px; }
+      .otw-row { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; }
       .otw-arrow, .otw-arrow-rtl { align-self: center; transform: rotate(90deg); }
-      .otw-twin { flex: 1 1 auto; }
       .otw-thumb { width: 96px; height: 96px; }
-      .otw-foot { flex-direction: column; align-items: stretch; }
+      .otw-foot { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; }
+      /* ── LE VIDE DE LA CARTE EN VUE ETROITE VENAIT D'ICI ──────────────────
+         .otw-row et .otw-foot passent en colonne : l'axe principal devient la
+         VERTICALE, et les flex-basis calibres pour la rangee desktop se lisent
+         alors comme des HAUTEURS minimales. .otw-target (flex: 1 1 190px)
+         reservait 190 px pour 63 px de texte, .otw-foot-text (flex: 1 1 220px)
+         220 px pour 58 px de description : 289 px de vide sur une carte de
+         770 px, soit les deux trous observes — l'un sous le nom du parfum
+         aime, l'autre entre la description et les boutons.
+         En colonne, aucun de ces blocs n'a de raison de grandir ni de reserver
+         quoi que ce soit : chacun prend la hauteur de son contenu, et le gap
+         de 12 px fait seul l'espacement. */
+      .otw-target, .otw-twin, .otw-foot-text, .otw-buy { flex: 0 0 auto; }
       /* 375 px : le stepper garde sa largeur, l'ajout prend le reste, la fiche
          passe dessous sur toute la largeur. */
       .otw-buy { width: 100%; }

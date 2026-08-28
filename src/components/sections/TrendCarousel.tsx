@@ -145,6 +145,7 @@ export function TrendCarousel({
 
             {/* Boutons réseaux sociaux « Suivez-nous » */}
             <div
+              className="dp-trend-follow-row"
               style={{
                 display: "flex",
                 flexWrap: "wrap",
@@ -155,6 +156,7 @@ export function TrendCarousel({
               }}
             >
               <span
+                className="dp-trend-follow-label"
                 style={{
                   fontFamily: "var(--font-sans)",
                   fontSize: 11,
@@ -171,7 +173,7 @@ export function TrendCarousel({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={L.tiktokAria}
-                className="trend-follow-btn"
+                className="trend-follow-btn dp-trend-follow"
                 style={followBtn}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden>
@@ -184,7 +186,7 @@ export function TrendCarousel({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={L.instagramAria}
-                className="trend-follow-btn"
+                className="trend-follow-btn dp-trend-follow"
                 style={followBtn}
               >
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
@@ -215,7 +217,7 @@ export function TrendCarousel({
         {/* Carrousel scroll-snap */}
         <div
           ref={scrollRef}
-          className="trend-scroll"
+          className="trend-scroll dp-trend-scroll"
           style={{
             display: "flex",
             gap: 16,
@@ -245,8 +247,8 @@ export function TrendCarousel({
         @media (min-width: 768px) { .trend-arrows { display: inline-flex; } }
         .trend-scroll::-webkit-scrollbar { display: none; }
         .trend-item { width: 72vw; max-width: 260px; }
-        @media (max-width: 600px) { .trend-item { width: 64vw; max-width: 240px; } }
-        @media (max-width: 420px) { .trend-item { width: 58vw; max-width: 208px; } }
+        @media (max-width: 600px) { .trend-item { width: 58vw; max-width: 210px; } }
+        @media (max-width: 420px) { .trend-item { width: 54vw; max-width: 188px; } }
         @media (min-width: 640px) { .trend-item { width: 300px; } }
         .trend-follow-btn { transition: border-color .2s ease, color .2s ease, transform .2s ease; }
         .trend-follow-btn:hover { border-color: #C9A24A; color: #A8801F; }
