@@ -508,6 +508,18 @@ export default function HomePageClient() {
       </section>
       )}
 
+      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
+      <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px 40px" }}>
+        <div style={{ maxWidth: 1040, margin: "0 auto" }}>
+          <SectionHeader
+            eyebrow={tTwin("eyebrow")}
+            title={tTwin("title")}
+            subtitle={tTwin("subtitle")}
+          />
+          <OlfactiveTwin matches={OLFACTIVE_TWINS} variant="compact" locale={locale} />
+        </div>
+      </section>
+
       {/* ── COFFRETS & LOTS (juste après Shopping vidéo) ─────────── */}
       <section id="coffrets-lots" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
@@ -549,7 +561,7 @@ export default function HomePageClient() {
       {false && <BestSellers />}
 
       {/* ── BANNIÈRE PROMO YARA (roll-on) ─────────────────────────── */}
-      <section className="dp-yara-banner" style={{ position: "relative", width: "100%", overflow: "hidden", height: "clamp(220px, 25vw, 360px)" }}>
+      <section className="dp-yara-banner" style={{ position: "relative", width: "100%", overflow: "hidden", height: "clamp(170px, 18vw, 260px)" }}>
         <Image
           src="/assets/banner-yara.jpg"
           alt="Yara & Mousuf Wardi — roll-on de voyage"
@@ -721,18 +733,6 @@ export default function HomePageClient() {
               </Link>
             ))}
           </div>
-        </div>
-      </section>
-
-      {/* ── JUMEAU OLFACTIF ───────────────────────────────────────── */}
-      <section id="jumeau-olfactif" style={{ background: "var(--surface-page)", padding: "80px 20px 40px" }}>
-        <div style={{ maxWidth: 1040, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow={tTwin("eyebrow")}
-            title={tTwin("title")}
-            subtitle={tTwin("subtitle")}
-          />
-          <OlfactiveTwin matches={OLFACTIVE_TWINS} variant="compact" locale={locale} />
         </div>
       </section>
 

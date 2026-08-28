@@ -58,7 +58,7 @@ const TOP_TRUST: { label: string; icon: React.ReactNode }[] = [
   { label: "Livraison dans le monde, DOM-TOM compris", icon: ICON(<><circle cx="12" cy="12" r="9" /><path d="M3 12h18" /><path d="M12 3c2.5 2.5 3.8 5.6 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z" /></>) },
   { label: "Paiement en 4× sans frais", icon: ICON(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
   { label: "Échantillon offert dès 80 € d'achat", icon: ICON(<><rect x="3" y="8" width="18" height="13" rx="1" /><path d="M3 12h18M12 8v13M12 8S10 3 7.5 4 9 8 12 8zM12 8s2-5 4.5-4S15 8 12 8z" /></>) },
-  { label: "Livraison offerte dès 90 €", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
+  { label: "Livraison offerte dès 60 €", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
   { label: "Paiement 100% sécurisé", icon: ICON(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>) },
   { label: "Authenticité certifiée", icon: ICON(<><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" /><path d="M9 12l2 2 4-4" /></>) },
 ];
@@ -699,7 +699,10 @@ export function Header() {
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const cartCount = cartItems.reduce((n, i) => n + i.qty, 0);
   const cartTotalAmount = cartItems.reduce((s, i) => s + i.price * i.qty, 0);
-  const SHIP_THRESHOLD = 90; // aligné sur "Livraison offerte dès 90 €" / GiftProgressBar
+  // 60 € : la valeur annoncée dans les messages i18n, sur l'accueil, la FAQ,
+  // la page Livraison et la fiche produit. La barre demandait 30 € de plus que
+  // la promesse faite au client.
+  const SHIP_THRESHOLD = 60;
   const shipRemaining = Math.max(0, SHIP_THRESHOLD - cartTotalAmount);
   const shipPct = Math.min(100, Math.round((cartTotalAmount / SHIP_THRESHOLD) * 100));
   const [wishCount, setWishCount] = useState(0);
@@ -1188,7 +1191,7 @@ export function Header() {
             style={{
               position: "relative",
               fontFamily: "var(--font-sans)",
-              fontSize: "11.5px",
+              fontSize: "13px",
               fontWeight: 600,
               color: "#3A2C14",
               letterSpacing: ".04em",
@@ -1197,17 +1200,17 @@ export function Header() {
               gap: 8,
             }}
           >
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#8A6A1E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#8A6A1E" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
               <path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.8" /><circle cx="17" cy="18" r="1.8" />
             </svg>
-            Livraison offerte dès 90 €
+            Livraison offerte dès 60 €
           </span>
           <div
             className="dp-shipbar-progress"
             style={{
               position: "relative",
-              width: 180,
-              height: 6,
+              width: 220,
+              height: 9,
               background: "#EDE3CC",
               borderRadius: 99,
               overflow: "hidden",
@@ -1227,7 +1230,7 @@ export function Header() {
             style={{
               position: "relative",
               fontFamily: "var(--font-sans)",
-              fontSize: "11px",
+              fontSize: "12.5px",
               color: "#6B5A38",
             }}
           >

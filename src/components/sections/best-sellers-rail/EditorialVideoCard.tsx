@@ -111,7 +111,9 @@ export function EditorialVideoCard({
       className={fluid ? undefined : "dp-editorial-card"}
       style={{
         flex: fluid ? "1 1 auto" : "0 0 auto",
-        width: fluid ? "100%" : 380,
+        // Même largeur que RailProductCard : à 380 px la carte vidéo écrasait
+        // les produits qu'elle accompagne et dépassait du rail.
+        width: fluid ? "100%" : 216,
         position: "relative",
         borderRadius: 18,
         overflow: "hidden",

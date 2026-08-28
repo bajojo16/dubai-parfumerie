@@ -154,12 +154,12 @@ export function ProductCardLuxe({
       </div>
 
       {/* Corps */}
-      <div className="dp-luxe-body" style={{ padding: "18px 20px 22px", display: "flex", flexDirection: "column", gap: 8 }}>
+      <div className="dp-luxe-body" style={{ padding: "13px 15px 16px", display: "flex", flexDirection: "column", gap: 6 }}>
         <Link href={product.href} style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", gap: 6 }}>
-          <span className="dp-luxe-brand" style={{ fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: "1.5px", textTransform: "uppercase", color: T.creamLabel }}>
+          <span className="dp-luxe-brand" style={{ fontFamily: "var(--font-sans)", fontSize: 10, letterSpacing: "1.4px", textTransform: "uppercase", color: T.creamLabel }}>
             {product.brand}
           </span>
-          <span className="dp-luxe-title" style={{ fontFamily: "var(--font-display)", fontSize: 24, fontWeight: 500, lineHeight: 1.1, color: T.ink }}>
+          <span className="dp-luxe-title" style={{ fontFamily: "var(--font-display)", fontSize: 19, fontWeight: 500, lineHeight: 1.12, color: T.ink }}>
             {product.title}
           </span>
         </Link>
@@ -167,13 +167,13 @@ export function ProductCardLuxe({
         {/* Avis clients (étoiles or) — conservés */}
         {product.rating != null && (
           <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <span style={{ display: "inline-flex", color: T.gold, fontSize: 13 }} aria-hidden>
+            <span style={{ display: "inline-flex", color: T.gold, fontSize: 11 }} aria-hidden>
               {[0, 1, 2, 3, 4].map((s) => (
                 <span key={s} style={{ opacity: s < Math.round(product.rating!) ? 1 : 0.28 }}>★</span>
               ))}
             </span>
             {product.reviewCount != null && (
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: T.muted }}>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: T.muted }}>
                 ({product.reviewCount} {t("reviews")})
               </span>
             )}
@@ -182,11 +182,11 @@ export function ProductCardLuxe({
 
         {/* Ligne prix */}
         <div style={{ display: "inline-flex", flexWrap: "wrap", alignItems: "baseline", gap: 10, marginTop: 2 }}>
-          <span className="dp-luxe-price" style={{ fontFamily: "var(--font-display)", fontSize: 22, fontWeight: 600, color: T.inkPrice, whiteSpace: "nowrap" }}>
+          <span className="dp-luxe-price" style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 600, color: T.inkPrice, whiteSpace: "nowrap" }}>
             {fmt(product.price)}
           </span>
           {product.oldPrice && product.oldPrice > product.price && (
-            <span className="dp-luxe-oldprice" style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: T.muted, textDecoration: "line-through", whiteSpace: "nowrap" }}>
+            <span className="dp-luxe-oldprice" style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: T.muted, textDecoration: "line-through", whiteSpace: "nowrap" }}>
               {fmt(product.oldPrice)}
             </span>
           )}
@@ -207,7 +207,7 @@ export function ProductCardLuxe({
             border: "none",
             cursor: "pointer",
             borderRadius: 20,
-            padding: "9px 14px",
+            padding: "8px 12px",
             fontFamily: "var(--font-sans)",
             fontSize: 11,
             fontWeight: 500,

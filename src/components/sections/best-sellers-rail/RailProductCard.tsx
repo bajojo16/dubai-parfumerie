@@ -143,7 +143,7 @@ export function RailProductCard({
       onMouseLeave={() => setHover(false)}
       style={{
         flex: "0 0 auto",
-        width: 248,
+        width: 216,
         background: "#fff",
         border: `1px solid ${C.lines}`,
         borderRadius: 18,

@@ -125,6 +125,9 @@ export const DEMO_TRENDS: TrendProduct[] = [
     href: "/produit/aurum",
     variantId: "aurum-50",
     image: "/assets/products/aurum.webp",
+    // Sans cardVideo la carte se contentait du packshot : le film existe, il
+    // n'était joué que dans la lightbox.
+    cardVideo: "/assets/videos/aurum.mp4",
     video: "/assets/videos/aurum.mp4",
     rank: 4,
     price: 88,
