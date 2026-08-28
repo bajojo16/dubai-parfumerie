@@ -584,8 +584,14 @@ const CSS = `
 }
 .dp-ff-crit li { background: var(--surface-white); }
 .dp-ff-crit li > button {
-  display: grid; grid-template-columns: 7.5rem 1fr auto; align-items: baseline; gap: 10px;
-  width: 100%; padding: 9px 13px; text-align: start; cursor: pointer;
+  /* Le libellé au-dessus de la valeur, et non à côté : la colonne latérale est
+     étroite et « modifier » occupe sa largeur même invisible (opacity, pas
+     display). À trois colonnes sur une ligne, la valeur tombait sous sa
+     largeur minimale et l'ellipsis la rabotait à une lettre — « P… » pour
+     « Pour elle ». */
+  position: relative;
+  display: flex; flex-direction: column; align-items: flex-start; gap: 2px;
+  width: 100%; padding: 8px 62px 8px 13px; text-align: start; cursor: pointer;
   background: none; border: none; font-family: inherit;
   transition: background var(--dur-fast);
 }
@@ -596,9 +602,11 @@ const CSS = `
 }
 .dp-ff-crit li > button b {
   font-size: var(--t-sm); font-weight: var(--fw-medium); color: var(--ink-900);
-  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  line-height: var(--lh-snug);
 }
 .dp-ff-crit li > button i {
+  /* Hors flux : sinon il réserve sa place et vole celle de la valeur. */
+  position: absolute; inset-inline-end: 13px; top: 50%; transform: translateY(-50%);
   font-style: normal; font-size: 9px; letter-spacing: var(--ls-wide);
   text-transform: uppercase; color: var(--gold-700);
   opacity: 0; transition: opacity var(--dur-fast);
@@ -870,12 +878,17 @@ const CSS = `
   .dp-ff-panel.is-result .dp-ff-intro { text-align: start; }
 }
 @media (min-width: 1180px) {
-  /* La troisième colonne sort les offres de sous les cartes : les deux se lisent
-     alors d'un seul regard, comme sur l'écran d'origine. */
+  /* La troisième colonne sort les offres de sous les cartes : les deux se
+     lisent alors d'un seul regard, comme sur l'écran d'origine.
+     display:contents fait remonter les enfants de .dp-ff-reco dans cette
+     grille : chaque bloc doit donc être ancré explicitement, ligne ET colonne.
+     Sans ancrage, l'auto-placement laissait la colonne de gauche vide et
+     renvoyait les cartes sous les offres. */
   .dp-ff-result { grid-template-columns: minmax(0, .7fr) minmax(0, 1.2fr) minmax(0, .9fr); }
   .dp-ff-reco { display: contents; }
-  .dp-ff-reco-title { grid-column: 2; }
-  .dp-ff-grid { grid-column: 2; align-self: start; }
+  .dp-ff-result-side { grid-column: 1; grid-row: 1 / 3; }
+  .dp-ff-reco-title { grid-column: 2; grid-row: 1; align-self: end; }
+  .dp-ff-grid { grid-column: 2; grid-row: 2; align-self: start; }
   .dp-ff-offres { grid-column: 3; grid-row: 1 / 3; align-self: start; margin-top: 0; }
 }
 

@@ -110,6 +110,12 @@ export default async function ProductPage({ params }: PageProps) {
   const installment = (product.price / 4).toFixed(2).replace(".", ",");
 
   // Related products (cycle through images 3–6)
+  // Une story par produit, six au maximum — voir le commentaire au rendu.
+  const storyBubbles = DEMO_STORIES.filter(
+    (story, i, all) =>
+      all.findIndex((other) => (other.shopProductHandle ?? other.id) === (story.shopProductHandle ?? story.id)) === i,
+  ).slice(0, 6);
+
   const relatedSlugs = allProductSlugs()
     .filter((s) => s !== slug)
     .slice(0, 4);
@@ -421,7 +427,12 @@ export default async function ProductPage({ params }: PageProps) {
             />
 
             {/* Stories produit (bulles → lecteur plein écran) */}
-            <StoryBubbles stories={DEMO_STORIES} locale={locale} />
+            {/* Six bulles au plus : au-delà la rangée passe à la ligne et la
+                septième se retrouve seule sous les autres. Les stories d'un
+                même parfum se suivent dans la source, on n'en garde qu'une par
+                produit pour ne pas remplir la rangée avec trois fois le même
+                flacon au même prix. */}
+            <StoryBubbles stories={storyBubbles} locale={locale} />
 
 
             {/* L'ancienne ligne « Livraison offerte dès 60 € · Expédié sous 24 h

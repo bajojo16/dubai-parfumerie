@@ -29,19 +29,19 @@ import type { QuizQuestion } from "../types";
      trio médian                  = 3 × 49,90             = 149,70 €
      trio le plus cher possible   = 78,00 + 79,90 + 88,00 = 245,90 €
 
-   On coupe aux terciles du prix unitaire, multipliés par trois — chaque tranche
-   couvre alors un tiers des flacons du catalogue :
-     3 × 39,90 = 119,70 → arrondi à 120 €
-     3 × 59,00 = 177,00 → arrondi à 180 €
+   Bornes fixées par la boutique : 50 € et 120 €.
 
-   D'où : ≤ 120 €  ·  120 – 180 €  ·  180 € et plus. Les trois bornes sont
-   atteignables (51,70 ≤ 120 et 245,90 ≥ 180), aucune tranche n'est vide.
+   ⚠️ « Jusqu'à 50 € » ne peut contenir AUCUN trio complet : le moins cher
+   possible coûte 51,70 €. Le moteur retombe alors sur le trio le plus proche
+   du plafond, donc l'écran de fin reste juste — il annonce « au plus près de
+   votre budget » et non « dans votre budget ». À relire si les prix bougent :
+   si le catalogue descend, la tranche redeviendra atteignable d'elle-même.
    Les libellés restent ceux de l'archive.
    ──────────────────────────────────────────────────────────────────────────── */
 export const BUDGET_TIERS = [
-  { label: "Petit plaisir", hint: "Jusqu'à 120 €", min: 0, max: 120 },
-  { label: "Cœur de gamme", hint: "120 – 180 €", min: 120, max: 180 },
-  { label: "Premium", hint: "180 € et plus", min: 180, max: 99999 },
+  { label: "Petit plaisir", hint: "Jusqu'à 50 €", min: 0, max: 50 },
+  { label: "Cœur de gamme", hint: "50 – 120 €", min: 50, max: 120 },
+  { label: "Premium", hint: "120 € et plus", min: 120, max: 99999 },
 ] as const;
 
 /* ────────────────────────────────────────────────────────────────────────────
@@ -78,27 +78,6 @@ export const QUESTIONS: QuizQuestion[] = [
       { label: "Pour lui", gender: "Homme", fill: "var(--espresso-900)" },
       { label: "Mixte", gender: "Mixte", fill: "var(--ink-500)" },
     ],
-  },
-  {
-    id: "experience",
-    criterion: "Expérience",
-    title: "C'est votre premier parfum de niche ?",
-    subtitle: "Pour calibrer nos recommandations.",
-    layout: "fill",
-    options: [
-      // L'archive teintait ces deux options en vert « succès » et rouge
-      // « danger » : un rouge d'erreur pour « non » se lit comme un reproche.
-      // On reste sur deux valeurs de la palette.
-      { label: "Oui, je découvre", fill: "var(--gold-700)" },
-      { label: "Non, j'en porte déjà", fill: "var(--espresso-800)" },
-    ],
-    note: {
-      title: "Un parfum de niche, c'est quoi ?",
-      paragraphs: [
-        "Petites séries, hors grande distribution. Concentrations plus hautes, matières rares — oud, safran, ambre gris, rose de Taïf — et aucun test consommateur : le parti pris reste entier.",
-        "C'est la tradition des parfumeurs du Golfe : un sillage qu'on ne croise pas sur tout le monde.",
-      ],
-    },
   },
   {
     id: "intensite",
@@ -190,7 +169,6 @@ export const QUESTION_COUNT = QUESTIONS.length;
  */
 export const STEP = {
   destinataire: QUESTIONS.findIndex((q) => q.id === "destinataire"),
-  experience: QUESTIONS.findIndex((q) => q.id === "experience"),
   intensite: QUESTIONS.findIndex((q) => q.id === "intensite"),
   univers: QUESTIONS.findIndex((q) => q.id === "univers"),
   occasion: QUESTIONS.findIndex((q) => q.id === "occasion"),

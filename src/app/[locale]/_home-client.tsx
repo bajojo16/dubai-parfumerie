@@ -941,7 +941,7 @@ export default function HomePageClient() {
           <SectionHeader
             eyebrow="Notre expertise"
             title={<>Trouvez votre <em>signature</em></>}
-            subtitle="Huit questions, deux minutes : nous composons un trio de parfums accordé à votre famille olfactive."
+            subtitle="Quelques questions, deux minutes : nous composons un trio de parfums accordé à votre famille olfactive."
           />
           <FragranceFinderQuiz variant="inline" locale={locale} />
         </div>

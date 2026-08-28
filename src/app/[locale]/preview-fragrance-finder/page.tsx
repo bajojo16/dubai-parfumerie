@@ -4,7 +4,8 @@
  * Démo isolée du FragranceFinder — la page sert de banc d'essai au quiz, que le
  * layout monte par ailleurs sur tout le site.
  *
- * Le quiz est la réplique de celui d'AD Parfumerie : huit questions, une famille
+ * Le quiz est la réplique de celui d'AD Parfumerie, moins deux questions retirées à la
+ * demande de la boutique : une famille
  * olfactive, trois flacons pris dans le catalogue agrégé (`SEARCH_PRODUCTS`),
  * leurs combinaisons et leurs remises.
  */

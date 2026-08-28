@@ -1,7 +1,7 @@
 "use client";
 
 /**
- * En-tête de progression du quiz : retour, compteur « QUESTION n/8 » et barre
+ * En-tête de progression du quiz : retour, compteur « QUESTION n/N » et barre
  * fine. Reprise du bloc `.q-head` / `.q-bar` de l'archive.
  *
  * Les styles vivent dans le bloc `CSS` de `FragranceFinderModal.tsx` : la
