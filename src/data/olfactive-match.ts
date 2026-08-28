@@ -342,6 +342,19 @@ function genderAffinity(refGender: string, productGender: string): number {
 }
 
 /** Score d'un produit pour une référence, décomposé pour rester auditable. */
+/**
+ * Première note du produit appartenant à ce groupe — le libellé à afficher
+ * quand on annonce un accord partagé. `null` si le produit n'en porte aucune
+ * lisible (ses « notes » se réduisent parfois à sa famille : « Ambré, Oud,
+ * Épicé »), auquel cas l'appelant retombe sur la note de la référence.
+ */
+function productNoteInGroup(profile: ProductProfile, g: NoteGroup): string | null {
+  for (const note of profile.product.notes ?? []) {
+    if (noteGroup(note) === g) return note.toLowerCase();
+  }
+  return null;
+}
+
 function scoreProduct(ref: ReferencePerfume, profile: ProductProfile) {
   const family = profile.family
     ? FAMILY_AFFINITY[ref.family][profile.family]
@@ -361,7 +374,20 @@ function scoreProduct(ref: ReferencePerfume, profile: ProductProfile) {
     if (profile.groups.has(g)) {
       accordPoints += 1;
       exactGroups.add(g);
-      shared.push(accord);
+      // On nomme la note DU JUMEAU, pas celle de la référence.
+      //
+      // La comparaison se fait par GROUPE — « mandarine verte » et « bergamote »
+      // n'en forment qu'un, et c'est voulu : deux agrumes de tête jouent le même
+      // rôle. Mais la liste s'intitule « Accords partagés » et cite ensuite des
+      // notes : pousser le libellé de la référence prêtait au flacon des notes
+      // qu'il n'a pas. Olympéa · Khamrah annonçait « mandarine verte, fleur de
+      // gingembre, vanille salée » quand Khamrah porte bergamote, muscade et
+      // vanille. Le groupe était vrai, la note affichée non.
+      // Dédoublonné : deux accords de la référence peuvent tomber dans le même
+      // groupe (« tabac » et « cannelle » sont tous deux épicés) et désigner la
+      // même note du flacon — la liste affichait alors « épicé, épicé ».
+      const label = productNoteInGroup(profile, g) ?? accord;
+      if (!shared.includes(label)) shared.push(label);
     } else if (profile.supergroups.has(NOTE_SUPERGROUP[g])) {
       accordPoints += SUPERGROUP_CREDIT;
     }

@@ -88,7 +88,11 @@ export function ProductCardLuxe({
       {/* Zone image portrait (cadre crème) */}
       <div className="dp-luxe-media" style={{ position: "relative", background: T.imageBg, padding: 6, overflow: "hidden" }}>
         <div className="dp-luxe-frame" style={{ position: "relative", width: "100%", aspectRatio: "1 / 1.15", borderRadius: 16, overflow: "hidden" }}>
-          <Image src={product.image} alt={product.title} fill sizes="(max-width:760px) 50vw, 260px" style={{ objectFit: "cover" }} />
+          {/* `objectPosition` à 42 % : en `cover`, le cadrage centré collait le
+              bouchon au bord haut du cadre, sous les pastilles « Soldes » et
+              la remise. Descendre le point d'ancrage de huit points rend de
+              l'air au-dessus du flacon sans entamer son ombre portée. */}
+          <Image src={product.image} alt={product.title} fill sizes="(max-width:760px) 50vw, 260px" style={{ objectFit: "cover", objectPosition: "center 42%" }} />
         </div>
 
         {/* Badge promo — début (gauche LTR / droite RTL) */}
