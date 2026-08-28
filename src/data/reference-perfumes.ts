@@ -140,6 +140,21 @@ export const REFERENCE_PERFUMES: ReferencePerfume[] = [
   { id: "afnan-turathi-red", name: "Turathi Red", house: "Afnan", gender: "femme", family: "boisee", accords: ["notes florales", "agrumes", "ambre", "notes boisées", "musc", "patchouli"] },
 
   // ─── Ajmal ─────────────────────────────────────────────────────────────────
+  // ── Arabian Oud (العربية للعود) ──────────────────────────────────────────
+  // Première maison saoudienne, fondée à Riyad en 1982 : elle manquait à la
+  // base, si bien qu'elle ne pouvait pas être proposée à la commande — la
+  // liste des maisons de `on-demand-catalog.ts` n'est qu'un filtre sur ce
+  // fichier, elle n'invente aucune référence.
+  { id: "arabian-oud-kalemat", name: "Kalemat", house: "Arabian Oud", year: 2010, gender: "mixte", family: "gourmande", accords: ["miel", "ambre", "fève tonka", "oud", "santal", "musc"] },
+  { id: "arabian-oud-kalemat-amber", name: "Kalemat Amber", house: "Arabian Oud", gender: "mixte", family: "ambree", accords: ["ambre", "miel", "vanille", "oud", "bois de santal", "musc"] },
+  { id: "arabian-oud-kalemat-black", name: "Kalemat Black", house: "Arabian Oud", gender: "mixte", family: "boisee", accords: ["oud", "safran", "cuir", "ambre", "patchouli", "musc"] },
+  { id: "arabian-oud-madawi", name: "Madawi", house: "Arabian Oud", gender: "mixte", family: "boisee", accords: ["oud", "rose", "safran", "ambre gris", "santal", "musc"] },
+  { id: "arabian-oud-woody", name: "Woody", house: "Arabian Oud", gender: "homme", family: "boisee", accords: ["cèdre", "vétiver", "bergamote", "ambre", "musc", "santal"] },
+  { id: "arabian-oud-ana-al-malik", name: "Ana Al Malik", house: "Arabian Oud", gender: "homme", family: "boisee", accords: ["oud", "cuir", "épices", "ambre", "cèdre", "musc"] },
+  { id: "arabian-oud-lail-maleki", name: "Lail Maleki", house: "Arabian Oud", gender: "mixte", family: "ambree", accords: ["rose", "oud", "ambre", "vanille", "musc", "encens"] },
+  { id: "arabian-oud-sehr-al-kalemat", name: "Sehr Al Kalemat", house: "Arabian Oud", gender: "mixte", family: "gourmande", accords: ["miel", "vanille", "praline", "ambre", "oud", "musc"] },
+  { id: "arabian-oud-mukhallat-malaki", name: "Mukhallat Malaki", house: "Arabian Oud", gender: "mixte", family: "boisee", accords: ["oud", "rose de Taïf", "musc", "ambre gris", "santal", "encens"] },
+  { id: "arabian-oud-ghroob", name: "Ghroob", house: "Arabian Oud", gender: "femme", family: "florale", accords: ["rose", "pêche", "jasmin", "musc blanc", "ambre", "santal"] },
   { id: "ajmal-expedition", name: "Expedition", house: "Ajmal", year: 2001, gender: "homme", family: "florale", accords: ["agrumes", "bergamote", "citron", "violette", "iris", "cèdre"] },
   { id: "ajmal-sacred-love", name: "Sacred Love", house: "Ajmal", year: 2010, gender: "femme", family: "florale", accords: ["agrumes", "notes florales", "jasmin", "nénuphar", "lys", "pêche"] },
   { id: "ajmal-free-spirit", name: "Free Spirit", house: "Ajmal", year: 2019, gender: "homme", family: "verte", accords: ["agrumes", "bergamote", "basilic", "pamplemousse"] },

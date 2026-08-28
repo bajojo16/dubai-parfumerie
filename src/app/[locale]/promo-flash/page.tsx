@@ -3,6 +3,8 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { Link } from "@/i18n/navigation";
+import { QtyStepper } from "@/components/ui/QtyStepper";
+import { addItem } from "@/lib/cart";
 
 const PROMO_PRODUCTS = [
   { id: 1, name: "Lattafa Oud Pour Elle", brand: "Lattafa", price: 18.90, oldPrice: 84.90, discount: 77, category: "Femme", image: "prod-1.jpg" },
@@ -45,6 +47,12 @@ function useCountdown(totalSeconds: number) {
 
 export default function PromoFlashPage() {
   const [activeFilter, setActiveFilter] = useState("Tous");
+  /**
+   * Quantité par produit. Une seule table plutôt qu'un état par carte : la
+   * grille est rendue en boucle, et un `useState` dans la boucle serait un
+   * appel de hook conditionnel. L'entrée absente vaut 1.
+   */
+  const [qty, setQty] = useState<Record<number, number>>({});
   const { hh, mm, ss } = useCountdown(86399); // 23:59:59
 
   const filteredProducts =
@@ -411,14 +419,34 @@ export default function PromoFlashPage() {
                     </span>
                   </div>
 
-                  {/* Add to cart button */}
+                  {/* Sélecteur de quantité + ajout au panier.
+                      Le bouton n'était câblé à rien : il changeait de couleur
+                      au survol et c'est tout. Il ajoute maintenant vraiment,
+                      dans la quantité choisie. */}
+                  <div style={{ marginTop: "auto", paddingTop: 12, display: "flex", alignItems: "center", gap: 8 }}>
+                  <QtyStepper
+                    value={qty[product.id] ?? 1}
+                    onChange={(n) => setQty((q) => ({ ...q, [product.id]: n }))}
+                    size="xs"
+                  />
                   <button
                     className="add-to-cart-btn"
+                    type="button"
+                    aria-label={`Ajouter ${product.name} au panier`}
+                    onClick={() =>
+                      addItem(
+                        {
+                          id: String(product.id),
+                          name: product.name,
+                          brand: product.brand,
+                          price: product.price,
+                          image: `/assets/${product.image}`,
+                        },
+                        qty[product.id] ?? 1
+                      )
+                    }
                     style={{
-                      marginTop: "auto",
-                      paddingTop: 12,
-                      display: "block",
-                      width: "100%",
+                      flex: 1,
                       padding: "11px 0",
                       background: "var(--gold-500)",
                       color: "#fff",
@@ -434,6 +462,7 @@ export default function PromoFlashPage() {
                   >
                     Ajouter au panier
                   </button>
+                  </div>
                 </div>
               </div>
             ))}

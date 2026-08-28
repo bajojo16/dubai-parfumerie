@@ -649,14 +649,19 @@ export default async function ProductPage({ params }: PageProps) {
                         position: "relative",
                         aspectRatio: "1 / 1",
                         background: "var(--surface-white)",
-                        padding: "0.75rem",
+                        // La marge était portée par le conteneur, que `fill`
+                        // ignore : posé en `inset: 0`, le visuel remplissait la
+                        // boîte entière et venait toucher les bords. Elle passe
+                        // sur l'image, qui respire et se lit plus petite.
+                        padding: 0,
+                        overflow: "hidden",
                       }}
                     >
                       <Image
                         src={relProduct.image ?? "/assets/prod-3.jpg"}
                         alt={`${relProduct.name} — ${relProduct.brand}`}
                         fill
-                        style={{ objectFit: "contain" }}
+                        style={{ objectFit: "contain", padding: "1.35rem" }}
                         sizes="(max-width: 768px) 50vw, 25vw"
                       />
                       {relDiscount > 0 && (

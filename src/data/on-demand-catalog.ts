@@ -35,6 +35,7 @@ export const ON_DEMAND_HOUSES: readonly string[] = [
   "Al Haramain",
   "Amouage",
   "Amouroud",
+  "Arabian Oud",
   "Arabiyat",
   "Ard Al Zaafaran",
   "Armaf",
