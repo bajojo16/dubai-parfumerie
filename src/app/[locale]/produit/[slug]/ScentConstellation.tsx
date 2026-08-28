@@ -17,46 +17,139 @@
 
 import Image from "next/image";
 
-/** Visuels de matière disponibles dans `public/assets/scents/`. */
+/**
+ * Visuels de matière, un par MATIÈRE et non plus un par famille.
+ *
+ * Il n'y en avait que sept — ambre, boisé, épice, floral, musc, oud, rose — et
+ * chaque note y était rattachée par mot-clé. Praline, vanille, benjoin et ambre
+ * gris montraient donc la même photo d'ambre ; santal, myrrhe et encens le même
+ * bois. Datte et bergamote, faute de mot-clé, retombaient sur un monogramme.
+ * Vingt-six visuels dédiés les remplacent ; les sept d'origine restent en
+ * dernier recours pour les notes qui n'ont pas encore le leur.
+ */
 const NOTE_IMAGES: Record<string, string> = {
+  // — Matières propres —
   ambre: "/assets/scents/ambre.jpg",
+  ambreGris: "/assets/scents/ambre-gris.jpg",
+  benjoin: "/assets/scents/benjoin.jpg",
+  bergamote: "/assets/scents/bergamote.jpg",
+  cannelle: "/assets/scents/cannelle.jpg",
+  cardamome: "/assets/scents/cardamome.jpg",
+  cedre: "/assets/scents/cedre.jpg",
+  citron: "/assets/scents/citron.jpg",
+  datte: "/assets/scents/datte.jpg",
+  encens: "/assets/scents/encens.jpg",
+  feveTonka: "/assets/scents/feve-tonka.jpg",
+  fruits: "/assets/scents/fruits.jpg",
+  jasmin: "/assets/scents/jasmin.jpg",
+  marine: "/assets/scents/marine.jpg",
+  musc: "/assets/scents/musc.jpg",
+  muscade: "/assets/scents/muscade.jpg",
+  myrtille: "/assets/scents/myrtille.jpg",
+  oud: "/assets/scents/oud.jpg",
+  patchouli: "/assets/scents/patchouli.jpg",
+  poivre: "/assets/scents/poivre.jpg",
+  praline: "/assets/scents/praline.jpg",
+  rose: "/assets/scents/rose.jpg",
+  safran: "/assets/scents/safran.jpg",
+  santal: "/assets/scents/santal.jpg",
+  vanille: "/assets/scents/vanille.jpg",
+  vetiver: "/assets/scents/vetiver.jpg",
+  // — Familles, dernier recours —
   boise: "/assets/scents/boise.jpg",
   epice: "/assets/scents/epice.jpg",
   floral: "/assets/scents/floral.jpg",
-  musc: "/assets/scents/musc.jpg",
-  oud: "/assets/scents/oud.jpg",
-  rose: "/assets/scents/rose.jpg",
 };
 
-/** Mots-clés qui rattachent une note à l'un des visuels ci-dessus. */
+/**
+ * Mots-clés rattachant une note à un visuel. L'ORDRE COMPTE : la première
+ * entrée dont le mot est contenu dans la note gagne. Les mots les plus précis
+ * passent donc avant les plus larges — « ambre gris » avant « ambre », « fève
+ * tonka » avant « fève », « bois de santal » avant « bois ».
+ */
 const NOTE_KEYWORDS: [string, string][] = [
-  ["oud", "oud"],
-  ["rose", "rose"],
-  ["musc", "musc"],
+  // ── Pièges de sous-chaîne, à traiter EN PREMIER ─────────────────────────
+  // La comparaison est un `includes` : « framBOISe » contient « bois »,
+  // « menthe POIVRÉe » contient « poivre », « musc BOISé » contient « bois ».
+  // Sans ces trois lignes en tête, la framboise s'affichait en rondins de
+  // cèdre et la menthe en grains de poivre.
+  ["framboise", "fruits"],
+  ["menthe", "marine"],
+  ["musc boisé", "musc"],
+  ["musc boise", "musc"],
+  // Résines et ambres — le plus précis d'abord
+  ["ambre gris", "ambreGris"],
   ["ambre", "ambre"],
   ["ambré", "ambre"],
-  ["benjoin", "ambre"],
-  ["vanille", "ambre"],
-  ["tonka", "ambre"],
-  ["praline", "ambre"],
-  ["safran", "epice"],
-  ["cannelle", "epice"],
-  ["muscade", "epice"],
-  ["poivre", "epice"],
-  ["cardamome", "epice"],
-  ["santal", "boise"],
-  ["cèdre", "boise"],
-  ["cedre", "boise"],
+  ["labdanum", "benjoin"],
+  ["benjoin", "benjoin"],
+  ["résine", "benjoin"],
+  ["resine", "benjoin"],
+  ["myrrhe", "encens"],
+  ["encens", "encens"],
+  // Bois
+  ["bois de santal", "santal"],
+  ["santal", "santal"],
+  ["cèdre", "cedre"],
+  ["cedre", "cedre"],
+  ["bouleau", "cedre"],
   ["bois", "boise"],
-  ["patchouli", "boise"],
-  ["vétiver", "boise"],
-  ["encens", "boise"],
-  ["myrrhe", "boise"],
-  ["jasmin", "floral"],
-  ["iris", "floral"],
+  ["vétiver", "vetiver"],
+  ["vetiver", "vetiver"],
+  ["patchouli", "patchouli"],
+  ["oud", "oud"],
+  // Épices
+  ["cannelle", "cannelle"],
+  ["cardamome", "cardamome"],
+  ["muscade", "muscade"],
+  ["poivre", "poivre"],
+  ["safran", "safran"],
+  ["épice", "epice"],
+  ["epice", "epice"],
+  // Gourmand
+  ["fève tonka", "feveTonka"],
+  ["feve tonka", "feveTonka"],
+  ["tonka", "feveTonka"],
+  ["praline", "praline"],
+  ["vanille", "vanille"],
+  ["datte", "datte"],
+  // Agrumes
+  ["citron bergamote", "bergamote"],
+  ["bergamote", "bergamote"],
+  ["citron", "citron"],
+  ["mandarine", "citron"],
+  ["pamplemousse", "citron"],
+  // Fruits
+  ["myrtille", "myrtille"],
+  ["cassis", "fruits"],
+  ["framboise", "fruits"],
+  ["fruits rouges", "fruits"],
+  ["fruité", "fruits"],
+  ["ananas", "fruits"],
+  ["pomme", "fruits"],
+  ["poire", "fruits"],
+  ["pêche", "fruits"],
+  // Aquatique et frais
+  ["marine", "marine"],
+  ["aquatique", "marine"],
+  ["concombre", "marine"],
+  ["menthe", "marine"],
+  ["frais", "marine"],
+  // Fleurs
+  ["jasmin", "jasmin"],
+  ["rose", "rose"],
   ["fleur", "floral"],
+  ["fleurs", "floral"],
   ["oranger", "floral"],
+  ["néroli", "floral"],
+  ["neroli", "floral"],
+  ["muguet", "floral"],
+  ["iris", "floral"],
   ["lilas", "floral"],
+  ["violette", "floral"],
+  ["floral", "floral"],
+  // Musc
+  ["musc", "musc"],
 ];
 
 function noteImage(note: string): string | null {
