@@ -650,12 +650,26 @@ const CSS = `
 }
 .dp-ff-budget.out { background: var(--surface-cream-2); color: var(--ink-400); }
 
-.dp-ff-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+/* Cinq rangées communes — visuel, texte, sélecteur, prix, boutons — pour que
+   les trois cartes s'alignent ligne à ligne. Sans cela un nom sur deux lignes
+   ou des notes plus longues décalaient tout le bas de la carte, et le bouton
+   d'ajout d'une colonne se retrouvait à la hauteur du prix de la voisine. */
+.dp-ff-grid {
+  display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: auto auto auto auto auto; gap: 12px;
+}
 .dp-ff-card {
-  display: flex; flex-direction: column;
+  display: grid; grid-row: span 5; grid-template-rows: subgrid;
   background: var(--surface-white); border: 1px solid var(--line-100);
   border-radius: var(--r-md); overflow: hidden; position: relative;
+  min-width: 0;
   transition: box-shadow var(--dur) var(--ease-out), opacity var(--dur) var(--ease-out);
+}
+/* Repli sans subgrid : on retombe sur la colonne flex d'origine, où seule la
+   dernière rangée s'aligne (margin-top:auto). Le reste tient debout. */
+@supports not (grid-template-rows: subgrid) {
+  .dp-ff-grid { grid-template-rows: none; }
+  .dp-ff-card { display: flex; flex-direction: column; }
 }
 .dp-ff-card:hover { box-shadow: var(--shadow-sm); }
 .dp-ff-card.off { opacity: .48; }
@@ -729,11 +743,20 @@ const CSS = `
 .dp-ff-pick.on { background: var(--espresso-900); border-color: var(--espresso-900); color: var(--on-dark-strong); }
 .dp-ff-pick.on .dp-ff-tick { opacity: 1; }
 
-.dp-ff-actions { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 11px 12px 0; }
-.dp-ff-price { font-size: var(--t-lead); font-weight: var(--fw-semibold); color: var(--price); transition: color var(--dur-fast); }
+/* Le prix et le sélecteur de quantité sortaient de la carte : rien ne les
+   autorisait à passer à la ligne, et le prix ne pouvait pas rétrécir sous sa
+   largeur de texte. */
+.dp-ff-actions {
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 8px; padding: 11px 12px 0; min-width: 0;
+}
+.dp-ff-price {
+  font-size: var(--t-lead); font-weight: var(--fw-semibold); color: var(--price);
+  min-width: 0; transition: color var(--dur-fast);
+}
 .dp-ff-price.multiple { color: var(--gold-700); }
 .dp-ff-qty {
-  display: inline-flex; align-items: center; gap: 1px;
+  display: inline-flex; align-items: center; gap: 1px; flex: 0 0 auto;
   border: 1px solid var(--line-200); border-radius: var(--r-pill); padding: 2px;
 }
 .dp-ff-qty button {
@@ -745,9 +768,12 @@ const CSS = `
 .dp-ff-qty button:hover { background: var(--surface-cream); color: var(--gold-700); }
 .dp-ff-qty b { min-width: 2ch; text-align: center; font-size: var(--t-xs); font-weight: var(--fw-semibold); }
 
-.dp-ff-buttons { display: flex; gap: 6px; padding: 11px 12px 12px; margin-top: auto; }
+.dp-ff-buttons {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  padding: 11px 12px 12px; margin-top: auto; align-items: end; min-width: 0;
+}
 .dp-ff-add {
-  flex: 1 1 auto; height: 34px; cursor: pointer;
+  flex: 1 1 6rem; min-width: 0; height: 34px; cursor: pointer;
   border: 1px solid var(--ink-900); border-radius: var(--r-pill);
   background: none; color: var(--ink-900); font-family: inherit;
   font-size: 10px; font-weight: var(--fw-semibold);
@@ -757,7 +783,8 @@ const CSS = `
 .dp-ff-add:hover { background: var(--ink-900); color: var(--on-dark-strong); }
 .dp-ff-add.on { background: var(--success); border-color: var(--success); color: var(--on-dark-strong); }
 .dp-ff-sheet {
-  display: inline-flex; align-items: center; height: 34px; padding: 0 12px;
+  display: inline-flex; align-items: center; justify-content: center;
+  flex: 0 1 auto; min-width: 0; height: 34px; padding: 0 12px;
   border: 1px solid var(--line-200); border-radius: var(--r-pill);
   color: var(--ink-500); text-decoration: none;
   font-size: 10px; font-weight: var(--fw-semibold);
