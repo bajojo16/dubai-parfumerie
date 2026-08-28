@@ -13,7 +13,13 @@ export type ShippingCountry = {
   code: string;
   /** Nom affiché (français par défaut). */
   name: string;
-  /** Emoji drapeau. */
+  /**
+   * Emoji drapeau. Les territoires français d'outre-mer (RE, MQ, GP, YT, GF,
+   * PF, NC) portent 🇫🇷 et non leur drapeau régional : ces emojis récents
+   * manquent à beaucoup de polices système — Android affichait un rectangle
+   * bleu à la place de 🇷🇪 — et le pavillon national dit de toute façon
+   * l'essentiel au client, qui reste sur le territoire national.
+   */
   flag: string;
   /** Délai de transport indicatif (texte libre, défini ici). */
   deliveryDays: string;
@@ -131,8 +137,8 @@ export const DEMO_SHIPPING_COUNTRIES: ShippingCountry[] = [
   },
   {
     code: "RE",
-    name: "Réunion",
-    flag: "🇷🇪",
+    name: "Île de la Réunion",
+    flag: "🇫🇷",
     deliveryDays: "6 à 10 jours ouvrés",
     served: true,
     orders: 51,
@@ -148,7 +154,7 @@ export const DEMO_SHIPPING_COUNTRIES: ShippingCountry[] = [
   {
     code: "MQ",
     name: "Martinique",
-    flag: "🇲🇶",
+    flag: "🇫🇷",
     deliveryDays: "6 à 10 jours ouvrés",
     served: true,
     orders: 37,
@@ -180,7 +186,7 @@ export const DEMO_SHIPPING_COUNTRIES: ShippingCountry[] = [
   {
     code: "GP",
     name: "Guadeloupe",
-    flag: "🇬🇵",
+    flag: "🇫🇷",
     deliveryDays: "6 à 10 jours ouvrés",
     served: true,
     orders: 23,
@@ -221,7 +227,7 @@ export const DEMO_SHIPPING_COUNTRIES: ShippingCountry[] = [
   {
     code: "YT",
     name: "Mayotte",
-    flag: "🇾🇹",
+    flag: "🇫🇷",
     deliveryDays: "7 à 12 jours ouvrés",
     served: true,
     orders: 16,
@@ -277,7 +283,7 @@ export const DEMO_SHIPPING_COUNTRIES: ShippingCountry[] = [
   {
     code: "PF",
     name: "Polynésie française",
-    flag: "🇵🇫",
+    flag: "🇫🇷",
     deliveryDays: "8 à 14 jours ouvrés",
     served: true,
     orders: 7,
@@ -317,7 +323,7 @@ export const DEMO_SHIPPING_COUNTRIES: ShippingCountry[] = [
   {
     code: "NC",
     name: "Nouvelle-Calédonie",
-    flag: "🇳🇨",
+    flag: "🇫🇷",
     deliveryDays: "8 à 14 jours ouvrés",
     served: true,
     orders: 6,
@@ -341,7 +347,7 @@ export const DEMO_SHIPPING_COUNTRIES: ShippingCountry[] = [
   {
     code: "GF",
     name: "Guyane",
-    flag: "🇬🇫",
+    flag: "🇫🇷",
     deliveryDays: "7 à 12 jours ouvrés",
     served: true,
     orders: 5,

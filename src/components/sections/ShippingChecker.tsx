@@ -61,6 +61,23 @@ const DEFAULT_LABELS: ShippingLabels = {
   noResults: "Aucun pays trouvé",
 };
 
+/**
+ * Repli d'accents pour la recherche : « reunion » doit trouver « Île de la
+ * Réunion », « guadeloupe » « Guadeloupe », etc. Personne ne compose un Î au
+ * clavier d'un téléphone, et la casse seule ne suffisait pas — la saisie sans
+ * accent ne renvoyait rien. NFD sépare la lettre de son diacritique, la plage
+ * U+0300–U+036F retire ce dernier ; les tirets et apostrophes passent aussi à
+ * l'espace pour que « nouvelle caledonie » trouve « Nouvelle-Calédonie ».
+ */
+function fold(s: string): string {
+  return s
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/['’\-]/g, " ")
+    .trim()
+    .toLowerCase();
+}
+
 const BG = "#F6F0E4";
 const CTA = "#C4A24F";
 const ACCENT = "#A8801F";
@@ -196,9 +213,9 @@ export function ShippingChecker({
   }, [countries, locale]);
 
   const filtered = useMemo(() => {
-    const q = query.trim().toLowerCase();
+    const q = fold(query);
     if (!q) return ordered;
-    return ordered.filter((c) => c.name.toLowerCase().includes(q));
+    return ordered.filter((c) => fold(c.name).includes(q));
   }, [ordered, query]);
 
   const runCheck = useCallback(
@@ -263,6 +280,18 @@ export function ShippingChecker({
     "{n}",
     new Intl.NumberFormat(locale).format(otherServedCount)
   );
+
+  // Preuve sociale du pays vérifié : quatrième pastille de la grille de gauche,
+  // aux côtés des trois autres stats, plutôt qu'en pied du panneau résultat où
+  // elle formait une ligne isolée. Absente tant qu'aucun pays n'est vérifié —
+  // la grille se contente alors de trois pastilles.
+  const ordersText =
+    result?.served && typeof result.orders === "number"
+      ? L.ordersNote.replace(
+          "{n}",
+          new Intl.NumberFormat(locale).format(result.orders)
+        )
+      : null;
 
   return (
     <section
@@ -569,7 +598,9 @@ export function ShippingChecker({
               marginTop: 4,
             }}
           >
-            {[otherServedText, L.statPrep, L.statTracking].map((text, i) => (
+            {[otherServedText, L.statPrep, L.statTracking, ordersText]
+              .filter((t): t is string => Boolean(t))
+              .map((text, i) => (
               <div
                 key={i}
                 style={{
@@ -712,31 +743,8 @@ export function ShippingChecker({
                     </div>
                   );
                 })()}
-                {typeof result.orders === "number" && (
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 7,
-                      marginTop: 10,
-                      fontFamily: "var(--font-sans)",
-                      fontSize: 12,
-                      color: ACCENT,
-                      fontWeight: 600,
-                      lineHeight: 1.4,
-                    }}
-                  >
-                    <span aria-hidden style={{ fontSize: 13 }}>
-                      ✦
-                    </span>
-                    <span>
-                      {L.ordersNote.replace(
-                        "{n}",
-                        new Intl.NumberFormat(locale).format(result.orders)
-                      )}
-                    </span>
-                  </div>
-                )}
+                {/* La preuve sociale « Déjà N commandes » a rejoint la grille de
+                    pastilles, à gauche : voir `ordersText`. */}
               </div>
             </div>
           )}
