@@ -38,7 +38,7 @@ export type ShippingLabels = {
 
 const DEFAULT_LABELS: ShippingLabels = {
   eyebrow: "Livraison internationale",
-  title: "Nous livrons presque partout dans le monde",
+  title: "Nous livrons dans le monde",
   subtitle:
     "Où que vous soyez, l'Orient vous parvient. Vérifiez la livraison dans votre pays.",
   fieldLabel: "Votre pays de livraison",
