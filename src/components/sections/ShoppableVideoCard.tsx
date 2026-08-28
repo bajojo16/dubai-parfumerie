@@ -157,7 +157,14 @@ export function ShoppableVideoCard({
         style={{
           position: "relative",
           display: "block",
-          aspectRatio: "9 / 16",
+          // Ratio pilotable par variable : en mobile la carte 9/16 mangeait
+          // presque tout l'écran, on la ramène à un portrait court (voir la
+          // media query du carrousel). Desktop inchangé via le fallback.
+          aspectRatio: "var(--dpsv-ratio, 9 / 16)",
+          // Item flex en colonne : `min-height: auto` prendrait la taille
+          // intrinsèque de la vidéo (9:16) et annulerait l'aspect-ratio.
+          minHeight: 0,
+          overflow: "hidden",
           background: "#000",
           textDecoration: "none",
         }}
@@ -210,9 +217,10 @@ export function ShoppableVideoCard({
           style={{
             position: "absolute",
             insetInlineStart: "50%",
-            transform: "translateX(-50%) translateY(-34px)",
-            width: 68,
-            height: 68,
+            transform:
+              "translateX(-50%) translateY(calc(var(--dpsv-thumb, 68px) / -2))",
+            width: "var(--dpsv-thumb, 68px)",
+            height: "var(--dpsv-thumb, 68px)",
             borderRadius: 12,
             border: "3px solid #fff",
             boxShadow: "0 6px 16px rgba(80,60,30,.18)",
@@ -234,14 +242,14 @@ export function ShoppableVideoCard({
       {/* Infos produit */}
       <div
         style={{
-          paddingTop: 40,
-          paddingInline: 12,
-          paddingBottom: 12,
+          paddingTop: "var(--dpsv-info-pt, 40px)",
+          paddingInline: "var(--dpsv-info-pi, 12px)",
+          paddingBottom: "var(--dpsv-info-pb, 12px)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
           textAlign: "center",
-          gap: 4,
+          gap: "var(--dpsv-info-gap, 4px)",
         }}
       >
         <Link
@@ -249,7 +257,7 @@ export function ShoppableVideoCard({
           aria-label={`${L.viewProduct} — ${product.name}`}
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: 16,
+            fontSize: "var(--dpsv-name-fs, 16px)",
             color: "#2C2620",
             textDecoration: "none",
             lineHeight: 1.2,
@@ -260,8 +268,9 @@ export function ShoppableVideoCard({
         <div
           style={{
             fontFamily: "var(--font-sans)",
-            fontSize: 15,
+            fontSize: "var(--dpsv-price-fs, 15px)",
             fontWeight: 700,
+            lineHeight: "var(--dpsv-tight-lh, normal)",
             color: "#A8801F",
           }}
         >
@@ -269,13 +278,19 @@ export function ShoppableVideoCard({
         </div>
 
         {available ? (
-          <div style={{ marginTop: 12 }}>
+          <div style={{ marginTop: "var(--dpsv-qty-mt, 12px)" }}>
             <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
           </div>
         ) : (
-          /* Réserve la hauteur du stepper (38px) pour aligner le bouton Épuisé
-             avec les boutons « Ajouter au panier » des cartes voisines */
-          <div aria-hidden style={{ marginTop: 9, height: 32 }} />
+          /* Réserve exactement la hauteur du stepper pour aligner le bouton
+             Épuisé avec les boutons « Ajouter au panier » des cartes voisines */
+          <div
+            aria-hidden
+            style={{
+              marginTop: "var(--dpsv-qty-mt, 12px)",
+              height: "var(--dpsv-qty-h, 38px)",
+            }}
+          />
         )}
 
         <button
@@ -292,14 +307,16 @@ export function ShoppableVideoCard({
           aria-live="polite"
           style={{
             width: "100%",
-            marginTop: 12,
+            marginTop: "var(--dpsv-cta-mt, 12px)",
+            minHeight: "var(--dpsv-cta-minh, 0px)",
             border: "none",
             borderRadius: 24,
-            padding: "9px 14px",
+            padding: "var(--dpsv-cta-py, 9px) 14px",
             background: buttonBg,
             color: "#fff",
             fontFamily: "var(--font-sans)",
             fontSize: 11,
+            lineHeight: "var(--dpsv-tight-lh, normal)",
             fontWeight: 700,
             letterSpacing: ".08em",
             textTransform: "uppercase",

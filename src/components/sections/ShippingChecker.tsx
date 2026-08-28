@@ -102,6 +102,13 @@ export function ShippingChecker({
   const [result, setResult] = useState<ShippingCountry | null>(null);
   const [show, setShow] = useState(false); // pour l'animation d'apparition
   const [emailSent, setEmailSent] = useState(false);
+  /**
+   * Pointeur grossier (doigt) → on remplace le combobox de recherche par un
+   * <select> natif : le clavier logiciel ne s'ouvre pas et c'est le sélecteur
+   * système qui affiche la liste (donc jamais masquée par le clavier).
+   * false au premier rendu = markup desktop identique côté SSR.
+   */
+  const [coarse, setCoarse] = useState(false);
 
   const listboxId = useId();
   const optionId = (i: number) => `${listboxId}-opt-${i}`;
@@ -118,6 +125,16 @@ export function ShippingChecker({
     () => countries.filter((c) => c.served).length,
     [countries]
   );
+
+  // Détection tactile (après montage → aucun risque de mismatch d'hydratation).
+  useEffect(() => {
+    const mq = window.matchMedia?.("(pointer: coarse)");
+    if (!mq) return;
+    const apply = () => setCoarse(mq.matches);
+    apply();
+    mq.addEventListener("change", apply);
+    return () => mq.removeEventListener("change", apply);
+  }, []);
 
   // Détection : prop detectedCode, sinon navigator.language (région), sinon rien.
   useEffect(() => {
@@ -182,9 +199,10 @@ export function ShippingChecker({
       setOpen(false);
       // Résultat affiché en direct dès la sélection (plus de bouton « Vérifier »).
       runCheck(c.code);
-      inputRef.current?.focus();
+      // En tactile, refocaliser rouvrirait le clavier logiciel pour rien.
+      if (!coarse) inputRef.current?.focus();
     },
-    [runCheck]
+    [runCheck, coarse]
   );
 
   // Fermer le listbox au clic extérieur
@@ -331,36 +349,98 @@ export function ShippingChecker({
                 <path d="M3 12h18" />
                 <path d="M12 3c2.5 2.5 3.8 5.7 3.8 9S14.5 18.5 12 21c-2.5-2.5-3.8-5.7-3.8-9S9.5 5.5 12 3z" />
               </svg>
-              <input
-                id={`${listboxId}-input`}
-                ref={inputRef}
-                role="combobox"
-                aria-expanded={open}
-                aria-controls={listboxId}
-                aria-autocomplete="list"
-                aria-activedescendant={open && filtered[activeIndex] ? optionId(activeIndex) : undefined}
-                autoComplete="off"
-                value={displayValue}
-                placeholder={L.placeholder}
-                onFocus={() => setOpen(true)}
-                onChange={(e) => {
-                  setQuery(e.target.value);
-                  setOpen(true);
-                  setActiveIndex(0);
-                }}
-                onKeyDown={onKeyDown}
-                style={{
-                  flex: 1,
-                  border: "none",
-                  outline: "none",
-                  background: "transparent",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: 15,
-                  color: TITLE,
-                  textAlign: isRTL ? "right" : "left",
-                  minWidth: 0,
-                }}
-              />
+              {coarse ? (
+                <>
+                  {/* Valeur affichée (le <select> transparent au-dessus capte le toucher) */}
+                  <span
+                    aria-hidden
+                    style={{
+                      flex: 1,
+                      minWidth: 0,
+                      fontFamily: "var(--font-sans)",
+                      fontSize: 15,
+                      color: selected ? TITLE : DETAIL,
+                      textAlign: isRTL ? "right" : "left",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {selected ? `${selected.flag} ${selected.name}` : L.placeholder}
+                  </span>
+                  {/* <select> natif superposé au pill : ouvre le sélecteur système,
+                      sans clavier logiciel. Étiqueté par le <label> ci-dessus. */}
+                  <select
+                    id={`${listboxId}-input`}
+                    value={selectedCode ?? ""}
+                    onChange={(e) => {
+                      const c = byCode.get(e.target.value.toUpperCase());
+                      if (c) selectCountry(c);
+                    }}
+                    style={{
+                      position: "absolute",
+                      insetBlock: 0,
+                      insetInline: 0,
+                      width: "100%",
+                      height: "100%",
+                      minHeight: 52,
+                      margin: 0,
+                      padding: 0,
+                      border: "none",
+                      background: "transparent",
+                      appearance: "none",
+                      WebkitAppearance: "none",
+                      // 16px : empêche le zoom automatique iOS au focus.
+                      fontSize: 16,
+                      fontFamily: "var(--font-sans)",
+                      opacity: 0,
+                      zIndex: 3,
+                    }}
+                  >
+                    {!selectedCode && (
+                      <option value="" disabled>
+                        {L.placeholder}
+                      </option>
+                    )}
+                    {ordered.map((c) => (
+                      <option key={c.code} value={c.code}>
+                        {`${c.flag} ${c.name}`}
+                      </option>
+                    ))}
+                  </select>
+                </>
+              ) : (
+                <input
+                  id={`${listboxId}-input`}
+                  ref={inputRef}
+                  role="combobox"
+                  aria-expanded={open}
+                  aria-controls={listboxId}
+                  aria-autocomplete="list"
+                  aria-activedescendant={open && filtered[activeIndex] ? optionId(activeIndex) : undefined}
+                  autoComplete="off"
+                  value={displayValue}
+                  placeholder={L.placeholder}
+                  onFocus={() => setOpen(true)}
+                  onChange={(e) => {
+                    setQuery(e.target.value);
+                    setOpen(true);
+                    setActiveIndex(0);
+                  }}
+                  onKeyDown={onKeyDown}
+                  style={{
+                    flex: 1,
+                    border: "none",
+                    outline: "none",
+                    background: "transparent",
+                    fontFamily: "var(--font-sans)",
+                    fontSize: 15,
+                    color: TITLE,
+                    textAlign: isRTL ? "right" : "left",
+                    minWidth: 0,
+                  }}
+                />
+              )}
               {/* Chevron */}
               <svg
                 width="16"
@@ -382,8 +462,9 @@ export function ShippingChecker({
               </svg>
             </div>
 
-            {/* Listbox */}
-            {open && (
+            {/* Listbox (desktop / pointeur fin uniquement — en tactile c'est le
+                sélecteur système qui liste les pays) */}
+            {open && !coarse && (
               <ul
                 id={listboxId}
                 role="listbox"

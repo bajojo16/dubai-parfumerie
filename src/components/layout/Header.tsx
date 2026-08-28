@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link, usePathname as useLocalePathname, useRouter } from "@/i18n/navigation";
 import Image from "next/image";
 import { getCart, cartCount as getCartCount, removeItem, setQty, subscribe, type CartItem } from "@/lib/cart";
@@ -693,6 +693,7 @@ export function Header() {
   const pathname = usePathname();
   const isPreviewWelcome = pathname?.includes("/preview-welcome") ?? false;
   const locale = useLocale();
+  const t = useTranslations("common");
   const localePathname = useLocalePathname();
   const router = useRouter();
   const [currency, setCurrency] = useState("EUR");
@@ -930,6 +931,7 @@ export function Header() {
         }}
       >
         <div
+          className="dp-header-inner"
           style={{
             height: 74,
             display: "flex",
@@ -947,17 +949,17 @@ export function Header() {
             onClick={() => setMobileMenuOpen(true)}
             aria-label="Menu"
             style={{
-              display: "none", flexDirection: "column", justifyContent: "center", gap: 4,
+              display: "none", flexDirection: "column", justifyContent: "center", alignItems: "center", gap: 4,
               background: "none", border: "none", cursor: "pointer", padding: 6, flexShrink: 0,
             }}
           >
-            <span style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
-            <span style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
-            <span style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
+            <span className="dp-burger-bar" style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
+            <span className="dp-burger-bar" style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
+            <span className="dp-burger-bar" style={{ width: 22, height: 2, background: "var(--ink-900)", borderRadius: 2 }} />
           </button>
 
           {/* Logo */}
-          <Link href="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
+          <Link className="dp-header-logo" href="/" style={{ flexShrink: 0, display: "flex", alignItems: "center" }}>
             <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 28, width: "auto", display: "block" }} />
           </Link>
 
@@ -1044,7 +1046,34 @@ export function Header() {
           </button>
 
           {/* Right icons */}
-          <div style={{ display: "flex", alignItems: "center", gap: 6, marginLeft: "auto" }}>
+          <div className="dp-header-actions" style={{ display: "flex", alignItems: "center", gap: 6, marginInlineStart: "auto" }}>
+            {/* Loupe mobile — le champ `.dp-search` du desktop est masqué sous 760px ;
+                sans ce bouton la recherche n'était atteignable qu'en ouvrant le menu
+                burger. Même déclencheur que le desktop : la superposition. */}
+            <button
+              type="button"
+              className="dp-icon-btn dp-search-mobile"
+              onClick={() => setSearchOpen(true)}
+              aria-label={t("search")}
+              title={t("search")}
+              style={{
+                display: "none",
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                color: "var(--ink-900)",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 2,
+                padding: "6px 8px",
+                borderRadius: "var(--r-sm)",
+                flexShrink: 0,
+              }}
+            >
+              <IconSearch />
+            </button>
+
             <button
               className="dp-icon-btn"
               onClick={() => setAuthOpen(true)}

@@ -131,6 +131,39 @@ export function ShoppableVideoCarousel({
         @media (max-width: 420px) {
           [data-dp-shoppable] { --dp-shoppable-card-w: 58%; }
         }
+        /* Mobile : la carte 9/16 + le bloc d'infos aéré faisaient ~565px de haut
+           sur un écran de 844px — une seule carte occupait tout l'écran. On passe
+           le visuel en portrait court (4/5) et on resserre les métriques du bloc
+           d'infos, en gardant des cibles tactiles ≥ 40px et du texte ≥ 11px.
+           Tout passe par des variables : le desktop garde ses fallbacks inline. */
+        @media (max-width: 760px) {
+          [data-dp-shoppable] {
+            --dpsv-ratio: 4 / 5;
+            --dpsv-thumb: 44px;
+            --dpsv-info-pt: 26px;
+            --dpsv-info-pi: 10px;
+            --dpsv-info-pb: 6px;
+            --dpsv-info-gap: 1px;
+            --dpsv-tight-lh: 1.2;
+            --dpsv-name-fs: 14px;
+            --dpsv-price-fs: 13px;
+            --dpsv-qty-mt: 4px;
+            --dpsv-qty-h: 46px;
+            --dpsv-cta-mt: 8px;
+            --dpsv-cta-minh: 40px;
+            --dpsv-cta-py: 10px;
+          }
+          /* QtyStepper est partagé et pose ses métriques en style inline :
+             seul !important peut les redéfinir depuis ce parent. On monte les
+             boutons à 40px (cible tactile mobile), d'où --dpsv-qty-h: 46px
+             (40 + 2×2 de padding + 2 de bordure) pour la carte « Épuisé ». */
+          [data-dp-shoppable] .dp-qty {
+            --qty-dim: 40px !important;
+            --qty-fbtn: 17px !important;
+            --qty-fval: 14px !important;
+            --qty-valw: 30px !important;
+          }
+        }
         /* Desktop : largeur de carte en px (et non en %) — indispensable pour que
            le conteneur puisse se dimensionner sur le contenu sans dépendance
            circulaire (carte % de la piste ⇄ piste dimensionnée sur les cartes). */
