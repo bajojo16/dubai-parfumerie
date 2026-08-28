@@ -17,6 +17,12 @@
  *
  * Cadre légal inchangé : usage nominatif des marques, texte seul, vocabulaire
  * « inspiré de » / « jumeau olfactif » — jamais « clone », « copie », « dupe ».
+ *
+ * RÈGLE D'AFFICHAGE, non négociable : on ne montre un jumeau QUE lorsque le
+ * moteur en certifie un (`findTwin` rend `null` sinon — voir le seuil documenté
+ * dans `olfactive-match.ts`). Aucun repli sur « le moins pire des 25 produits » :
+ * c'est ce repli qui proposait Al Haramain Noora pour Coco Mademoiselle. Quand
+ * il n'y a pas de jumeau, on l'annonce et on propose l'alerte e-mail.
  */
 
 import Image from "next/image";
@@ -54,6 +60,39 @@ const C = {
 
 /** Nombre de propositions d'autocomplétion — au-delà, la liste ne se lit plus. */
 const MAX_SUGGESTIONS = 8;
+
+/** Validation de format côté client — même expression que la newsletter. */
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+/**
+ * Demandes d'alerte « prévenez-moi », conservées dans le navigateur.
+ * Convention de nommage du repo : préfixe `dp_` (cf. `dp_wishlist`,
+ * `dp_recherches`, `dp_ondemand`).
+ */
+const ALERTS_KEY = "dp_alertes_jumeau";
+
+/** Au-delà, une maquette n'a aucune raison de faire grossir le stockage local. */
+const MAX_ALERTS = 50;
+
+type TwinAlert = { email: string; reference: string; at: string };
+
+/**
+ * Mémorise la demande côté navigateur. Ce n'est PAS un envoi : rien ne part, et
+ * c'est volontaire — la trace locale permet de montrer la demande en démo sans
+ * faire croire qu'un e-mail a été expédié.
+ */
+function rememberAlert(email: string, reference: string) {
+  try {
+    const raw = window.localStorage.getItem(ALERTS_KEY);
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    const list: TwinAlert[] = Array.isArray(parsed) ? (parsed as TwinAlert[]) : [];
+    list.push({ email, reference, at: new Date().toISOString() });
+    window.localStorage.setItem(ALERTS_KEY, JSON.stringify(list.slice(-MAX_ALERTS)));
+  } catch {
+    // Navigation privée, quota plein, stockage refusé : la confirmation reste
+    // affichée. Perdre la trace locale ne doit pas casser l'écran.
+  }
+}
 
 /**
  * Vue unifiée du résultat : une correspondance relue par l'équipe et un
@@ -126,6 +165,14 @@ export function OlfactiveTwin({
   const [view, setView] = useState<ResultView | null>(() => (matches[0] ? viewFromCurated(matches[0]) : null));
   const [addedKey, setAddedKey] = useState("");
 
+  // Référence choisie pour laquelle nous n'avons PAS de jumeau. Un état à part
+  // de `view` : les deux ne coexistent jamais, mais confondre les deux ferait
+  // réapparaître un vieux résultat derrière l'écran « pas encore de jumeau ».
+  const [missing, setMissing] = useState("");
+  const [alertEmail, setAlertEmail] = useState("");
+  const [alertError, setAlertError] = useState("");
+  const [alertSent, setAlertSent] = useState(false);
+
   const inputRef = useRef<HTMLInputElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
 
@@ -162,8 +209,21 @@ export function OlfactiveTwin({
 
   const choose = useCallback(
     (ref: ReferencePerfume) => {
-      const twin = mod?.findTwin(ref);
-      if (twin) setView(viewFromTwin(twin));
+      // `findTwin` rend `null` dès que la correspondance n'est pas certaine.
+      // On l'assume : mieux vaut annoncer l'absence que servir un à-peu-près.
+      const twin = mod?.findTwin(ref) ?? null;
+      if (twin) {
+        setView(viewFromTwin(twin));
+        setMissing("");
+      } else {
+        setView(null);
+        setMissing(`${ref.house} · ${ref.name}`);
+      }
+      // Nouvelle référence demandée : le formulaire d'alerte repart à zéro,
+      // sinon la confirmation de la demande précédente resterait à l'écran.
+      // Fait ici et non dans un effet : `react-hooks/set-state-in-effect`.
+      setAlertSent(false);
+      setAlertError("");
       // On ne remet que le nom : réouvrir le champ propose de nouveau les
       // déclinaisons de la même référence (Sauvage, Sauvage Elixir…).
       setQuery(ref.name);
@@ -172,6 +232,20 @@ export function OlfactiveTwin({
     },
     [mod]
   );
+
+  const submitAlert = (e: React.FormEvent) => {
+    e.preventDefault();
+    const value = alertEmail.trim();
+    if (!EMAIL_RE.test(value)) {
+      setAlertError(t("alert_invalid"));
+      return;
+    }
+    setAlertError("");
+    // STUB — aucune API réelle, rien n'est envoyé. L'endpoint d'alerte reste à
+    // brancher (même convention que la newsletter : Brevo/Mailchimp/Klaviyo…).
+    rememberAlert(value, missing);
+    setAlertSent(true);
+  };
 
   const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") {
@@ -204,6 +278,13 @@ export function OlfactiveTwin({
     }
   };
 
+  /**
+   * Les trois libellés existent encore parce que `MatchStrength` a trois valeurs,
+   * mais seul « très proche » est atteignable à l'écran : un résultat servi est
+   * toujours certifié, et le moteur force alors ce niveau. Ne PAS rebrancher
+   * « proche » / « apparenté » sur un résultat affiché — c'est le badge
+   * « Profil proche » posé sur un non-jumeau qui a motivé cette correction.
+   */
   const strengthLabel: Record<MatchStrength, string> = {
     "tres-proche": t("strength_very_close"),
     proche: t("strength_close"),
@@ -359,7 +440,12 @@ export function OlfactiveTwin({
             type="button"
             aria-pressed={active}
             onClick={() => {
+              // Paire relue à la main : c'est un jumeau certain, on efface
+              // l'éventuel écran « pas encore de jumeau » affiché juste avant.
               setView(viewFromCurated(m));
+              setMissing("");
+              setAlertSent(false);
+              setAlertError("");
               setOpen(false);
             }}
             className={active ? "otw-pill otw-pill-on" : "otw-pill"}
@@ -371,9 +457,73 @@ export function OlfactiveTwin({
     </div>
   );
 
+  /**
+   * Écran « pas encore de jumeau ».
+   *
+   * C'est l'état MAJORITAIRE (le catalogue compte 25 produits pour 3 952
+   * références) : il ne doit pas se lire comme une erreur mais comme une
+   * promesse — d'où la même carte crème que le résultat, un titre en Cormorant
+   * et un filet doré plutôt qu'un ton d'avertissement.
+   */
+  const missingEl = (
+    <div className="otw-none">
+      <span className="otw-none-mark" aria-hidden>
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke={C.goldLabel} strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round">
+          <path d="M12 3l2.1 5.4L20 9.3l-4 4 1 5.7-5-2.8-5 2.8 1-5.7-4-4 5.9-.9z" />
+        </svg>
+      </span>
+      <div className="otw-none-eyebrow">{t("no_twin_eyebrow")}</div>
+      <h3 className="otw-none-title">{t("no_twin_title", { name: missing })}</h3>
+      <p className="otw-none-text">{t("no_twin_text")}</p>
+
+      {alertSent ? (
+        <p className="otw-none-done" role="status">
+          <span className="otw-none-check" aria-hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M4 12.5l5 5L20 6.5" />
+            </svg>
+          </span>
+          {t("alert_success", { name: missing })}
+        </p>
+      ) : (
+        <form className="otw-none-form" onSubmit={submitAlert} noValidate>
+          <input
+            type="email"
+            inputMode="email"
+            autoComplete="email"
+            aria-label={t("alert_label")}
+            aria-invalid={Boolean(alertError)}
+            placeholder={t("alert_placeholder")}
+            value={alertEmail}
+            onChange={(e) => {
+              setAlertEmail(e.target.value);
+              // L'erreur disparaît dès la correction : la laisser sous un champ
+              // déjà corrigé donne l'impression que la saisie est refusée.
+              if (alertError) setAlertError("");
+            }}
+            className="otw-none-input"
+          />
+          <button type="submit" className="otw-none-submit">
+            {t("alert_submit")}
+          </button>
+        </form>
+      )}
+
+      {alertError && (
+        <p className="otw-none-error" role="alert">
+          {alertError}
+        </p>
+      )}
+      {!alertSent && <p className="otw-none-micro">{t("alert_micro")}</p>}
+    </div>
+  );
+
   const resultEl = (
     <div aria-live="polite">
-      {view && (
+      {missing ? (
+        missingEl
+      ) : (
+        view && (
         <div
           className="otw-card"
           style={{
@@ -464,6 +614,7 @@ export function OlfactiveTwin({
             </Link>
           </div>
         </div>
+        )
       )}
     </div>
   );
@@ -567,8 +718,44 @@ export function OlfactiveTwin({
       border-radius: 999px; padding: 10px 18px; }
     .otw-cta:hover { background: ${C.goldDark}; }
 
+    /* ── Ecran « pas encore de jumeau » ─────────────────────────────────────
+       Meme carte creme que le resultat, filet dore, titre en Cormorant : cet
+       ecran est majoritaire, il doit se lire comme une promesse et non comme
+       une erreur. Aucun rouge, aucune icone d'alerte. */
+    .otw-none { background: #fff; border: 1px solid ${C.searchBorder}; border-radius: 14px; padding: 20px 18px;
+      box-shadow: 0 10px 26px rgba(58,44,20,.07); text-align: center; max-width: 100%; overflow: hidden; }
+    .otw-none-mark { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+      background: ${C.tagBg}; border: 1px solid ${C.tagBorder}; margin-bottom: 10px; }
+    .otw-none-eyebrow { font-family: var(--font-sans); font-size: 10px; letter-spacing: 1.4px; text-transform: uppercase;
+      color: ${C.goldLabel}; margin-bottom: 6px; }
+    .otw-none-title { font-family: var(--font-display); font-size: 22px; font-weight: 500; line-height: 1.2;
+      color: ${C.ink}; margin: 0 0 8px; overflow-wrap: anywhere; }
+    .otw-none-text { font-family: var(--font-sans); font-size: 12.5px; line-height: 1.55; color: ${C.muted};
+      margin: 0 auto 14px; max-width: 44ch; }
+    .otw-none-form { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin: 0 auto; max-width: 420px; }
+    .otw-none-input { flex: 1 1 200px; min-width: 0; border: 1px solid ${C.searchBorder}; border-radius: 999px;
+      padding: 11px 16px; font-family: var(--font-sans); font-size: 13px; color: ${C.ink}; background: ${C.stage};
+      outline: none; transition: border-color .2s, background .2s; }
+    .otw-none-input::placeholder { color: ${C.legal}; }
+    .otw-none-input:focus { border-color: ${C.gold}; background: #fff; }
+    .otw-none-submit { flex: 0 0 auto; border: none; cursor: pointer; border-radius: 999px; padding: 11px 20px;
+      font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase;
+      color: #fff; background: ${C.goldCta}; transition: background .2s; }
+    .otw-none-submit:hover { background: ${C.goldDark}; }
+    .otw-none-error { font-family: var(--font-sans); font-size: 11.5px; color: ${C.goldDark}; margin: 8px 0 0; }
+    .otw-none-micro { font-family: var(--font-sans); font-size: 10.5px; color: ${C.legal}; margin: 10px 0 0; }
+    .otw-none-done { display: inline-flex; align-items: center; gap: 8px; text-align: start; margin: 0 auto;
+      font-family: var(--font-sans); font-size: 12.5px; line-height: 1.5; color: ${C.ink};
+      background: ${C.tagBg}; border: 1px solid ${C.tagBorder}; border-radius: 14px; padding: 10px 14px; max-width: 44ch; }
+    .otw-none-check { flex: 0 0 auto; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
+      background: ${C.goldCta}; }
+
     @media (max-width: 760px) {
       .otwin-grid { grid-template-columns: 1fr; }
+      .otw-none { padding: 16px 14px; }
+      .otw-none-title { font-size: 19px; }
+      .otw-none-form { max-width: none; }
+      .otw-none-input, .otw-none-submit { flex: 1 1 100%; width: 100%; }
       .otw-row { flex-direction: column; align-items: stretch; gap: 10px; }
       .otw-arrow, .otw-arrow-rtl { align-self: center; transform: rotate(90deg); }
       .otw-twin { flex: 1 1 auto; }

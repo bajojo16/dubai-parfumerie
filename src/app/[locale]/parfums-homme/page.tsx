@@ -29,20 +29,20 @@ export default function ParfumsHommePage() {
         </p>
       </section>
 
-      <section style={{ maxWidth: 1240, margin: "0 auto", padding: "60px 24px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 28 }}>
+      <section style={{ maxWidth: 1240, margin: "0 auto", padding: "48px 24px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 20 }}>
           {products.map(p => (
             <Link key={p.id} href={`/produit/${p.name.toLowerCase().replace(/ /g, "-")}`} style={{ textDecoration: "none", background: "var(--surface-white)", border: "1px solid #e8dfd0", borderRadius: "var(--r-lg)", overflow: "hidden", display: "block" }}>
               <div style={{ position: "relative", paddingBottom: "100%" }}>
-                <Image src={p.image} alt={p.name} fill sizes="(max-width: 768px) 100vw, 33vw" style={{ objectFit: "cover" }} />
+                <Image src={p.image} alt={p.name} fill sizes="(max-width: 760px) 50vw, 220px" style={{ objectFit: "cover" }} />
               </div>
-              <div style={{ padding: "18px 20px 22px" }}>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.68rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 6 }}>{p.brand}</div>
-                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", color: "var(--ink-900)", margin: "0 0 6px" }}>{p.name}</h3>
-                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--ink-400)", marginBottom: 14 }}>{p.notes}</div>
+              <div style={{ padding: "13px 14px 16px" }}>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 5 }}>{p.brand}</div>
+                <h3 style={{ fontFamily: "var(--font-display)", fontSize: "1rem", color: "var(--ink-900)", margin: "0 0 5px" }}>{p.name}</h3>
+                <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.7rem", color: "var(--ink-400)", marginBottom: 10 }}>{p.notes}</div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 10 }}>
-                  <span style={{ fontFamily: "var(--font-display)", fontSize: "1.3rem", fontWeight: 600, color: "var(--ink-900)" }}>{p.price.toFixed(2)} €</span>
-                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.82rem", color: "var(--ink-400)", textDecoration: "line-through" }}>{p.oldPrice.toFixed(2)} €</span>
+                  <span style={{ fontFamily: "var(--font-display)", fontSize: "1.12rem", fontWeight: 600, color: "var(--ink-900)" }}>{p.price.toFixed(2)} €</span>
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.75rem", color: "var(--ink-400)", textDecoration: "line-through" }}>{p.oldPrice.toFixed(2)} €</span>
                 </div>
               </div>
             </Link>

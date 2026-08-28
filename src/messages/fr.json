@@ -65,6 +65,15 @@
     "search_label": "Rechercher un parfum de référence",
     "suggestions": "Suggestions",
     "add_to_cart": "Ajouter au panier",
-    "added": "Ajouté ✓"
+    "added": "Ajouté ✓",
+    "no_twin_eyebrow": "Pas encore de jumeau",
+    "no_twin_title": "Nous n'avons pas encore le jumeau de {name}",
+    "no_twin_text": "Nous ne proposons un jumeau que lorsque le profil correspond vraiment — jamais une approximation. Celui-ci n'est pas encore dans notre collection. Laissez votre e-mail : vous serez prévenu·e dès son arrivée.",
+    "alert_label": "Votre adresse e-mail",
+    "alert_placeholder": "vous@email.com",
+    "alert_submit": "Prévenez-moi",
+    "alert_invalid": "Merci de saisir une adresse e-mail valide.",
+    "alert_success": "C'est noté pour {name}. Nous vous écrivons dès que son jumeau rejoint la collection.",
+    "alert_micro": "Un seul e-mail, pour ce parfum. Aucune newsletter."
   }
 }

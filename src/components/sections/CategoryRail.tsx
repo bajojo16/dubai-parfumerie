@@ -114,7 +114,7 @@ function CategoryDisc({ category }: { category: Category }) {
             src={category.image as string}
             alt={category.name}
             fill
-            sizes="(max-width: 760px) 170px, 210px"
+            sizes="(max-width: 760px) 170px, 130px"
             style={{ objectFit: "cover", objectPosition: category.imagePosition ?? "center", transform: `scale(${category.imageScale ?? 1.28})` }}
           />
         </span>
@@ -281,13 +281,14 @@ const CSS = `
 }
 
 .dp-catrail-scroller {
-  /* Les rails sont limites a trois vignettes : a 116px les disques flottaient au
-     milieu d'une ligne pleine largeur. On les laisse respirer proportionnellement
-     a la fenetre, borne haute pour ne pas devenir des affiches. */
-  --dp-disc: clamp(150px, 14vw, 200px);
-  --dp-gap: 36px;
+  /* Taille d'origine. L'agrandissement a clamp(150px, 14vw, 200px) avait ete
+     fait quand les rails etaient limites a trois vignettes ; la liste complete
+     etant revenue sur desktop et tablette, des disques de 200px devenaient des
+     affiches. Le mobile garde sa propre taille plus bas. */
+  --dp-disc: 116px;
+  --dp-gap: 28px;
   --dp-pad-x: 24px;
-  --dp-meta-fs: 12px;
+  --dp-meta-fs: 11px;
   scrollbar-width: none;
   -ms-overflow-style: none;
   scroll-padding-inline: 24px;
@@ -307,7 +308,7 @@ const CSS = `
 .dp-catrail-name {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 20px;
+  font-size: 18px;
   line-height: 1.1;
   color: ${T.ink};
 }

@@ -165,6 +165,12 @@ type ProductProfile = {
   groups: Set<NoteGroup>;
   supergroups: Set<string>;
   gender: string;
+  /**
+   * Un produit sans aucune note lisible (« Aurum », « Amber Nuit » : `notes: []`
+   * et pas de famille) ne peut apporter AUCUNE preuve de parenté. Il peut encore
+   * apparaître dans un classement de debug, jamais être servi comme jumeau.
+   */
+  provable: boolean;
 };
 
 const PRODUCT_PROFILES: ProductProfile[] = SEARCH_PRODUCTS.map((product) => {
@@ -172,12 +178,14 @@ const PRODUCT_PROFILES: ProductProfile[] = SEARCH_PRODUCTS.map((product) => {
   const supergroups = new Set<string>();
   for (const g of groups) supergroups.add(NOTE_SUPERGROUP[g]);
   const key = familyOf(product);
+  const family = (key === "frais" || key === "floral" || key === "ambre" || key === "boise" ? key : "") as CatalogFamily | "";
   return {
     product,
-    family: (key === "frais" || key === "floral" || key === "ambre" || key === "boise" ? key : "") as CatalogFamily | "",
+    family,
     groups,
     supergroups,
     gender: norm(product.gender),
+    provable: Boolean(family) && groups.size > 0,
   };
 });
 
@@ -212,6 +220,24 @@ export type TwinResult = {
   /** 0..1, déterministe */
   score: number;
   strength: MatchStrength;
+  /**
+   * Vrai seulement quand la correspondance est un JUMEAU défendable : soit une
+   * paire relue à la main, soit un calcul qui franchit le seuil ci-dessous.
+   * L'interface ne doit rien présenter comme jumeau quand ce drapeau est faux.
+   */
+  verified: boolean;
+  /** affinité de famille retenue, 0..1 — exposée pour rester auditable */
+  familyAffinity: number;
+  /** couverture des accords, 0..1 (rappel + précision, crédits de super-famille inclus) */
+  accordCoverage: number;
+  /** nombre de GROUPES de notes exactement partagés — la seule preuve dure */
+  exactAccordCount: number;
+  /** recouvrement exact des deux profils (Jaccard sur les groupes de notes), 0..1 */
+  accordOverlap: number;
+  /** part du profil de la référence réellement portée par le produit, 0..1 */
+  exactAccordRecall: number;
+  /** nombre de groupes de notes lisibles dans la référence — dit si la mesure est fiable */
+  referenceGroupCount: number;
   /** libellé de la famille de la référence (« Ambrée ») */
   referenceFamilyLabel: string;
   /** libellé de la famille du catalogue qui la sert (« Ambré · gourmand ») */
@@ -226,6 +252,11 @@ export type TwinResult = {
 };
 
 /**
+ * Repère indicatif, conservé pour le classement de debug de `rankTwins`.
+ * Il ne décide RIEN de ce qui est affiché : c'est `isDupe` qui tranche, et ses
+ * conditions sont strictement plus dures. Ne jamais présenter « proche » ou
+ * « apparenté » comme un jumeau — c'est le bug d'origine.
+ *
  * Le niveau de proximité se lit sur les COMPOSANTES, pas sur le score global.
  * Avec 25 produits, le meilleur score est presque toujours élevé — un seuil sur
  * le total aurait affiché « très proche » partout, exactement ce qu'on veut
@@ -236,6 +267,69 @@ function strengthOf(family: number, accords: number): MatchStrength {
   if (family >= 0.85 && accords >= 0.55) return "tres-proche";
   if (family >= 0.85 || (family >= 0.6 && accords >= 0.3)) return "proche";
   return "apparente";
+}
+
+// ─── Seuil de jumeau ─────────────────────────────────────────────────────────
+/**
+ * POURQUOI un seuil dur, et pourquoi sur les composantes plutôt que sur le score.
+ *
+ * Le score global ne peut pas servir de garde-fou : avec 25 produits pour 3 952
+ * références, le MEILLEUR produit est toujours à un score élevé — il est le
+ * meilleur d'un panier minuscule, ce qui ne prouve aucune parenté. Mesuré sur
+ * toute la base, l'ancien `strengthOf` classait 2 290 références sur 3 952 en
+ * « profil très proche » : plus d'une sur deux. Ce n'est pas un jumeau, c'est un
+ * défaut d'affichage.
+ *
+ * Le cas qui a fait remonter le problème : Chanel Coco Mademoiselle (chypre
+ * frais patchouli-vétiver) servie par Al Haramain Noora (« Rosé · Ambré ·
+ * Boisé »), badgée « profil proche ». Un seul axe commun, la rose. Noora, comme
+ * la majorité du catalogue, ne porte pas de vraies notes mais trois libellés de
+ * famille : le score se jouait donc presque entièrement sur l'affinité de
+ * famille, et n'importe quelle référence florale tombait dessus.
+ *
+ * Quatre conditions cumulatives, toutes nécessaires :
+ *
+ *  1. FAMILLE EXACTE (affinité = 1). « Proche » était atteint dès 0,85, c'est-à-
+ *     dire par un pis-aller assumé de la table d'affinité — Coco Mademoiselle
+ *     tombait précisément là. Un jumeau ne se joue pas sur un pis-aller.
+ *
+ *  2. Au moins TROIS groupes de notes EXACTEMENT partagés. C'est la seule preuve
+ *     dure du dossier : les crédits de super-famille (santal ≈ cèdre) servent à
+ *     classer, ils ne démontrent rien. Coco Mademoiselle / Noora n'en partagent
+ *     qu'un, la rose.
+ *
+ *  3. RAPPEL EXACT >= 0,75 : le produit doit porter les trois quarts des axes de
+ *     la référence. Sans cette condition, Dior J'adore (floral blanc) passait sur
+ *     Shaghaf (rose-oud) avec 3 axes sur 5 — même famille, même compte, profil
+ *     différent.
+ *
+ *  4. RECOUVREMENT (Jaccard) >= 0,30 : symétrique, il élimine le produit à dix
+ *     notes qui couvre la référence par sa seule richesse.
+ *
+ * Calibrage du 0,75 / 0,30 sur des témoins durs : Lattafa Khamrah, présent des
+ * deux côtés (donc jumeau de lui-même), plafonne à un rappel de 0,75 et un
+ * Jaccard de 0,333 — les accords de la base sont plus grossiers que les notes du
+ * catalogue, monter au-dessus rejetterait une identité parfaite.
+ *
+ * Résultat mesuré sur la base entière : 537 références sur 3 952 (13,6 %)
+ * obtiennent un jumeau calculé, les 8 paires relues à la main s'y ajoutent, et
+ * tout le reste bascule sur l'écran « pas encore de jumeau ».
+ */
+const DUPE_MIN_FAMILY = 1;
+const DUPE_MIN_EXACT_ACCORDS = 3;
+const DUPE_MIN_EXACT_RECALL = 0.75;
+const DUPE_MIN_OVERLAP = 0.3;
+
+function isDupe(profile: ProductProfile, s: Scored): boolean {
+  // Un produit sans notes lisibles (« Aurum », « Amber Nuit ») ne peut rien
+  // démontrer : il échouerait de toute façon sur (2), la garde le dit tout haut.
+  if (!profile.provable) return false;
+  return (
+    s.family >= DUPE_MIN_FAMILY &&
+    s.exact >= DUPE_MIN_EXACT_ACCORDS &&
+    s.exactRecall >= DUPE_MIN_EXACT_RECALL &&
+    s.overlap >= DUPE_MIN_OVERLAP
+  );
 }
 
 function genderAffinity(refGender: string, productGender: string): number {
@@ -253,6 +347,10 @@ function scoreProduct(ref: ReferencePerfume, profile: ProductProfile) {
 
   const shared: string[] = [];
   const refGroups = new Set<NoteGroup>();
+  // Groupes EXACTEMENT communs aux deux profils. On compte des groupes et non
+  // des libellés : « Rose » et « Rose de mai » sont un seul accord partagé, pas
+  // deux — sinon une référence bavarde franchirait le seuil sans rien prouver.
+  const exactGroups = new Set<NoteGroup>();
   let accordPoints = 0;
   for (const accord of ref.accords) {
     const g = noteGroup(accord);
@@ -260,6 +358,7 @@ function scoreProduct(ref: ReferencePerfume, profile: ProductProfile) {
     refGroups.add(g);
     if (profile.groups.has(g)) {
       accordPoints += 1;
+      exactGroups.add(g);
       shared.push(accord);
     } else if (profile.supergroups.has(NOTE_SUPERGROUP[g])) {
       accordPoints += SUPERGROUP_CREDIT;
@@ -278,14 +377,26 @@ function scoreProduct(ref: ReferencePerfume, profile: ProductProfile) {
   const gender = genderAffinity(ref.gender, profile.gender);
   const popularity = Math.min(100, Math.max(0, profile.product.popularity)) / 100;
 
+  // Recouvrement EXACT des deux profils (indice de Jaccard sur les groupes de
+  // notes) : combien d'axes les deux parfums ont réellement en commun, rapporté
+  // à tout ce qu'ils portent à eux deux. Symétrique, donc insensible au fait
+  // qu'une référence soit bavarde ou qu'un produit porte dix notes.
+  const union = new Set<NoteGroup>([...refGroups, ...profile.groups]);
+  const overlap = union.size ? exactGroups.size / union.size : 0;
+  const exactRecall = refGroups.size ? exactGroups.size / refGroups.size : 0;
+
   const score = W_FAMILY * family + W_ACCORDS * accords + W_GENDER * gender + W_POPULARITY * popularity;
-  return { score, shared, family, accords };
+  return { score, shared, family, accords, exact: exactGroups.size, overlap, exactRecall, refGroupCount: refGroups.size };
 }
 
 /**
  * Classement complet des produits pour une référence, du plus proche au moins
  * proche. Les égalités sont tranchées par le slug : deux exécutions donnent
  * exactement le même ordre.
+ *
+ * ⚠️ Ce classement NE FILTRE PAS : il rend le meilleur candidat même quand
+ * aucun n'est un jumeau. Chaque entrée porte son drapeau `verified` ; l'appelant
+ * qui affiche un résultat doit passer par `findTwin`, jamais par ce classement.
  */
 export function rankTwins(ref: ReferencePerfume, limit = 3): TwinResult[] {
   const scored = PRODUCT_PROFILES.map((profile) => ({ profile, ...scoreProduct(ref, profile) }));
@@ -295,14 +406,25 @@ export function rankTwins(ref: ReferencePerfume, limit = 3): TwinResult[] {
   return scored.slice(0, Math.max(1, limit)).map((s) => buildResult(ref, s.profile, s));
 }
 
-type Scored = { score: number; shared: string[]; family: number; accords: number };
+type Scored = { score: number; shared: string[]; family: number; accords: number; exact: number; overlap: number; exactRecall: number; refGroupCount: number };
 
 function buildResult(ref: ReferencePerfume, profile: ProductProfile, s: Scored): TwinResult {
+  const verified = isDupe(profile, s);
   return {
     reference: ref,
     product: profile.product,
     score: Math.round(s.score * 1000) / 1000,
-    strength: strengthOf(s.family, s.accords),
+    // Un jumeau retenu est par définition au niveau le plus haut : le seuil est
+    // plus exigeant que `strengthOf`. Laisser « profil proche » sur un résultat
+    // servi comme jumeau serait exactement l'ambiguïté qu'on vient de corriger.
+    strength: verified ? "tres-proche" : strengthOf(s.family, s.accords),
+    verified,
+    familyAffinity: s.family,
+    accordCoverage: Math.round(s.accords * 1000) / 1000,
+    exactAccordCount: s.exact,
+    accordOverlap: Math.round(s.overlap * 1000) / 1000,
+    exactAccordRecall: Math.round(s.exactRecall * 1000) / 1000,
+    referenceGroupCount: s.refGroupCount,
     referenceFamilyLabel: FAMILY_LABELS[ref.family],
     catalogFamilyLabel: profile.family ? FAMILIES[profile.family].label : FAMILY_LABELS[ref.family],
     catalogFamilyText: profile.family ? FAMILIES[profile.family].text : "",
@@ -311,8 +433,12 @@ function buildResult(ref: ReferencePerfume, profile: ProductProfile, s: Scored):
 }
 
 /**
- * Le jumeau d'une référence : la correspondance validée quand il en existe
- * une, le mieux classé sinon. `null` seulement si le catalogue est vide.
+ * Le jumeau d'une référence — ou `null` quand nous n'en avons pas.
+ *
+ * `null` n'est PAS une erreur : c'est le cas majoritaire et il est assumé. Le
+ * catalogue compte 25 produits, la base 3 952 références ; l'écrasante majorité
+ * n'a tout simplement pas d'équivalent chez nous. L'appelant doit alors montrer
+ * l'écran « pas encore de jumeau », jamais un pis-aller.
  */
 export function findTwin(ref: ReferencePerfume): TwinResult | null {
   const curatedKey = CURATED_BY_REFERENCE[ref.id];
@@ -321,15 +447,17 @@ export function findTwin(ref: ReferencePerfume): TwinResult | null {
     const profile = curated && PRODUCT_PROFILES.find((p) => p.product.slug === curated.productHandle);
     if (curated && profile) {
       const result = buildResult(ref, profile, scoreProduct(ref, profile));
-      // Relue et validée : elle ne redescend pas sous « très proche », et sa
-      // description rédigée remplace le texte générique.
-      return { ...result, strength: "tres-proche", score: Math.max(result.score, 0.9), curated };
+      // Relue à la main par l'équipe : c'est un jumeau par construction, quel
+      // que soit ce que dit le calcul. Sa description rédigée remplace le texte
+      // générique et son niveau ne redescend pas sous « très proche ».
+      return { ...result, strength: "tres-proche", verified: true, score: Math.max(result.score, 0.9), curated };
     }
   }
-  return rankTwins(ref, 1)[0] ?? null;
+  const best = rankTwins(ref, 1)[0];
+  return best && best.verified ? best : null;
 }
 
-/** Raccourci par identifiant — l'interface ne manipule que des ids. */
+/** Raccourci par identifiant — l'interface ne manipule que des ids. `null` = pas de jumeau. */
 export function findTwinById(referenceId: string): TwinResult | null {
   const ref = REFERENCE_BY_ID.get(referenceId);
   return ref ? findTwin(ref) : null;

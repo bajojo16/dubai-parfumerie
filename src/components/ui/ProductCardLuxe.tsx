@@ -60,6 +60,7 @@ export function ProductCardLuxe({
 
   return (
     <div
+      className="dp-cardluxe"
       dir={isRTL ? "rtl" : "ltr"}
       style={{
         background: T.cardBg,
@@ -70,12 +71,19 @@ export function ProductCardLuxe({
         display: "flex",
         flexDirection: "column",
         textAlign: isRTL ? "right" : "left",
+        // Sans borne, une piste 1fr étire la carte à ~420px dès que la grille
+        // repasse à 2 colonnes (760-980px) : l'image 4:5 y atteignait ~500px
+        // de haut et une rangée mangeait tout l'écran. La densité visée est
+        // celle des cartes du rail best-sellers (216px).
+        width: "100%",
+        maxWidth: 280,
+        justifySelf: "center",
       }}
     >
-      {/* Zone image 4:5 (cadre crème) */}
-      <div style={{ position: "relative", background: T.imageBg, padding: 14 }}>
-        <div style={{ position: "relative", width: "100%", aspectRatio: "4 / 5", borderRadius: 16, overflow: "hidden" }}>
-          <Image src={product.image} alt={product.title} fill sizes="(max-width:600px) 50vw, 280px" style={{ objectFit: "cover" }} />
+      {/* Zone image portrait (cadre crème) */}
+      <div className="dp-luxe-media" style={{ position: "relative", background: T.imageBg, padding: 10 }}>
+        <div className="dp-luxe-frame" style={{ position: "relative", width: "100%", aspectRatio: "1 / 1.1", borderRadius: 12, overflow: "hidden" }}>
+          <Image src={product.image} alt={product.title} fill sizes="(max-width:760px) 50vw, 260px" style={{ objectFit: "cover" }} />
         </div>
 
         {/* Badge promo — début (gauche LTR / droite RTL) */}
@@ -84,15 +92,15 @@ export function ProductCardLuxe({
             className="dp-luxe-badge-promo"
             style={{
               position: "absolute",
-              insetInlineStart: 22,
+              insetInlineStart: 16,
               background: "rgba(201,162,74,0.22)",
               backdropFilter: "blur(4px)",
               WebkitBackdropFilter: "blur(4px)",
               color: T.goldDark,
               fontFamily: "var(--font-sans)",
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: 500,
-              padding: "5px 11px",
+              padding: "4px 9px",
               borderRadius: 20,
             }}
           >
@@ -106,10 +114,10 @@ export function ProductCardLuxe({
             className="dp-luxe-badge-stock"
             style={{
               position: "absolute",
-              insetInlineEnd: 22,
-              // borné à la moitié de la carte : le libellé est long et sortait
-              // du cadre, coupé en plein mot
-              maxWidth: "calc(100% - 44px)",
+              insetInlineEnd: 16,
+              // borné à la largeur utile de la carte : le libellé est long et
+              // sortait du cadre, coupé en plein mot
+              maxWidth: "calc(100% - 32px)",
               overflow: "hidden",
               textOverflow: "ellipsis",
               whiteSpace: "nowrap",
@@ -118,9 +126,9 @@ export function ProductCardLuxe({
               WebkitBackdropFilter: "blur(4px)",
               color: T.stockText,
               fontFamily: "var(--font-sans)",
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: 500,
-              padding: "5px 11px",
+              padding: "4px 9px",
               borderRadius: 20,
             }}
           >
@@ -131,11 +139,39 @@ export function ProductCardLuxe({
         <style>{`
           .dp-luxe-badge-promo,
           .dp-luxe-badge-stock {
-            top: 22px;
+            top: 16px;
           }
+          /* Le rendu mobile a été calibré séparément et doit rester intact :
+             on y rétablit toutes les valeurs d'avant le resserrement desktop
+             (padding du cadre, ratio de l'image, badges, stepper). */
           @media (max-width: 760px) {
+            .dp-cardluxe { max-width: none !important; }
+            .dp-luxe-media { padding: 14px !important; }
+            .dp-luxe-frame { aspect-ratio: 4 / 5 !important; border-radius: 16px !important; }
+            .dp-luxe-badge-promo,
+            .dp-luxe-badge-stock {
+              top: 22px;
+              font-size: 11px !important;
+              padding: 5px 11px !important;
+            }
+            .dp-luxe-badge-promo { inset-inline-start: 22px !important; }
             .dp-luxe-badge-stock {
               top: 52px;
+              inset-inline-end: 22px !important;
+              max-width: calc(100% - 44px) !important;
+            }
+            .dp-luxe-stars,
+            .dp-luxe-reviews { font-size: 11px !important; }
+            .dp-luxe-titleblock { gap: 6px !important; }
+            .dp-luxe-pricerow { gap: 10px !important; margin-top: 2px !important; }
+            .dp-cardluxe-actions { margin-top: 6px !important; }
+            /* Le stepper repasse en taille sm via ses variables : ses styles
+               sont inline, seul un !important sur les variables les atteint. */
+            .dp-cardluxe-actions .dp-qty {
+              --qty-dim: 32px !important;
+              --qty-fbtn: 16px !important;
+              --qty-fval: 13px !important;
+              --qty-valw: 30px !important;
             }
           }
           /* Carte resserrée à ~158px dans la grille 2 colonnes mobile
@@ -153,32 +189,32 @@ export function ProductCardLuxe({
                bouton côte à côte ne tenaient pas, le bouton passait sur deux
                lignes et doublait la hauteur de la carte. */
             .dp-cardluxe-actions { gap: 5px !important; }
-            .dp-cardluxe-addbtn { font-size: 9.5px !important; padding: 7px 8px !important; }
+            .dp-cardluxe-addbtn { font-size: 9.5px !important; padding: 7px 8px !important; letter-spacing: 0.6px !important; }
           }
         `}</style>
       </div>
 
       {/* Corps */}
-      <div className="dp-luxe-body" style={{ padding: "13px 15px 16px", display: "flex", flexDirection: "column", gap: 6 }}>
-        <Link href={product.href} style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", gap: 6 }}>
-          <span className="dp-luxe-brand" style={{ fontFamily: "var(--font-sans)", fontSize: 10, letterSpacing: "1.4px", textTransform: "uppercase", color: T.creamLabel }}>
+      <div className="dp-luxe-body" style={{ padding: "11px 13px 13px", display: "flex", flexDirection: "column", gap: 5 }}>
+        <Link href={product.href} className="dp-luxe-titleblock" style={{ textDecoration: "none", color: "inherit", display: "flex", flexDirection: "column", gap: 4 }}>
+          <span className="dp-luxe-brand" style={{ fontFamily: "var(--font-sans)", fontSize: 9.5, letterSpacing: "1.2px", textTransform: "uppercase", color: T.creamLabel }}>
             {product.brand}
           </span>
-          <span className="dp-luxe-title" style={{ fontFamily: "var(--font-display)", fontSize: 19, fontWeight: 500, lineHeight: 1.12, color: T.ink }}>
+          <span className="dp-luxe-title" style={{ fontFamily: "var(--font-display)", fontSize: 17, fontWeight: 500, lineHeight: 1.12, color: T.ink }}>
             {product.title}
           </span>
         </Link>
 
         {/* Avis clients (étoiles or) — conservés */}
         {product.rating != null && (
-          <div style={{ display: "inline-flex", alignItems: "center", gap: 6 }}>
-            <span style={{ display: "inline-flex", color: T.gold, fontSize: 11 }} aria-hidden>
+          <div style={{ display: "inline-flex", alignItems: "center", gap: 5 }}>
+            <span className="dp-luxe-stars" style={{ display: "inline-flex", color: T.gold, fontSize: 10 }} aria-hidden>
               {[0, 1, 2, 3, 4].map((s) => (
                 <span key={s} style={{ opacity: s < Math.round(product.rating!) ? 1 : 0.28 }}>★</span>
               ))}
             </span>
             {product.reviewCount != null && (
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: T.muted }}>
+              <span className="dp-luxe-reviews" style={{ fontFamily: "var(--font-sans)", fontSize: 10, color: T.muted }}>
                 ({product.reviewCount} {t("reviews")})
               </span>
             )}
@@ -186,20 +222,20 @@ export function ProductCardLuxe({
         )}
 
         {/* Ligne prix */}
-        <div style={{ display: "inline-flex", flexWrap: "wrap", alignItems: "baseline", gap: 10, marginTop: 2 }}>
-          <span className="dp-luxe-price" style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 600, color: T.inkPrice, whiteSpace: "nowrap" }}>
+        <div className="dp-luxe-pricerow" style={{ display: "inline-flex", flexWrap: "wrap", alignItems: "baseline", gap: 8, marginTop: 1 }}>
+          <span className="dp-luxe-price" style={{ fontFamily: "var(--font-display)", fontSize: 16.5, fontWeight: 600, color: T.inkPrice, whiteSpace: "nowrap" }}>
             {fmt(product.price)}
           </span>
           {product.oldPrice && product.oldPrice > product.price && (
-            <span className="dp-luxe-oldprice" style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: T.muted, textDecoration: "line-through", whiteSpace: "nowrap" }}>
+            <span className="dp-luxe-oldprice" style={{ fontFamily: "var(--font-sans)", fontSize: 11, color: T.muted, textDecoration: "line-through", whiteSpace: "nowrap" }}>
               {fmt(product.oldPrice)}
             </span>
           )}
         </div>
 
         {/* Sélecteur quantité + bouton */}
-        <div className="dp-cardluxe-actions" style={{ marginTop: 6, display: "flex", alignItems: "center", gap: 8 }}>
-        <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
+        <div className="dp-cardluxe-actions" style={{ marginTop: 5, display: "flex", alignItems: "center", gap: 7 }}>
+        <QtyStepper value={qty} onChange={setQty} size="xs" locale={locale} />
         <button
           className="dp-cardluxe-addbtn"
           type="button"
@@ -212,11 +248,11 @@ export function ProductCardLuxe({
             border: "none",
             cursor: "pointer",
             borderRadius: 20,
-            padding: "8px 12px",
+            padding: "7px 10px",
             fontFamily: "var(--font-sans)",
-            fontSize: 11,
+            fontSize: 10,
             fontWeight: 500,
-            letterSpacing: "0.6px",
+            letterSpacing: "0.4px",
             lineHeight: 1.25,
             textTransform: "uppercase",
             color: "#fff",

@@ -39,17 +39,19 @@ export function QtyStepper({
   onChange: (n: number) => void;
   min?: number;
   max?: number;
-  size?: "sm" | "md";
+  size?: "xs" | "sm" | "md";
   locale?: string;
   labels?: QtyStepperLabels;
 }) {
   const L = { ...DEFAULT_LABELS, ...labels };
   const isRTL = locale === "ar";
 
-  const dim = size === "sm" ? 32 : 40;
-  const fontBtn = size === "sm" ? 16 : 18;
-  const fontVal = size === "sm" ? 13 : 15;
-  const valW = size === "sm" ? 30 : 38;
+  // "xs" : pour les grilles produit desktop, où la carte est bornée à 280px
+  // et où le stepper doit laisser assez de place au bouton d'ajout.
+  const dim = size === "xs" ? 28 : size === "sm" ? 32 : 40;
+  const fontBtn = size === "xs" ? 14 : size === "sm" ? 16 : 18;
+  const fontVal = size === "xs" ? 12 : size === "sm" ? 13 : 15;
+  const valW = size === "xs" ? 24 : size === "sm" ? 30 : 38;
 
   const clamp = (n: number) => Math.max(min, Math.min(max, n));
 
@@ -78,6 +80,12 @@ export function QtyStepper({
     ["--qty-cream" as string]: C.cream,
     ["--qty-border" as string]: C.border,
     ["--qty-dim" as string]: `${dim}px`,
+    // Toutes les métriques passent par des variables CSS : c'est le seul moyen
+    // pour un parent (media query) de rétablir une autre taille, les styles
+    // inline primant sinon sur toute règle CSS non !important.
+    ["--qty-fbtn" as string]: `${fontBtn}px`,
+    ["--qty-fval" as string]: `${fontVal}px`,
+    ["--qty-valw" as string]: `${valW}px`,
     display: "inline-flex",
     alignItems: "center",
     gap: 2,
@@ -103,7 +111,7 @@ export function QtyStepper({
     background: disabled ? "transparent" : "#fff",
     boxShadow: disabled ? "none" : "0 1px 3px rgba(120,90,40,.12)",
     color: disabled ? "var(--qty-border)" : "var(--qty-gold-deep)",
-    fontSize: fontBtn,
+    fontSize: "var(--qty-fbtn)",
     fontWeight: 600,
     lineHeight: 1,
     cursor: disabled ? "not-allowed" : "pointer",
@@ -113,17 +121,17 @@ export function QtyStepper({
   });
 
   return (
-    <span role="group" aria-label={`${L.decrease} / ${L.increase}`} dir={isRTL ? "rtl" : "ltr"} style={groupStyle}>
+    <span className="dp-qty" role="group" aria-label={`${L.decrease} / ${L.increase}`} dir={isRTL ? "rtl" : "ltr"} style={groupStyle}>
       <button type="button" onClick={dec} disabled={atMin} aria-label={L.decrease} style={btnStyle(atMin)}>
         −
       </button>
       <span
         aria-live="polite"
         style={{
-          minWidth: valW,
+          minWidth: "var(--qty-valw)",
           textAlign: "center",
           fontFamily: "var(--font-sans)",
-          fontSize: fontVal,
+          fontSize: "var(--qty-fval)",
           fontWeight: 600,
           color: "var(--qty-ink)",
           fontVariantNumeric: "tabular-nums",

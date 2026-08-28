@@ -162,8 +162,51 @@ export function ScentWheelInteractive({
         </div>
       )}
 
+      {/* En-tête pleine largeur — le titre coiffe la section entière (roue + panneau)
+          au lieu d'être enfermé dans la colonne de droite : il annonce le module
+          complet et reste au bon endroit quand les deux colonnes se superposent
+          sous 760px (sinon il se retrouverait sous la roue). */}
+      <div
+        className="dp-wheel-head"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          textAlign: "center",
+          maxWidth: 760,
+          marginInline: "auto",
+          marginBottom: 26,
+        }}
+      >
+        <div
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: 11,
+            letterSpacing: ".22em",
+            textTransform: "uppercase",
+            color: "#A8915F",
+            marginBottom: 10,
+          }}
+        >
+          {L.eyebrow}
+        </div>
+        <h2
+          style={{
+            fontFamily: "var(--font-display)",
+            fontWeight: 400,
+            fontSize: "clamp(2rem,3.6vw,2.9rem)",
+            color: "#2C2620",
+            lineHeight: 1.1,
+            margin: 0,
+          }}
+        >
+          {L.title}
+          {active ? ` : ${active.label}` : ""}
+        </h2>
+      </div>
+
       {/* Contenu */}
       <div
+        className="dp-wheel-grid"
         style={{
           position: "relative",
           zIndex: 1,
@@ -177,17 +220,19 @@ export function ScentWheelInteractive({
         {/* Colonne roue */}
         <div
           style={{
-            flex: "1 1 300px",
+            flex: "0 1 320px",
             display: "flex",
             justifyContent: "center",
-            minWidth: 280,
+            minWidth: 240,
           }}
         >
           <div
             style={{
               position: "relative",
               width: "100%",
-              maxWidth: 360,
+              // Roue réduite de 360 à 280 (-22%) : le viewBox carré 300x300 garde
+              // le cercle parfait, seule l'échelle de rendu change.
+              maxWidth: 280,
             }}
           >
           <svg
@@ -300,7 +345,9 @@ export function ScentWheelInteractive({
                     textAnchor="middle"
                     dominantBaseline="middle"
                     fontFamily="var(--font-sans)"
-                    fontSize={12}
+                    // Remonté de 12 à 14 unités SVG : la roue ayant rétréci de 22 %,
+                    // ça restitue au libellé sa taille rendue d'origine (~13px).
+                    fontSize={14}
                     fontWeight={600}
                     letterSpacing=".06em"
                     fill="#FFFFFF"
@@ -334,7 +381,7 @@ export function ScentWheelInteractive({
                 textAnchor="middle"
                 dominantBaseline="middle"
                 fontFamily="var(--font-display)"
-                fontSize={22}
+                fontSize={25}
                 fill="#2C2620"
                 style={{ pointerEvents: "none" }}
               >
@@ -346,7 +393,7 @@ export function ScentWheelInteractive({
                 y={150}
                 textAnchor="middle"
                 fontFamily="var(--font-display)"
-                fontSize={15}
+                fontSize={17}
                 fill="#2C2620"
                 style={{ pointerEvents: "none" }}
               >
@@ -354,9 +401,9 @@ export function ScentWheelInteractive({
                   const w = L.restName.split(" ");
                   const mid = Math.ceil(w.length / 2);
                   const lines = w.length > 2 ? [w.slice(0, mid).join(" "), w.slice(mid).join(" ")] : w;
-                  const startY = lines.length > 1 ? 144 : 150;
+                  const startY = lines.length > 1 ? 142 : 150;
                   return lines.map((ln, idx) => (
-                    <tspan key={idx} x={150} y={startY + idx * 17}>
+                    <tspan key={idx} x={150} y={startY + idx * 19}>
                       {ln}
                     </tspan>
                   ));
@@ -369,7 +416,7 @@ export function ScentWheelInteractive({
               textAnchor="middle"
               dominantBaseline="middle"
               fontFamily="var(--font-sans)"
-              fontSize={8.5}
+              fontSize={9.5}
               letterSpacing="2"
               fill="#8A6E2E"
               style={{
@@ -429,7 +476,7 @@ export function ScentWheelInteractive({
                 y={11}
                 textAnchor={isRTL ? "end" : "start"}
                 fontFamily="var(--font-sans)"
-                fontSize={12}
+                fontSize={14}
                 letterSpacing=".02em"
                 fill="#A8801F"
               >
@@ -446,7 +493,7 @@ export function ScentWheelInteractive({
             soit la largeur du texte (locale) ou la largeur du viewport. */}
         <div
           style={{
-            flex: "1 1 300px",
+            flex: "1 1 380px",
             minWidth: 260,
             display: "flex",
             flexDirection: "column",
@@ -468,39 +515,17 @@ export function ScentWheelInteractive({
                 : undefined
             }
           >
-          <div
-            style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: 11,
-              letterSpacing: ".22em",
-              textTransform: "uppercase",
-              color: "#A8915F",
-              marginBottom: 12,
-            }}
-          >
-            {L.eyebrow}
-          </div>
-          <h2
-            style={{
-              fontFamily: "var(--font-display)",
-              fontWeight: 400,
-              fontSize: "clamp(1.8rem,3vw,2.4rem)",
-              color: "#2C2620",
-              lineHeight: 1.1,
-              margin: "0 0 16px",
-            }}
-          >
-            {L.title}
-            {active ? ` : ${active.label}` : ""}
-          </h2>
-
+          {/* La description reste dans la colonne de droite : son contenu change à
+              chaque famille cliquée. Remontée en en-tête, elle ferait sauter la
+              hauteur de tout le bloc à chaque clic et éloignerait le texte de la
+              carte produit qu'il justifie. */}
           <p
             style={{
               fontFamily: "var(--font-sans)",
-              fontSize: 13,
+              fontSize: 14,
               color: "#6A655D",
               lineHeight: 1.7,
-              margin: "0 0 18px",
+              margin: 0,
               transition: reduced ? "none" : "opacity .4s ease",
             }}
           >
@@ -550,15 +575,18 @@ export function ScentWheelInteractive({
                   href={p.href}
                   className="dp-wheel-card"
                   style={{
-                    flex: "1 1 240px",
+                    // minWidth:0 obligatoire : sans lui, le contenu (nom long)
+                    // impose sa largeur minimale et fait déborder la carte sous 760px.
+                    flex: "1 1 260px",
+                    minWidth: 0,
                     display: "flex",
                     alignItems: "center",
-                    gap: 16,
+                    gap: 18,
                     textDecoration: "none",
                     background: "#fff",
                     border: ".5px solid #E6DCC8",
-                    borderRadius: 16,
-                    padding: 12,
+                    borderRadius: 18,
+                    padding: 16,
                     transition: reduced
                       ? "none"
                       : "transform .2s ease, box-shadow .2s ease",
@@ -567,10 +595,10 @@ export function ScentWheelInteractive({
                   <div
                     style={{
                       position: "relative",
-                      width: 56,
-                      height: 84,
+                      width: 84,
+                      height: 124,
                       flexShrink: 0,
-                      borderRadius: 10,
+                      borderRadius: 12,
                       overflow: "hidden",
                       background: "#F7F1E6",
                     }}
@@ -579,7 +607,7 @@ export function ScentWheelInteractive({
                       src={p.image}
                       alt={p.name}
                       fill
-                      sizes="56px"
+                      sizes="84px"
                       style={{ objectFit: "contain" }}
                     />
                   </div>
@@ -587,11 +615,11 @@ export function ScentWheelInteractive({
                     <div
                       style={{
                         fontFamily: "var(--font-sans)",
-                        fontSize: 10,
+                        fontSize: 11,
                         letterSpacing: ".14em",
                         textTransform: "uppercase",
                         color: "#A8915F",
-                        marginBottom: 4,
+                        marginBottom: 6,
                       }}
                     >
                       {p.brand}
@@ -599,10 +627,10 @@ export function ScentWheelInteractive({
                     <div
                       style={{
                         fontFamily: "var(--font-display)",
-                        fontSize: 20,
+                        fontSize: 25,
                         lineHeight: 1.15,
                         color: "#2C2620",
-                        marginBottom: 5,
+                        marginBottom: 7,
                         whiteSpace: "nowrap",
                         overflow: "hidden",
                         textOverflow: "ellipsis",
@@ -613,7 +641,7 @@ export function ScentWheelInteractive({
                     <div
                       style={{
                         fontFamily: "var(--font-sans)",
-                        fontSize: 14,
+                        fontSize: 17,
                         fontWeight: 700,
                         color: "#A8801F",
                       }}
@@ -644,6 +672,25 @@ export function ScentWheelInteractive({
         .dp-wheel-card:hover {
           transform: translateY(-2px);
           box-shadow: 0 8px 20px rgba(44,38,32,.12);
+        }
+        /* Sous 760px : pile en colonne unique. !important est requis car
+           flex-direction est posé en style inline (row-reverse en RTL) et une
+           regle de feuille ne peut pas le battre autrement. flex:none evite que
+           les bases 320px/380px imposent une hauteur en mode colonne. */
+        @media (max-width: 760px) {
+          .dp-wheel-grid {
+            flex-direction: column !important;
+            align-items: stretch !important;
+            gap: 22px;
+          }
+          .dp-wheel-grid > * {
+            flex: none !important;
+            width: 100%;
+            min-width: 0 !important;
+          }
+          .dp-wheel-head {
+            margin-bottom: 20px;
+          }
         }
         @media (prefers-reduced-motion: reduce) {
           .dp-wheel-seg, .dp-wheel-card { transition: none !important; }

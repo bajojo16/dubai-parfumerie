@@ -187,14 +187,14 @@ export function ShoppableVideoCard({
               top: 12,
               insetInlineStart: 12,
               fontFamily: "var(--font-sans)",
-              fontSize: 11,
+              fontSize: 10,
               fontWeight: 700,
               letterSpacing: ".06em",
               textTransform: "uppercase",
               color: "#2C2620",
               background: "rgba(255,255,255,.92)",
               borderRadius: 999,
-              padding: "5px 12px",
+              padding: "4px 10px",
             }}
           >
             {L.soldOut}
@@ -210,9 +210,9 @@ export function ShoppableVideoCard({
           style={{
             position: "absolute",
             insetInlineStart: "50%",
-            transform: "translateX(-50%) translateY(-44px)",
-            width: 88,
-            height: 88,
+            transform: "translateX(-50%) translateY(-34px)",
+            width: 68,
+            height: 68,
             borderRadius: 12,
             border: "3px solid #fff",
             boxShadow: "0 6px 16px rgba(80,60,30,.18)",
@@ -224,8 +224,8 @@ export function ShoppableVideoCard({
           <Image
             src={product.thumbnailUrl}
             alt={product.name}
-            width={88}
-            height={88}
+            width={68}
+            height={68}
             style={{ width: "100%", height: "100%", objectFit: "cover" }}
           />
         </Link>
@@ -234,9 +234,9 @@ export function ShoppableVideoCard({
       {/* Infos produit */}
       <div
         style={{
-          paddingTop: 52,
-          paddingInline: 16,
-          paddingBottom: 16,
+          paddingTop: 40,
+          paddingInline: 12,
+          paddingBottom: 12,
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -249,7 +249,7 @@ export function ShoppableVideoCard({
           aria-label={`${L.viewProduct} — ${product.name}`}
           style={{
             fontFamily: "var(--font-display)",
-            fontSize: 20,
+            fontSize: 16,
             color: "#2C2620",
             textDecoration: "none",
             lineHeight: 1.2,
@@ -260,7 +260,7 @@ export function ShoppableVideoCard({
         <div
           style={{
             fontFamily: "var(--font-sans)",
-            fontSize: 18,
+            fontSize: 15,
             fontWeight: 700,
             color: "#A8801F",
           }}
@@ -275,7 +275,7 @@ export function ShoppableVideoCard({
         ) : (
           /* Réserve la hauteur du stepper (38px) pour aligner le bouton Épuisé
              avec les boutons « Ajouter au panier » des cartes voisines */
-          <div aria-hidden style={{ marginTop: 12, height: 38 }} />
+          <div aria-hidden style={{ marginTop: 9, height: 32 }} />
         )}
 
         <button
@@ -295,11 +295,11 @@ export function ShoppableVideoCard({
             marginTop: 12,
             border: "none",
             borderRadius: 24,
-            padding: "12px 18px",
+            padding: "9px 14px",
             background: buttonBg,
             color: "#fff",
             fontFamily: "var(--font-sans)",
-            fontSize: 13,
+            fontSize: 11,
             fontWeight: 700,
             letterSpacing: ".08em",
             textTransform: "uppercase",

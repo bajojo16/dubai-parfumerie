@@ -477,7 +477,7 @@ export default function HomePageClient() {
             title={<>Les parfums <em>de l&apos;été</em></>}
             subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
           />
-          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 280px))", justifyContent: "center", gap: 20 }}>
             {products.slice(0, 4).map(p => (
               <ProductCardLuxe
                 key={p.id}
@@ -536,7 +536,7 @@ export default function HomePageClient() {
             title={<>Plus de senteurs, <em>meilleur prix</em></>}
             subtitle="Découvrez plusieurs fragrances en un seul achat, à prix réduit."
           />
-          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 24 }}>
+          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 280px))", justifyContent: "center", gap: 24 }}>
             {COFFRETS_HOME.map((p, i) => (
               <ProductCardLuxe
                 key={i}
@@ -674,7 +674,7 @@ export default function HomePageClient() {
             title={<>Tous nos <em>incontournables</em></>}
             subtitle="Les parfums les plus appréciés de notre clientèle, semaine après semaine."
           />
-          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 280px))", justifyContent: "center", gap: 20 }}>
             {bestSellers.map(p => <ProductCardLuxe key={p.id} product={toLuxe(p)} locale={locale} />)}
           </div>
         </div>
@@ -785,7 +785,10 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 5. AUTHENTICITÉ (Notre promesse, avant le blog) ───────── */}
+      {/* ── 5. AUTHENTICITÉ (Notre promesse, avant le blog) ─────────
+           Masquée à la demande. Le bloc reste en place : le remettre à `true`
+           suffit à le rétablir, aucune donnée n'a été supprimée. */}
+      {false && (
       <section id="authenticite" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <RevealOnScroll>
@@ -814,6 +817,7 @@ export default function HomePageClient() {
           </div>
         </div>
       </section>
+      )}
 
       {/* ── 21. LE JOURNAL (BLOG, sous Exclusif) ────────────────────
            Masquée le temps que les articles soient écrits. Remettre `true`

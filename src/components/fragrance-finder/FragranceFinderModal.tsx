@@ -686,7 +686,9 @@ const CSS = `
   display: grid; place-items: center;
   background: var(--surface-white); border: 1px solid var(--line-200); color: var(--surface-white);
   transition: background var(--dur-fast), border-color var(--dur-fast);
+  padding: 0; cursor: pointer;
 }
+.dp-ff-case:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 2px; }
 .dp-ff-case svg { width: 13px; height: 13px; opacity: 0; transition: opacity var(--dur-fast); }
 .dp-ff-card:not(.off) .dp-ff-case { background: var(--success); border-color: var(--success); }
 .dp-ff-card:not(.off) .dp-ff-case svg { opacity: 1; }
@@ -726,22 +728,6 @@ const CSS = `
   display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
 }
 
-.dp-ff-pick {
-  display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  margin: 11px 12px 0; padding: 6px 10px; cursor: pointer;
-  border: 1px solid var(--line-200); border-radius: var(--r-pill);
-  background: var(--surface-white); color: var(--ink-400); font-family: inherit;
-  font-size: 9px; font-weight: var(--fw-bold);
-  letter-spacing: var(--ls-wide); text-transform: uppercase;
-  transition: background var(--dur-fast), color var(--dur-fast), border-color var(--dur-fast);
-}
-.dp-ff-tick {
-  width: 14px; height: 14px; flex: 0 0 14px; padding: 1px; border-radius: var(--r-pill);
-  border: 1px solid currentColor; fill: none; stroke: currentColor; stroke-width: 2.4;
-  stroke-linecap: round; stroke-linejoin: round; opacity: 0; transition: opacity var(--dur-fast);
-}
-.dp-ff-pick.on { background: var(--espresso-900); border-color: var(--espresso-900); color: var(--on-dark-strong); }
-.dp-ff-pick.on .dp-ff-tick { opacity: 1; }
 
 /* Le prix et le sélecteur de quantité sortaient de la carte : rien ne les
    autorisait à passer à la ligne, et le prix ne pouvait pas rétrécir sous sa
@@ -926,7 +912,7 @@ const CSS = `
   .dp-ff-result-side { grid-column: 1; grid-row: 1 / 3; }
   .dp-ff-reco-title { grid-column: 2; grid-row: 1; align-self: end; }
   .dp-ff-grid { grid-column: 2; grid-row: 2; align-self: start; }
-  .dp-ff-offres { grid-column: 3; grid-row: 1 / 3; align-self: start; margin-top: 0; }
+  .dp-ff-offres { grid-column: 3; grid-row: 2; align-self: start; margin-top: 0; }
 }
 
 /* ── Portable ── */
@@ -946,8 +932,6 @@ const CSS = `
   .dp-ff-actions { flex-direction: column; align-items: stretch; gap: 5px; padding: 8px 8px 0; }
   .dp-ff-price { text-align: center; font-size: var(--t-body); }
   .dp-ff-qty { justify-content: center; }
-  .dp-ff-pick { margin: 8px 8px 0; }
-  .dp-ff-pick span { display: none; }
   /* La rangee de boutons passe en colonne ici. En colonne, le main axis est la
      hauteur : le flex-basis 6rem de .dp-ff-add devenait une hauteur de 96px, et
      son flex-grow:1 lui faisait avaler tout le reste de la rangee subgrid — d'ou

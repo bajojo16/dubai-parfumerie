@@ -107,12 +107,12 @@ export function ShoppableVideoCarousel({
         }
         @media (min-width: 768px) {
           .dp-shoppable-arrow { display: grid; }
-          [data-dp-shoppable] { --dp-shoppable-card-w: 25%; }
+          [data-dp-shoppable] { --dp-shoppable-card-w: 21%; }
         }
         /* Une carte 9:16 devient vite haute : plus la colonne est large, plus la
            section mange l'écran. On resserre pour en montrer davantage. */
         @media (min-width: 1100px) {
-          [data-dp-shoppable] { --dp-shoppable-card-w: 18%; }
+          [data-dp-shoppable] { --dp-shoppable-card-w: 15%; }
         }
       `}</style>
     </div>

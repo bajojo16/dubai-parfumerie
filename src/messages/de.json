@@ -65,6 +65,15 @@
     "search_label": "Referenzduft suchen",
     "suggestions": "Vorschläge",
     "add_to_cart": "In den Warenkorb",
-    "added": "Hinzugefügt ✓"
+    "added": "Hinzugefügt ✓",
+    "no_twin_eyebrow": "Noch kein Zwilling",
+    "no_twin_title": "Den Zwilling von {name} haben wir noch nicht",
+    "no_twin_text": "Wir nennen einen Zwilling nur, wenn das Profil wirklich passt — niemals eine Annäherung. Dieser fehlt noch in unserer Kollektion. Hinterlassen Sie Ihre E-Mail, wir melden uns, sobald er da ist.",
+    "alert_label": "Ihre E-Mail-Adresse",
+    "alert_placeholder": "sie@email.com",
+    "alert_submit": "Benachrichtigen",
+    "alert_invalid": "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+    "alert_success": "Notiert für {name}. Wir schreiben Ihnen, sobald der Zwilling in die Kollektion kommt.",
+    "alert_micro": "Eine einzige E-Mail, nur für diesen Duft. Kein Newsletter."
   }
 }

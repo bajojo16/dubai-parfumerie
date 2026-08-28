@@ -305,6 +305,20 @@ img, svg, video { max-width: 100%; }
   }
 }
 
+/* Grilles produit de la homepage entre 761 et 980px : la règle générique
+   ci-dessus les repasse à 2 colonnes en 1fr, ce qui étirait chaque carte à
+   ~420px de large — avec une image portrait, une seule rangée remplissait
+   l'écran. On borne la piste à la largeur nominale de la carte (280px) et on
+   recentre la grille pour ne pas laisser les cartes collées au bord.
+   Placée APRÈS le bloc ≤980px : même spécificité (une classe vs un sélecteur
+   d'attribut), c'est l'ordre de source qui départage. */
+@media (min-width: 761px) and (max-width: 980px) {
+  .dp-home-prod-grid {
+    grid-template-columns: repeat(2, minmax(0, 280px)) !important;
+    justify-content: center !important;
+  }
+}
+
 /* ── Mobile ≤ 760px ─────────────────────────────────────── */
 @media (max-width: 760px) {
   /* Grilles de cartes (produits, stats, piliers) → 2 colonnes */

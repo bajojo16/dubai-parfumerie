@@ -65,6 +65,15 @@
     "search_label": "Cerca un profumo di riferimento",
     "suggestions": "Suggerimenti",
     "add_to_cart": "Aggiungi al carrello",
-    "added": "Aggiunto ✓"
+    "added": "Aggiunto ✓",
+    "no_twin_eyebrow": "Ancora nessun gemello",
+    "no_twin_title": "Non abbiamo ancora il gemello di {name}",
+    "no_twin_text": "Proponiamo un gemello solo quando il profilo corrisponde davvero, mai un'approssimazione. Questo non è ancora nella nostra collezione. Lascia la tua email: ti avvisiamo appena arriva.",
+    "alert_label": "Il tuo indirizzo email",
+    "alert_placeholder": "tu@email.com",
+    "alert_submit": "Avvisami",
+    "alert_invalid": "Inserisci un indirizzo email valido.",
+    "alert_success": "Annotato per {name}. Ti scriviamo appena il suo gemello entra in collezione.",
+    "alert_micro": "Una sola email, per questo profumo. Nessuna newsletter."
   }
 }

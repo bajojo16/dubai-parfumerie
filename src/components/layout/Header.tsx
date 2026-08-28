@@ -71,6 +71,9 @@ const NAV_LINKS = [
   { label: "Parfums Homme", href: "/parfums-homme" },
   { label: "Huile de Parfum", href: "/huile-de-parfum" },
   { label: "Marques", href: "/marques" },
+  // Libellé court volontairement : la barre est en `white-space: nowrap` et
+  // « Commande à la demande » la ferait déborder sur les écrans 1024-1280.
+  { label: "Sur commande", href: "/commande-a-la-demande" },
   { label: "Bons Plans", href: "/promo-flash", highlight: true },
   { label: "Coffrets & Lots", href: "/promo-flash" },
   { label: "Blog", href: "/blog" },

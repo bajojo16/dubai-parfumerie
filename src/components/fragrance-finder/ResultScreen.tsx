@@ -250,11 +250,22 @@ export function ResultScreen({
             return (
               <article key={p.id} className={`dp-ff-card${on ? "" : " off"}`}>
                 <span className="dp-ff-num" aria-hidden="true">{i + 1}</span>
-                <span className="dp-ff-case" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round">
+                {/* La pastille d'angle porte desormais la selection. La pilule
+                    « Dans la selection » qui vivait sous le nom a ete retiree :
+                    elle repetait en toutes lettres ce que la coche verte disait
+                    deja, et pesait plus lourd que le nom du parfum. Le role
+                    reste tenu par un vrai bouton, donc atteignable au clavier. */}
+                <button
+                  type="button"
+                  className="dp-ff-case"
+                  aria-pressed={on}
+                  aria-label={on ? `Retirer ${p.name} de la selection` : `Remettre ${p.name} dans la selection`}
+                  onClick={() => togglePick(i)}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                     <path d="m5 12.5 4.5 4.5L19 7" />
                   </svg>
-                </span>
+                </button>
 
                 <div className="dp-ff-vis" ref={(el) => { visualRefs.current[i] = el; }}>
                   {/* La vidéo de carte, quand la source en fournit une : elle
@@ -280,18 +291,6 @@ export function ResultScreen({
                   <span className="dp-ff-name">{p.name}</span>
                   {p.notes.length > 0 && <span className="dp-ff-notes">{p.notes.slice(0, 3).join(" · ")}</span>}
                 </div>
-
-                <button
-                  type="button"
-                  className={`dp-ff-pick${on ? " on" : ""}`}
-                  aria-pressed={on}
-                  onClick={() => togglePick(i)}
-                >
-                  <svg className="dp-ff-tick" viewBox="0 0 24 24" aria-hidden="true">
-                    <path d="m6 12.5 4 4 8-9" />
-                  </svg>
-                  <span>{on ? "Dans la sélection" : "Écarté"}</span>
-                </button>
 
                 <div className="dp-ff-actions">
                   <span className={`dp-ff-price${quantities[i] > 1 ? " multiple" : ""}`}>

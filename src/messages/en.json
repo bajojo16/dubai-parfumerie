@@ -65,6 +65,15 @@
     "search_label": "Search a reference fragrance",
     "suggestions": "Suggestions",
     "add_to_cart": "Add to cart",
-    "added": "Added ✓"
+    "added": "Added ✓",
+    "no_twin_eyebrow": "No twin yet",
+    "no_twin_title": "We don't have the twin of {name} yet",
+    "no_twin_text": "We only offer a twin when the profile truly matches — never an approximation. This one is not in our collection yet. Leave your email and we'll let you know the moment it arrives.",
+    "alert_label": "Your email address",
+    "alert_placeholder": "you@email.com",
+    "alert_submit": "Notify me",
+    "alert_invalid": "Please enter a valid email address.",
+    "alert_success": "Noted for {name}. We'll write to you as soon as its twin joins the collection.",
+    "alert_micro": "One email, for this fragrance only. No newsletter."
   }
 }

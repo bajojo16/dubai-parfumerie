@@ -164,7 +164,7 @@ export function Faq({
           fontFamily: "var(--font-sans)",
         }}
       >
-        <div style={{ maxWidth: 820, margin: "0 auto" }}>
+        <div style={{ maxWidth: 1120, margin: "0 auto" }}>
           {/* En-tête centré */}
           <div style={{ textAlign: "center", marginBottom: 28 }}>
             <div
@@ -194,8 +194,11 @@ export function Faq({
             </h2>
           </div>
 
-          {/* Liste complète (toutes catégories), accordéon exclusif */}
-          <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+          {/* Liste complète (toutes catégories), accordéon exclusif.
+             Grille 2 colonnes : l'ordre du DOM est conservé, donc la lecture se
+             fait ligne par ligne (gauche -> droite) et l'ordre de tabulation
+             clavier reste identique à l'ordre visuel. */}
+          <div className="dp-faq-compact-grid">
             {questions.map((item, i) => (
               <FaqItem
                 key={item.id}
@@ -221,6 +224,22 @@ export function Faq({
 
         {/* Styles scoped (animation de cascade / reduced-motion) */}
         <style>{`
+          /* align-items: start empeche une carte ouverte d'etirer sa voisine :
+             chaque cellule garde la hauteur de son propre contenu, la ligne
+             grandit sans deformer l'autre colonne. */
+          .dp-faq-compact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            align-items: start;
+            gap: 12px 20px;
+          }
+          /* Seuil mobile du repo : une seule colonne sous 760px. */
+          @media (max-width: 760px) {
+            .dp-faq-compact-grid {
+              grid-template-columns: minmax(0, 1fr);
+              gap: 12px;
+            }
+          }
           @keyframes dpFaqIn {
             from { opacity: 0; transform: translateY(8px); }
             to { opacity: 1; transform: none; }
