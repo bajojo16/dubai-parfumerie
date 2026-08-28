@@ -367,7 +367,7 @@ function SectionHeader({
   dark?: boolean;
 }) {
   return (
-    <div style={{ textAlign: "center", marginBottom: 48 }}>
+    <div className="dp-section-header" style={{ textAlign: "center", marginBottom: 48 }}>
       <div style={{
         fontFamily: "var(--font-sans)", fontSize: "0.78rem",
         letterSpacing: "0.22em", textTransform: "uppercase",
@@ -376,15 +376,23 @@ function SectionHeader({
       }}>{eyebrow}</div>
       <h2 style={{
         fontFamily: "var(--font-display)",
-        fontSize: "clamp(2.2rem, 3.8vw, 3.2rem)",
+        // Le plancher du clamp était à 2,2rem : sur 390 px un titre de deux
+        // mots passait sur trois lignes et mangeait un écran entier.
+        fontSize: "clamp(1.55rem, 3.8vw, 3.2rem)",
         color: dark ? "var(--on-dark-strong)" : "var(--ink-900)",
         margin: 0, lineHeight: 1.12,
       }}>{title}</h2>
+      <style>{`
+        @media (max-width: 760px) {
+          /* 48 px sous chaque titre creusaient un vide entre deux sections. */
+          .dp-section-header { margin-bottom: 24px !important; }
+        }
+      `}</style>
       {subtitle && (
         <p style={{
-          fontFamily: "var(--font-sans)", fontSize: "1.1rem",
+          fontFamily: "var(--font-sans)", fontSize: "clamp(0.9rem, 1.4vw, 1.1rem)",
           color: dark ? "var(--on-dark-muted)" : "var(--ink-500)",
-          marginTop: 16, lineHeight: 1.7,
+          marginTop: 16, lineHeight: 1.6,
           maxWidth: 640, marginInline: "auto",
         }}>{subtitle}</p>
       )}
@@ -439,7 +447,7 @@ export default function HomePageClient() {
       {/* ── CATÉGORIES (rail circulaire, sous la bannière) ────────── */}
       <section id="categories-rail" style={{ background: "var(--surface-page)", padding: "44px 0 16px" }}>
         <CategoryRail
-          categories={DEMO_CATEGORIES}
+          categories={DEMO_CATEGORIES.slice(0, 3)}
           locale={locale}
           onCategoryClick={(cat) => {
             if (cat.slug === "offre-duo") {
@@ -637,7 +645,7 @@ export default function HomePageClient() {
       {/* ── CATEGORY RAIL (2e occurrence, après la bannière Yara) ──── */}
       <section id="category-rail-2" style={{ background: "var(--surface-page)", padding: "20px 0" }}>
         {/* Jeu de données indépendant (anciens libellés formats) */}
-        <CategoryRail categories={DEMO_CATEGORIES_FORMATS} locale={locale} />
+        <CategoryRail categories={DEMO_CATEGORIES_FORMATS.slice(0, 3)} locale={locale} />
       </section>
 
       {/* ── BEST-SELLERS (au-dessus de Le catalogue) ──────────────── */}
@@ -708,11 +716,13 @@ export default function HomePageClient() {
         <TrendCarousel products={DEMO_TRENDS} locale={locale} />
       </section>
 
-      {/* ── 12. CATÉGORIES (Nos univers, au-dessus de jumeau) ─────── */}
-      <section id="categories" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
+      {/* ── 12. CATÉGORIES (Nos univers, au-dessus de jumeau) ───────
+           Masquée en version mobile : quatre vignettes plein cadre y
+           occupaient deux écrans pour dire ce que le menu dit déjà. */}
+      <section id="categories" className="dp-hide-mobile" style={{ background: "var(--surface-cream)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader eyebrow="Nos univers" title="Pour elle, pour lui, pour tous" />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
             {[
               { img: "/assets/cat-femme.jpg", label: "Pour Elle", count: "320 parfums", href: "/parfums-femme" },
               { img: "/assets/cat-homme.jpg", label: "Pour Lui", count: "280 parfums", href: "/parfums-homme" },
@@ -748,7 +758,7 @@ export default function HomePageClient() {
       {/* ── HUILES DE PARFUM (sous Shopping vidéo) ────────────────── */}
       <section id="huiles" style={{ background: "var(--surface-cream)", padding: "24px 20px 80px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
             <div>
               <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-700)", marginBottom: 12 }}>Exclusif</div>
               <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 3.5vw, 2.8rem)", color: "var(--ink-900)", margin: "0 0 18px", lineHeight: 1.1 }}>
@@ -785,7 +795,7 @@ export default function HomePageClient() {
             subtitle="Chaque flacon est sourcé directement auprès des distributeurs officiels aux Émirats."
           />
           </RevealOnScroll>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 28 }}>
             {[
               { n: "01", title: "Sourcing direct Dubaï", desc: "Nous nous approvisionnons exclusivement auprès des distilleries et distributeurs agréés aux EAU, garantissant l'authenticité de chaque flacon." },
               { n: "02", title: "Certificats d'authenticité", desc: "Chaque commande est accompagnée d'un certificat numéroté. Code QR vérifiable directement sur le site officiel de la marque." },
@@ -805,8 +815,11 @@ export default function HomePageClient() {
         </div>
       </section>
 
-      {/* ── 21. LE JOURNAL (BLOG, sous Exclusif) ──────────────────── */}
-      <JournalSection articles={JOURNAL_ARTICLES} locale={locale} />
+      {/* ── 21. LE JOURNAL (BLOG, sous Exclusif) ────────────────────
+           Masquée le temps que les articles soient écrits. Remettre `true`
+           pour la rétablir ; le composant et les données restent en place,
+           et la page /blog continue de les servir. */}
+      {false && <JournalSection articles={JOURNAL_ARTICLES} locale={locale} />}
 
       {/* ── LE MUR DES SENTEURS — désactivé ───────────────────────── */}
       {false && (
@@ -820,7 +833,7 @@ export default function HomePageClient() {
               subtitle="Explorez nos 8 univers, des oud profonds aux muscs enveloppants."
             />
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 12 }}>
             {[
               { img: "/assets/scents/oud.jpg", label: "Oud", sub: "Profond · Mystérieux" },
               { img: "/assets/scents/ambre.jpg", label: "Ambre", sub: "Chaud · Enveloppant" },
@@ -874,7 +887,7 @@ export default function HomePageClient() {
             title={<>Vidéo <em>produits</em></>}
             subtitle="Ils partagent leur expérience, sans filtre."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 16 }}>
             {[
               { name: "Vanilla Voyage", desc: "Démonstration produit", src: "/assets/videos/vanilla-voyage.mp4" },
               { name: "Reef 33", desc: "Démonstration produit", src: "/assets/videos/reef33.mp4" },
@@ -1056,7 +1069,7 @@ export default function HomePageClient() {
             <div style={{ fontFamily: "var(--font-sans)", fontSize: "10px", letterSpacing: ".18em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 12, textAlign: "center" }}>
               3 parfums {selectedScent} à découvrir
             </div>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
+            <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 12 }}>
               {scentProducts[selectedScent].map(p => (
                 <Link key={p.name} href={`/produit/${p.name.trim().toLowerCase().replace(/\s+/g, "-")}`} style={{
                   textDecoration: "none", display: "flex", alignItems: "center", gap: 12,
@@ -1091,7 +1104,7 @@ export default function HomePageClient() {
       {/* ── 15. FOCUS MARQUE ──────────────────────────────────────── */}
       <section id="marque" style={{ background: "var(--espresso-900)", padding: "80px 20px" }}>
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 64, alignItems: "center" }}>
             <VideoPlaceholder
               label="Brand story Lattafa — vidéo institutionnelle"
               aspectRatio="4/3"
@@ -1157,7 +1170,7 @@ export default function HomePageClient() {
             title="+7000 articles commandés"
             subtitle="Authentiques, vérifiés, non modifiés."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 18, marginBottom: 48 }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 18, marginBottom: 48 }}>
             {[
               { n: "4.9/5", l: "Note globale", sub: "Sur 8 400 avis" },
               { n: "98%", l: "Recommandent", sub: "à leur entourage" },
@@ -1171,7 +1184,7 @@ export default function HomePageClient() {
               </div>
             ))}
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 20 }}>
             {testimonials.map((t, i) => (
               <div key={i} style={{ background: "var(--surface-white)", border: "1px solid var(--line-200)", borderRadius: "var(--r-lg)", padding: "28px 24px" }}>
                 <div style={{ color: "var(--star)", fontSize: "1rem", marginBottom: 14, letterSpacing: "0.05em" }}>{"★".repeat(t.stars)}</div>
@@ -1226,7 +1239,7 @@ export default function HomePageClient() {
             title="Comprendre la parfumerie orientale"
             subtitle="Les grandes matières premières qui font l'âme des fragrances du Golfe."
           />
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
+          <div className="dp-grid-auto" style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 20 }}>
             {editorialBlocks.map(b => (
               <div key={b.name} style={{ background: "var(--surface-white)", border: "1px solid var(--line-200)", borderRadius: "var(--r-lg)", padding: "28px 22px" }}>
                 <div style={{ fontFamily: "var(--font-display)", fontSize: "2rem", color: "var(--gold-500)", marginBottom: 10 }}>{b.symbol}</div>

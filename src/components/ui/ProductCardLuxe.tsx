@@ -144,11 +144,16 @@ export function ProductCardLuxe({
              débordait/serrait le texte à cette largeur. On réduit
              typo + espacements en conservant les proportions. */
           @media (max-width: 760px) {
-            .dp-luxe-body { padding: 12px 14px 14px !important; gap: 6px !important; }
-            .dp-luxe-brand { font-size: 9.5px !important; letter-spacing: 1px !important; }
-            .dp-luxe-title { font-size: 16px !important; }
-            .dp-luxe-price { font-size: 16px !important; }
-            .dp-luxe-oldprice { font-size: 11px !important; }
+            .dp-luxe-body { padding: 9px 10px 11px !important; gap: 4px !important; }
+            .dp-luxe-brand { font-size: 8.5px !important; letter-spacing: .9px !important; }
+            .dp-luxe-title { font-size: 13.5px !important; }
+            .dp-luxe-price { font-size: 14px !important; }
+            .dp-luxe-oldprice { font-size: 10px !important; }
+            /* Deux cartes par ligne sur un écran de 390 px : le stepper et le
+               bouton côte à côte ne tenaient pas, le bouton passait sur deux
+               lignes et doublait la hauteur de la carte. */
+            .dp-cardluxe-actions { gap: 5px !important; }
+            .dp-cardluxe-addbtn { font-size: 9.5px !important; padding: 7px 8px !important; }
           }
         `}</style>
       </div>

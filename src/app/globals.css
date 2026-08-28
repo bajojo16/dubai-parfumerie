@@ -482,3 +482,22 @@ img, svg, video { max-width: 100%; }
     scroll-snap-align: start !important;
   }
 }
+
+/* Sections retirées du parcours mobile : elles y coûtaient plus d'écran
+   qu'elles n'apportaient d'information. Le contenu reste servi au HTML,
+   donc indexable — seul l'affichage est coupé. */
+@media (max-width: 760px) {
+  .dp-hide-mobile { display: none; }
+}
+
+/* Grilles de la page d'accueil déclarées en colonnes fixes (repeat(3,1fr),
+   repeat(4,1fr), 1fr 1fr) : elles gardaient leur compte de colonnes sur un
+   écran de 390 px, où chaque colonne tombait à ~90 px et le texte se brisait
+   mot par mot. Les grilles qui portent déjà une classe dédiée gardent leur
+   propre repli et ne sont pas concernées. */
+@media (max-width: 1024px) {
+  .dp-grid-auto { grid-template-columns: repeat(2, 1fr) !important; }
+}
+@media (max-width: 620px) {
+  .dp-grid-auto { grid-template-columns: 1fr !important; gap: 16px !important; }
+}
