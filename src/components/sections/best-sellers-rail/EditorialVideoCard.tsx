@@ -1,7 +1,8 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import { Link } from "@/i18n/navigation";
+import { useVideoAutoplay } from "@/hooks/useVideoAutoplay";
 
 const C = {
   cream: "#F7F3EC",
@@ -50,55 +51,14 @@ export function EditorialVideoCard({
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const rootRef = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
-  const [playing, setPlaying] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
 
-  // prefers-reduced-motion → pas de lecture auto (poster figé)
-  useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setReduceMotion(mq.matches);
-    apply();
-    mq.addEventListener?.("change", apply);
-    return () => mq.removeEventListener?.("change", apply);
-  }, []);
-
-  // IntersectionObserver : la vidéo ne joue que lorsqu'elle est dans le viewport (>50%)
-  useEffect(() => {
-    const el = rootRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting && entry.intersectionRatio > 0.5),
-      { threshold: [0, 0.5, 1] }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  // Lecture / pause selon visibilité (sauf reduced-motion → poster seul)
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (reduceMotion || !visible) {
-      v.pause();
-      setPlaying(false);
-      return;
-    }
-    v.play()
-      .then(() => setPlaying(true))
-      .catch(() => setPlaying(false));
-  }, [visible, reduceMotion]);
-
-  const handlePlayClick = useCallback(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (v.paused) v.play().then(() => setPlaying(true)).catch(() => {});
-    else {
-      v.pause();
-      setPlaying(false);
-    }
-  }, []);
+  // La lecture suit la visibilité, jamais le survol : sur téléphone il n'y a
+  // pas de survol. Le hook force `muted` + `playsInline` avant chaque appel,
+  // ouvre `preload` au moment utile (la carte était en `preload="none"`, ce qui
+  // faisait échouer le play() immédiat et la laissait figée sur son poster) et
+  // retente à `canplay`. En cas de refus du navigateur, `blocked` fait
+  // apparaître le bouton de lecture — ici toujours présent quand ça ne joue pas.
+  const { playing, toggle } = useVideoAutoplay(videoRef, rootRef);
 
   return (
     <article
@@ -130,6 +90,8 @@ export function EditorialVideoCard({
         muted
         loop
         playsInline
+        // Rien n'est téléchargé tant que la carte n'est pas à l'écran ; le hook
+        // bascule sur "auto" avant de lancer la lecture.
         preload="none"
         aria-label={card.title}
         style={{
@@ -147,8 +109,9 @@ export function EditorialVideoCard({
       {!playing && (
         <button
           type="button"
-          onClick={handlePlayClick}
+          onClick={toggle}
           aria-label={L.play}
+          data-dp-play-fallback
           className="dp-editorial-play-btn"
           style={{
             position: "absolute",
@@ -163,6 +126,10 @@ export function EditorialVideoCard({
             background: "rgba(247,243,236,0.92)",
             display: "grid",
             placeItems: "center",
+            // Le voile dégradé et le bloc éditorial sont déclarés APRÈS dans le
+            // DOM : sans z-index ils passaient devant le bouton, qui devenait
+            // intappable en variante fluide (le titre recouvre son centre).
+            zIndex: 3,
           }}
         >
           <svg

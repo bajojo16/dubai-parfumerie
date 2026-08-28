@@ -1,11 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { TrendProduct } from "@/data/trend-products";
 import { type TrendTheme, getTrendTheme } from "@/data/trend-theme";
 import { addItem } from "@/lib/cart";
 import { QtyStepper } from "@/components/ui/QtyStepper";
+import { VideoPlayFallback } from "@/components/ui/VideoPlayFallback";
+import { useVideoAutoplay } from "@/hooks/useVideoAutoplay";
 
 export type TrendCardLabels = {
   rank: string;        // "#{rank}" — {rank} remplacé
@@ -16,6 +18,7 @@ export type TrendCardLabels = {
   soldOut: string;     // "Épuisé"
   like: string;        // aria-label cœur
   share: string;       // aria-label partage
+  play: string;        // aria-label bouton de lecture de repli
 };
 
 const DEFAULT_LABELS: TrendCardLabels = {
@@ -27,6 +30,7 @@ const DEFAULT_LABELS: TrendCardLabels = {
   soldOut: "Épuisé",
   like: "J'aime",
   share: "Partager",
+  play: "Lire la vidéo",
 };
 
 const STRUCK = "rgba(255,255,255,0.6)"; // prix barré sur média sombre
@@ -54,6 +58,15 @@ export function TrendCard({
   const [liked, setLiked] = useState(false);
   const [qty, setQty] = useState(1);
   const [reduceMotion, setReduceMotion] = useState(false);
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+
+  // La carte portait `autoPlay` en dur : les quatre vidéos du rail se lançaient
+  // ensemble (données gaspillées, décodeurs saturés — deux d'entre elles
+  // calaient au bout d'une seconde), et un refus d'autoplay ne laissait aucun
+  // moyen de démarrer. La lecture suit maintenant la visibilité, une carte à la
+  // fois, avec bouton de repli si le navigateur refuse.
+  const { playing, blocked, play } = useVideoAutoplay(videoRef, rootRef);
 
   useEffect(() => {
     if (typeof window === "undefined" || !window.matchMedia) return;
@@ -136,6 +149,7 @@ export function TrendCard({
       role="button"
       tabIndex={0}
       aria-label={product.name}
+      ref={rootRef}
       className="dp-trend-card"
       dir={isRTL ? "rtl" : "ltr"}
       onClick={() => onOpen?.()}
@@ -166,12 +180,14 @@ export function TrendCard({
       {/* Média plein cadre (object-cover) — vidéo si fournie, sinon image */}
       {product.cardVideo ? (
         <video
+          ref={videoRef}
           src={product.cardVideo}
-          autoPlay
           muted
           loop
           playsInline
-          preload="metadata"
+          // Hors champ : aucun octet. Le hook ouvre `preload` puis lance la
+          // lecture quand la carte entre réellement dans le champ de vision.
+          preload="none"
           poster={product.image}
           style={{
             position: "absolute",
@@ -198,6 +214,12 @@ export function TrendCard({
             transform: animate && hover ? "scale(1.06)" : "none",
           }}
         />
+      )}
+
+      {/* Repli : le navigateur a refusé la lecture automatique (Brave Android,
+          économiseur de données) — sans ce bouton la vidéo reste un poster mort. */}
+      {product.cardVideo && !playing && blocked && (
+        <VideoPlayFallback label={`${L.play} — ${product.name}`} onPlay={play} size={52} />
       )}
 
       {/* Dégradé sombre bas (lisibilité) */}

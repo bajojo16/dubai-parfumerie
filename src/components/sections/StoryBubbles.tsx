@@ -2,12 +2,20 @@
 
 import { useRef, useState } from "react";
 import type { ProductStory } from "@/data/product-stories";
+import { VideoPlayFallback } from "@/components/ui/VideoPlayFallback";
+import { useVideoAutoplay } from "@/hooks/useVideoAutoplay";
 import { StoryPlayer, type StoryLabels } from "./StoryPlayer";
 
 /**
  * StoryBubbles — rangée de bulles rondes "stories" sous le bloc d'achat.
- * Survol (pointer fin) : zoom + lecture muette + halo doré. Tactile : tap ouvre le player.
- * Respecte prefers-reduced-motion. N'affiche rien si stories vide.
+ *
+ * La lecture ne dépend PLUS du survol : une bulle jouait uniquement au
+ * `mouseenter`, et un téléphone n'en émet pas — toutes les bulles restaient
+ * figées sur leur poster. Elles jouent maintenant dès qu'elles entrent dans le
+ * champ de vision (muettes, en ligne) et se coupent quand elles en sortent.
+ * Le survol garde son rôle sur pointeur fin : il relance depuis le début.
+ * Tap : ouvre le player. Respecte prefers-reduced-motion.
+ * N'affiche rien si stories vide.
  */
 export function StoryBubbles({
   stories,
@@ -48,28 +56,28 @@ export function StoryBubbles({
 function Bubble({ story, price, onOpen }: { story: ProductStory; price: string | null; onOpen: () => void }) {
   const [hover, setHover] = useState(false);
   const videoRef = useRef<HTMLVideoElement>(null);
-  const reduce = typeof window !== "undefined" && window.matchMedia?.("(prefers-reduced-motion: reduce)").matches;
+  const rootRef = useRef<HTMLButtonElement>(null);
+  const { playing, blocked, reduceMotion, play } = useVideoAutoplay(videoRef, rootRef);
+  const reduce = reduceMotion;
 
   const enter = () => {
-    if (reduce) return;
     setHover(true);
+    if (reduce) return;
     const v = videoRef.current;
-    if (v) {
-      v.currentTime = 0;
-      v.play().catch(() => {});
-    }
+    if (v) v.currentTime = 0;
+    play();
   };
   const leave = () => {
     setHover(false);
+    // On ne coupe pas la lecture au départ du curseur : la bulle est peut-être
+    // encore à l'écran, et c'est la visibilité qui décide désormais.
     const v = videoRef.current;
-    if (v) {
-      v.pause();
-      v.currentTime = 0;
-    }
+    if (v && reduce) v.pause();
   };
 
   return (
     <button
+      ref={rootRef}
       type="button"
       onClick={onOpen}
       onMouseEnter={enter}
@@ -89,7 +97,7 @@ function Bubble({ story, price, onOpen }: { story: ProductStory; price: string |
         transition: "transform .25s ease, box-shadow .25s ease",
       }}
     >
-      <span style={{ display: "block", width: "100%", height: "100%", borderRadius: "50%", overflow: "hidden", background: "#222" }}>
+      <span style={{ position: "relative", display: "block", width: "100%", height: "100%", borderRadius: "50%", overflow: "hidden", background: "#222" }}>
         <video
           ref={videoRef}
           src={story.videoUrl}
@@ -97,9 +105,15 @@ function Bubble({ story, price, onOpen }: { story: ProductStory; price: string |
           muted
           loop
           playsInline
+          // Le hook ouvre `preload` quand la bulle devient visible : hors champ,
+          // une rangée de bulles ne télécharge rien.
           preload="none"
           style={{ width: "100%", height: "100%", objectFit: "cover" }}
         />
+        {/* Repli quand le navigateur refuse la lecture automatique : la bulle
+            EST déjà un bouton (tap = ouvrir le player), le pictogramme est donc
+            purement décoratif — un bouton dans un bouton n'est pas valide. */}
+        {!playing && (blocked || reduce) && <VideoPlayFallback decorative size={28} />}
       </span>
       {price && (
         <span

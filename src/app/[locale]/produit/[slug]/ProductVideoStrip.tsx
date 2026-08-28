@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { DEMO_STORIES } from "@/data/product-stories";
 import { DEMO as SHOPPABLE_VIDEOS } from "@/data/shoppable-videos";
 import { clipsFor as fileClipsFor } from "@/data/product-clips";
@@ -138,11 +138,40 @@ export default function ProductVideoStrip({
   productImage?: string;
 }) {
   const [openIndex, setOpenIndex] = useState(-1);
+  const playerRef = useRef<HTMLVideoElement>(null);
 
   const slots = assignClips(clipsForProduct(productSlug));
   const open = openIndex >= 0 ? slots[openIndex] : null;
 
   const close = useCallback(() => setOpenIndex(-1), []);
+
+  // La lecture part d'un tap, donc elle est autorisée — sauf navigateur qui
+  // bloque tout (Brave Android, économiseur de données). `autoPlay` seul ne
+  // laisse alors qu'un poster immobile : on retente explicitement, et en dernier
+  // recours en muet (les contrôles natifs permettent de remettre le son).
+  useEffect(() => {
+    if (!open) return;
+    const v = playerRef.current;
+    if (!v) return;
+    v.playsInline = true;
+    const tryPlay = () => {
+      v.play().catch(() => {
+        if (v.muted) return;
+        v.muted = true;
+        v.play().catch(() => {});
+      });
+    };
+    tryPlay();
+    const onReady = () => {
+      if (v.paused) tryPlay();
+    };
+    v.addEventListener("canplay", onReady);
+    v.addEventListener("loadeddata", onReady);
+    return () => {
+      v.removeEventListener("canplay", onReady);
+      v.removeEventListener("loadeddata", onReady);
+    };
+  }, [open]);
 
   // Échap + verrou du scroll pendant la lecture, comme `TrendLightbox`.
   useEffect(() => {
@@ -348,6 +377,7 @@ export default function ProductVideoStrip({
           </button>
 
           <video
+            ref={playerRef}
             key={open.videoUrl}
             src={open.videoUrl}
             poster={open.posterUrl}

@@ -1,7 +1,7 @@
 "use client";
 import { AnimatePresence, motion } from "framer-motion";
 import { useTranslations } from "next-intl";
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { useCallback, useEffect, useState } from "react";
 
 const EASE = [0.22, 1, 0.36, 1] as [number, number, number, number];
@@ -56,6 +56,67 @@ const SLIDES: Slide[] = [
 const AUTO_MS = 8000;
 const ZOOM_S = 12;
 
+/* Dimensions natives des visuels : le paysage du desktop et le portrait du
+   mobile n'ont ni le même ratio ni la même largeur, getImageProps a besoin
+   des deux pour générer les bons srcSet. */
+const DESKTOP_SIZE = { width: 2000, height: 848 };
+const MOBILE_SIZE = { width: 939, height: 1400 };
+const HERO_MOBILE_MEDIA = "(max-width: 760px)";
+
+/* Fond de bannière en art direction NATIVE (<picture> + <source media>).
+
+   Pourquoi pas deux <Image fill> superposées, l'une masquée par
+   `display:none` : c'était fragile sur trois plans, tous mesurés.
+   1) Les deux variantes étaient bel et bien téléchargées (le trafic réseau
+      montrait `slider-1.jpg&w=1200` ET `slider-1-mobile.jpg&w=1200` en 200
+      sur un viewport de 390px) — `display:none` n'annule pas une requête
+      déjà lancée par le sélecteur de srcSet. Double charge sur mobile.
+   2) La bascule dépendait d'une règle posée dans globals.css, donc d'un
+      chunk CSS qui peut arriver périmé : sans elle, c'est le visuel paysage
+      qui s'affiche, recadré et coupé.
+   3) Le choix se faisait au niveau du `display`, donc après application de
+      la feuille de style, alors que le navigateur avait déjà commencé à
+      décoder les deux images.
+
+   <picture>/<source media> résout le choix dans le préchargeur HTML, avant
+   toute exécution de CSS ou de JS : une seule variante est demandée, et le
+   rendu est correct même si aucun script ni aucune feuille de style
+   secondaire n'arrive jamais. getImageProps donne les srcSet optimisés par
+   /_next/image sans passer par le composant <Image>. */
+function HeroPicture({ slide, priority }: { slide: Slide; priority: boolean }) {
+  const common = { alt: "", sizes: "100vw", quality: 75 };
+
+  const {
+    props: { srcSet: desktopSrcSet, ...imgProps },
+  } = getImageProps({ ...common, ...DESKTOP_SIZE, src: slide.img, priority });
+
+  const mobileSrcSet = slide.imgMobile
+    ? getImageProps({ ...common, ...MOBILE_SIZE, src: slide.imgMobile, priority }).props.srcSet
+    : undefined;
+
+  return (
+    <picture>
+      {mobileSrcSet && <source media={HERO_MOBILE_MEDIA} srcSet={mobileSrcSet} sizes="100vw" />}
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
+        {...imgProps}
+        srcSet={desktopSrcSet}
+        alt=""
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          bottom: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          objectFit: "cover",
+        }}
+      />
+    </picture>
+  );
+}
+
 /* Overlay promo aligné à droite, police Cormorant — partagé par les bannières 1 & 2 */
 function PromoOverlay({
   line1,
@@ -67,6 +128,7 @@ function PromoOverlay({
   tagline,
   scrim,
   alignFocalToCondition,
+  skipEnter,
 }: {
   line1: string;
   line2: string;
@@ -77,11 +139,14 @@ function PromoOverlay({
   tagline?: string;
   scrim?: boolean;
   alignFocalToCondition?: boolean;
+  /* true tant que le composant n'est pas monté côté client : l'overlay est
+     alors rendu directement à son état final (voir AnimatedHero). */
+  skipEnter?: boolean;
 }) {
   return (
     <motion.div
       data-dp-promo
-      initial={{ opacity: 0, y: 16 }}
+      initial={skipEnter ? false : { opacity: 0, y: 16 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0, y: -12 }}
       transition={{ duration: 0.7, ease: EASE }}
@@ -248,7 +313,7 @@ function PromoOverlay({
       {/* CTA pilule — apparition dynamique + effet brillant incitatif */}
       <motion.a
         href={href}
-        initial={{ opacity: 0, y: 14, scale: 0.9 }}
+        initial={skipEnter ? false : { opacity: 0, y: 14, scale: 0.9 }}
         animate={{
           opacity: 1,
           y: 0,
@@ -345,8 +410,35 @@ function PromoOverlay({
             align-items: center !important;
             justify-content: center !important;
             text-align: center !important;
-            padding: 16px 18px !important;
+            /* Contraste. Sur la variante portrait, le bloc texte ne se pose
+               plus sur un fond dégagé comme en paysage : il retombe pile sur
+               les flacons éclairés, et la tagline en Cormorant fin passait sur
+               des zones dorées presque blanches. Le voile local (et non un
+               voile plein cadre, qui éteindrait le visuel) redonne le contraste
+               là où il manque et s'éteint avant les bords. !important :
+               background et text-shadow sont posés en style inline sur
+               l'élément, seul un !important les écrase. Ce voile remplace aussi
+               celui de la bannière 2 (prop scrim), calé pour le paysage. */
+            /* Marges internes généreuses : c'est DANS ce padding que le voile
+               s'éteint, sinon il se coupe net au ras du texte. */
+            padding: 30px 26px !important;
+            /* closest-side, et pas une taille en % : les pourcentages d'un
+               radial-gradient sont des RAYONS relatifs à la boîte, donc
+               100% 100% déborde largement et le dégradé se retrouve tranché
+               au carré sur les bords (bordure rectangulaire visible, mesurée
+               en capture). closest-side cale l'alpha 0 exactement sur chaque
+               bord : aucune arête. */
+            background: radial-gradient(
+              closest-side at 50% 48%,
+              rgba(18, 13, 9, 0.74),
+              rgba(18, 13, 9, 0.5) 52%,
+              rgba(18, 13, 9, 0) 100%
+            ) !important;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.72), 0 1px 26px rgba(0, 0, 0, 0.55) !important;
           }
+          /* La pilule est blanche : l'ombre héritée du conteneur salissait son
+             libellé sombre. */
+          [data-dp-promo] a { text-shadow: none !important; }
           .dp-promo-title, .dp-promo-focal-justify {
             text-align: center !important;
             text-align-last: auto !important;
@@ -358,7 +450,11 @@ function PromoOverlay({
           [data-dp-promo] {
             --dp-promo-focal-size: clamp(1.8rem, 12vw, 3rem);
             max-width: min(94vw, 380px) !important;
-            padding: 14px 14px !important;
+            /* Le padding reste généreux : c'est la zone où le voile de
+               contraste s'éteint (voir le bloc 760px). Le réduire à 14px
+               le tranchait net au ras du texte — et ce palier couvre la
+               quasi-totalité des téléphones (390px inclus). */
+            padding: 26px 20px !important;
           }
         }
       `}</style>
@@ -373,6 +469,29 @@ export function AnimatedHero() {
   const tSample = useTranslations("sampleBanner");
 
   const go = useCallback((n: number) => setI(((n % SLIDES.length) + SLIDES.length) % SLIDES.length), []);
+
+  /* CAUSE DU HERO NOIR SUR MOBILE (mesurée) — framer-motion sérialise le prop
+     `initial` en style inline dès le rendu serveur : le HTML livré contenait
+     `opacity:0` sur le calque d'image de fond ET sur le bloc promo. Ces deux
+     éléments ne redeviennent visibles qu'une fois l'animation de montage
+     jouée côté client. Tant que ce script ne s'exécute pas — hydratation qui
+     échoue, chunk manquant, bloqueur —, ils restent à `opacity:0` et l'on ne
+     voit plus que le fond `--espresso-900` de la section. Reproduit à
+     l'identique en headless avec l'exécution des scripts coupée : bannière
+     entièrement noire, seules restaient visibles les particules (motion.div
+     SANS `initial`, donc jamais sérialisées à 0), le compteur « 01 / 03 » et
+     la rangée de vignettes — des div ordinaires. C'est exactement la capture
+     décrite depuis le téléphone.
+
+     Correctif : la première passe (serveur + première passe client, donc
+     identiques : pas de mismatch d'hydratation) rend `initial={false}`, ce
+     qui fait écrire à framer-motion les valeurs de `animate` — le hero est
+     donc visible sans la moindre ligne de JavaScript. L'animation d'entrée
+     n'est réactivée qu'après montage, pour les slides SUIVANTES : `initial`
+     n'est lu qu'au montage d'un élément, les éléments déjà présents ne
+     rejouent donc rien et il n'y a aucun clignotement. */
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   useEffect(() => {
     const t = setTimeout(() => go(i + 1), AUTO_MS);
@@ -393,39 +512,15 @@ export function AnimatedHero() {
       <AnimatePresence>
         <motion.div
           key={i}
-          initial={{ opacity: 0 }}
+          initial={mounted ? { opacity: 0 } : false}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           transition={{ opacity: { duration: 1.4, ease: EASE } }}
           style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
         >
-          <motion.div
-            initial={{ scale: 1.0 }}
-            animate={{ scale: 1.0 }}
-            transition={{ duration: 0, ease: "linear" }}
-            style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}
-          >
-            <Image
-              className="dp-hero-img-desktop"
-              src={slide.img}
-              alt={slide.title}
-              fill
-              priority={i === 0}
-              sizes="100vw"
-              style={{ objectFit: "cover", opacity: 1 }}
-            />
-            {slide.imgMobile && (
-              <Image
-                className="dp-hero-img-mobile"
-                src={slide.imgMobile}
-                alt={slide.title}
-                fill
-                priority={i === 0}
-                sizes="100vw"
-                style={{ objectFit: "cover", opacity: 1 }}
-              />
-            )}
-          </motion.div>
+          <div style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0 }}>
+            <HeroPicture slide={slide} priority={i === 0} />
+          </div>
         </motion.div>
       </AnimatePresence>
 
@@ -634,6 +729,7 @@ export function AnimatedHero() {
             cta={tSample("cta")}
             tagline={tSample("tagline")}
             href="#coffrets-lots"
+            skipEnter={!mounted}
           />
         )}
         {i === 1 && (
@@ -646,6 +742,7 @@ export function AnimatedHero() {
             cta={tReef("cta")}
             href="#reef-rail"
             scrim
+            skipEnter={!mounted}
           />
         )}
         {i === 2 && (
@@ -659,6 +756,7 @@ export function AnimatedHero() {
             tagline="Découvrez les fragrances que tout le monde s'arrache"
             href="#bestsellers-rail"
             alignFocalToCondition
+            skipEnter={!mounted}
           />
         )}
       </AnimatePresence>

@@ -73,12 +73,36 @@ export function StoryPlayer({
     else go(index + 1);
   }, [index, stories.length, go, onClose]);
 
-  // Recharge + lecture à chaque changement de story
+  // Recharge + lecture à chaque changement de story.
+  // Le player s'ouvre sur un tap, donc la lecture est normalement autorisée —
+  // mais si le navigateur refuse quand même (Brave, économiseur de données), un
+  // `.catch()` vide laissait la story figée sur sa première image. On retente
+  // alors en muet, seul mode qu'aucun navigateur ne bloque, et on retente une
+  // fois les données prêtes si le premier appel est arrivé trop tôt.
   useEffect(() => {
     const v = videoRef.current;
     if (!v) return;
     v.currentTime = 0;
-    v.play().catch(() => {});
+    v.playsInline = true;
+    const tryPlay = () => {
+      const p = v.play();
+      p?.catch(() => {
+        if (v.muted) return;
+        v.muted = true;
+        setMuted(true);
+        v.play().catch(() => {});
+      });
+    };
+    tryPlay();
+    const onReady = () => {
+      if (v.paused) tryPlay();
+    };
+    v.addEventListener("canplay", onReady);
+    v.addEventListener("loadeddata", onReady);
+    return () => {
+      v.removeEventListener("canplay", onReady);
+      v.removeEventListener("loadeddata", onReady);
+    };
   }, [index]);
 
   // Focus trap simple + ESC + restauration focus

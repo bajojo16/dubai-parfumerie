@@ -68,6 +68,20 @@ const C = {
 /** Nombre de propositions d'autocomplétion — au-delà, la liste ne se lit plus. */
 const MAX_SUGGESTIONS = 8;
 
+/**
+ * Pastilles montrées d'emblée EN MOBILE (< 760 px). Les huit suggestions
+ * tiennent sur quatre rangées de la grille à deux colonnes ; on n'en peint que
+ * cinq plus le bouton « Voir plus », qui occupe la sixième case — trois rangées
+ * au lieu de quatre, et la carte de résultat remonte d'autant.
+ *
+ * Le filtrage est PUREMENT VISUEL (règle CSS dans la media query) : les huit
+ * pastilles restent dans le DOM, donc l'invariant du module tient toujours —
+ * chaque pastille affichée, avant comme après « Voir plus », vient de
+ * `resolveSuggestions` et renvoie un jumeau certifié. Il n'y a rien à trier
+ * côté JavaScript, et donc aucun risque d'écart entre les deux listes.
+ */
+const MOBILE_PILL_COUNT = 5;
+
 /** Validation de format côté client — même expression que la newsletter. */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -181,6 +195,8 @@ export function OlfactiveTwin({
   const [loading, setLoading] = useState(false);
   const [addedKey, setAddedKey] = useState("");
   const [qty, setQty] = useState(1);
+  /** « Voir plus » : révèle en mobile les pastilles au-delà de la cinquième. */
+  const [pillsExpanded, setPillsExpanded] = useState(false);
 
   /**
    * Pastilles = suggestions par défaut. La liste vient de la base (voir
@@ -217,6 +233,27 @@ export function OlfactiveTwin({
 
   const inputRef = useRef<HTMLInputElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
+  const resultRef = useRef<HTMLDivElement>(null);
+
+  /**
+   * Compteur de sélections. On ne peut pas faire défiler dans le gestionnaire
+   * de clic : le résultat n'est peint qu'au rendu suivant, et la carte n'a donc
+   * pas encore sa hauteur définitive. Ce compteur sert de dépendance à l'effet
+   * ci-dessous, qui s'exécute une fois le nouveau résultat à l'écran. Zéro =
+   * premier rendu, on ne défile pas (le module s'amorce sur Dior · Sauvage,
+   * personne n'a rien demandé).
+   */
+  const [selectionTick, setSelectionTick] = useState(0);
+
+  useEffect(() => {
+    if (selectionTick === 0) return;
+    const el = resultRef.current;
+    if (!el) return;
+    // `nearest` : on ne bouge que si la carte n'est pas déjà à l'écran — en
+    // vue large (colonne de droite) l'appel ne fait donc rien.
+    const reduce = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+    el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
+  }, [selectionTick]);
 
   // ── Chargement différé, au premier usage du champ ──────────────────────────
   // Déclenché par le focus autant que par la frappe : le temps de lire le
@@ -282,6 +319,7 @@ export function OlfactiveTwin({
       setQuery(ref.name);
       setOpen(false);
       setQty(1);
+      setSelectionTick((n) => n + 1);
       inputRef.current?.blur();
     },
     [mod]
@@ -313,6 +351,7 @@ export function OlfactiveTwin({
       setAlertError("");
       setQty(1);
       setOpen(false);
+      setSelectionTick((n) => n + 1);
     },
     [ensureModule]
   );
@@ -516,7 +555,11 @@ export function OlfactiveTwin({
   // Pastilles = suggestions par défaut, dérivées de la base : chacune a un
   // jumeau certifié, aucune ne mène à l'écran « pas encore de jumeau ».
   const pillsEl = (
-    <div className="otw-pills" role="group" aria-label={t("suggestions")}>
+    <div
+      className={pillsExpanded ? "otw-pills otw-pills-all" : "otw-pills"}
+      role="group"
+      aria-label={t("suggestions")}
+    >
       {pills.map((p) => {
         const active = view?.referenceId === p.referenceId;
         return (
@@ -531,6 +574,19 @@ export function OlfactiveTwin({
           </button>
         );
       })}
+      {/* « Voir plus » : dernière case de la grille mobile, masqué en vue large
+          par la feuille de styles (les huit pastilles y tiennent sur deux
+          rangées). Rendu seulement s'il reste vraiment quelque chose à
+          révéler — si la base ne certifiait plus que cinq suggestions, un
+          bouton qui n'ouvre rien serait un mensonge. */}
+      {/* Pas d'aria-expanded : le bouton disparaît une fois déplié, l'attribut
+          ne pourrait jamais passer à true. Ce sont les pastilles révélées, dans
+          le même groupe, qui disent que quelque chose s'est ouvert. */}
+      {!pillsExpanded && pills.length > MOBILE_PILL_COUNT && (
+        <button type="button" className="otw-more" onClick={() => setPillsExpanded(true)}>
+          {t("show_more")}
+        </button>
+      )}
     </div>
   );
 
@@ -596,7 +652,7 @@ export function OlfactiveTwin({
   );
 
   const resultEl = (
-    <div aria-live="polite" className="otw-result">
+    <div ref={resultRef} aria-live="polite" className="otw-result">
       {missing ? (
         missingEl
       ) : (
@@ -773,6 +829,12 @@ export function OlfactiveTwin({
     .otw-pill:hover { border-color: ${C.gold}; background: ${C.optionHover}; }
     .otw-pill-on { border-color: ${C.pillSelBg}; background: ${C.pillSelBg}; color: ${C.pillSelText}; }
     .otw-pill-on:hover { background: ${C.pillSelBg}; border-color: ${C.pillSelBg}; }
+    /* « Voir plus » n'existe qu'en mobile : au-dessus de 760 px les huit
+       pastilles tiennent sur deux rangees, il n'y a rien a replier. display
+       none et non visibility : le bouton doit aussi sortir de l'arbre
+       d'accessibilite, sinon un lecteur d'ecran de bureau annonce une commande
+       qui ne mene nulle part. */
+    .otw-more { display: none; }
 
     .otw-card { max-width: 100%; display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(58,44,20,.05); }
     /* Rangee principale : original | fleche | jumeau. Les deux colonnes de
@@ -867,6 +929,30 @@ export function OlfactiveTwin({
 
     @media (max-width: 760px) {
       .otwin-grid { grid-template-columns: 1fr; }
+      /* ── LES PASTILLES S'EMPILAIENT UNE PAR LIGNE ────────────────────────
+         Les libelles font de 13 a 44 caracteres (« Maison Francis Kurkdjian ·
+         Baccarat Rouge 540 » prend toute la largeur a 390 px). En flex-wrap,
+         le bloc ne plaçait qu'une pastille par rangee, de largeurs tres
+         inegales : 277 px de haut a lui seul, et la carte de resultat — le
+         coeur du module — repoussee hors de l'ecran.
+         Grille a DEUX COLONNES EGALES : typo resserree, rembourrage reduit,
+         et le libelle passe a la ligne DANS la pastille (white-space normal)
+         plutot que d'etre tronque — on ne coupe jamais le nom d'un parfum.
+         min-height 40px garde une cible tactile confortable ; align-items
+         stretch (defaut de la grille) egalise les deux cases d'une rangee. */
+      .otw-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
+      .otw-pill, .otw-more { min-height: 40px; display: flex; align-items: center; justify-content: center;
+        text-align: center; padding: 6px 8px; line-height: 1.25; }
+      .otw-pill { font-size: 11.5px; white-space: normal; overflow: visible; text-overflow: clip;
+        overflow-wrap: break-word; }
+      /* Cinq pastilles + « Voir plus » = trois rangees pleines. Les trois
+         autres restent dans le DOM, simplement masquees : elles reviennent
+         d'un seul clic, sans que la liste certifiee ait ete touchee. */
+      .otw-pills:not(.otw-pills-all) > .otw-pill:nth-child(n+${MOBILE_PILL_COUNT + 1}) { display: none; }
+      .otw-more { font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: .5px;
+        cursor: pointer; border-radius: 999px; border: 1px dashed ${C.tagBorder}; background: transparent;
+        color: ${C.goldDark}; }
+      .otw-more:hover { border-color: ${C.gold}; background: ${C.tagBg}; }
       .otw-none { padding: 16px 14px; }
       .otw-none-title { font-size: 19px; }
       .otw-none-form { max-width: none; }

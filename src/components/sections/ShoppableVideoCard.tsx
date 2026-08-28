@@ -5,6 +5,8 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { addItem } from "@/lib/cart";
 import { QtyStepper } from "@/components/ui/QtyStepper";
+import { VideoPlayFallback } from "@/components/ui/VideoPlayFallback";
+import { useVideoAutoplay } from "@/hooks/useVideoAutoplay";
 import type { ShoppableVideo } from "@/data/shoppable-videos";
 
 export type ShoppableCardLabels = {
@@ -38,12 +40,17 @@ export function ShoppableVideoCard({
 
   const videoRef = useRef<HTMLVideoElement>(null);
   const cardRef = useRef<HTMLElement>(null);
-  const [visible, setVisible] = useState(false);
-  const [reduceMotion, setReduceMotion] = useState(false);
   const [hover, setHover] = useState(false);
   const [added, setAdded] = useState(false);
   const [qty, setQty] = useState(1);
   const addedTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Lecture pilotée par la visibilité — pas par le survol : un téléphone n'a
+  // pas de survol, et c'est ce qui laissait les cartes figées sur leur poster.
+  // Seule la carte réellement à l'écran charge et joue (les autres du carrousel
+  // ne consomment rien).
+  const { playing, blocked, reduceMotion, play } = useVideoAutoplay(videoRef, cardRef);
+  const showPlayButton = !playing && (blocked || reduceMotion);
 
   const fmtPrice = useCallback(
     (n: number) => {
@@ -59,52 +66,6 @@ export function ShoppableVideoCard({
     },
     [locale]
   );
-
-  // prefers-reduced-motion
-  useEffect(() => {
-    if (typeof window === "undefined" || !window.matchMedia) return;
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    const apply = () => setReduceMotion(mq.matches);
-    apply();
-    mq.addEventListener?.("change", apply);
-    return () => mq.removeEventListener?.("change", apply);
-  }, []);
-
-  // IntersectionObserver — ne lit la vidéo que lorsqu'elle est visible
-  useEffect(() => {
-    const el = cardRef.current;
-    if (!el || typeof IntersectionObserver === "undefined") return;
-    const io = new IntersectionObserver(
-      ([entry]) => setVisible(entry.isIntersecting && entry.intersectionRatio > 0.5),
-      { threshold: [0, 0.5, 1] }
-    );
-    io.observe(el);
-    return () => io.disconnect();
-  }, []);
-
-  // Play / pause selon visibilité (sauf prefers-reduced-motion → poster fixe)
-  useEffect(() => {
-    const v = videoRef.current;
-    if (!v) return;
-    if (reduceMotion) {
-      v.pause();
-      return;
-    }
-    if (!visible) {
-      v.pause();
-      return;
-    }
-    // Autoplay mobile (iOS/Android) exige `muted` réellement appliqué côté
-    // propriété JS, pas seulement l'attribut HTML — on le force par sécurité.
-    v.muted = true;
-    const tryPlay = () => v.play().catch(() => {});
-    tryPlay();
-    // Sur mobile, si les données ne sont pas encore bufferisées au moment du
-    // 1er appel, play() échoue silencieusement (promesse rejetée) et la vidéo
-    // reste bloquée sur le poster. On retente dès que le navigateur est prêt.
-    v.addEventListener("canplay", tryPlay, { once: true });
-    return () => v.removeEventListener("canplay", tryPlay);
-  }, [visible, reduceMotion]);
 
   useEffect(() => {
     return () => {
@@ -150,13 +111,13 @@ export function ShoppableVideoCard({
         flexDirection: "column",
       }}
     >
-      {/* Vidéo verticale 9:16 */}
-      <Link
-        href={product.href}
-        aria-label={`${L.viewProduct} — ${product.name}`}
+      {/* Vidéo verticale 9:16.
+          Le cadre porte le ratio (et non plus le lien) : le bouton de lecture
+          de repli est un <button>, il ne peut pas vivre DANS un <a>. Le lien
+          reste en surface, le bouton passe au-dessus de lui. */}
+      <div
         style={{
           position: "relative",
-          display: "block",
           // Ratio pilotable par variable : en mobile la carte 9/16 mangeait
           // presque tout l'écran, on la ramène à un portrait court (voir la
           // media query du carrousel). Desktop inchangé via le fallback.
@@ -166,48 +127,75 @@ export function ShoppableVideoCard({
           minHeight: 0,
           overflow: "hidden",
           background: "#000",
-          textDecoration: "none",
         }}
       >
-        <video
-          ref={videoRef}
-          src={video.videoUrl}
-          poster={video.posterUrl}
-          muted
-          loop
-          playsInline
-          preload="auto"
-          aria-label={`${L.playVideo} — ${product.name}`}
+        <Link
+          href={product.href}
+          aria-label={`${L.viewProduct} — ${product.name}`}
+          // Le survol garde son rôle sur pointeur fin (desktop) : il relance la
+          // vidéo si elle avait été mise en pause. Il n'est plus le SEUL
+          // déclencheur — la visibilité l'est.
+          onMouseEnter={() => play()}
           style={{
-            width: "100%",
-            height: "100%",
-            objectFit: "cover",
-            borderTopLeftRadius: 18,
-            borderTopRightRadius: 18,
+            position: "absolute",
+            inset: 0,
             display: "block",
+            overflow: "hidden",
+            textDecoration: "none",
           }}
-        />
-        {!available && (
-          <span
+        >
+          <video
+            ref={videoRef}
+            src={video.videoUrl}
+            poster={video.posterUrl}
+            muted
+            loop
+            playsInline
+            // Rien n'est téléchargé tant que la carte n'est pas à l'écran : le
+            // hook passe `preload` à "auto" au moment de la lecture. Sur un
+            // carrousel de cinq cartes, ça évite cinq téléchargements pour une
+            // seule vidéo regardée.
+            preload="none"
+            aria-label={`${L.playVideo} — ${product.name}`}
             style={{
-              position: "absolute",
-              top: 12,
-              insetInlineStart: 12,
-              fontFamily: "var(--font-sans)",
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: ".06em",
-              textTransform: "uppercase",
-              color: "#2C2620",
-              background: "rgba(255,255,255,.92)",
-              borderRadius: 999,
-              padding: "4px 10px",
+              width: "100%",
+              height: "100%",
+              objectFit: "cover",
+              borderTopLeftRadius: 18,
+              borderTopRightRadius: 18,
+              display: "block",
             }}
-          >
-            {L.soldOut}
-          </span>
+          />
+          {!available && (
+            <span
+              style={{
+                position: "absolute",
+                top: 12,
+                insetInlineStart: 12,
+                fontFamily: "var(--font-sans)",
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: ".06em",
+                textTransform: "uppercase",
+                color: "#2C2620",
+                background: "rgba(255,255,255,.92)",
+                borderRadius: 999,
+                padding: "4px 10px",
+              }}
+            >
+              {L.soldOut}
+            </span>
+          )}
+        </Link>
+
+        {showPlayButton && (
+          <VideoPlayFallback
+            label={`${L.playVideo} — ${product.name}`}
+            onPlay={play}
+            size={52}
+          />
         )}
-      </Link>
+      </div>
 
       {/* Vignette produit chevauchante */}
       <div style={{ position: "relative", height: 0 }}>

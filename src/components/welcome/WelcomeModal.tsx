@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 
 // ─── WelcomeModal ─────────────────────────────────────────────────────────────
@@ -42,6 +42,50 @@ export interface WelcomeModalProps {
   alreadyMemberLabel?: string;
   loginLabel?: string;
   declineLabel?: string;
+  /** Libellé accessible du bouton de fermeture (aria-label). */
+  closeLabel?: string;
+}
+
+// ─── Stockage sûr ─────────────────────────────────────────────────────────────
+// `localStorage` peut LEVER, pas seulement renvoyer null : navigation privée
+// Android, "bloquer les données de site", quota atteint, certaines WebViews.
+// L'ancien `close()` écrivait dans localStorage AVANT `setShown(false)` : quand
+// setItem levait, l'état ne changeait jamais et la modale devenait impossible à
+// fermer — son voile `position: fixed; inset: 0` gelait alors toute la page
+// (header, hero, roue, livraison). Ces helpers n'échouent jamais.
+let memoryStore: Record<string, string> = {};
+
+function safeGetItem(key: string): string | null {
+  try {
+    const v = window.localStorage.getItem(key);
+    if (v !== null) return v;
+  } catch {
+    /* stockage indisponible : on retombe plus bas */
+  }
+  try {
+    const v = window.sessionStorage.getItem(key);
+    if (v !== null) return v;
+  } catch {
+    /* idem */
+  }
+  return Object.prototype.hasOwnProperty.call(memoryStore, key) ? memoryStore[key] : null;
+}
+
+function safeSetItem(key: string, value: string): void {
+  // Mémoire d'abord : garantit qu'on ne réaffiche pas la modale dans la session
+  // même si les deux stockages du navigateur refusent l'écriture.
+  memoryStore[key] = value;
+  try {
+    window.localStorage.setItem(key, value);
+    return;
+  } catch {
+    /* on tente le sessionStorage */
+  }
+  try {
+    window.sessionStorage.setItem(key, value);
+  } catch {
+    /* la mémoire suffit pour la session courante */
+  }
 }
 
 const DEFAULT_LANGUAGES = [
@@ -83,6 +127,7 @@ export function WelcomeModal({
   alreadyMemberLabel = "Déjà membre ?",
   loginLabel = "Se connecter",
   declineLabel = "Non merci",
+  closeLabel = "Fermer",
 }: WelcomeModalProps) {
   const [shown, setShown] = useState(forceOpen);
   const [email, setEmail] = useState("");
@@ -92,26 +137,44 @@ export function WelcomeModal({
 
   useEffect(() => {
     if (forceOpen) return; // preview : déjà affiché, on ignore le localStorage
-    const seen = localStorage.getItem(storageKey);
+    const seen = safeGetItem(storageKey);
     if (!seen) {
       const t = setTimeout(() => setShown(true), delayMs);
       return () => clearTimeout(t);
     }
   }, [forceOpen, storageKey, delayMs]);
 
-  const close = () => {
-    if (!forceOpen) localStorage.setItem(storageKey, "1");
+  // L'état est mis à jour EN PREMIER : aucune erreur de stockage ne peut
+  // empêcher la fermeture (c'était la cause du blocage total de la page).
+  const close = useCallback(() => {
     setShown(false);
-  };
+    if (!forceOpen) safeSetItem(storageKey, "1");
+  }, [forceOpen, storageKey]);
 
+  // Échap ferme la modale ; l'écouteur n'existe que tant qu'elle est ouverte.
+  useEffect(() => {
+    if (!shown) return;
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") close();
+    };
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [shown, close]);
+
+  // Démontage complet quand elle est fermée : plus aucun nœud de la modale ne
+  // peut intercepter un tap. (Pas d'animation de sortie ici, donc pas de nœud
+  // résiduel ; le `pointerEvents` du voile ci-dessous est une seconde barrière.)
   if (!shown) return null;
 
   return (
     <div
       suppressHydrationWarning
+      role="dialog"
+      aria-modal="true"
       onClick={close}
       style={{
         position: "fixed", inset: 0, zIndex: 400,
+        pointerEvents: shown ? "auto" : "none",
         background: "rgba(15,10,6,0.72)", backdropFilter: "blur(5px)",
         display: "flex", alignItems: "center", justifyContent: "center",
         padding: "20px",
@@ -161,10 +224,12 @@ export function WelcomeModal({
         {/* Right panel — form */}
         <div style={{ background: "var(--surface-white)", padding: "44px 36px 40px", position: "relative" }}>
           {/* Close */}
-          <button onClick={close} style={{
-            position: "absolute", top: 16, right: 16,
+          <button onClick={close} type="button" aria-label={closeLabel} style={{
+            position: "absolute", top: 8, insetInlineEnd: 8,
+            width: 44, height: 44,
+            display: "flex", alignItems: "center", justifyContent: "center",
             background: "none", border: "none", cursor: "pointer",
-            color: "var(--ink-400)", fontSize: "1.1rem", lineHeight: 1, padding: 4,
+            color: "var(--ink-400)", fontSize: "1.35rem", lineHeight: 1, padding: 0,
           }}>×</button>
 
           <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.6rem", letterSpacing: "0.2em", textTransform: "uppercase", color: "var(--gold-500)", marginBottom: 14 }}>{eyebrow}</div>
@@ -205,7 +270,7 @@ export function WelcomeModal({
               value={whatsapp}
               onChange={e => setWhatsapp(e.target.value)}
               style={{
-                width: "100%", padding: "13px 14px 13px 40px",
+                width: "100%", padding: "13px 14px", paddingInlineStart: 40,
                 border: "1px solid #ddd", borderRadius: "var(--r-sm)",
                 fontFamily: "var(--font-sans)", fontSize: "0.88rem",
                 color: "var(--ink-900)", background: "#fff", outline: "none",

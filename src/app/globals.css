@@ -1052,14 +1052,19 @@ img, svg, video { max-width: 100%; }
    Les visuels paysage du slider, recadrés en `cover` sur un écran étroit,
    perdaient les flacons sur les côtés. Trois bannières composées pour le
    portrait prennent le relais sous 760px ; le desktop est inchangé.
-   Les deux <Image> sont rendues, une seule est affichée : `display:none`
-   suffit à empêcher le chargement des variantes non affichées par
-   next/image (l'attribut `loading` reste géré par le navigateur). */
-.dp-hero-img-mobile { display: none !important; }
-@media (max-width: 760px) {
-  .dp-hero-img-desktop { display: none !important; }
-  .dp-hero-img-mobile { display: block !important; }
-}
+
+   Cette bascule N'EST PLUS FAITE EN CSS. Les règles `.dp-hero-img-desktop`
+   / `.dp-hero-img-mobile` qui vivaient ici ont été retirées : masquer une
+   variante avec `display:none` n'empêchait pas son téléchargement (les deux
+   `/_next/image` répondaient 200 sur un viewport de 390px), et surtout la
+   bannière dépendait alors de l'arrivée de CE fichier — un chunk CSS périmé
+   suffisait à afficher le visuel paysage coupé.
+
+   L'art direction est désormais native, dans AnimatedHero.tsx :
+   <picture> + <source media="(max-width: 760px)">. Le navigateur choisit la
+   variante dans son préchargeur HTML, avant tout CSS et tout JS, et n'en
+   télécharge qu'une. Le même seuil de 760px y est déclaré (HERO_MOBILE_MEDIA)
+   pour rester aligné sur les media queries de mise en page du composant. */
 
 /* ── Header mobile : cibles tactiles ≥44px + loupe ──────────────────────
    Constaté sur un vrai téléphone (~390px) : le burger ne mesurait que
@@ -1125,4 +1130,27 @@ img, svg, video { max-width: 100%; }
 /* Très petits écrans : le logo se réduit encore, les cibles ne bougent pas. */
 @media (max-width: 380px) {
   .dp-header-logo img { width: 104px !important; }
+}
+
+/* ── Header mobile : icônes redessinées plus petites ───────────────────
+   Les cibles restent à 44×44px (recommandation tactile), mais le dessin
+   des icônes à 26px les faisait paraître lourdes dans une barre déjà
+   dense. On réduit le glyphe, pas la zone touchable : le rembourrage
+   absorbe la différence. */
+@media (max-width: 760px) {
+  .dp-icon-btn svg { width: 20px !important; height: 20px !important; }
+  .dp-icon-btn { padding: 12px !important; }
+  .dp-burger-bar { width: 20px !important; height: 2px !important; }
+  .dp-burger { gap: 4px !important; }
+}
+
+/* ── Bannière Yara : plus basse sur mobile ─────────────────────────────
+   Le visuel occupait un tiers de l'écran pour une accroche de deux
+   lignes. On resserre la hauteur minimale et le texte avec. */
+@media (max-width: 760px) {
+  .dp-yara-inner {
+    min-height: clamp(120px, 30vw, 160px) !important;
+    padding-block: 14px !important;
+  }
+  .dp-yara-text { font-size: 0.92rem !important; line-height: 1.25 !important; }
 }
