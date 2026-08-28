@@ -22,6 +22,14 @@ const features = [
   },
 ] as const;
 
+/**
+ * Maisons dotées d'une page à elles. Table plutôt que test sur le nom : la
+ * liste grandira, et l'entrée manquante retombe seule sur le catalogue filtré.
+ */
+const BRAND_PAGES: Record<string, string> = {
+  Reef: "/marques/reef",
+};
+
 export default function MarquesPage() {
   return (
     <div
@@ -255,9 +263,14 @@ export default function MarquesPage() {
                   {brand.description}
                 </p>
 
-                {/* CTA link */}
+                {/* CTA link — les maisons qui ont leur page dédiée y mènent ;
+                    les autres retombent sur le catalogue filtré, en attendant
+                    d'avoir la leur. Reef est la première. */}
                 <Link
-                  href={`/catalogue?marque=${encodeURIComponent(brand.name)}`}
+                  href={
+                    BRAND_PAGES[brand.name] ??
+                    `/catalogue?marque=${encodeURIComponent(brand.name)}`
+                  }
                   style={{
                     fontFamily: "var(--font-sans)",
                     fontSize: "var(--t-sm)",
