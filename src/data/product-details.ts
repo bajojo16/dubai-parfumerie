@@ -224,17 +224,94 @@ export const PRODUCTS: Record<string, Product> = {
     heartNotes: ["Praline", "Fève tonka", "Vanille", "Fleur d'oranger"],
     baseNotes: ["Benjoin", "Bois de santal", "Ambre gris", "Myrrhe", "Encens"],
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
-    image: "/assets/products/khamrah/khamrah-packshot.webp",
-    // Six vues volontairement distinctes : flacon seul, coffret, mise en scène
-    // épicée, ambiance orientale, puis deux gros plans matière (dattes, encens)
-    // qui montrent la pyramide plutôt que de la décrire.
+    // Nouveau packshot de référence : trois quarts sur fond clair, cadré serré,
+    // carré. L'ancien (`khamrah-packshot.webp`) était un portrait où le flacon
+    // n'occupait que la moitié de la hauteur — illisible partout où ce champ est
+    // réduit (vignette panier 68 px, jumeau olfactif 116 px en `contain`).
+    image: "/assets/products/khamrah/khamrah-hf-05.jpg",
+    // Neuf vues volontairement distinctes, du produit vers son univers :
+    // six prises de vue studio du flacon (trois quarts, face, contre-plongée,
+    // plongée, puis deux macros matière — l'étiquette gravée et le cristal où
+    // le jus fait ses bulles), le coffret, et enfin les deux mises en scène qui
+    // montrent la pyramide (lit de dattes, encens) plutôt que de la décrire.
+    // `gallery[0]` reprend `image` — c'est la vue ouverte par défaut.
     gallery: [
-      "/assets/products/khamrah/khamrah-packshot.webp",
+      "/assets/products/khamrah/khamrah-hf-05.jpg",
+      "/assets/products/khamrah/khamrah-hf-02.jpg",
+      "/assets/products/khamrah/khamrah-hf-09.jpg",
+      "/assets/products/khamrah/khamrah-hf-06.jpg",
+      "/assets/products/khamrah/khamrah-hf-03.jpg",
+      "/assets/products/khamrah/khamrah-hf-04.jpg",
       "/assets/products/khamrah/khamrah-coffret.webp",
-      "/assets/products/khamrah/khamrah-dattes-epices.webp",
-      "/assets/products/khamrah/khamrah-plateau-laiton.webp",
       "/assets/products/khamrah/khamrah-lit-dattes.webp",
       "/assets/products/khamrah/khamrah-encens.webp",
+    ],
+  },
+  "arabiyat-prestige-blueberry-musk": {
+    name: "Blueberry Musk",
+    brand: "Arabiyat Prestige",
+    // Prix promotionnel demandé pour cette référence (20,00 € au lieu de 25,00 €).
+    price: 20.0,
+    oldPrice: 25.0,
+    // Note et nombre d'avis de démonstration, comme les autres fiches rédigées
+    // de ce fichier : le repo n'a pas de base d'avis: valeurs stables, pas tirées
+    // au hasard, pour que le JSON-LD ne change pas d'un rendu à l'autre.
+    rating: 4.7,
+    reviews: 214,
+    // Pas de « EDP 30% » ici : les six premières fiches l'affichent, mais aucune
+    // source ne donne le taux de concentration de cette référence — on s'en tient
+    // au libellé que `product-resolve.ts` utilise déjà par défaut.
+    concentration: "Eau de parfum",
+    volume: "100ml",
+    origin: "Fabriqué à Dubaï",
+    description:
+      "Blueberry Musk s'ouvre sur une myrtille pleine et froide, cueillie plutôt que confite : la baie garde son acidité, tenue par un trait de fruits rouges qui l'empêche de tourner au sirop. Le cœur la laisse fondre — le musc blanc arrive, laiteux, presque poudré, et pose sur le fruit ce voile de peau propre qui fait toute la signature du parfum. Le fond ne cherche pas la démonstration : une vanille discrète et des bois blancs prolongent l'accord, tiède et enveloppant, longtemps après que la myrtille s'est effacée. Un gourmand fruité qui reste net, porté par un flacon bleu translucide veiné d'arabesques dorées.",
+    viralNote:
+      "Très partagé sur les réseaux sociaux, où son accord myrtille-musc — rare dans la parfumerie du Golfe — lui vaut d'être cherché nommément plutôt que rapproché d'un grand classique.",
+    topNotes: ["Myrtille", "Fruits rouges", "Cassis"],
+    heartNotes: ["Musc blanc", "Fleurs blanches", "Framboise"],
+    baseNotes: ["Vanille", "Bois blancs", "Musc"],
+    // Badges calés sur la convention de `product-resolve.ts` (famille, forme,
+    // origine, garantie) plutôt que sur le « Tenue 24h / EDP 30% » des six
+    // premières fiches : deux promesses qu'aucune source ne documente ici.
+    badges: ["Ambré · gourmand", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
+    image: "/assets/products/blueberry/blueberry-packshot.jpg",
+    // Packshot d'abord (vue par défaut, reprise en vignette de carte), puis les
+    // trois mises en scène qui montrent la pyramide : la baie fraîche, la coulée
+    // de myrtilles écrasées pour le côté gourmand, la glace pour la fraîcheur.
+    gallery: [
+      "/assets/products/blueberry/blueberry-packshot.jpg",
+      "/assets/products/blueberry/blueberry-myrtilles.jpg",
+      "/assets/products/blueberry/blueberry-coulee.jpg",
+      "/assets/products/blueberry/blueberry-glace.jpg",
+    ],
+  },
+  "arabiyat-prestige-marwa": {
+    name: "Marwa",
+    brand: "Arabiyat Prestige",
+    // Aucun prix imposé pour cette référence : calé au milieu de la fourchette
+    // du catalogue (Khamrah 21,90 € … Reef 33 49,90 €), au-dessus du prix promo
+    // de Blueberry Musk puisque le flacon est le format « prestige » facetté.
+    // Prix barré au ratio des autres fiches (~-25 %).
+    price: 29.9,
+    oldPrice: 39.9,
+    rating: 4.7,
+    reviews: 96,
+    concentration: "Eau de parfum",
+    volume: "100ml",
+    origin: "Fabriqué à Dubaï",
+    description:
+      "Marwa est un floral blanc tenu à distance du bouquet sucré. La fleur d'oranger ouvre, verte et amère comme au petit matin, avant que le jasmin ne prenne le relais et n'apporte la chair — solaire, un peu miellée, jamais capiteuse. Puis vient la poudre : un musc soyeux étire le bouquet, l'assourdit, et le pose sur des bois blancs très clairs qui tiennent l'ensemble sans le boiser. Il en reste un sillage net et lumineux, du linge repassé plus que de la fleur coupée, à l'image du flacon d'argent facetté et de son bouchon taillé en pointe de diamant.",
+    topNotes: ["Fleur d'oranger", "Néroli", "Poire"],
+    heartNotes: ["Jasmin", "Fleurs blanches", "Iris"],
+    baseNotes: ["Musc blanc", "Bois blancs", "Ambre clair"],
+    badges: ["Floral", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
+    image: "/assets/products/marwa/marwa-packshot.jpg",
+    // Deux vues seulement en banque : le packshot (fond clair, fleurs blanches)
+    // et la mise en scène sur cristaux de quartz, qui dit la facette poudrée.
+    gallery: [
+      "/assets/products/marwa/marwa-packshot.jpg",
+      "/assets/products/marwa/marwa-cristaux.jpg",
     ],
   },
 };

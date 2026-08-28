@@ -78,18 +78,22 @@ export const DEMO: ShoppableVideo[] = [
     },
   },
   {
-    // Le flacon en lévitation sous la pluie d'épices : le plan le plus « pub »
-    // de la banque, celui qui accroche le mieux dans un carrousel qui défile.
+    // La cascade de cannelle, puis la coulée d'ambre sur le flacon, puis la macro
+    // de l'étiquette : le plan le plus « pub » de la banque, celui qui accroche
+    // le mieux dans un carrousel qui défile — et le seul qui finisse sur une
+    // étiquette parfaitement lisible, ce qui compte quand la carte passe vite.
+    // Remplace `khamrah-levitation.mp4`, dont le flacon restait flou en vol.
     id: "khamrah",
-    videoUrl: "/assets/videos/khamrah-levitation.mp4",
-    posterUrl: "/assets/videos/khamrah-levitation-poster.webp",
+    videoUrl: "/assets/videos/khamrah-hf-02.mp4",
+    posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     productHandle: "lattafa-khamrah",
     product: {
       name: "Khamrah",
       // Aligné sur la fiche rédigée (`product-details.ts`) : le prix de la carte
       // et celui de la fiche qu'elle ouvre doivent être le même nombre.
       price: 21.9,
-      thumbnailUrl: "/assets/products/khamrah/khamrah-packshot.webp",
+      // Vignette 68 px : il faut le packshot le plus serré, pas le plus large.
+      thumbnailUrl: "/assets/products/khamrah/khamrah-hf-05.jpg",
       available: true,
       href: "/produit/lattafa-khamrah",
       variantId: "lattafa-khamrah-100ml",

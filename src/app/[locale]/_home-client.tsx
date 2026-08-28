@@ -93,12 +93,10 @@ const products = [
 // Sélection « Les parfums de l'été » — liste dédiée : `products` alimente aussi
 // bestSellers et oilItems, la modifier changerait ces deux sections.
 const summerProducts: (LuxeProduct & { id: number })[] = [
-  // TODO visuel : aucun packshot « My Perfumes · Blueberry » dans public/assets.
-  // prod-3.jpg (flacon bleu) tient lieu de repère en attendant le vrai fichier.
-  { id: 101, image: "/assets/prod-3.jpg", brand: "My Perfumes", title: "Blueberry", price: 20, oldPrice: 25, href: "/promo-flash" },
+  { id: 101, image: "/assets/products/blueberry/blueberry-packshot.jpg", brand: "Arabiyat Prestige", title: "Blueberry Musk", price: 20, oldPrice: 25, href: "/produit/arabiyat-prestige-blueberry-musk" },
   { id: 102, image: "/assets/products/reef-33.webp", brand: "Reef Perfumes", title: "Reef 33", price: 70, href: "/promo-flash" },
   { id: 103, image: "/assets/products/marshmallow-blush.webp", brand: "Paris Corner", title: "Marshmallow Blush", price: 39.5, href: "/promo-flash" },
-  { id: 104, image: "/assets/products/khamrah/khamrah-packshot.webp", brand: "Lattafa", title: "Khamrah", price: 29, href: "/produit/lattafa-khamrah", rating: 5, reviewCount: 1 },
+  { id: 104, image: "/assets/products/khamrah/khamrah-hf-05.jpg", brand: "Lattafa", title: "Khamrah", price: 21.9, href: "/produit/lattafa-khamrah", rating: 5, reviewCount: 1 },
 ];
 
 const bestSellers = products.slice(2, 6);

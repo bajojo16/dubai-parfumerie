@@ -107,6 +107,21 @@ export const BRANDS = [
       "Maison artisanale de Dubaï privilégiant les matières premières nobles : oud de qualité supérieure, roses de Taïf et musc pur.",
     image: "/assets/coffrets.jpg",
   },
+  {
+    name: "Arabiyat Prestige",
+    city: "Dubai",
+    cityFlag: "🇦🇪",
+    // Année du groupe My Perfumes (Dubaï), la maison mère derrière Arabiyat —
+    // pas celle de la ligne « Prestige », qui est plus récente et que nous
+    // n'avons pas pu dater. À confirmer avant une mise en production.
+    founded: 2007,
+    // Compte réel des références Arabiyat présentes dans `reference-perfumes.ts`,
+    // pas une promesse marketing arrondie comme les entrées voisines.
+    refs: "39 références",
+    description:
+      "Ligne haute couture d'Arabiyat, Prestige habille des compositions gourmandes et florales dans des flacons sculptés — verre teinté, arabesques dorées, bouchons taillés.",
+    image: "/assets/products/marwa/marwa-packshot.jpg",
+  },
 ] as const;
 
 export type Brand = (typeof BRANDS)[number];

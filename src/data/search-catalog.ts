@@ -199,8 +199,11 @@ export function brandLogo(name: string): string | undefined {
 // les vidéos du site ne sont pas des fioles fixes, et seule celle-ci l'est.
 const FIOLE_FIXE: Record<string, { video: string; poster: string }> = {
   "lattafa-khamrah": {
-    video: "/assets/videos/khamrah-fiole-fixe.mp4",
-    poster: "/assets/videos/khamrah-fiole-fixe-poster.webp",
+    // Aligné sur la story « khamrah-fiole-fixe » de `product-stories.ts` : c'est
+    // désormais ce plan-là (flacon net sur la pierre sombre, décor qui bouge
+    // autour) qui porte l'étiquette « fiole fixe » partout dans le site.
+    video: "/assets/videos/khamrah-hf-04.mp4",
+    poster: "/assets/products/khamrah/khamrah-poster.jpg",
   },
 };
 

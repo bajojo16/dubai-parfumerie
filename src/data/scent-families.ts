@@ -79,7 +79,7 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     ingredientImage: "/assets/scents/boise.jpg",
     collectionSlug: "boise",
     products: [
-      { name: "Sandal Wood", brand: "Al Haramain", price: 36.9, image: "/assets/products/khamrah/khamrah-packshot.webp", href: "/produit/sandal-wood" },
+      { name: "Sandal Wood", brand: "Al Haramain", price: 36.9, image: "/assets/oils/tanasuk.png", href: "/produit/sandal-wood" },
       { name: "Santal Royal", brand: "Lattafa", price: 33.9, image: "/assets/products/vanilla-voyage.webp", href: "/produit/santal-royal" },
     ],
   },

@@ -71,7 +71,10 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     family: "Gourmand · Boisé · Épicé",
     description: "Cognac chaleureux, cannelle et tonka — un gourmand boisé enveloppant.",
     // Packshot réel du flacon Khamrah : plus de visuel générique sous ce nom.
-    product: { name: "Khamrah", brand: "Lattafa", price: 21.9, image: "/assets/products/khamrah/khamrah-packshot.webp", href: "/produit/lattafa-khamrah" },
+    // Cadre serré et carré plutôt que le portrait large de `khamrah-packshot.webp` :
+    // la vignette du jumeau fait 96–116 px en `objectFit: contain`, donc tout ce
+    // que le cadrage laisse de vide autour du flacon est perdu à l'affichage.
+    product: { name: "Khamrah", brand: "Lattafa", price: 21.9, image: "/assets/products/khamrah/khamrah-hf-05.jpg", href: "/produit/lattafa-khamrah" },
   },
   {
     key: "oud-wood",

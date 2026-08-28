@@ -47,31 +47,48 @@ export const DEMO_STORIES: ProductStory[] = [
     shop: { price: 49, href: "/promo-flash", name: "Aurum" },
   },
   {
-    // Khamrah : la coulée d'ambre sur le flacon dit le côté gourmand du parfum
-    // mieux qu'une ligne de notes. Poster extrait de la vidéo elle-même, sur
-    // une image où l'étiquette dorée est lisible — la 1re frame est une macro
-    // sombre qui ne laisse pas reconnaître le produit dans la bulle.
-    id: "khamrah-nectar",
-    videoUrl: "/assets/videos/khamrah-nectar.mp4",
-    posterUrl: "/assets/videos/khamrah-nectar-poster.webp",
+    // Nouvelle prise de vue Higgsfield — le flacon reste immobile et net pendant
+    // que la lumière chaude tourne et qu'une main soulève le capuchon : c'est le
+    // seul plan qui découvre le vaporisateur, et le plus « porté » des cinq.
+    // Placé en tête : la fiche produit ne garde qu'une bulle par référence, elle
+    // prend la première — autant que ce soit celle où le flacon se reconnaît le mieux.
+    id: "khamrah-geste",
+    videoUrl: "/assets/videos/khamrah-hf-05.mp4",
+    posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     title: "Khamrah",
     shopProductHandle: "lattafa-khamrah",
     shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
   },
   {
-    // « Fiole fixe » : le flacon reste immobile et net pendant que dattes et
-    // cannelle tournent autour. C'est le plan qui montre le mieux CE flacon-là.
+    // La coulée d'ambre sur le flacon dit le côté gourmand du parfum mieux
+    // qu'une ligne de notes. Nouvelle prise de vue : le plan reste macro, mais
+    // l'étiquette dorée y est lisible du début à la fin — l'ancienne version
+    // ouvrait sur une macro sombre où le produit n'était pas reconnaissable.
+    id: "khamrah-nectar",
+    videoUrl: "/assets/videos/khamrah-hf-03.mp4",
+    posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
+    title: "Khamrah",
+    shopProductHandle: "lattafa-khamrah",
+    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+  },
+  {
+    // « Fiole fixe » : le flacon reste net sur sa pierre sombre pendant que le
+    // décor (bâton de cannelle, poussière d'épices) bouge autour. C'est le plan
+    // qui montre le mieux CE flacon-là.
     id: "khamrah-fiole-fixe",
-    videoUrl: "/assets/videos/khamrah-fiole-fixe.mp4",
-    posterUrl: "/assets/videos/khamrah-fiole-fixe-poster.webp",
+    videoUrl: "/assets/videos/khamrah-hf-04.mp4",
+    posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     title: "Khamrah · Fiole fixe",
     shopProductHandle: "lattafa-khamrah",
     shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
   },
   {
+    // La datte ouverte puis le sirop qu'on en tire : la note de tête montrée
+    // par son ingrédient plutôt qu'écrite. Le seul des cinq plans où le flacon
+    // n'est pas le sujet — d'où sa place en fin de rangée.
     id: "khamrah-dattes",
-    videoUrl: "/assets/videos/khamrah-dattes.mp4",
-    posterUrl: "/assets/videos/khamrah-dattes-poster.webp",
+    videoUrl: "/assets/videos/khamrah-hf-01.mp4",
+    posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     title: "Khamrah · Datte",
     shopProductHandle: "lattafa-khamrah",
     shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },

@@ -4,11 +4,12 @@ import Image from "next/image";
 import { useCallback, useEffect, useState } from "react";
 import { DEMO_STORIES } from "@/data/product-stories";
 import { DEMO as SHOPPABLE_VIDEOS } from "@/data/shoppable-videos";
+import { clipsFor as fileClipsFor } from "@/data/product-clips";
 
 /**
  * Rangée de quatre miniatures vidéo, sous le bloc livraison de la fiche produit.
  *
- * Le catalogue n'a pas quatre films par parfum — Khamrah en a trois, la plupart
+ * Le catalogue n'a pas quatre films par parfum — Khamrah en a cinq, la plupart
  * zéro ou un. Le composant ne fabrique donc rien : il place les vidéos réellement
  * disponibles pour CE produit dans les quatre cases, et laisse les autres en
  * « à venir ». Les quatre cases restent visibles même vides, parce qu'elles
@@ -52,19 +53,43 @@ const CATEGORIES: { id: CategoryId; label: string; caption: string }[] = [
  *    visible qu'une association inventée qui mentirait sur son contenu.
  */
 const PINNED_CATEGORY: Record<string, CategoryId> = {
+  // Nouvelles prises de vue Khamrah — chacune épinglée à ce qu'elle montre :
+  "/assets/videos/khamrah-hf-02.mp4": "spot", // cascade de cannelle + coulée d'ambre : le film de marque
+  "/assets/videos/khamrah-hf-03.mp4": "hypermotion", // macro de la coulée : de la matière en mouvement
+  "/assets/videos/khamrah-hf-04.mp4": "fiole-fixe", // flacon net sur la pierre, décor qui bouge autour
+  "/assets/videos/khamrah-hf-05.mp4": "ugc", // une main soulève le capuchon : la seule prise « portée »
+  // Anciennes vidéos, conservées : elles ne sont plus référencées par les deux
+  // banques, mais un retour en arrière sur l'une d'elles retrouve sa case.
   "/assets/videos/khamrah-levitation.mp4": "spot",
   "/assets/videos/khamrah-nectar.mp4": "hypermotion",
   "/assets/videos/khamrah-fiole-fixe.mp4": "fiole-fixe",
+  // Blueberry Musk — trois films dont on sait ce qu'ils montrent :
+  // `blueberry-hf-01` est un plan large d'entrepôt de glace, décor construit et
+  // flacon posé au fond, c'est-à-dire un film de marque → Spot TV ;
+  // `blueberry-hf-05` est une macro de myrtilles et d'éclats de glace en
+  // suspension, de la matière en mouvement sans le produit → Hypermotion ;
+  // `blueberry-hf-03` garde le flacon net et centré pendant que les baies
+  // tournent autour → Fiole fixe.
+  "/assets/videos/blueberry-hf-01.mp4": "spot",
+  "/assets/videos/blueberry-hf-05.mp4": "hypermotion",
+  "/assets/videos/blueberry-hf-03.mp4": "fiole-fixe",
 };
 
 /**
- * Les deux banques de vidéos du repo indexent par identifiant produit, mais pas
- * sous le même nom de champ, et se recoupent (Reef 33 est dans les deux avec le
- * même fichier). On fusionne et on déduplique sur l'URL du fichier.
+ * Les trois banques de vidéos du repo indexent par identifiant produit, mais pas
+ * sous le même nom de champ, et se recoupent (Reef 33 est dans deux d'entre elles
+ * avec le même fichier). On fusionne et on déduplique sur l'URL du fichier.
+ *
+ * L'ordre de lecture est celui de la priorité d'affichage : les films attachés à
+ * la fiche (`product-clips.ts`) d'abord — ils ont été choisis et ordonnés pour
+ * cette bande-là —, puis les stories, puis le carrousel « shoppable ».
  */
 function clipsForProduct(slug: string): Clip[] {
   const byUrl = new Map<string, Clip>();
 
+  for (const clip of fileClipsFor(slug)) {
+    if (!byUrl.has(clip.videoUrl)) byUrl.set(clip.videoUrl, { ...clip });
+  }
   for (const story of DEMO_STORIES) {
     if (story.shopProductHandle !== slug) continue;
     if (!byUrl.has(story.videoUrl)) {
