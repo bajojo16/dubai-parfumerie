@@ -18,12 +18,14 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { addItem } from "@/lib/cart";
+import { norm } from "@/data/search-catalog";
 import {
   SAMPLE_PRODUCTS,
   SAMPLE_BRANDS,
   SAMPLE_COLLECTIONS,
   COLLECTION_META,
   SAMPLE_FAMILIES,
+  type SampleFamilyId,
   type SampleProduct,
   type SampleCollectionId,
 } from "@/data/sample-selector-products";
@@ -151,6 +153,12 @@ export default function SampleSelector({
   const [auto, setAuto] = useState<QtyMap>({});
   const [filterBrand, setFilterBrand] = useState("Toutes");
   const [filterCol, setFilterCol] = useState<SampleCollectionId | "all">("all");
+  /**
+   * Filtre par famille olfactive. On choisissait jusqu'ici par maison ou par
+   * selection marketing, jamais par ce que le parfum SENT — alors que c'est la
+   * seule entree qui ait un sens quand on compose un coffret decouverte.
+   */
+  const [filterFam, setFilterFam] = useState<SampleFamilyId | "all">("all");
   const [q, setQ] = useState("");
   const [crit, setCrit] = useState<CritId>("bestsellers");
   // Famille active du critère « Par note » (défaut : 1re famille du catalogue).
@@ -418,9 +426,18 @@ export default function SampleSelector({
   const matchFilter = (p: SampleProduct) => {
     const okBrand = filterBrand === "Toutes" || p.brand === filterBrand;
     const okCol = filterCol === "all" || p.tags.includes(filterCol as SampleCollectionId);
+    // Le champ ne cherchait que le nom et la maison, accents exiges : « rose »
+    // ne trouvait pas « Rose de Taif » ecrit « Rosé », et aucune note ne
+    // repondait. On normalise des deux cotes et on elargit a la famille — ce
+    // que fait deja la superposition de recherche du header.
+    const nq = norm(q);
+    const okFam = filterFam === "all" || p.family === filterFam;
     const okQ =
-      p.name.toLowerCase().includes(q) || p.brand.toLowerCase().includes(q);
-    return okBrand && okCol && okQ;
+      !nq ||
+      norm(p.name).includes(nq) ||
+      norm(p.brand).includes(nq) ||
+      norm(SAMPLE_FAMILIES[p.family].label).includes(nq);
+    return okBrand && okCol && okFam && okQ;
   };
   const list = PRODUCTS.filter(matchFilter);
   const full = total >= MAX;
@@ -551,7 +568,7 @@ export default function SampleSelector({
               <input
                 type="text"
                 value={q}
-                onChange={(e) => setQ(e.target.value.toLowerCase().trim())}
+                onChange={(e) => setQ(e.target.value)}
                 placeholder="Rechercher un parfum…"
                 autoComplete="off"
                 aria-label="Rechercher un parfum"
@@ -576,7 +593,36 @@ export default function SampleSelector({
             </div>
           </div>
 
-          {/* Ligne 3 : filtres Marques (condensés, scrollables) */}
+          {/* Ligne 3 : filtres Notes olfactives */}
+          <div className="ss-filterrow ss-scroll" role="group" aria-label="Filtre Notes">
+            <span className="ss-flabel">Notes</span>
+            <button
+              className={"ss-chip" + (filterFam === "all" ? " ss-active" : "")}
+              aria-pressed={filterFam === "all"}
+              onClick={() => setFilterFam("all")}
+            >
+              Toutes
+            </button>
+            {(Object.values(SAMPLE_FAMILIES) as { id: SampleFamilyId; label: string; tint: string }[]).map((f) => {
+              const active = f.id === filterFam;
+              return (
+                <button
+                  key={f.id}
+                  className={"ss-chip" + (active ? " ss-active" : "")}
+                  aria-pressed={active}
+                  onClick={() => setFilterFam(active ? "all" : f.id)}
+                >
+                  {/* Pastille de couleur : la famille se reconnait avant meme
+                      d'avoir lu son nom, et la teinte est celle deja utilisee
+                      par les vignettes de produit. */}
+                  <span className="ss-fdot" style={{ background: f.tint }} aria-hidden="true" />
+                  {f.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Ligne 4 : filtres Marques (condensés, scrollables) */}
           <div className="ss-filterrow ss-scroll" role="group" aria-label="Filtre Marques">
             <span className="ss-flabel">Marques</span>
             {BRANDS.map((b) => {
@@ -669,6 +715,21 @@ export default function SampleSelector({
         </p>
 
         {/* ── Grille ── */}
+        {/* Titre de la selection manuelle. Le bloc automatique en avait un,
+            pas celui-ci : la grille commencait sans rien dire de ce qu'on y
+            fait, et les deux voies — choisir soi-meme, ou laisser la maison
+            completer — ne se lisaient pas comme deux options du meme choix. */}
+        <div className="ss-secthead">
+          <h2 className="ss-secttitle">
+            <span aria-hidden="true">✧</span> Choisissez vous-même
+          </h2>
+          <p className="ss-sectsub">
+            Touchez un flacon pour l&apos;ajouter. {MAX - total > 0
+              ? `Il reste ${MAX - total} emplacement${MAX - total > 1 ? "s" : ""}.`
+              : "Votre coffret est complet."}
+          </p>
+        </div>
+
         <div className="ss-grid">
           {!list.length && <div className="ss-empty">Aucun parfum ne correspond.</div>}
           {list.map((p) => {
@@ -844,6 +905,12 @@ function StyleBlock() {
     .ss-scroll{overflow-x:auto;scrollbar-width:thin;scrollbar-color:rgba(28,26,23,.28) transparent;-webkit-overflow-scrolling:touch;padding-block:2px}
     .ss-scroll::-webkit-scrollbar{height:5px}
     .ss-scroll::-webkit-scrollbar-thumb{background:rgba(28,26,23,.24);border-radius:5px}
+    .ss-secthead{max-width:1180px;margin:0 auto 12px;padding-inline:22px}
+    .ss-secttitle{font-family:'Cormorant Garamond',var(--font-display);font-size:22px;font-weight:600;margin:0 0 2px;color:#1c1a17;display:flex;align-items:center;gap:8px}
+    .ss-secttitle span{color:#c2a15b;font-size:16px}
+    .ss-sectsub{font-family:'Jost',var(--font-sans);font-size:12.5px;font-weight:300;color:rgba(28,26,23,.6);margin:0}
+    .ss-mark{background:rgba(194,161,91,.3);color:inherit;border-radius:3px;padding:0 1px}
+    .ss-fdot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-inline-end:5px;vertical-align:middle}
     .ss-flabel{flex:0 0 auto;font-size:8.5px;letter-spacing:.14em;text-transform:uppercase;opacity:.42;margin:0;padding-inline-end:2px}
     .ss-chip{flex:0 0 auto;font-family:'Jost',var(--font-sans);font-size:11.5px;font-weight:400;letter-spacing:.02em;padding:5px 11px;border-radius:100px;border:1px solid rgba(28,26,23,.22);background:transparent;color:#1c1a17;cursor:pointer;transition:.18s;white-space:nowrap;display:inline-flex;align-items:center;gap:4px}
     .ss-chip:hover{border-color:#c2a15b}
