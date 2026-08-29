@@ -608,8 +608,12 @@ export function ShippingChecker({
                 suivi — occupent la rangée du bas. Sans pays vérifié il n'y a
                 pas de compteur, et les trois pastilles gardent l'ordre
                 d'origine. */}
+            {/* Le compteur du pays vérifié passe en tête : c'est la réponse à
+                la question qu'on vient de poser. Le nombre d'AUTRES pays le
+                suit, comme un élargissement — l'inverse se lisait à contresens,
+                le général avant le particulier. */}
             {(ordersText
-              ? [otherServedText, ordersText, L.statTracking, L.statPrep]
+              ? [ordersText, otherServedText, L.statTracking, L.statPrep]
               : [otherServedText, L.statPrep, L.statTracking]
             ).map((text, i) => (
               <div
