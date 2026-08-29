@@ -30,24 +30,31 @@ import Image from "next/image";
 const NOTE_IMAGES: Record<string, string> = {
   // — Matières propres —
   ambre: "/assets/scents/ambre.jpg",
+  ananas: "/assets/scents/ananas.jpg",
   ambreGris: "/assets/scents/ambre-gris.jpg",
   benjoin: "/assets/scents/benjoin.jpg",
   bergamote: "/assets/scents/bergamote.jpg",
   cannelle: "/assets/scents/cannelle.jpg",
   cardamome: "/assets/scents/cardamome.jpg",
+  cassis: "/assets/scents/cassis.jpg",
   cedre: "/assets/scents/cedre.jpg",
   citron: "/assets/scents/citron.jpg",
   datte: "/assets/scents/datte.jpg",
   encens: "/assets/scents/encens.jpg",
   feveTonka: "/assets/scents/feve-tonka.jpg",
+  fleursBlanches: "/assets/scents/fleurs-blanches.jpg",
+  framboise: "/assets/scents/framboise.jpg",
   fruits: "/assets/scents/fruits.jpg",
   jasmin: "/assets/scents/jasmin.jpg",
   marine: "/assets/scents/marine.jpg",
+  menthe: "/assets/scents/menthe.jpg",
+  muguet: "/assets/scents/muguet.jpg",
   musc: "/assets/scents/musc.jpg",
   muscade: "/assets/scents/muscade.jpg",
   myrtille: "/assets/scents/myrtille.jpg",
   oud: "/assets/scents/oud.jpg",
   patchouli: "/assets/scents/patchouli.jpg",
+  pomme: "/assets/scents/pomme.jpg",
   poivre: "/assets/scents/poivre.jpg",
   praline: "/assets/scents/praline.jpg",
   rose: "/assets/scents/rose.jpg",
@@ -73,8 +80,8 @@ const NOTE_KEYWORDS: [string, string][] = [
   // « menthe POIVRÉe » contient « poivre », « musc BOISé » contient « bois ».
   // Sans ces trois lignes en tête, la framboise s'affichait en rondins de
   // cèdre et la menthe en grains de poivre.
-  ["framboise", "fruits"],
-  ["menthe", "marine"],
+  ["framboise", "framboise"],
+  ["menthe", "menthe"],
   ["musc boisé", "musc"],
   ["musc boise", "musc"],
   // Résines et ambres — le plus précis d'abord
@@ -121,29 +128,28 @@ const NOTE_KEYWORDS: [string, string][] = [
   ["pamplemousse", "citron"],
   // Fruits
   ["myrtille", "myrtille"],
-  ["cassis", "fruits"],
-  ["framboise", "fruits"],
+  ["cassis", "cassis"],
   ["fruits rouges", "fruits"],
   ["fruité", "fruits"],
-  ["ananas", "fruits"],
-  ["pomme", "fruits"],
-  ["poire", "fruits"],
+  ["ananas", "ananas"],
+  ["pomme", "pomme"],
+  ["poire", "pomme"],
   ["pêche", "fruits"],
   // Aquatique et frais
   ["marine", "marine"],
   ["aquatique", "marine"],
   ["concombre", "marine"],
-  ["menthe", "marine"],
   ["frais", "marine"],
   // Fleurs
   ["jasmin", "jasmin"],
   ["rose", "rose"],
+  ["fleurs blanches", "fleursBlanches"],
+  ["fleurs", "fleursBlanches"],
   ["fleur", "floral"],
-  ["fleurs", "floral"],
   ["oranger", "floral"],
   ["néroli", "floral"],
   ["neroli", "floral"],
-  ["muguet", "floral"],
+  ["muguet", "muguet"],
   ["iris", "floral"],
   ["lilas", "floral"],
   ["violette", "floral"],
@@ -244,9 +250,20 @@ export function ScentConstellation({
             de la page sans avoir besoin d'un packshot détouré. */}
         <div className="dp-sc-core">
           <div className="dp-sc-halo" aria-hidden="true" />
+          {/* Marge de 14 % sur l'image : `contain` la fait tenir dans le CARRÉ
+              du médaillon, mais celui-ci est rond et n'en montre que le disque
+              inscrit — les coins, donc le haut et le bas du flacon, tombaient
+              hors du cercle. Un carré tient dans un disque à 70,7 % de son
+              diamètre ; la marge y ramène l'image, avec un peu de sécurité. */}
           <div className="dp-sc-medallion">
             {image ? (
-              <Image src={image} alt={productName} fill sizes="230px" style={{ objectFit: "contain" }} />
+              <Image
+                src={image}
+                alt={productName}
+                fill
+                sizes="230px"
+                style={{ objectFit: "contain", padding: "14%" }}
+              />
             ) : (
               <span className="dp-sc-core-text">
                 <b>{productName}</b>

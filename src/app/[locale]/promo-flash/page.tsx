@@ -23,7 +23,17 @@ const PROMO_PRODUCTS = [
 
 const OFFER_2_3 = "Achète 2 = 3 offert";
 const OFFER_VOLUME = "Achat en volume";
-const FILTERS = ["Tous", "Femme", "Homme", "Mixte", "Huile de Parfum", "Coffrets & Lots", OFFER_2_3, OFFER_VOLUME];
+/**
+ * La rangée ne garde que les deux OFFRES.
+ *
+ * Les six filtres par catégorie — Tous, Femme, Homme, Mixte, Huile de Parfum,
+ * Coffrets & Lots — faisaient doublon avec la navigation du site, qui mène
+ * déjà à ces rayons. Sur une page dont le sujet est la promotion, ils
+ * détournaient du seul choix qui lui appartient : profiter de l'offre, ou
+ * commander en gros. `activeFilter` reste à « Tous » par défaut, donc la
+ * grille montre toujours l'ensemble des promotions.
+ */
+const FILTERS = [OFFER_2_3, OFFER_VOLUME];
 
 /**
  * Paliers de remise pour l'achat en gros. Ils ne s'appliquent pas au panier :
