@@ -569,14 +569,18 @@ export default function PromoFlashPage() {
                       )
                     }
                     style={{
-                      flex: 1,
-                      padding: "11px 0",
+                      // Largeur du libellé, pas de la carte : les autres rails
+                      // du site ont déjà cette pilule compacte, celle-ci
+                      // restait un bandeau pleine largeur.
+                      flex: "0 1 auto",
+                      padding: "9px 20px",
                       background: "var(--gold-500)",
                       color: "#fff",
                       fontFamily: "var(--font-sans)",
                       fontWeight: 600,
-                      fontSize: 14,
+                      fontSize: 12,
                       letterSpacing: "0.06em",
+                      whiteSpace: "nowrap",
                       border: "none",
                       borderRadius: "var(--r-md)",
                       cursor: "pointer",
