@@ -482,7 +482,12 @@ export default function SampleSelector({
       <div className="ss-topbar" style={{ textAlign: "center", padding: "32px 0 20px", borderBottom: `1px solid ${C.line}` }}>
         <p style={{ fontFamily: "'Jost',var(--font-sans)", fontWeight: 500, letterSpacing: ".42em", fontSize: 12, textTransform: "uppercase", color: C.goldDeep, margin: "0 0 16px" }}>{brandmark}</p>
         <p style={{ fontWeight: 400, letterSpacing: ".34em", textTransform: "uppercase", fontSize: 11, opacity: 0.55, margin: "0 0 10px" }}>Coffret découverte · {MAX} échantillons</p>
-        <h1 style={{ fontFamily: "'Cormorant Garamond',var(--font-display)", fontWeight: 500, fontSize: "clamp(28px,5vw,44px)", lineHeight: 1.02, margin: "0 auto 12px", maxWidth: "16ch" }}>Composez votre sélection d&apos;échantillons</h1>
+        {/* `maxWidth: 16ch` cassait le titre en trois lignes au milieu d'un hero
+              large de plus de mille pixels : beaucoup de hauteur perdue, et la
+              page commençait par un mur de texte au lieu du sélecteur. La
+              largeur disponible sert désormais ; `text-wrap: balance` répartit
+              les mots si le titre doit tout de même passer à la ligne. */}
+          <h1 style={{ fontFamily: "'Cormorant Garamond',var(--font-display)", fontWeight: 500, fontSize: "clamp(28px,5vw,44px)", lineHeight: 1.08, margin: "0 auto 12px", maxWidth: "34ch", textWrap: "balance" }}>Composez votre sélection d&apos;échantillons</h1>
         <p style={{ fontWeight: 300, fontSize: 15, lineHeight: 1.6, opacity: 0.72, maxWidth: "52ch", margin: "0 auto" }}>Choisissez vos coups de cœur… ou laissez la maison compléter les emplacements restants selon vos goûts et nos best-sellers.</p>
       </div>
 
@@ -508,7 +513,16 @@ export default function SampleSelector({
               <span className="ss-plbl">échantillons</span>
             </div>
             <div className="ss-nwrap">
-              <span className="ss-nlbl">Nombre</span>
+              {/* Le nombre choisi se lit ici EN TOUTES LETTRES, pas seulement
+                  dans la pastille noire du segment. Sur la barre, la sélection
+                  ne tenait qu'à un fond sombre de 30 px : on savait qu'un
+                  chiffre était actif, on ne savait pas lequel sans le chercher.
+                  C'est pourtant la décision structurante de la page — tout le
+                  reste (jauge, prix, bouton) en découle. */}
+              <span className="ss-nlbl">
+                <b className="ss-ncount">{n}</b>
+                <span>échantillons</span>
+              </span>
               <div className="ss-nseg" role="radiogroup" aria-label="Nombre d'échantillons">
                 {N_OPTIONS.map((opt) => {
                   const active = opt === n;
@@ -815,7 +829,8 @@ function StyleBlock() {
 
     /* N-selector à droite */
     .ss-nwrap{display:inline-flex;align-items:center;gap:8px}
-    .ss-nlbl{font-size:9px;letter-spacing:.16em;text-transform:uppercase;opacity:.42}
+    .ss-nlbl{display:inline-flex;align-items:baseline;gap:5px;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.62;white-space:nowrap}
+    .ss-ncount{font-family:'Cormorant Garamond',var(--font-display);font-size:26px;font-weight:600;letter-spacing:0;line-height:1;color:#a9873f;opacity:1}
 
     /* recherche compacte */
     .ss-search{position:relative;flex:1 1 200px;min-width:150px;max-width:340px}
@@ -841,7 +856,8 @@ function StyleBlock() {
     .ss-toolbar.ss-tb-stuck .ss-plbl{display:none}
     .ss-toolbar.ss-tb-stuck .ss-progress-c{padding:4px 12px}
     .ss-toolbar.ss-tb-stuck .ss-pips{display:none}
-    .ss-toolbar.ss-tb-stuck .ss-nlbl{display:none}
+    .ss-toolbar.ss-tb-stuck .ss-nlbl>span{display:none}
+    .ss-toolbar.ss-tb-stuck .ss-ncount{font-size:20px}
     .ss-toolbar.ss-tb-stuck .ss-search input{padding-block:6px}
 
     .ss-assist{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,#fffdf8,#f3ecdb);border:1px solid rgba(194,161,91,.4);border-radius:14px;padding:15px 20px;margin-bottom:22px;position:sticky;z-index:15;transition:padding .2s,box-shadow .2s}
@@ -858,11 +874,11 @@ function StyleBlock() {
     .ss-crit button:focus-visible{outline:2px solid #a9873f;outline-offset:1px}
 
     .ss-nseg{display:inline-flex;gap:3px;background:#fff;border:1px solid rgba(28,26,23,.22);border-radius:100px;padding:3px}
-    .ss-nseg button{border:none;background:transparent;font-family:'Cormorant Garamond',var(--font-display);font-weight:600;font-size:15px;min-width:30px;padding:5px 9px;border-radius:100px;cursor:pointer;color:#1c1a17;transition:.18s;line-height:1}
+    .ss-nseg button{border:none;background:transparent;font-family:'Cormorant Garamond',var(--font-display);font-weight:600;font-size:18px;min-width:38px;padding:8px 12px;border-radius:100px;cursor:pointer;color:#1c1a17;transition:.18s;line-height:1}
     .ss-nseg button:hover{color:#a9873f}
-    .ss-nseg button.ss-on{background:#1c1a17;color:#c2a15b}
+    .ss-nseg button.ss-on{background:#1c1a17;color:#c2a15b;font-size:20px;box-shadow:0 0 0 2px #c2a15b, 0 6px 14px -6px rgba(28,26,23,.55);transform:scale(1.04)}
     .ss-nseg button:focus-visible{outline:2px solid #a9873f;outline-offset:2px}
-    .ss-toolbar.ss-tb-stuck .ss-nseg button{padding-block:3px;font-size:14px}
+    .ss-toolbar.ss-tb-stuck .ss-nseg button{padding-block:5px;font-size:16px}
 
     .ss-famrow{display:flex;flex-wrap:wrap;gap:5px;justify-content:flex-end}
     .ss-famchip{display:inline-flex;align-items:center;gap:5px;font-family:'Jost',var(--font-sans);font-size:11px;font-weight:400;padding:5px 10px;border-radius:100px;border:1px solid rgba(28,26,23,.22);background:#fff;color:#1c1a17;cursor:pointer;transition:.18s;white-space:nowrap}
