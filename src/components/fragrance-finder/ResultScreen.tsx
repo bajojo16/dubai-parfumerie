@@ -24,7 +24,7 @@ import { addItem } from "@/lib/cart";
 import { QUESTIONS, STEP } from "./data/questions";
 import { QuestionScreen } from "./QuestionScreen";
 import type { ScoredProduct } from "./lib/recommend";
-import { combinations, discountRate, familyName, familyText } from "./lib/recommend";
+import { combinations, freeItemsDiscount, familyName, familyText } from "./lib/recommend";
 import type { FamilyKey, QuizAnswers } from "./types";
 
 /**
@@ -119,8 +119,15 @@ export function ResultScreen({
   // ── Totaux ────────────────────────────────────────────────────────────────
   const units = trio.reduce((n, _, i) => (picked[i] ? n + quantities[i] : n), 0);
   const gross = trio.reduce((s, r, i) => (picked[i] ? s + (r.product.price || 0) * quantities[i] : s), 0);
-  const rate = discountRate(units);
-  const net = gross * (1 - rate);
+  /**
+   * Un prix PAR EXEMPLAIRE : deux fois le même flacon comptent pour deux
+   * unités dans l'offre, et le cadeau est bien le moins cher de l'ensemble.
+   */
+  const unitPrices = trio.flatMap((r, i) =>
+    picked[i] ? Array<number>(quantities[i]).fill(r.product.price || 0) : []
+  );
+  const discount = freeItemsDiscount(unitPrices);
+  const net = gross - discount;
 
   const budgetAnswer = answers[STEP.budget];
   const budgetOption = budgetAnswer == null ? undefined : QUESTIONS[STEP.budget].options[budgetAnswer];
@@ -163,9 +170,7 @@ export function ResultScreen({
     });
     setAdded((a) => a.map((v, i) => v || picked[i]));
     onToast(
-      rate
-        ? `${units} flacon${units > 1 ? "s" : ""} au panier — remise de ${Math.round(rate * 100)} %`
-        : `${units} flacon au panier`,
+      `${units} flacon${units > 1 ? "s" : ""} au panier${discount > 0 ? " — le 3ᵉ offert" : ""}`,
     );
   }
 
@@ -237,8 +242,8 @@ export function ResultScreen({
           {budgetOption && (
             <span className={`dp-ff-budget${inBudget ? "" : " out"}`}>
               {inBudget
-                ? `Total ${money.format(net)}${rate ? " remise déduite" : ""}, dans votre budget`
-                : `Total ${money.format(net)}${rate ? " remise déduite" : ""} — au plus près de votre budget`}
+                ? `Total ${money.format(net)}${discount ? " offre déduite" : ""}, dans votre budget`
+                : `Total ${money.format(net)}${discount ? " offre déduite" : ""} — au plus près de votre budget`}
             </span>
           )}
         </h3>
@@ -322,26 +327,30 @@ export function ResultScreen({
               <i style={{ width: `${(Math.min(units, 3) / 3) * 100}%` }} />
             </div>
             <div className="dp-ff-jauge-lib">
-              <span>2 parfums · −10 %</span>
-              <span>3 parfums · −20 %</span>
+              <span>2 parfums</span>
+              <span>3 parfums · le 3ᵉ offert</span>
             </div>
             <p className="dp-ff-jauge-msg">
-              {units === 0 && "Choisissez au moins un parfum pour voir votre remise."}
+              {units === 0 && "Choisissez au moins un parfum pour voir votre offre."}
               {units === 1 && (
                 <>
-                  Ajoutez <b>un parfum</b> et la remise démarre à 10 %.
+                  Encore <b>deux parfums</b> et le troisième vous est offert.
                 </>
               )}
               {units === 2 && (
                 <>
-                  Encore <b>un parfum</b> et votre remise passe de 10 % à 20 %
-                  {/* ce que le troisième ferait gagner, en euros et non en pourcentage */}
-                  {gross > 0 ? ` — soit ${money.format(gross * 0.1)} de moins.` : "."}
+                  Encore <b>un parfum</b> et le moins cher des trois vous est
+                  offert
+                  {/* ce que le troisième ferait gagner, en euros : c'est le prix
+                      du flacon le moins cher de la sélection, pas un pourcentage */}
+                  {unitPrices.length > 0
+                    ? ` — soit ${money.format(Math.min(...unitPrices))} de moins.`
+                    : "."}
                 </>
               )}
               {units >= 3 && (
                 <>
-                  Remise maximale atteinte : <b>−20 %</b>.
+                  Offre appliquée : <b>{money.format(discount)}</b> offerts.
                 </>
               )}
             </p>
@@ -351,7 +360,10 @@ export function ResultScreen({
             {combinations(trio.length).map((indexes) => {
               const brut = indexes.reduce((s, i) => s + (trio[i].product.price || 0) * quantities[i], 0);
               const count = indexes.reduce((s, i) => s + quantities[i], 0);
-              const t = discountRate(count);
+              const comboPrices = indexes.flatMap((i) =>
+                Array<number>(quantities[i]).fill(trio[i].product.price || 0)
+              );
+              const off = freeItemsDiscount(comboPrices);
               const active = indexes.join(",") === pickedKey;
               const full = indexes.length === trio.length;
               return (
@@ -369,9 +381,9 @@ export function ResultScreen({
                   </span>
                   <span className="dp-ff-combi-lib">{full ? "Les trois" : "Les deux"}</span>
                   <span className="dp-ff-combi-prix">
-                    {t > 0 && <s>{money.format(brut)}</s>}
-                    <b>{money.format(brut * (1 - t))}</b>
-                    {t > 0 && <em>−{Math.round(t * 100)} %</em>}
+                    {off > 0 && <s>{money.format(brut)}</s>}
+                    <b>{money.format(brut - off)}</b>
+                    {off > 0 && <em>3ᵉ offert</em>}
                   </span>
                 </button>
               );

@@ -22,7 +22,20 @@ const PROMO_PRODUCTS = [
 ];
 
 const OFFER_2_3 = "Achète 2 = 3 offert";
-const FILTERS = ["Tous", "Femme", "Homme", "Mixte", "Huile de Parfum", "Coffrets & Lots", OFFER_2_3];
+const OFFER_VOLUME = "Achat en volume";
+const FILTERS = ["Tous", "Femme", "Homme", "Mixte", "Huile de Parfum", "Coffrets & Lots", OFFER_2_3, OFFER_VOLUME];
+
+/**
+ * Paliers de remise pour l'achat en gros. Ils ne s'appliquent pas au panier :
+ * c'est une grille tarifaire indicative, suivie d'une demande de devis — le
+ * volume se négocie, il ne se met pas au panier comme un flacon.
+ */
+const VOLUME_TIERS = [
+  { qty: 12, discount: 15 },
+  { qty: 25, discount: 20 },
+  { qty: 50, discount: 25 },
+  { qty: 100, discount: 35 },
+];
 
 function useCountdown(totalSeconds: number) {
   const [remaining, setRemaining] = useState(totalSeconds);
@@ -54,6 +67,9 @@ export default function PromoFlashPage() {
    */
   const [qty, setQty] = useState<Record<number, number>>({});
   const { hh, mm, ss } = useCountdown(86399); // 23:59:59
+
+  /** L'onglet volume remplace la grille produits par la grille tarifaire. */
+  const showVolume = activeFilter === OFFER_VOLUME;
 
   const filteredProducts =
     activeFilter === "Tous" || activeFilter === "Huile de Parfum"
@@ -292,7 +308,104 @@ export default function PromoFlashPage() {
           })}
         </div>
 
+        {/* ACHAT EN VOLUME — grille tarifaire, pas de produits.
+            Le gros ne s'ajoute pas au panier : la remise dépend de la
+            quantité ET des références, elle se négocie. On affiche donc les
+            paliers puis on renvoie vers une demande de devis. */}
+        {showVolume && (
+          <section style={{ maxWidth: 860, margin: "0 auto", padding: "48px 24px" }}>
+            <h2
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(1.7rem, 3.4vw, 2.3rem)",
+                fontWeight: 500,
+                color: "var(--ink-900)",
+                margin: "0 0 10px",
+                textAlign: "center",
+              }}
+            >
+              Achat en volume
+            </h2>
+            <p
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: 14.5,
+                color: "var(--ink-500)",
+                margin: "0 0 32px",
+                textAlign: "center",
+                lineHeight: 1.65,
+              }}
+            >
+              Revendeurs, comités d&apos;entreprise, événements : la remise suit la
+              quantité commandée, toutes références confondues.
+            </p>
+
+            <ul style={{ listStyle: "none", margin: "0 0 28px", padding: 0, display: "flex", flexDirection: "column", gap: 10 }}>
+              {VOLUME_TIERS.map(({ qty, discount }) => (
+                <li
+                  key={qty}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: 16,
+                    background: "var(--surface-white)",
+                    border: "1px solid var(--line-100, rgba(0,0,0,.08))",
+                    borderRadius: "var(--r-md)",
+                    padding: "16px 22px",
+                  }}
+                >
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: 15, color: "var(--ink-900)", fontWeight: 500 }}>
+                    À partir de <strong style={{ fontWeight: 700 }}>{qty} flacons</strong>
+                  </span>
+                  <span
+                    style={{
+                      fontFamily: "var(--font-sans)",
+                      fontSize: 15,
+                      fontWeight: 700,
+                      color: "var(--gold-700)",
+                      background: "var(--gold-100, #FBF3E2)",
+                      borderRadius: "var(--r-pill, 999px)",
+                      padding: "6px 16px",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    −{discount} %
+                  </span>
+                </li>
+              ))}
+            </ul>
+
+            <div style={{ textAlign: "center" }}>
+              <Link
+                href="/commande-a-la-demande"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 8,
+                  background: "var(--gold-500)",
+                  color: "#fff",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: 14,
+                  fontWeight: 700,
+                  letterSpacing: "0.06em",
+                  textTransform: "uppercase",
+                  textDecoration: "none",
+                  borderRadius: "var(--r-pill, 999px)",
+                  padding: "14px 30px",
+                }}
+              >
+                Demander un devis
+              </Link>
+              <p style={{ fontFamily: "var(--font-sans)", fontSize: 12.5, color: "var(--ink-400, #8A7E68)", margin: "14px 0 0" }}>
+                Réponse sous 24 h ouvrées · à partir de 12 flacons
+              </p>
+            </div>
+          </section>
+        )}
+
         {/* PRODUCT GRID */}
+        {!showVolume && (
         <section style={{ maxWidth: 1280, margin: "0 auto", padding: "48px 24px" }}>
           <div className="promo-grid">
             {filteredProducts.map((product) => (
@@ -468,6 +581,7 @@ export default function PromoFlashPage() {
             ))}
           </div>
         </section>
+        )}
 
         {/* BOTTOM BANNER */}
         <section

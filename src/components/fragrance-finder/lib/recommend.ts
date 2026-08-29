@@ -215,11 +215,24 @@ export function recommend(criteria: QuizCriteria, products = SEARCH_PRODUCTS): S
   return fillUp(pickTrio(ranked, criteria.budgetMin, criteria.budgetMax), products);
 }
 
-/** Barème des remises : deux flacons −10 %, trois et plus −20 %. */
-export function discountRate(count: number): number {
-  if (count >= 3) return 0.2;
-  if (count === 2) return 0.1;
-  return 0;
+/**
+ * Offre unique de la boutique : DEUX ACHETÉS, LE TROISIÈME OFFERT.
+ *
+ * Elle remplace les deux paliers en pourcentage (−10 % à deux flacons, −20 % à
+ * trois) qui coexistaient ici. Deux barèmes concurrents pour la même sélection
+ * obligeaient le client à calculer pour savoir lequel s'appliquait, et le
+ * −20 % ne correspondait à aucune offre annoncée ailleurs sur le site — la
+ * pastille de la page des promotions dit « Achète 2 = 3 offert », c'est elle
+ * qui fait foi.
+ *
+ * On rend un MONTANT en euros et non un taux : le cadeau est le flacon le
+ * moins cher de la sélection, sa valeur dépend donc des prix retenus, pas
+ * seulement de leur nombre. Par tranche de trois — six flacons, deux offerts.
+ */
+export function freeItemsDiscount(prices: number[]): number {
+  const sorted = [...prices].sort((a, b) => a - b);
+  const free = Math.floor(sorted.length / 3);
+  return sorted.slice(0, free).reduce((sum, price) => sum + price, 0);
 }
 
 /**
