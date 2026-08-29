@@ -217,10 +217,24 @@ export const TWIN_SUGGESTIONS: readonly TwinSuggestion[] = [
   { referenceId: "armani-stronger-with-you", label: "Giorgio Armani · Stronger With You" },
   { referenceId: "mancera-red-tobacco", label: "Mancera · Red Tobacco" },
   { referenceId: "jpg-le-male-elixir", label: "Jean Paul Gaultier · Le Mâle Elixir" },
-  { referenceId: "narciso-fleur-musc", label: "Narciso Rodriguez · Fleur Musc for Her" },
   { referenceId: "paco-rabanne-olympea", label: "Paco Rabanne · Olympéa" },
-  // — Réserve : sert dès qu'une des huit ci-dessus perd son jumeau —
   { referenceId: "marly-pegasus", label: "Parfums de Marly · Pegasus" },
+  // — Réserve : sert dès qu'une des huit ci-dessus perd son jumeau —
+  // Fleur Musc for Her descend ici, et pas parce qu'il lui manque un jumeau :
+  // elle en a un, et il est enfin juste. Elle tombait sur Swiss Arabian Shaghaf
+  // Oud — un oud cambodi que `familyOf` classait « Floral » — badgé « profil
+  // très proche » face à un musc rosé léger. Le moteur lui rend désormais
+  // Lattafa Oud Pour Elle (rose damascène, safran, musc blanc, ambre), du même
+  // registre floral-musqué.
+  //
+  // Ce qui la retire de la vitrine, c'est la TROISIÈME condition de
+  // `resolveSuggestions` : Oud Pour Elle n'a pas de photo en banque et porte
+  // encore `/assets/prod-1.jpg`, un visuel de remplissage qui montre un autre
+  // flacon. La pastille mènerait donc à une carte au mauvais flacon. La
+  // recherche du module, elle, sert la paire normalement — seule la mise en
+  // vitrine est suspendue. À remonter dès que le packshot d'Oud Pour Elle
+  // entre en banque : c'est la seule chose qui manque.
+  { referenceId: "narciso-fleur-musc", label: "Narciso Rodriguez · Fleur Musc for Her" },
   { referenceId: "tom-ford-noir-extreme", label: "Tom Ford · Noir Extreme" },
   { referenceId: "versace-eros-flame", label: "Versace · Eros Flame" },
   { referenceId: "guerlain-shalimar", label: "Guerlain · Shalimar" },

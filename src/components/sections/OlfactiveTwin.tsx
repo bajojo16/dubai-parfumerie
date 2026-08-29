@@ -917,7 +917,15 @@ export function OlfactiveTwin({
 
     .otw-foot { margin-top: 16px; padding-top: 14px; display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
     .otw-foot-text { flex: 1 1 220px; min-width: 0; }
-    .otw-desc { font-family: var(--font-sans); font-size: 12.5px; color: ${C.muted}; margin: 0; line-height: 1.55; }
+    /* Trois lignes, pas cinq. Le paragraphe vient de la fiche produit, où il
+       a toute la place ; ici il partage la carte avec le prix, les accords et
+       deux boutons, et cinq lignes de corps repoussaient l'ajout au panier
+       hors du regard. Trois lignes suffisent à donner le registre du jus —
+       qui veut la suite ouvre la fiche, c'est le rôle de « Voir ce parfum ».
+       On coupe à l'affichage et non dans la donnée : la description reste
+       entière pour la fiche, le JSON-LD et la recherche. */
+    .otw-desc { font-family: var(--font-sans); font-size: 12.5px; color: ${C.muted}; margin: 0; line-height: 1.55;
+      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .otw-accords { font-family: var(--font-sans); font-size: 11px; color: ${C.goldLabel}; margin: 5px 0 0; line-height: 1.4; overflow-wrap: anywhere; }
     /* Un seul plein : l'ajout au panier. La fiche produit passe en contour, a
        la meme hauteur, sur le meme axe — les deux boutons ne se disputent plus

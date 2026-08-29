@@ -30,6 +30,13 @@ export type RailProduct = {
   brand: string;
   name: string;
   notes: string;
+  /**
+   * Famille olfactive dominante, quand la source la déclare. Non affichée par
+   * la carte : `search-catalog.ts` la lit pour ranger la référence sans avoir
+   * à deviner sa famille depuis `notes` — un triptyque de vitrine (« Boisé ·
+   * Ambré · Doré ») cite autant de registres qu'il en écarte.
+   */
+  family?: string;
   image: string;
   price: Money;
   compareAtPrice?: Money;

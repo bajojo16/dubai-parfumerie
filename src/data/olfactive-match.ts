@@ -313,9 +313,17 @@ function strengthOf(family: number, accords: number): MatchStrength {
  * Jaccard de 0,333 — les accords de la base sont plus grossiers que les notes du
  * catalogue, monter au-dessus rejetterait une identité parfaite.
  *
- * Résultat mesuré sur la base entière : 537 références sur 3 952 (13,6 %)
- * obtiennent un jumeau calculé, les 8 paires relues à la main s'y ajoutent, et
- * tout le reste bascule sur l'écran « pas encore de jumeau ».
+ * Résultat mesuré sur la base entière : 902 références sur 3 963 (22,8 %)
+ * obtiennent un jumeau calculé, servi par 19 produits différents. Les 8 paires
+ * relues à la main s'y ajoutent, et tout le reste bascule sur l'écran « pas
+ * encore de jumeau ».
+ *
+ * Ce chiffre valait 537 sur 3 952 (13,6 %), concentrés sur 16 produits, tant que
+ * la famille du catalogue était devinée au comptage de mots. Les seuils n'ont
+ * pas bougé d'un millième : ce sont les familles qui étaient fausses, et une
+ * famille fausse fait échouer la condition (1) — famille EXACTE — pour les
+ * bonnes références autant qu'elle la fait réussir pour les mauvaises. Un oud
+ * classé « Floral » servait des florales et ne servait aucune boisée.
  */
 const DUPE_MIN_FAMILY = 1;
 const DUPE_MIN_EXACT_ACCORDS = 3;
@@ -481,8 +489,18 @@ export function findTwin(ref: ReferencePerfume): TwinResult | null {
       return { ...result, strength: "tres-proche", verified: true, score: Math.max(result.score, 0.9), curated };
     }
   }
-  const best = rankTwins(ref, 1)[0];
-  return best && best.verified ? best : null;
+  // On prend le premier candidat qui franchit le seuil, PAS le premier du
+  // classement. Les deux ne coïncident pas, et c'est voulu : le score inclut le
+  // genre et la popularité, qui servent à départager deux dossiers équivalents
+  // mais ne prouvent aucune parenté, tandis que `isDupe` ne regarde que les
+  // preuves (famille exacte, accords réellement partagés, recouvrement).
+  //
+  // Narciso Rodriguez · Fleur Musc for Her le montrait : Al Haramain Noora
+  // arrivait en tête sur le seul bonus de genre (« Femme ») avec UN accord
+  // partagé, sans franchir le seuil ; Lattafa Oud Pour Elle la suivait à trois
+  // millièmes avec quatre accords exacts et un dossier certifié. Ne regarder que
+  // le premier revenait à répondre « pas de jumeau » alors qu'on en tenait un.
+  return rankTwins(ref, PRODUCT_PROFILES.length).find((r) => r.verified) ?? null;
 }
 
 /** Raccourci par identifiant — l'interface ne manipule que des ids. `null` = pas de jumeau. */

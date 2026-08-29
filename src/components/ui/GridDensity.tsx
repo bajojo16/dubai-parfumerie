@@ -27,10 +27,17 @@ import { useCallback, useEffect, useRef, useState } from "react";
 const MIN_CARD_PX = 150;
 /** Au-delà, on n'ajoute plus de colonnes : on ferait des vignettes de contact. */
 const HARD_MAX_COLS = 6;
+/**
+ * Une seule colonne n'est pas une densité, c'est une liste : la carte s'étire
+ * sur toute la largeur du contenu, l'image devient un bandeau et il ne reste
+ * qu'un produit à l'écran. La butée basse est donc à deux — c'est aussi ce que
+ * le reste du site sert en mobile.
+ */
+const MIN_COLS = 2;
 
 function maxColumnsFor(width: number): number {
   if (width <= 0) return HARD_MAX_COLS;
-  return Math.max(1, Math.min(HARD_MAX_COLS, Math.floor(width / MIN_CARD_PX)));
+  return Math.max(MIN_COLS, Math.min(HARD_MAX_COLS, Math.floor(width / MIN_CARD_PX)));
 }
 
 export default function GridDensity({
@@ -89,13 +96,13 @@ export default function GridDensity({
     }
     // Défaut : une colonne de moins que le maximum. La grille respire, et le
     // curseur n'est pas collé à sa butée — sinon on ne voit pas qu'il bouge.
-    const fallback = Math.max(1, maxCols - 1);
-    setCols(Math.min(maxCols, Math.max(1, saved ?? fallback)));
+    const fallback = Math.max(MIN_COLS, maxCols - 1);
+    setCols(Math.min(maxCols, Math.max(MIN_COLS, saved ?? fallback)));
   }, [maxCols, storageKey]);
 
   const change = useCallback(
     (next: number) => {
-      const clamped = Math.min(maxCols, Math.max(1, next));
+      const clamped = Math.min(maxCols, Math.max(MIN_COLS, next));
       setCols(clamped);
       try {
         window.localStorage.setItem(storageKey, String(clamped));
@@ -108,8 +115,8 @@ export default function GridDensity({
 
   const value = cols ?? maxCols;
   // Un curseur à une seule position ne sert à rien : sur un écran si étroit
-  // qu'une seule colonne tient, on rend la grille sans sa commande.
-  const usable = maxCols > 1;
+  // que seule la butée basse tient, on rend la grille sans sa commande.
+  const usable = maxCols > MIN_COLS;
 
   return (
     <div ref={hostRef}>
@@ -145,7 +152,7 @@ export default function GridDensity({
           <>
           <input
             type="range"
-            min={1}
+            min={MIN_COLS}
             max={maxCols}
             step={1}
             value={value}

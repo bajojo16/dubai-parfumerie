@@ -21,6 +21,12 @@ export type BundleProduct = {
   name: string;
   brand: string;
   notes: string;
+  /**
+   * Famille olfactive dominante, quand le lot est la SEULE source du flacon
+   * (Oud Royal, Silk Rose) : ailleurs la fiche rédigée ou le rail la déclare
+   * déjà et gagne la déduplication.
+   */
+  family?: string;
   price: number;
   was: number;
   image: string;
@@ -86,6 +92,7 @@ export const BUNDLE_PRODUCTS: BundleProduct[] = [
     name: "Oud Royal",
     brand: "Ard Al Zaafaran",
     notes: "Oud, Ambre gris, Encens",
+    family: "Boisé",
     price: 69.9,
     was: 139.9,
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
@@ -97,6 +104,7 @@ export const BUNDLE_PRODUCTS: BundleProduct[] = [
     name: "Silk Rose",
     brand: "Lattafa",
     notes: "Rose de Taïf, Pivoine",
+    family: "Floral",
     price: 39.9,
     was: 79.9,
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).

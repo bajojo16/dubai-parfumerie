@@ -22,6 +22,13 @@ export type TrendProduct = {
   href: string;
   variantId: string;
   image: string;
+  /**
+   * Famille olfactive dominante. Les tendances ne portent AUCUNE note : sans
+   * ce champ, `search-catalog.ts` n'avait que le nom du flacon pour les
+   * ranger, et « Amber Nuit » comme « Aurum » ressortaient sans famille du
+   * tout — donc absents des facettes du catalogue et inéligibles au jumeau.
+   */
+  family?: string;
   cardVideo?: string; // vidéo jouée dans la carte (à la place de l'image)
   cardObjectPosition?: string; // cadrage média carte (ex. "center 68%")
   video?: string; // vidéo verticale (lightbox)
@@ -124,6 +131,7 @@ export const DEMO_TRENDS: TrendProduct[] = [
     brand: "Dubaï Parfumerie",
     href: "/produit/aurum",
     variantId: "aurum-50",
+    family: "Ambré",
     image: "/assets/products/aurum.webp",
     // Sans cardVideo la carte se contentait du packshot : le film existe, il
     // n'était joué que dans la lightbox.
@@ -152,6 +160,7 @@ export const DEMO_TRENDS: TrendProduct[] = [
     brand: "Dubaï Parfumerie",
     href: "/produit/amber-nuit",
     variantId: "amber-nuit-50",
+    family: "Ambré",
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-5.jpg",
     // Pas de film propre à Amber Nuit : aurum-v4.mp4 montre le flacon d'Aurum.

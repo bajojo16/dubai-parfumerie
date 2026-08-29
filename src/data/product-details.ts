@@ -21,6 +21,27 @@ export interface Product {
   topNotes: string[];
   heartNotes: string[];
   baseNotes: string[];
+  /**
+   * Famille olfactive DOMINANTE, écrite noir sur blanc.
+   *
+   * Elle existe parce que la déduire des notes était une devinette, et que la
+   * devinette s'est trompée en vitrine : Shaghaf Oud, dont le cœur est un oud
+   * cambodi, ressortait « Floral » — deux roses et une fleur d'oranger
+   * suffisaient à égaler l'oud et le santal, et l'égalité était tranchée par
+   * l'ordre d'écriture du dictionnaire de `search-catalog.ts`. Un jumeau
+   * olfactif se choisit d'abord sur la famille : une famille fausse donne un
+   * appariement faux, quelle que soit la finesse du reste du calcul.
+   *
+   * Vocabulaire : le PREMIER descripteur porte la dominante (`familyOf` ne lit
+   * que lui). « Boisé », « Ambré », « Gourmand », « Floral », « Frais »,
+   * « Aromatique », « Fruité » — un triptyque de vitrine reste permis, mais sa
+   * tête doit être la dominante réelle.
+   *
+   * Optionnel : une fiche qui ne la déclare pas retombe sur la déduction, qui
+   * reste correcte pour un profil franc. Elle ne l'est pas pour les orientaux à
+   * facettes multiples, et c'est tout le catalogue de cette maison.
+   */
+  family?: string;
   badges: string[];
   image?: string;
   /**
@@ -94,6 +115,11 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Rose damascène", "Safran", "Bergamote"],
     heartNotes: ["Musc blanc", "Jasmin", "Iris"],
     baseNotes: ["Oud", "Ambre", "Santal blanc", "Vanille"],
+    // La rose damascène ouvre et le cœur reste floral (jasmin, iris) : c'est
+    // la déclinaison FÉMININE de la maison, l'oud du fond la soutient sans la
+    // renverser. Distinction assumée avec Shaghaf Oud, déclaré boisé : là-bas
+    // l'oud cambodi est au CŒUR et la rose n'est qu'un accent.
+    family: "Floral",
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-1.jpg",
@@ -115,6 +141,11 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Cardamome", "Poivre noir", "Citron"],
     heartNotes: ["Oud royal", "Rose de Taïf", "Encens"],
     baseNotes: ["Ambre", "Résine de benjoin", "Musc chaud", "Vétiver"],
+    // Oud royal au cœur, vétiver et musc boisé au fond : le nom met l'ambre
+    // devant, la composition met le bois. Sa paire relue vise Tom Ford Oud
+    // Wood, dont la base classe la référence en « boisée » — déclarer boisé ici
+    // aligne enfin l'affinité de famille sur l'appariement qu'on affiche.
+    family: "Boisé",
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-2.jpg",
@@ -136,6 +167,8 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Marine", "Concombre", "Menthe poivrée"],
     heartNotes: ["Jasmin", "Muguet", "Patchouli"],
     baseNotes: ["Cèdre", "Ambre gris", "Musc bleu"],
+    // Marine, concombre, menthe poivrée : l'ouverture EST le parfum.
+    family: "Frais",
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-3.jpg",
@@ -157,6 +190,10 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Ananas", "Citron bergamote", "Pomme"],
     heartNotes: ["Rose", "Jasmin", "Patchouli"],
     baseNotes: ["Bouleau birch", "Musc", "Ambre", "Cèdre"],
+    // Ananas et pomme en tête, mais bouleau fumé et cèdre en fond — c'est un
+    // fruité-boisé, pas une eau fraîche. La déduction le rangeait en « Frais »
+    // sur la seule bergamote, ce qui le rendait candidat aux hespéridées.
+    family: "Boisé",
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-4.jpg",
@@ -178,6 +215,11 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Safran", "Épices", "Rose"],
     heartNotes: ["Oud cambodi", "Rose orientale", "Fleur d'oranger"],
     baseNotes: ["Santal crémeux", "Musc", "Résines", "Labdanum"],
+    // LE cas qui a fait remonter le bug : deux roses et une fleur d'oranger
+    // suffisaient à faire de cet oud un « Floral », et le module l'appariait
+    // alors à des muscs rosés légers. Le cœur est un oud cambodi, le fond un
+    // santal : la colonne vertébrale est boisée, les fleurs sont des accents.
+    family: "Boisé",
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
     image: "/assets/products/shaghaf-oud.webp",
   },
@@ -198,6 +240,9 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Safran royal", "Poivre de Sichuan", "Bergamote"],
     heartNotes: ["Oud précieux", "Fleurs de Saba", "Absolu de rose"],
     baseNotes: ["Résines dorées", "Encens", "Musc boisé", "Ambre"],
+    // Sa propre `viralNote` le dit « boisé-épicé » : la famille déclarée ne
+    // fait que cesser de la contredire (la déduction sortait « Ambré »).
+    family: "Boisé",
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
     // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
     image: "/assets/prod-6.jpg",
@@ -223,6 +268,8 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Datte", "Cannelle", "Bergamote", "Muscade"],
     heartNotes: ["Praline", "Fève tonka", "Vanille", "Fleur d'oranger"],
     baseNotes: ["Benjoin", "Bois de santal", "Ambre gris", "Myrrhe", "Encens"],
+    // Datte, praline, tonka, vanille : gourmand avant tout, le bois est un fond.
+    family: "Gourmand",
     badges: ["Tenue 24h", "EDP 30%", "Fabriqué à Dubaï", "Authenticité garantie"],
     // Nouveau packshot de référence : trois quarts sur fond clair, cadré serré,
     // carré. L'ancien (`khamrah-packshot.webp`) était un portrait où le flacon
@@ -271,6 +318,8 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Myrtille", "Fruits rouges", "Cassis"],
     heartNotes: ["Musc blanc", "Fleurs blanches", "Framboise"],
     baseNotes: ["Vanille", "Bois blancs", "Musc"],
+    // Myrtille, cassis, framboise sur un fond vanillé — fruité-gourmand.
+    family: "Fruité",
     // Badges calés sur la convention de `product-resolve.ts` (famille, forme,
     // origine, garantie) plutôt que sur le « Tenue 24h / EDP 30% » des six
     // premières fiches : deux promesses qu'aucune source ne documente ici.
@@ -305,6 +354,9 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Fleur d'oranger", "Néroli", "Poire"],
     heartNotes: ["Jasmin", "Fleurs blanches", "Iris"],
     baseNotes: ["Musc blanc", "Bois blancs", "Ambre clair"],
+    // Fleur d'oranger et néroli en tête, jasmin et iris au cœur : un blanc
+    // floral franc, sans structure boisée pour le contredire.
+    family: "Floral",
     badges: ["Floral", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
     image: "/assets/products/marwa/marwa-packshot.jpg",
     // Trois vues : le packshot, puis la reprise du même cadrage avec les fleurs
@@ -349,6 +401,8 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Cognac", "Cannelle"],
     heartNotes: ["Praline", "Fève tonka"],
     baseNotes: ["Vanille", "Bois de santal", "Cèdre"],
+    // Cognac, cannelle, praline, tonka : le registre est celui de la liqueur.
+    family: "Gourmand",
     badges: ["Ambré", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
     // Packshot studio : c'est le seul cadrage qui tient en vignette 68 px,
     // là où les mises en scène sombres de la série (charbon, ardoise, terre
@@ -430,6 +484,9 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Citron vert", "Bergamote", "Poivre de Sichuan"],
     heartNotes: ["Lavande", "Anis étoilé", "Cannelle", "Muscade"],
     baseNotes: ["Réglisse", "Bois ambrés", "Vanille", "Accord minéral"],
+    // Lavande, anis, poivre de Sichuan : aromatique en tête, comme la référence
+    // dont il est le jumeau relu (Dior Sauvage, famille « aromatique »).
+    family: "Aromatique",
     // Badges à la convention de `product-resolve.ts` (famille, forme, origine,
     // garantie), avec le libellé de famille tel que `FAMILIES` l'écrit : les
     // « Tenue 24h / EDP 30% » des six premières fiches sont deux promesses
@@ -502,6 +559,8 @@ export const PRODUCTS: Record<string, Product> = {
     topNotes: ["Vanille de Madagascar", "Caramel", "Miel"],
     heartNotes: ["Fève tonka", "Amande grillée", "Praline"],
     baseNotes: ["Benjoin", "Bois de santal", "Musc blanc", "Ambre"],
+    // Vanille de Madagascar, caramel, miel, praline : gourmand de bout en bout.
+    family: "Gourmand",
     badges: ["Ambré · gourmand", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
     // Des sept packshots, le seul cadré large ET centré, avec la lumière la
     // plus franche sur le verre dépoli : les autres décalent le flacon d'un

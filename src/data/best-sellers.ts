@@ -25,6 +25,7 @@ export const REEF_PRODUCTS: RailProduct[] = [
     brand: "Reef",
     name: "Aurum",
     notes: "Boisé · Ambré · Doré",
+    family: "Boisé",
     image: "/assets/products/aurum.webp",
     price: { amount: 64.9, currency: CURRENCY },
     compareAtPrice: { amount: 84.9, currency: CURRENCY },
@@ -36,6 +37,7 @@ export const REEF_PRODUCTS: RailProduct[] = [
     brand: "Reef",
     name: "Reef 33",
     notes: "Frais · Aquatique · Boisé",
+    family: "Frais",
     image: "/assets/products/reef-33.webp",
     price: { amount: 49.9, currency: CURRENCY },
     compareAtPrice: { amount: 62.9, currency: CURRENCY },
@@ -47,6 +49,10 @@ export const REEF_PRODUCTS: RailProduct[] = [
     brand: "Reef",
     name: "Summer",
     notes: "Floral · Fruité · Frais",
+    // Sans déclaration, « Frais » l'emportait sur « Floral » à une voix près :
+    // le tableau de vitrine met pourtant le floral en tête, et c'est lui qui
+    // porte le parfum.
+    family: "Floral",
     image: "/assets/products/summer.webp",
     price: { amount: 44.9, currency: CURRENCY },
     compareAtPrice: { amount: 56.9, currency: CURRENCY },
@@ -58,6 +64,7 @@ export const REEF_PRODUCTS: RailProduct[] = [
     brand: "Reef",
     name: "Volcano",
     notes: "Boisé · Minéral · Épicé",
+    family: "Boisé",
     image: "/assets/products/volcano.webp",
     price: { amount: 47.9, currency: CURRENCY },
     compareAtPrice: { amount: 59.9, currency: CURRENCY },

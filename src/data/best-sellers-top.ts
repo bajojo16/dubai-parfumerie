@@ -27,6 +27,9 @@ export const TOP_PRODUCTS: RailProduct[] = [
     brand: "Reef",
     name: "Aurum",
     notes: "Boisé · Ambré · Doré",
+    // « Doré » n'est pas une matière : sans famille déclarée, seul « Boisé »
+    // aurait voté, et « Ambré » aussi — l'égalité se serait jouée ailleurs.
+    family: "Boisé",
     image: "/assets/products/aurum.webp",
     price: { amount: 64.9, currency: CURRENCY },
     compareAtPrice: { amount: 84.9, currency: CURRENCY },
@@ -38,6 +41,8 @@ export const TOP_PRODUCTS: RailProduct[] = [
     brand: "Atelier Oud",
     name: "Oud & Roses",
     notes: "Oud · Rose · Safran",
+    // Un oud-rose : l'oud porte, la rose se pose dessus — et le nom le dit.
+    family: "Boisé",
     image: "/assets/products/oud-roses.webp",
     price: { amount: 79.9, currency: CURRENCY },
   },
@@ -47,6 +52,7 @@ export const TOP_PRODUCTS: RailProduct[] = [
     brand: "Maison Yara",
     name: "Vanilla Voyage",
     notes: "Vanille · Tonka · Ambre",
+    family: "Gourmand",
     image: "/assets/products/vanilla-voyage.webp",
     price: { amount: 58.9, currency: CURRENCY },
     compareAtPrice: { amount: 69.9, currency: CURRENCY },
@@ -58,6 +64,7 @@ export const TOP_PRODUCTS: RailProduct[] = [
     brand: "Reef",
     name: "Reef 33",
     notes: "Frais · Aquatique · Boisé",
+    family: "Frais",
     image: "/assets/products/reef-33.webp",
     price: { amount: 49.9, currency: CURRENCY },
     compareAtPrice: { amount: 62.9, currency: CURRENCY },
@@ -69,6 +76,7 @@ export const TOP_PRODUCTS: RailProduct[] = [
     brand: "Reef",
     name: "Volcano",
     notes: "Boisé · Minéral · Épicé",
+    family: "Boisé",
     image: "/assets/products/volcano.webp",
     price: { amount: 47.9, currency: CURRENCY },
   },

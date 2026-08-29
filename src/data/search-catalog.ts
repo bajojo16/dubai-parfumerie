@@ -141,21 +141,113 @@ export const FAMILIES: Record<string, { label: string; words: string[]; text: st
   },
 };
 
+/**
+ * DOMINANCE STRUCTURELLE — pourquoi les quatre familles ne pèsent pas pareil.
+ *
+ * Un parfum se lit à sa colonne vertébrale, pas au nombre de matières qu'il
+ * cite. L'oud cambodi et le santal de Shaghaf Oud TIENNENT la composition ; la
+ * rose et la fleur d'oranger sont des accents posés dessus.
+ *
+ * La version précédente comptait une voix par mot du dictionnaire trouvé dans
+ * le texte, puis gardait le meilleur avec `hits > best`. Shaghaf Oud sortait à
+ * DEUX partout — rose + fleur d'oranger, safran + labdanum, oud + santal — et
+ * c'est alors l'ORDRE D'ÉCRITURE de l'objet `FAMILIES` qui tranchait, `floral`
+ * y étant déclaré en deuxième. Un oud dense était donc affiché « Floral », et
+ * l'affinité de famille le rendait « très proche » d'un musc rosé léger.
+ * Personne ne peut deviner qu'une famille se joue à la place d'une accolade.
+ *
+ * Deux règles écrites remplacent ce hasard :
+ *   `voix` — ce que vaut UNE matière de cette famille. Un fond (bois, résine)
+ *            porte le sillage pendant des heures là où une tête (agrume, note
+ *            verte) s'évapore en minutes : elles ne pèsent pas pareil.
+ *   `rang` — qui l'emporte à égalité de voix. En parfumerie orientale une
+ *            structure boisée ou ambrée DOMINE un accent floral ou frais : un
+ *            parfum qui porte oud et santal n'est pas un floral parce qu'il
+ *            contient aussi une rose.
+ * Le résultat ne dépend plus de l'ordre dans lequel ce fichier est écrit.
+ */
+const FAMILY_STRUCTURE: Record<string, { voix: number; rang: number }> = {
+  boise: { voix: 3, rang: 4 },
+  ambre: { voix: 3, rang: 3 },
+  floral: { voix: 2, rang: 2 },
+  frais: { voix: 1, rang: 1 },
+};
+
+/**
+ * Famille d'UNE matière, ou "" si le libellé ne dit rien d'olfactif.
+ *
+ * Une note ne vote qu'une fois : « boisé » contient « bois », et l'ancien
+ * comptage par mot du dictionnaire lui donnait donc deux points pour une seule
+ * matière. Et quand plusieurs familles reconnaissent le même libellé — « fleur
+ * d'oranger » est un floral mais contient « orange », « bois de rose » est un
+ * bois qui cite une fleur — c'est la plus dominante qui l'emporte, jamais la
+ * première rencontrée.
+ */
+function familyOfNote(note: string): string {
+  const n = norm(note);
+  if (!n) return "";
+  let winner = "";
+  let rang = 0;
+  for (const [key, def] of Object.entries(FAMILIES)) {
+    if (!def.words.some((w) => n.includes(norm(w)))) continue;
+    if (FAMILY_STRUCTURE[key].rang > rang) {
+      rang = FAMILY_STRUCTURE[key].rang;
+      winner = key;
+    }
+  }
+  return winner;
+}
+
+/**
+ * Famille annoncée par la source, ou "" si elle n'en annonce pas.
+ *
+ * Les sources l'écrivent de deux façons : une clé simple (« Ambré », « Rosé »)
+ * ou un triptyque de vitrine (« Oud · Boisé · Épicé »). Dans les deux cas le
+ * PREMIER descripteur porte la dominante — c'est une décision éditoriale, prise
+ * par quelqu'un qui a jugé que ce parfum était d'abord un oud, et elle vaut
+ * mieux qu'un comptage de mots. On s'arrête donc au premier descripteur qu'on
+ * sait traduire, au lieu de balayer la phrase entière : l'ancienne version
+ * testait « épicé » avant « boisé » et remontait le TROISIÈME descripteur
+ * d'Amber Oud, qu'elle classait ambré quand sa source le dit boisé.
+ */
+function familyFromDeclared(declared: string | undefined): string {
+  for (const part of splitNotes(declared)) {
+    const s = norm(part);
+    if (!s) continue;
+    if (s.startsWith("ambr") || s.includes("gourmand") || s.includes("fruit") || s.includes("epice") || s.includes("sucre")) return "ambre";
+    if (s.startsWith("floral") || s.startsWith("fleur") || s.startsWith("rose") || s.startsWith("musqu")) return "floral";
+    if (s.startsWith("frais") || s.startsWith("aromatique") || s.includes("aquatique") || s.includes("marin") || s.includes("agrume") || s.includes("hesperid")) return "frais";
+    if (s.startsWith("bois") || s.startsWith("oud") || s.startsWith("santal") || s.startsWith("cuir") || s.startsWith("chypr")) return "boise";
+  }
+  return "";
+}
+
 /** Renvoie la clé de famille, ou "" si rien ne ressort. */
 export function familyOf(p: SearchProduct): string {
-  const declared = norm(p.family);
-  if (declared.startsWith("ambr") || declared.includes("gourmand") || declared.includes("fruit") || declared.includes("epice")) return "ambre";
-  if (declared.startsWith("floral")) return "floral";
-  if (declared.startsWith("frais") || declared.includes("aquatique")) return "frais";
-  if (declared.startsWith("bois")) return "boise";
+  const declared = familyFromDeclared(p.family);
+  if (declared) return declared;
 
-  const text = norm([p.notes.join(" "), p.family, p.name].join(" "));
+  // Rien de déclaré : les matières votent. Le nom du flacon vote avec elles —
+  // « Shaghaf Oud », « Silk Rose » et « Vanilla Voyage » annoncent leur famille
+  // avant même qu'on lise la pyramide, et c'est souvent le seul indice qui
+  // reste sur une référence dont les notes n'ont pas encore été saisies.
+  const scores = new Map<string, number>();
+  for (const token of [...p.notes, p.name]) {
+    const key = familyOfNote(token);
+    if (!key) continue;
+    scores.set(key, (scores.get(key) ?? 0) + FAMILY_STRUCTURE[key].voix);
+  }
+
   let winner = "";
   let best = 0;
-  for (const [key, def] of Object.entries(FAMILIES)) {
-    const hits = def.words.reduce((n, w) => n + (text.includes(w) ? 1 : 0), 0);
-    if (hits > best) {
-      best = hits;
+  let rang = 0;
+  for (const [key, score] of scores) {
+    const r = FAMILY_STRUCTURE[key].rang;
+    // `>` sur les voix, puis `>` sur le rang : deux familles à égalité de voix
+    // sont départagées par la dominance, pas par l'ordre d'insertion de la Map.
+    if (score > best || (score === best && r > rang)) {
+      best = score;
+      rang = r;
       winner = key;
     }
   }
@@ -272,6 +364,11 @@ function collect(): RawProduct[] {
       topNotes: p.topNotes,
       heartNotes: p.heartNotes,
       baseNotes: p.baseNotes,
+      // La fiche rédigée est la source la plus fiable du catalogue : sa famille
+      // déclarée doit gagner la déduplication devant le triptyque de vitrine
+      // que `OLFACTIVE_TWINS` porte pour le même flacon (« Gourmand · Boisé ·
+      // Épicé »), lequel décrit la PAIRE plus qu'il ne classe le produit.
+      family: p.family,
       volume: p.volume,
       concentration: p.concentration,
       description: p.description,
@@ -290,6 +387,7 @@ function collect(): RawProduct[] {
       price: p.price,
       compareAtPrice: p.compareAtPrice,
       available: p.available,
+      family: p.family,
       notes: [],
       popularity: Math.max(0, 100 - (p.rank - 1) * 6),
     });
@@ -305,6 +403,7 @@ function collect(): RawProduct[] {
       price: p.price.amount,
       compareAtPrice: p.compareAtPrice?.amount,
       available: true,
+      family: p.family,
       notes: splitNotes(p.notes),
       popularity: Math.max(0, 92 - i * 4),
     });
@@ -354,6 +453,7 @@ function collect(): RawProduct[] {
       price: p.price,
       compareAtPrice: p.was,
       available: p.available,
+      family: p.family,
       notes: splitNotes(p.notes),
       popularity: Math.max(0, 66 - i * 3),
     });
