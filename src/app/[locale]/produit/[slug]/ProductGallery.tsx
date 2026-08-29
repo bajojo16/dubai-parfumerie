@@ -36,9 +36,17 @@ export default function ProductGallery({
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
       {/* Image principale */}
+      {/* `maxWidth` en plus du ratio : sur un grand écran la colonne de gauche
+          fait la moitié du conteneur, et un 4/5 qui l'occupe entièrement donne
+          un flacon plus haut que l'écran — on ne voyait plus qu'un détail de
+          bouchon. La photo s'arrête à 460 px et se centre ; en dessous de cette
+          largeur elle occupe toute la place, donc le mobile ne change pas. */}
       <div
         style={{
           position: "relative",
+          width: "100%",
+          maxWidth: 460,
+          margin: "0 auto",
           borderRadius: "var(--r-lg)",
           overflow: "hidden",
           background: "var(--surface-cream)",

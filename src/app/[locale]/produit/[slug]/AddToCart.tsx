@@ -76,8 +76,12 @@ export default function AddToCart({ productName, price }: AddToCartProps) {
         </span>
       </label>
 
-      {/* Quantity + Add to cart row */}
-      <div style={{ display: "flex", gap: "0.75rem", alignItems: "center" }}>
+      {/* Quantity + Add to cart row.
+          La rangée est bornée, pas seulement le bouton : c'est elle qui donne
+          le gabarit du bloc d'achat, et le bouton « Acheter en 1 clic » s'aligne
+          dessus. Sans cette borne, la rangée traversait la colonne et le bouton
+          flottait en son milieu, sans bord commun avec rien. */}
+      <div style={{ display: "flex", gap: "0.75rem", alignItems: "center", width: "100%", maxWidth: 392 }}>
         {/* Quantity stepper */}
         <div
           style={{
@@ -152,12 +156,12 @@ export default function AddToCart({ productName, price }: AddToCartProps) {
         <button
           onClick={handleAddToCart}
           style={{
-            // Ni pleine largeur ni minuscule : une bande dorée qui traversait
-            // toute la colonne pesait plus lourd que le prix qu'elle sert. Elle
-            // grandit avec la place disponible mais s'arrête à 280 px, et se
-            // replie sous cette largeur sur les colonnes étroites.
-            flex: "1 1 200px",
-            maxWidth: 280,
+            // Occupe ce que la rangée bornée laisse après le sélecteur de
+            // quantité. C'est la rangée qui fixe la largeur, plus le bouton :
+            // en pleine colonne, la bande dorée pesait plus lourd que le prix
+            // qu'elle sert.
+            flex: "1 1 auto",
+            minWidth: 0,
             height: "42px",
             background: cartAdded
               ? "var(--gold-700)"
@@ -184,8 +188,13 @@ export default function AddToCart({ productName, price }: AddToCartProps) {
       {/* 1-click buy */}
       <button
         style={{
+          // Même gabarit que la rangée du dessus — sélecteur de quantité plus
+          // bouton d'ajout — pour que les deux blocs s'arrêtent au même bord.
+          // En pleine largeur, l'action SECONDAIRE paraissait la plus large des
+          // deux, donc la plus importante.
           width: "100%",
-          height: "44px",
+          maxWidth: 392,
+          height: "42px",
           background: "transparent",
           color: "var(--ink-700)",
           border: "1.5px solid var(--line-200)",
