@@ -55,15 +55,30 @@ const CATEGORIES: { id: CategoryId; label: string; caption: string }[] = [
  */
 const PINNED_CATEGORY: Record<string, CategoryId> = {
   // Nouvelles prises de vue Khamrah — chacune épinglée à ce qu'elle montre :
+  "/assets/videos/khamrah-hf-14.mp4": "ugc", // une main ornée de henné se referme sur le flacon : le seul plan porté
   "/assets/videos/khamrah-hf-02.mp4": "spot", // cascade de cannelle + coulée d'ambre : le film de marque
   "/assets/videos/khamrah-hf-03.mp4": "hypermotion", // macro de la coulée : de la matière en mouvement
   "/assets/videos/khamrah-hf-04.mp4": "fiole-fixe", // flacon net sur la pierre, décor qui bouge autour
-  "/assets/videos/khamrah-hf-05.mp4": "ugc", // une main soulève le capuchon : la seule prise « portée »
+  // `-05` garde son épingle « ugc » alors que `-14` occupe désormais la case :
+  // `product-clips.ts` le déclare après lui, donc il perd l'arbitrage de
+  // l'étage 1 et retombe en surplus. L'épingle n'est pas morte pour autant —
+  // elle est la position de repli du jour où `-14` sortirait de la banque, et
+  // c'est exactement ce que la règle « épinglé, sinon premier libre » sert à
+  // garantir. La retirer laisserait `-05` tomber dans une case au hasard.
+  "/assets/videos/khamrah-hf-05.mp4": "ugc", // une main soulève le capuchon : le geste, sans personne à l'écran
   // Anciennes vidéos, conservées : elles ne sont plus référencées par les deux
   // banques, mais un retour en arrière sur l'une d'elles retrouve sa case.
   "/assets/videos/khamrah-levitation.mp4": "spot",
   "/assets/videos/khamrah-nectar.mp4": "hypermotion",
   "/assets/videos/khamrah-fiole-fixe.mp4": "fiole-fixe",
+  // Vanilla Voyage — six films Higgsfield, dont trois seulement disent quelque
+  // chose d'assez distinct pour mériter une case ; le quatrième épinglé est
+  // l'ancien rendu de juin, gardé pour la seule raison que rien d'autre ne
+  // montre le parfum entre des mains (voir `product-clips.ts`).
+  "/assets/videos/vanilla-voyage-hf-01.mp4": "spot", // la route, la matière, le flacon : le film de marque
+  "/assets/videos/vanilla-voyage-hf-03.mp4": "hypermotion", // ingrédients en lévitation autour du flacon
+  "/assets/videos/vanilla-voyage-hf-05.mp4": "fiole-fixe", // le flacon net, les éclats de caramel qui volent
+  "/assets/videos/vanilla-voyage.mp4": "ugc", // des mains ouvrent le coffret et vaporisent : le seul plan porté
   // Blueberry Musk — trois films dont on sait ce qu'ils montrent :
   // `blueberry-hf-01` est un plan large d'entrepôt de glace, décor construit et
   // flacon posé au fond, c'est-à-dire un film de marque → Spot TV ;

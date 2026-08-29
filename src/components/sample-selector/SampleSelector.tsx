@@ -940,10 +940,21 @@ function StyleBlock() {
     .ss-crit button.ss-on{background:#1c1a17;color:#f6f1e7}
     .ss-crit button:focus-visible{outline:2px solid #a9873f;outline-offset:1px}
 
-    .ss-nseg{display:inline-flex;gap:3px;background:#fff;border:1px solid rgba(28,26,23,.22);border-radius:100px;padding:3px}
-    .ss-nseg button{border:none;background:transparent;font-family:'Cormorant Garamond',var(--font-display);font-weight:600;font-size:18px;min-width:38px;padding:8px 12px;border-radius:100px;cursor:pointer;color:#1c1a17;transition:.18s;line-height:1}
-    .ss-nseg button:hover{color:#a9873f}
-    .ss-nseg button.ss-on{background:#1c1a17;color:#c2a15b;font-size:20px;box-shadow:0 0 0 2px #c2a15b, 0 6px 14px -6px rgba(28,26,23,.55);transform:scale(1.04)}
+    /* La sélection ne changeait que de COULEUR : une rondelle sombre parmi cinq
+       chiffres de même famille et de même graisse, dans une barre elle-même
+       ronde. Rond sur rond — on lisait « un chiffre est actif », pas lequel.
+       On change donc la silhouette, pas la taille : la barre s'équerre, et le
+       choix devient le seul élément à porter un ergot, qui désigne la grille
+       qu'il commande. Une forme se repère de loin ; une nuance de fond, non. */
+    .ss-nseg{display:inline-flex;gap:2px;background:#fff;border:1px solid rgba(28,26,23,.22);border-radius:11px;padding:3px;overflow:visible}
+    .ss-nseg button{position:relative;border:none;background:transparent;font-family:'Cormorant Garamond',var(--font-display);font-weight:600;font-size:18px;min-width:38px;padding:8px 12px;border-radius:7px;cursor:pointer;color:#1c1a17;transition:.18s;line-height:1}
+    .ss-nseg button:hover{color:#a9873f;background:rgba(28,26,23,.05)}
+    /* Même corps de texte que les autres — la demande était « plus flagrant »,
+       pas « plus gros ». Tout le contraste passe par le bloc plein et l'ergot. */
+    .ss-nseg button.ss-on{background:#1c1a17;color:#c2a15b;box-shadow:0 0 0 1.5px #c2a15b,0 5px 13px -5px rgba(28,26,23,.55)}
+    /* L'ergot déborde sous la barre (d'où overflow:visible au-dessus) et
+       tient dans le padding vertical de la barre d'outils : rien ne bouge. */
+    .ss-nseg button.ss-on::after{content:"";position:absolute;top:100%;left:50%;width:0;height:0;margin-top:1px;transform:translateX(-50%);border-left:5px solid transparent;border-right:5px solid transparent;border-top:5px solid #1c1a17}
     .ss-nseg button:focus-visible{outline:2px solid #a9873f;outline-offset:2px}
     .ss-toolbar.ss-tb-stuck .ss-nseg button{padding-block:5px;font-size:16px}
 

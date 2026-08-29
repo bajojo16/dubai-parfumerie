@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import GridDensity from "@/components/ui/GridDensity";
 
 export const metadata: Metadata = {
   title: "Parfums Homme",
@@ -30,7 +31,7 @@ export default function ParfumsHommePage() {
       </section>
 
       <section style={{ maxWidth: 1240, margin: "0 auto", padding: "48px 24px" }}>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))", gap: 20 }}>
+        <GridDensity storageKey="dp-density-homme" gap={20}>
           {products.map(p => (
             <Link key={p.id} href={`/produit/${p.name.toLowerCase().replace(/ /g, "-")}`} style={{ textDecoration: "none", background: "var(--surface-white)", border: "1px solid #e8dfd0", borderRadius: "var(--r-lg)", overflow: "hidden", display: "block" }}>
               <div style={{ position: "relative", paddingBottom: "100%" }}>
@@ -47,7 +48,7 @@ export default function ParfumsHommePage() {
               </div>
             </Link>
           ))}
-        </div>
+        </GridDensity>
       </section>
     </main>
   );

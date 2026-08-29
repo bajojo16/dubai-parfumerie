@@ -75,7 +75,6 @@ const NAV_LINKS = [
   // « Commande à la demande » la ferait déborder sur les écrans 1024-1280.
   { label: "Sur commande", href: "/commande-a-la-demande" },
   { label: "Bons Plans", href: "/promo-flash", highlight: true },
-  { label: "Coffrets & Lots", href: "/promo-flash" },
 ];
 
 interface MegaData {
@@ -91,9 +90,13 @@ const MEGA: Record<string, MegaData> = {
         // entier. Sans elle, un visiteur qui ne se reconnaissait dans aucune
         // des entrées fines n'avait aucun moyen de voir simplement la liste —
         // il fallait fermer le menu et cliquer sur son intitulé.
+        // Elle renvoyait vers `/parfums-femme` (six flacons figés en dur dans
+        // la page) : promettre « tous » et livrer un extrait. Elle mène
+        // désormais à `/catalogue`, la seule page branchée sur le catalogue
+        // agrégé, où le rayon se retrouve par les filtres.
         title: "Types de produit",
         links: [
-          { label: "Tous les parfums", href: "/parfums-femme" },
+          { label: "Tous les parfums", href: "/catalogue" },
           { label: "Eau de Parfum", href: "/parfums-femme" },
           { label: "Huile de Parfum", href: "/huile-de-parfum" },
           { label: "Coffrets découverte", href: "/promo-flash" },
@@ -120,7 +123,7 @@ const MEGA: Record<string, MegaData> = {
       {
         title: "Types de produit",
         links: [
-          { label: "Tous les parfums", href: "/parfums-homme" },
+          { label: "Tous les parfums", href: "/catalogue" },
           { label: "Eau de Parfum", href: "/parfums-homme" },
           { label: "Huile de Parfum", href: "/huile-de-parfum" },
           { label: "Coffrets prestige", href: "/promo-flash" },

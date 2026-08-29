@@ -24,8 +24,10 @@ import type { ReferencePerfume } from "@/data/reference-perfumes";
  * Écrites EXACTEMENT comme dans `reference-perfumes.ts` : la comparaison se
  * fait sur la chaîne, une coquille ferait disparaître toute une maison.
  *
- * Amouage est omanaise, Hind Al Oud saoudienne, les dix-neuf autres sont
- * émiraties. Les maisons européennes ou américaines de la base (Xerjoff, Creed,
+ * Amouage est omanaise, Arabian Oud et Hind Al Oud saoudiennes, les autres
+ * émiraties. Pas de décompte en toutes lettres ici : la liste bouge à chaque
+ * maison ajoutée et le chiffre écrit à la main finissait par mentir.
+ * Les maisons européennes ou américaines de la base (Xerjoff, Creed,
  * Dior…) sont volontairement hors périmètre : la commande à la demande porte
  * sur le sourcing au Golfe, c'est là que la boutique a ses relais.
  */
@@ -48,6 +50,10 @@ export const ON_DEMAND_HOUSES: readonly string[] = [
   "Lattafa",
   "Maison Alhambra",
   "Nabeel",
+  // Ajoutée avec l'arrivée de Rifaaqat, sa première référence dans la base :
+  // la maison figurait déjà dans `brands.ts` et sur la page « Marques », mais
+  // pas ici, donc pas une seule de ses références n'était commandable.
+  "Paris Corner",
   "Rasasi",
   "Risala",
   "Swiss Arabian",

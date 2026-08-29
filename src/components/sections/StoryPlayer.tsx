@@ -469,7 +469,11 @@ export function StoryPlayer({
   );
 }
 
-const iconBtn: React.CSSProperties = {
+/** Exporté pour que le lecteur d'avis en images (ReviewMediaViewer) porte
+ *  exactement le même bouton rond translucide : deux visionneuses plein écran
+ *  du même site dont les croix de fermeture ne se ressemblent pas se lisent
+ *  comme deux produits différents. */
+export const iconBtn: React.CSSProperties = {
   width: 40,
   height: 40,
   borderRadius: "50%",

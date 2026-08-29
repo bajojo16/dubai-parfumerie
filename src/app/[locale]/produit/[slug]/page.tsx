@@ -8,6 +8,8 @@ import DeliveryEstimate from "./DeliveryEstimate";
 import ProductVideoStrip from "./ProductVideoStrip";
 import { StoryBubbles } from "@/components/sections/StoryBubbles";
 import { DEMO_STORIES } from "@/data/product-stories";
+import { ReviewMediaBubbles } from "@/components/sections/ReviewMediaBubbles";
+import { reviewMediaForProduct } from "@/data/review-media";
 import { allProductSlugs, resolveProduct } from "@/data/product-resolve";
 import { ScentConstellation } from "./ScentConstellation";
 import { notFound } from "next/navigation";
@@ -115,6 +117,11 @@ export default async function ProductPage({ params }: PageProps) {
     (story, i, all) =>
       all.findIndex((other) => (other.shopProductHandle ?? other.id) === (story.shopProductHandle ?? story.id)) === i,
   ).slice(0, 6);
+
+  // Les avis illustres de CETTE fiche uniquement : un avis porte une photo du
+  // parfum dont il parle, la rangee n'a donc aucun sens ailleurs. Tableau vide
+  // sur les fiches sans photo client, et le composant ne rend alors rien.
+  const mediaReviews = reviewMediaForProduct(slug);
 
   const relatedSlugs = allProductSlugs()
     .filter((s) => s !== slug)
@@ -402,8 +409,21 @@ export default async function ProductPage({ params }: PageProps) {
                 color: "var(--ink-500)",
               }}
             >
-              💳 Payez en{" "}
-              <strong style={{ color: "var(--ink-700)" }}>4× sans frais</strong>{" "}
+              {/* Marque PayPal reprise telle quelle du pied de page, qui la
+                  dessine déjà pour la rangée des moyens de paiement : deux
+                  tracés du même logo finiraient par diverger. L'émoji carte
+                  bancaire qui tenait cette place laissait croire à un
+                  fractionnement par carte, alors que c'est PayPal qui le
+                  porte — et le nom du prestataire est justement ce qui rend
+                  l'offre crédible. */}
+              Payez en{" "}
+              <strong style={{ color: "var(--ink-700)" }}>4× sans frais</strong> avec{" "}
+              <span style={{ display: "inline-flex", verticalAlign: "-3px" }}>
+                <svg viewBox="0 0 58 18" width="44" height="14" role="img" aria-label="PayPal">
+                  <text x="0" y="14.5" fontFamily="Arial, Helvetica, sans-serif" fontStyle="italic" fontWeight="800" fontSize="16" fill="#003087">Pay</text>
+                  <text x="25" y="14.5" fontFamily="Arial, Helvetica, sans-serif" fontStyle="italic" fontWeight="800" fontSize="16" fill="#009CDE">Pal</text>
+                </svg>
+              </span>{" "}
               — soit{" "}
               <strong style={{ color: "var(--ink-700)" }}>{installment} €</strong>
               /mois
@@ -847,6 +867,18 @@ export default async function ProductPage({ params }: PageProps) {
               </article>
             ))}
           </div>
+
+          {/* Les avis en images, au PIED de la section : les trois cartes de
+              texte ci-dessus sont la meme copie generique sur toutes les
+              fiches, alors que ces bulles-ci sont propres au produit ouvert.
+              Les poser avant aurait fait passer le contenu specifique pour un
+              accessoire du contenu generique. */}
+          <ReviewMediaBubbles
+            reviews={mediaReviews}
+            productSlug={slug}
+            productName={product.name}
+            locale={locale}
+          />
         </section>
       </div>
     </div>

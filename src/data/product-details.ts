@@ -307,11 +307,222 @@ export const PRODUCTS: Record<string, Product> = {
     baseNotes: ["Musc blanc", "Bois blancs", "Ambre clair"],
     badges: ["Floral", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
     image: "/assets/products/marwa/marwa-packshot.jpg",
-    // Deux vues seulement en banque : le packshot (fond clair, fleurs blanches)
-    // et la mise en scène sur cristaux de quartz, qui dit la facette poudrée.
+    // Trois vues : le packshot, puis la reprise du même cadrage avec les fleurs
+    // blanches posées au pied du flacon — la fiche vend un floral blanc, et
+    // c'est le seul visuel qui le montre —, enfin les cristaux de quartz, qui
+    // disent la facette poudrée. Les deux packshots nus restants ne changent
+    // que d'angle : une galerie qui répète le même plan fatigue pour rien.
     gallery: [
       "/assets/products/marwa/marwa-packshot.jpg",
+      "/assets/products/marwa/marwa-hf-01.jpg",
       "/assets/products/marwa/marwa-cristaux.jpg",
+    ],
+  },
+  "paris-corner-rifaaqat": {
+    name: "Rifaaqat",
+    brand: "Paris Corner",
+    // Prix et prix barré repris tels quels de l'entrée que `search-catalog.ts`
+    // portait en attendant cette fiche, pour ne pas créer un troisième chiffre
+    // sur un flacon qui n'en avait aucun : ils s'appuient sur le seul repère
+    // Paris Corner du dépôt, Marshmallow Blush à 39,50 € dans le rail promo.
+    price: 39.9,
+    oldPrice: 52.9,
+    // Valeurs de démonstration stables, comme les autres fiches rédigées.
+    // Volontairement sous Khamrah et Vanilla Voyage : la référence vient
+    // d'entrer au catalogue, un compteur d'avis à quatre chiffres démentirait
+    // la nouveauté que la page revendique par ailleurs.
+    rating: 4.7,
+    reviews: 142,
+    concentration: "Eau de parfum",
+    volume: "100ml",
+    origin: "Fabriqué à Dubaï",
+    description:
+      "Rifaaqat ouvre sur une gorgée d'alcool ambré : un cognac chaud et sec, cerclé de cannelle, qui pique avant de retomber. La praline fond dessus presque aussitôt et arrondit l'attaque, sans jamais la confire — c'est une praline grillée, un peu amère au bord, pas un caramel. Le cœur laisse monter la fève tonka, foin et coumarine, qui ramène le gourmand vers la peau. Le fond est un lit de vanille sombre posé sur des bois secs, santal et cèdre, dont la sécheresse empêche l'ensemble de tourner au sirop. Sillage dense et tenue longue, à l'image du flacon rectangulaire à capuchon noir mat et à l'étiquette calligraphiée.",
+    // Le grand classique reste anonyme : la règle du champ n'autorise à le
+    // nommer que si `olfactive-twins.ts` établit le rapprochement pour CE
+    // slug, et le fichier ne porte aucune entrée Rifaaqat. Le rapprochement
+    // existe pourtant : `reference-perfumes.ts` liste `kilian-angels-share`
+    // avec les mêmes accords, et `olfactive-match.ts` les apparie tout seul.
+    // C'est ce moteur qui doit le dire à l'écran, pas une phrase écrite ici.
+    viralNote:
+      "Très partagé sur les réseaux sociaux, où il est cherché pour sa parenté avec un grand classique gourmand au cognac, dont il rappelle l'axe praline, tonka et bois secs sans jamais prétendre s'y substituer.",
+    topNotes: ["Cognac", "Cannelle"],
+    heartNotes: ["Praline", "Fève tonka"],
+    baseNotes: ["Vanille", "Bois de santal", "Cèdre"],
+    badges: ["Ambré", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
+    // Packshot studio : c'est le seul cadrage qui tient en vignette 68 px,
+    // là où les mises en scène sombres de la série (charbon, ardoise, terre
+    // craquelée) noient le verre transparent dans leur fond.
+    image: "/assets/products/rifaaqat/rifaaqat-hf-01.jpg",
+    // Sept vues sur dix-sept. La série est riche en décors mais pauvre en
+    // information : douze photos ne changent que la matière posée sous le
+    // flacon, sans rien dire du jus. On garde donc le packshot, l'étui (ce que
+    // le client reçoit), puis cinq fonds retenus pour ce qu'ils évoquent du
+    // parfum — soie noire et marbre pour la densité du sillage, charbon et
+    // ardoise mouillée pour la sécheresse boisée du fond, coton pour la
+    // rondeur pralinée. Les dix écartées redisent l'une de ces cinq matières.
+    gallery: [
+      "/assets/products/rifaaqat/rifaaqat-hf-01.jpg",
+      "/assets/products/rifaaqat/rifaaqat-hf-06.jpg",
+      "/assets/products/rifaaqat/rifaaqat-hf-07.jpg",
+      "/assets/products/rifaaqat/rifaaqat-hf-11.jpg",
+      "/assets/products/rifaaqat/rifaaqat-hf-13.jpg",
+      "/assets/products/rifaaqat/rifaaqat-hf-15.jpg",
+      "/assets/products/rifaaqat/rifaaqat-hf-17.jpg",
+    ],
+  },
+  "maison-alhambra-salvo": {
+    // Le flacon des quinze visuels porte « SALVO ELIXIR » gravé en toutes
+    // lettres : la fiche prend ce nom-là, parce qu'une fiche produit doit
+    // annoncer ce que le client verra arriver dans le colis, pas ce que la
+    // page d'accueil a écrit. L'écart n'est PAS tranché ici, il est seulement
+    // documenté : `olfactive-twins.ts` vend « Salvo » à 16,90 € et pointe
+    // `maison-alhambra-salvo`, quand `reference-perfumes.ts` sépare bien deux
+    // jus (`alhambra-salvo`, aromatique lavande-ambrox / `alhambra-salvo-elixir`,
+    // fougère poivre-tabac). La fiche est posée sur le slug que la carte des
+    // jumeaux vise déjà, pour que les quinze visuels servent la page où le
+    // site amène vraiment le visiteur plutôt qu'une seconde page vide à côté.
+    // Reste à trancher ailleurs : renommer la carte en « Salvo Elixir », ou
+    // obtenir un visuel du Salvo simple et rendre à ce slug son jus d'origine.
+    name: "Salvo Elixir",
+    brand: "Maison Alhambra",
+    // Prix repris tel quel de la carte des jumeaux olfactifs plutôt que
+    // recalculé : tant que l'identité des deux jus n'est pas arbitrée, deux
+    // prix pour ce qui est peut-être le même flacon est exactement le genre
+    // d'incohérence qu'on ne rattrape jamais. Barré au ratio des autres
+    // fiches (~-26 %).
+    price: 16.9,
+    oldPrice: 22.9,
+    // Valeurs de démonstration stables, comme les autres fiches rédigées : le
+    // repo n'a pas de base d'avis, et un tirage au hasard ferait changer le
+    // JSON-LD d'un rendu à l'autre.
+    rating: 4.8,
+    reviews: 268,
+    // Pas de « EDP 30% » : aucune source ne donne le taux pour cette
+    // référence, on s'en tient au libellé par défaut de `product-resolve.ts`.
+    // Le mot « Elixir » du flacon désigne une déclinaison commerciale, pas une
+    // concentration mesurée — le recopier ici serait une promesse inventée.
+    concentration: "Eau de parfum",
+    // 60ml et non le « 100ml » de toutes les autres fiches : l'étui
+    // photographié (`salvo-hf-07`) porte « 60ml · 2.02 FL.OZ. » et « Eau de
+    // parfum » imprimés. Une contenance recopiée par habitude sur une fiche
+    // dont on a le carton sous les yeux, c'est une erreur de commande.
+    volume: "60ml",
+    origin: "Fabriqué à Dubaï",
+    description:
+      "Salvo Elixir s'ouvre net et froid, sur un citron vert pressé encore amer que le poivre de Sichuan vient piquer avant même que l'agrume ne retombe. Le cœur bascule vers l'aromatique : une lavande sèche, tenue courte, cerclée d'anis étoilé et d'un trait de cannelle qui la réchauffe sans jamais la sucrer. La muscade arrive ensuite, poudreuse, et épaissit l'accord jusqu'à lui donner un grain presque cuir qu'on n'attendait pas d'une ouverture aussi claire. Le fond assume la bascule — réglisse, bois ambrés et vanille sombre — posé sur une note minérale de pierre mouillée qui empêche l'ensemble de tourner au gourmand. Il en reste un sillage droit et dense, taillé pour le soir, à l'image du flacon de verre bleu nuit et de son bouchon strié.",
+    // Le grand classique reste anonyme : la règle du champ n'autorise à le
+    // nommer que si `olfactive-twins.ts` établit le rapprochement pour CE
+    // slug. Il le fait pour `maison-alhambra-salvo` — pas pour celui-ci — et
+    // vers le Sauvage classique, pas vers sa déclinaison Elixir. Nommer
+    // reviendrait donc à reprendre un rapprochement documenté pour un autre
+    // jus : à reconsidérer le jour où la carte pointera ce slug.
+    viralNote:
+      "Très partagé sur les réseaux sociaux, où il est cherché pour sa parenté avec un grand classique boisé-épicé, dont il rappelle l'axe lavande, épices et bois ambrés sans jamais prétendre s'y substituer.",
+    // Pyramide calée sur ce que les visuels mettent en scène — badiane,
+    // muscade, poivre, lavande, citron vert, pierre mouillée — plutôt que
+    // sur la seule fiche accords de `reference-perfumes.ts` : les photos sont
+    // la source qui parle de CE flacon, et une galerie qui montre une épice
+    // absente de la pyramide se voit immédiatement. Le grain photographié en
+    // `salvo-hf-10` est du Sichuan — cosses ouvertes, graine noire — pas du
+    // poivre rose : c'est aussi l'épice que `reference-perfumes.ts` liste pour
+    // la maison, les deux sources concordent donc.
+    topNotes: ["Citron vert", "Bergamote", "Poivre de Sichuan"],
+    heartNotes: ["Lavande", "Anis étoilé", "Cannelle", "Muscade"],
+    baseNotes: ["Réglisse", "Bois ambrés", "Vanille", "Accord minéral"],
+    // Badges à la convention de `product-resolve.ts` (famille, forme, origine,
+    // garantie), avec le libellé de famille tel que `FAMILIES` l'écrit : les
+    // « Tenue 24h / EDP 30% » des six premières fiches sont deux promesses
+    // qu'aucune source ne documente pour cette référence.
+    badges: ["Frais", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
+    // Packshot retenu parmi les six du studio parce que c'est le seul où le
+    // flacon est centré et cadré plein : les autres le posent à droite du
+    // cadre, ce qui le décale ou le tronque partout où ce champ est réduit
+    // (vignette panier 68 px, jumeau olfactif 116 px en `contain`).
+    image: "/assets/products/salvo/salvo-hf-05.jpg",
+    // Huit vues sur quinze, ordonnées du produit vers sa pyramide : le
+    // packshot par défaut, la vue seule à ombre douce, l'étui, puis une mise
+    // en scène par étage olfactif — citron vert pour la tête, lavande et
+    // badiane pour le cœur, poivre de Sichuan pour l'épice, ardoise mouillée
+    // pour la facette minérale du fond. Les sept écartées font doublon (04 et 09
+    // redisent la muscade de 08, 13 et 14 le minéral de 15) : une galerie qui
+    // répète une note lui donne un poids qu'elle n'a pas dans le jus.
+    gallery: [
+      "/assets/products/salvo/salvo-hf-05.jpg",
+      "/assets/products/salvo/salvo-hf-06.jpg",
+      "/assets/products/salvo/salvo-hf-07.jpg",
+      "/assets/products/salvo/salvo-hf-12.jpg",
+      "/assets/products/salvo/salvo-hf-11.jpg",
+      "/assets/products/salvo/salvo-hf-08.jpg",
+      "/assets/products/salvo/salvo-hf-10.jpg",
+      "/assets/products/salvo/salvo-hf-15.jpg",
+    ],
+  },
+  "vanilla-voyage": {
+    name: "Vanilla Voyage",
+    // « Maison Asrar » est ce que le flacon porte sous le nom, sur les seize
+    // visuels sans exception. Le repo en donne deux autres versions —
+    // « Maison Yara » dans `best-sellers-top.ts`, « Dubaï Parfumerie » dans
+    // `trend-products.ts` — qui ne peuvent pas être vraies toutes les trois.
+    // Le verre tranche ici ; les deux autres fichiers restent à aligner.
+    //
+    // La fiche occupe le slug `vanilla-voyage`, celui vers lequel tout le site
+    // pointe déjà (`shoppable-videos`, `trend-products`, `best-sellers-top`) :
+    // `resolveProduct()` sert `PRODUCTS[slug]` avant le catalogue agrégé, donc
+    // ces trois rails ouvrent désormais la fiche rédigée au lieu de la version
+    // composée qui affichait « Maison Yara ». La marque reste à aligner à la
+    // source, sans quoi la carte et la page qu'elle ouvre se contrediront.
+    brand: "Maison Asrar",
+    // 59 € / 79 € repris de `trend-products.ts`, qui porte déjà exactement ce
+    // couple prix-prix barré (~-25 %, le ratio des autres fiches) : recalculer
+    // un barré aurait produit un troisième prix pour le même flacon.
+    // `best-sellers-top.ts` en affiche encore un quatrième (58,90 / 69,90 €) —
+    // à aligner sur ce couple-ci, pas l'inverse, puisque c'est celui que la
+    // vidéo shoppable et la carte tendance annoncent au client.
+    price: 59,
+    oldPrice: 79,
+    // Note et volume d'avis plus élevés que les autres fiches parce que le
+    // site le présente comme son best-seller n°1 (`trend-products.ts`,
+    // `rank: 1`) : une réputation en dessous de celle de Khamrah contredirait
+    // le classement affiché ailleurs.
+    rating: 4.9,
+    reviews: 754,
+    concentration: "Eau de parfum",
+    // 100ml comme toutes les fiches. À noter : `trend-products.ts` déclare un
+    // `variantId` en « -50 » quand `shoppable-videos.ts` en déclare un en
+    // « -100ml » — deux contenances pour un seul flacon, à trancher là-bas.
+    volume: "100ml",
+    origin: "Fabriqué à Dubaï",
+    description:
+      "Vanilla Voyage s'ouvre sur une vanille déjà cuite, jamais fraîche : la gousse est fendue, grattée, chauffée jusqu'à ce que le sucre commence à blondir. Le caramel prend le relais, franc, avec cette pointe d'amertume du sucre juste avant qu'il ne brûle, qu'un miel épais arrondit sans l'alourdir. Le cœur laisse monter une fève tonka foin-coumarine et un soupçon d'amande grillée, qui ramènent le gourmand vers la peau plutôt que vers la pâtisserie. En fond, le benjoin et le bois de santal donnent le corps, le musc étire l'accord et l'ambre referme le voyage sur une chaleur résineuse. Un gourmand chaud et tenace, surtout sur les vêtements, à l'image de son flacon rond côtelé, ambré, coiffé d'un bouchon turban ivoire cerclé d'une tresse dorée.",
+    // Aucune entrée de `olfactive-twins.ts` ne concerne ce parfum : le grand
+    // classique reste donc anonyme, conformément à la règle du champ.
+    viralNote:
+      "Devenu l'un des flacons les plus filmés du site, il y est cherché pour son sillage inspiré d'un grand classique gourmand, dont il rappelle l'accord vanille-caramel sans jamais prétendre l'égaler.",
+    topNotes: ["Vanille de Madagascar", "Caramel", "Miel"],
+    heartNotes: ["Fève tonka", "Amande grillée", "Praline"],
+    baseNotes: ["Benjoin", "Bois de santal", "Musc blanc", "Ambre"],
+    badges: ["Ambré · gourmand", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
+    // Des sept packshots, le seul cadré large ET centré, avec la lumière la
+    // plus franche sur le verre dépoli : les autres décalent le flacon d'un
+    // tiers vers la droite (02, 03, 05, 07) ou passent en paysage (04), ce qui
+    // le tronque dans les vignettes carrées.
+    image: "/assets/products/vanilla-voyage/vanilla-voyage-packshot-01.jpg",
+    // Sept vues sur seize : deux studio (la vue de référence, puis la vue
+    // seule sans accessoire pour montrer le flacon nu), puis une mise en scène
+    // par facette — gousses pour la vanille, rayon de miel et éclats de sucre
+    // cuit pour le caramel, soie crème pour la douceur du fond, poudre dorée
+    // pour le sillage. Les neuf écartées sont des variantes de cadrage des
+    // mêmes décors (03 refait 02, 05 refait 01, 07 refait 08, 09 refait le
+    // sucre) : les garder gonflerait la galerie sans rien ajouter au récit.
+    gallery: [
+      "/assets/products/vanilla-voyage/vanilla-voyage-packshot-01.jpg",
+      "/assets/products/vanilla-voyage/vanilla-voyage-packshot-06.jpg",
+      "/assets/products/vanilla-voyage/vanilla-voyage-env-01.jpg",
+      "/assets/products/vanilla-voyage/vanilla-voyage-env-04.jpg",
+      "/assets/products/vanilla-voyage/vanilla-voyage-env-02.jpg",
+      "/assets/products/vanilla-voyage/vanilla-voyage-env-06.jpg",
+      "/assets/products/vanilla-voyage/vanilla-voyage-env-08.jpg",
     ],
   },
 };

@@ -75,7 +75,12 @@ export const BRANDS = [
     refs: "45+ références",
     description:
       "Maison moderne inspirée du glamour parisien et de l'opulence dubaïote, pour une parfumerie résolument contemporaine.",
-    image: "/assets/cat-femme.jpg",
+    // Packshot Rifaaqat plutôt que /assets/cat-femme.jpg : ce visuel-là est la
+    // vignette de la catégorie « Femme », partagée avec d'autres écrans — deux
+    // maisons voisines pouvaient donc s'afficher sous la même photo, qui en
+    // plus ne montrait aucun de leurs flacons. Même correction que pour
+    // Arabiyat Prestige, passée au packshot Marwa.
+    image: "/assets/products/rifaaqat/rifaaqat-hf-01.jpg",
   },
   {
     name: "Gulf Orchid",

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import GridDensity from "@/components/ui/GridDensity";
 
 export const metadata: Metadata = {
   title: "Huile de Parfum — Attar",
@@ -61,7 +62,7 @@ export default function HuileDeParfumPage() {
 
       <section style={{ maxWidth: 1240, margin: "0 auto", padding: "48px 24px 60px" }}>
         {/* Cartes compactes : ~5 colonnes à 1240px au lieu de 4 très larges */}
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(196px, 1fr))", gap: 18 }}>
+        <GridDensity storageKey="dp-density-huiles" gap={18}>
           {products.map(p => (
             <Link key={p.id} href={`/produit/${p.name.toLowerCase().replace(/ /g, "-")}`} style={{ textDecoration: "none", background: "var(--surface-white)", border: "1px solid #e8dfd0", borderRadius: "var(--r-lg)", overflow: "hidden", display: "block" }}>
               <div style={{ position: "relative", paddingBottom: "100%" }}>
@@ -79,7 +80,7 @@ export default function HuileDeParfumPage() {
               </div>
             </Link>
           ))}
-        </div>
+        </GridDensity>
       </section>
     </main>
   );

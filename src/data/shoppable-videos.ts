@@ -22,14 +22,25 @@ export type ShoppableVideo = {
 
 export const DEMO: ShoppableVideo[] = [
   {
+    // Une carte de carrousel est vue avant d'avoir joué : c'est le poster —
+    // donc la première image du film — qui décide si on s'arrête. Sur les six
+    // nouvelles prises de vue, `-03` est la seule qui ouvre déjà sur le flacon
+    // et son nom ; les autres commencent sur une route, une macro de caramel,
+    // un bouchon isolé ou un fond noir presque vide. Elle finit en plus sur un
+    // packshot net, ce qui compte quand la carte repart.
+    // Remplace le rendu de juin, dont les six plans en six secondes sautaient
+    // trop vite pour qu'aucun ne se lise.
     id: "vanilla-voyage",
-    videoUrl: "/assets/videos/vanilla-voyage.mp4",
-    posterUrl: "/assets/videos/vanilla-voyage-poster.webp",
+    videoUrl: "/assets/videos/vanilla-voyage-hf-03.mp4",
+    posterUrl: "/assets/videos/vanilla-voyage-hf-03-poster.jpg",
     productHandle: "vanilla-voyage",
     product: {
       name: "Vanilla Voyage",
       price: 59,
-      thumbnailUrl: "/assets/products/vanilla-voyage.webp",
+      // Le même packshot que celui de la fiche (`product-details.ts`) : la
+      // vignette de 68 px et la page qu'elle ouvre doivent montrer le même
+      // flacon sous le même angle, sinon le clic ressemble à une erreur.
+      thumbnailUrl: "/assets/products/vanilla-voyage/vanilla-voyage-packshot-01.jpg",
       available: true,
       href: "/produit/vanilla-voyage",
       variantId: "vanilla-voyage-100ml",

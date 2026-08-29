@@ -3517,6 +3517,15 @@ export const REFERENCE_PERFUMES: ReferencePerfume[] = [
   { id: "nicolai-creme-ebene-intense", name: "Crème Ébène Intense", house: "Parfums de Nicolaï", year: 2025, gender: "mixte", family: "boisee", accords: ["safran", "notes épicées", "datte", "cèdre de l'atlas", "papyrus", "vanille"] },
   { id: "nicolai-fig-tea-intense", name: "Fig-Tea Intense", house: "Parfums de Nicolaï", year: 2026, gender: "mixte", family: "aromatique", accords: ["orange", "mandarine", "pêche", "figue", "bois de gaïac", "ambre"] },
 
+  // ─── Paris Corner ──────────────────────────────────────────────────────────
+  // Maison dubaïote absente de la base jusqu'ici alors qu'elle figure déjà dans
+  // `brands.ts` : la section s'ouvre sur sa seule référence dont la composition
+  // soit établie de bout en bout. On n'en aligne pas d'autres pour faire nombre
+  // — la règle de véracité du fichier prime sur la taille des sections.
+  // `year` omis : la date de sortie n'est pas documentée de façon fiable, et le
+  // fichier autorise explicitement l'omission plutôt que l'approximation.
+  { id: "paris-corner-rifaaqat", name: "Rifaaqat", house: "Paris Corner", gender: "mixte", family: "gourmande", accords: ["cognac", "cannelle", "praline", "fève tonka", "vanille", "bois de santal"] },
+
   // ─── Paul Smith ────────────────────────────────────────────────────────────
   { id: "paulsmith-women", name: "Paul Smith Women", house: "Paul Smith", year: 2000, gender: "femme", family: "florale", accords: ["poivre rose", "cassis", "rose", "freesia", "thé vert", "cèdre"] },
   { id: "paulsmith-extreme-man", name: "Paul Smith Extreme Man", house: "Paul Smith", year: 2003, gender: "homme", family: "aromatique", accords: ["citron", "bergamote", "cardamome", "noix de muscade", "géranium", "fève tonka"] },

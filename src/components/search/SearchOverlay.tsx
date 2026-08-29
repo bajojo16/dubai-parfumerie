@@ -575,8 +575,15 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
             <span>voir la maison</span>
           </button>
 
+          {/* Le nom ouvre la fiche, comme la marque ouvre la maison juste
+              au-dessus. Il était le seul élément de la carte à ressembler à un
+              titre cliquable sans l'être : « Voir la fiche » vit tout en bas,
+              après la pyramide et le sélecteur de quantité, hors du champ de
+              qui a déjà reconnu le parfum à son nom. */}
           <h4 className="dp-rch-sheet-name">
-            <Highlight text={p.name} query={debounced.trim()} normalize={normalize} />
+            <button type="button" onClick={() => go({ kind: "product", product: p })}>
+              <Highlight text={p.name} query={debounced.trim()} normalize={normalize} />
+            </button>
           </h4>
 
           <p className="dp-rch-sheet-price">
@@ -1108,6 +1115,18 @@ const CSS = `
 }
 .dp-rch-sheet-brand span { color: var(--ink-400); letter-spacing: var(--ls-normal); text-transform: none; font-size: var(--t-xs); }
 .dp-rch-sheet-brand:hover span { color: var(--gold-700); }
+.dp-rch-sheet-name > button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  text-align: inherit;
+}
+.dp-rch-sheet-name > button:hover { color: var(--gold-700); }
+.dp-rch-sheet-name > button:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 3px; border-radius: 3px; }
 .dp-rch-sheet-name {
   margin: 0; font-family: var(--font-display);
   font-size: var(--t-title); font-weight: var(--fw-regular);

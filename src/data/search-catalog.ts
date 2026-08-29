@@ -211,6 +211,49 @@ const FIOLE_FIXE: Record<string, { video: string; poster: string }> = {
 
 type RawProduct = Omit<SearchProduct, "id" | "slug" | "keyName" | "keyBrand" | "keyNotes" | "keyAll">;
 
+/**
+ * Références photographiées, pas encore rédigées.
+ *
+ * Le fichier s'interdit d'inventer un catalogue, et ce relais n'en invente pas
+ * un : la banque d'images de `public/assets/products/` fait foi, c'est elle qui
+ * atteste que la boutique tient la référence. Le point de friction est ailleurs
+ * — une référence arrive avec ses visuels des semaines avant que sa fiche ne
+ * soit écrite dans `product-details.ts`, et pendant tout cet intervalle elle
+ * n'existe NULLE PART : ni en recherche, ni dans le quiz, ni dans
+ * l'appariement olfactif, ni sur `/produit/<slug>`, tous branchés sur
+ * SEARCH_PRODUCTS via cette agrégation. Le flacon est en rayon, le site l'ignore.
+ *
+ * Ce tableau est fait pour se vider. Dès que la fiche rédigée existe, l'entrée
+ * d'ici part : `collect()` la range en dernier, donc la fiche gagnerait de
+ * toute façon la déduplication — mais garder les deux ferait diverger deux
+ * prix pour un même flacon.
+ */
+const SANS_FICHE_REDIGEE: RawProduct[] = [
+  {
+    // Rifaaqat a désormais sa fiche rédigée dans `product-details.ts`, qui est
+    // la première source de `collect()` : prix, pyramide, description et
+    // galerie viennent de là. Ne restent ici que les deux champs qu'une fiche
+    // produit ne porte pas — la vidéo de carte et le rang de popularité — que
+    // `dedupe()` vient greffer sur l'entrée rédigée, poussée avant celle-ci.
+    // Dupliquer le prix ou les notes ici créerait deux vérités à maintenir.
+    name: "Rifaaqat",
+    brand: "Paris Corner",
+    href: "/produit/paris-corner-rifaaqat",
+    video: "/assets/videos/rifaaqat-hf-01.mp4",
+    // `available` et `notes` sont obligatoires dans `RawProduct`. Le tableau
+    // de notes reste vide à dessein : c'est l'entrée rédigée qui gagne le
+    // `dedupe()` et porte la pyramide, celle-ci ne fait que lui greffer la
+    // vidéo et le rang. Y recopier les notes en ferait une seconde source.
+    available: true,
+    notes: [],
+    // Sans historique de ventes, la popularité ne peut pas être mesurée : on la
+    // place juste sous le dernier rang du lot 3 pour 2 (66) pour que la
+    // nouveauté ne passe pas devant des références réellement vendues, tout en
+    // restant au-dessus du plancher où le classement l'enterrerait.
+    popularity: 62,
+  },
+];
+
 function collect(): RawProduct[] {
   const out: RawProduct[] = [];
 
@@ -315,6 +358,10 @@ function collect(): RawProduct[] {
       popularity: Math.max(0, 66 - i * 3),
     });
   });
+
+  // 7. Références sans fiche rédigée — en dernier : toute autre source qui
+  //    porterait déjà le même flacon (une fiche, un lot) doit l'emporter.
+  out.push(...SANS_FICHE_REDIGEE.map((p) => ({ ...p })));
 
   return out;
 }
