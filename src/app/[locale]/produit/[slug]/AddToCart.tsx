@@ -152,11 +152,12 @@ export default function AddToCart({ productName, price }: AddToCartProps) {
         <button
           onClick={handleAddToCart}
           style={{
-            flex: 1,
-            // 42px et non 48 : le bouton pesait plus lourd que le prix qu'il
-            // sert. Il reste au-dessus des 44px de cible tactile grâce à ses
-            // marges, et garde la pleine largeur restante — c'est l'action
-            // principale de la fiche, seule sa hauteur baisse.
+            // Ni pleine largeur ni minuscule : une bande dorée qui traversait
+            // toute la colonne pesait plus lourd que le prix qu'elle sert. Elle
+            // grandit avec la place disponible mais s'arrête à 280 px, et se
+            // replie sous cette largeur sur les colonnes étroites.
+            flex: "1 1 200px",
+            maxWidth: 280,
             height: "42px",
             background: cartAdded
               ? "var(--gold-700)"

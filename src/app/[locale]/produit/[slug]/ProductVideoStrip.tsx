@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { useVideoAutoplay } from "@/hooks/useVideoAutoplay";
 import { DEMO_STORIES } from "@/data/product-stories";
 import { DEMO as SHOPPABLE_VIDEOS } from "@/data/shoppable-videos";
 import { clipsFor as fileClipsFor } from "@/data/product-clips";
@@ -126,6 +127,42 @@ function assignClips(clips: Clip[]): (Clip | null)[] {
   }
 
   return slots;
+}
+
+/**
+ * Tuile en lecture continue.
+ *
+ * Une vignette figée ne dit pas ce que le film montre — il fallait ouvrir les
+ * quatre pour le savoir. Elles jouent donc en boucle, muettes, dès qu'elles
+ * entrent dans le champ. `useVideoAutoplay` s'occupe du reste : `preload`
+ * fermé tant que la tuile est hors écran, `muted` et `playsInline` posés côté
+ * propriété avant chaque `play()`, promesse interceptée, pause à la sortie du
+ * champ — quatre films qui tourneraient en permanence satureraient le
+ * décodeur d'un téléphone.
+ *
+ * Le poster reste : c'est lui qu'on voit tant que la vidéo n'a pas démarré, et
+ * c'est sur lui qu'on retombe si le navigateur refuse la lecture automatique.
+ */
+function StripTile({ videoUrl, posterUrl }: { videoUrl: string; posterUrl: string }) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  useVideoAutoplay(videoRef, wrapRef);
+
+  return (
+    <div ref={wrapRef} style={{ position: "absolute", inset: 0 }}>
+      <video
+        ref={videoRef}
+        src={videoUrl}
+        poster={posterUrl}
+        muted
+        loop
+        playsInline
+        preload="none"
+        aria-hidden="true"
+        style={{ width: "100%", height: "100%", objectFit: "cover" }}
+      />
+    </div>
+  );
 }
 
 export default function ProductVideoStrip({
@@ -259,19 +296,23 @@ export default function ProductVideoStrip({
                   transition: "border-color var(--dur-fast) var(--ease-out), transform var(--dur) var(--ease-out)",
                 }}
               >
-                {poster && (
-                  <Image
-                    src={poster}
-                    alt=""
-                    fill
-                    sizes="(max-width: 760px) 45vw, 130px"
-                    style={{
-                      objectFit: "cover",
-                      // Une case vide est assombrie : elle se lit tout de suite
-                      // comme un emplacement réservé, pas comme un visuel du produit.
-                      filter: clip ? "none" : "brightness(0.45) saturate(0.7)",
-                    }}
-                  />
+                {clip ? (
+                  <StripTile videoUrl={clip.videoUrl} posterUrl={poster ?? ""} />
+                ) : (
+                  poster && (
+                    <Image
+                      src={poster}
+                      alt=""
+                      fill
+                      sizes="(max-width: 760px) 45vw, 130px"
+                      style={{
+                        objectFit: "cover",
+                        // Une case vide est assombrie : elle se lit tout de suite
+                        // comme un emplacement réservé, pas comme un visuel du produit.
+                        filter: "brightness(0.45) saturate(0.7)",
+                      }}
+                    />
+                  )
                 )}
 
                 {clip ? (
@@ -282,17 +323,24 @@ export default function ProductVideoStrip({
                       top: "50%",
                       left: "50%",
                       transform: "translate(-50%, -50%)",
-                      width: 36,
-                      height: 36,
+                      width: 30,
+                      height: 30,
                       borderRadius: "var(--r-pill)",
-                      background: "rgba(255,255,255,0.9)",
+                      // Moins opaque et plus petite qu'avec un poster figé :
+                      // sous elle, il y a maintenant un film en mouvement.
+                      background: "rgba(255,255,255,0.78)",
                       display: "grid",
                       placeItems: "center",
                       boxShadow: "var(--shadow-sm)",
                     }}
                   >
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="var(--espresso-900)">
-                      <path d="M8 5.5v13l11-6.5z" />
+                    {/* Deux flèches en diagonale : la tuile joue déjà, le clic
+                        sert à passer en grand. Les quatre équerres d'angle
+                        essayées d'abord se lisaient comme une mire de scan. */}
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
+                      stroke="var(--espresso-900)" strokeWidth="2.4"
+                      strokeLinecap="round" strokeLinejoin="round">
+                      <path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7" />
                     </svg>
                   </span>
                 ) : (
