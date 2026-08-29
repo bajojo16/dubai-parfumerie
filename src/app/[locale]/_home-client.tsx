@@ -378,16 +378,19 @@ function SectionHeader({
   return (
     <div className="dp-section-header" style={{ textAlign: "center", marginBottom: 48 }}>
       <div style={{
-        fontFamily: "var(--font-sans)", fontSize: "0.78rem",
-        letterSpacing: "0.22em", textTransform: "uppercase",
+        fontFamily: "var(--font-sans)", fontSize: "0.7rem",
+        letterSpacing: "0.2em", textTransform: "uppercase",
         color: dark ? "var(--gold-400)" : "var(--gold-700)",
         marginBottom: 12, fontWeight: 500,
       }}>{eyebrow}</div>
       <h2 style={{
         fontFamily: "var(--font-display)",
         // Le plancher du clamp était à 2,2rem : sur 390 px un titre de deux
-        // mots passait sur trois lignes et mangeait un écran entier.
-        fontSize: "clamp(1.55rem, 3.8vw, 3.2rem)",
+        // mots passait sur trois lignes et mangeait un écran entier. Le
+        // PLAFOND descend à son tour de 3,2 à 2,6rem — sur un grand écran, un
+        // titre de trois mots occupait presque toute la largeur du contenu et
+        // écrasait la section qu'il annonce.
+        fontSize: "clamp(1.55rem, 3.2vw, 2.6rem)",
         color: dark ? "var(--on-dark-strong)" : "var(--ink-900)",
         margin: 0, lineHeight: 1.12,
       }}>{title}</h2>

@@ -87,8 +87,13 @@ const MEGA: Record<string, MegaData> = {
   "/parfums-femme": {
     columns: [
       {
+        // « Tous les parfums » en tête : c'est la sortie du menu vers le rayon
+        // entier. Sans elle, un visiteur qui ne se reconnaissait dans aucune
+        // des entrées fines n'avait aucun moyen de voir simplement la liste —
+        // il fallait fermer le menu et cliquer sur son intitulé.
         title: "Types de produit",
         links: [
+          { label: "Tous les parfums", href: "/parfums-femme" },
           { label: "Eau de Parfum", href: "/parfums-femme" },
           { label: "Huile de Parfum", href: "/huile-de-parfum" },
           { label: "Coffrets découverte", href: "/promo-flash" },
@@ -115,6 +120,7 @@ const MEGA: Record<string, MegaData> = {
       {
         title: "Types de produit",
         links: [
+          { label: "Tous les parfums", href: "/parfums-homme" },
           { label: "Eau de Parfum", href: "/parfums-homme" },
           { label: "Huile de Parfum", href: "/huile-de-parfum" },
           { label: "Coffrets prestige", href: "/promo-flash" },

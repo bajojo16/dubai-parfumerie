@@ -226,7 +226,9 @@ export function ScentWheelInteractive({
           style={{
             fontFamily: "var(--font-display)",
             fontWeight: 400,
-            fontSize: "clamp(1.75rem,3.6vw,2.9rem)",
+            // Plafond ramené de 2,9 à 2,3rem : le bandeau du titre prenait
+            // plus de hauteur que la roue qu'il annonce.
+            fontSize: "clamp(1.5rem,3vw,2.3rem)",
             color: "#2C2620",
             // 1.1 coupait accents et jambages ; 1.28 laisse le demi-interligne
             // nécessaire au-dessus et au-dessous des glyphes.
