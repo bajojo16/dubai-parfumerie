@@ -361,11 +361,17 @@ export function RailProductCard({
           className="dp-rail-card-addbtn"
           style={{
             marginTop: 5,
-            width: "100%",
+            // Largeur du contenu, pas de la carte : en pleine largeur la pilule
+            // noire faisait un bandeau plus lourd que le prix et le nom qu'elle
+            // sert, et alignée sous un sélecteur de quantité étroit, elle
+            // déséquilibrait le pied de carte. `maxWidth` la contient si la
+            // traduction s'allonge.
+            alignSelf: "flex-start",
+            maxWidth: "100%",
             border: "none",
             cursor: "pointer",
             borderRadius: 999,
-            padding: "9px 16px",
+            padding: "9px 20px",
             fontFamily: "var(--font-sans)",
             fontSize: 12,
             fontWeight: 600,
