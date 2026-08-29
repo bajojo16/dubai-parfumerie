@@ -18,6 +18,7 @@ interface QuizAnswers {
   q3: string;
   q4: string;
   q5: string;
+  q6: string;
 }
 
 interface QuizResult {
@@ -29,7 +30,7 @@ interface QuizResult {
 
 export async function POST(req: NextRequest) {
   const { answers }: { answers: QuizAnswers } = await req.json();
-  // answers: { q1: gender, q2: season, q3: mood, q4: notes, q5: intensity }
+  // answers: { q1: gender, q2: season, q3: mood, q4: notes, q5: intensity, q6: format }
 
   const prompt = `Tu es expert en parfums orientaux chez Dubaï Parfumerie.
 
@@ -39,6 +40,7 @@ Un client a répondu au quiz :
 - Humeur recherchée : ${answers.q3}
 - Notes préférées : ${answers.q4}
 - Intensité souhaitée : ${answers.q5}
+- Format souhaité : ${answers.q6 === "huile" ? "huile de parfum (à déposer)" : answers.q6 === "eau" ? "eau de parfum (vaporisateur)" : "indifférent — ne pas restreindre sur ce critère"}
 
 Produits disponibles :
 ${PRODUCTS.map(p => `• ${p.name} (${p.brand}) — familles: ${p.families.join(', ')} — genre: ${p.gender} — intensité: ${p.intensity} — ${p.price}€`).join('\n')}

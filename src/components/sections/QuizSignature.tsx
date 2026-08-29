@@ -9,6 +9,8 @@ interface QuizAnswers {
   q3: string;
   q4: string;
   q5: string;
+  /** Format souhaité : huile de parfum, eau de parfum, ou indifférent. */
+  q6: string;
 }
 
 interface RecommendedProduct {
@@ -65,6 +67,12 @@ function QuizIcon({ name }: { name: string }) {
     case "discrète": return svg(<><path d="M4 12h4l3-5 2 10 3-5h4" /></>);
     case "affirmée": return svg(<path d="M12 2l2.4 5.4L20 8l-4 4 1 6-5-3-5 3 1-6-4-4 5.6-.6z" />);
     case "puissante": return svg(<><path d="M3 12h3M18 12h3M12 3v3M12 18v3" /><path d="M7 7l2 2M17 7l-2 2M7 17l2-2M17 17l-2-2" /><circle cx="12" cy="12" r="3" /></>);
+    // q6 — format
+    // Le flacon à bille pour l'huile, le vaporisateur pour l'eau, les deux
+    // côte à côte pour « peu importe ».
+    case "huile": return svg(<><path d="M10 2h4v3h-4z" /><path d="M9 5h6l1 5v9a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2v-9z" /><circle cx="12" cy="21" r="1" /></>);
+    case "eau": return svg(<><path d="M10 2h4v3h-4z" /><rect x="7" y="7" width="10" height="14" rx="2" /><path d="M17 5h3M18.5 3.5v3" /></>);
+    case "indifferent": return svg(<><rect x="3" y="8" width="7" height="13" rx="1.5" /><rect x="14" y="8" width="7" height="13" rx="1.5" /><path d="M5 5h3M16 5h3M12 12v6" /></>);
     default: return svg(<circle cx="12" cy="12" r="6" />);
   }
 }
@@ -127,12 +135,28 @@ const QUESTIONS = [
       { value: 'puissante', label: 'Sillage puissant' },
     ],
   },
+  {
+    // Dernière question : elle ne porte pas sur le goût mais sur la FORME du
+    // produit. Les deux concentrations cohabitent au catalogue (`/huile-de-parfum`
+    // d'un côté, les vaporisateurs de l'autre) et ne se portent pas pareil —
+    // l'huile se dépose au poignet et tient sans nuage, l'eau se vaporise.
+    // « Peu importe » est une vraie réponse : beaucoup de clients n'ont pas
+    // d'avis, et la forcer fausserait la recommandation.
+    key: 'q6' as const,
+    label: 'Huile ou eau de parfum ?',
+    hint: "L'huile se dépose et tient de près ; l'eau se vaporise et rayonne.",
+    options: [
+      { value: 'huile', label: 'Huile de parfum' },
+      { value: 'eau', label: 'Eau de parfum' },
+      { value: 'indifferent', label: 'Peu importe' },
+    ],
+  },
 ];
 
 // ── Component ──────────────────────────────────────────────────────────────────
 
 export function QuizSignature() {
-  const [step, setStep] = useState(0); // 0-4 = questions, 5 = loading, 6 = results
+  const [step, setStep] = useState(0); // 0-5 = questions, 6 = chargement, 7 = résultats
   const [answers, setAnswers] = useState<Partial<QuizAnswers>>({});
   const [selected, setSelected] = useState<string | null>(null);
   const [result, setResult] = useState<QuizResult | null>(null);
@@ -277,11 +301,14 @@ export function QuizSignature() {
 
       {/* Options */}
       <div style={styles.optionsGrid}>
-        {currentQ.options.map(opt => {
+        {/* Une liste impaire laisserait un trou dans la grille à deux colonnes :
+              sa dernière option occupe donc les deux cases. */}
+        {currentQ.options.map((opt, i) => {
+          const spans = currentQ.options.length % 2 === 1 && i === currentQ.options.length - 1;
           const isSel = selected === opt.value;
           return (
             <button key={opt.value} onClick={() => selectOption(opt.value)}
-              style={{ ...styles.optionCard, ...(isSel ? styles.optionCardSelected : {}) }}>
+              style={{ ...styles.optionCard, ...(isSel ? styles.optionCardSelected : {}), ...(spans ? { gridColumn: '1 / -1' } : {}) }}>
               {isSel && (
                 <span style={styles.checkBadge}>
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="m5 12 5 5 9-11" /></svg>
