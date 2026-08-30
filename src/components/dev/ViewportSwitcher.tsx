@@ -233,7 +233,15 @@ export function ViewportSwitcher() {
             // Centré en bas : les autres boutons flottants occupent les coins
             // (WhatsApp bas-gauche @88px, FragranceFinder bas-droite @85px,
             // BackToTop bas-droite @24px). Le centre est donc libre.
-            insetBlockEnd: 20,
+            //
+            // Libre, SAUF quand la page pose sa propre barre d'action en bas —
+            // le sélecteur d'échantillons y met « N/12 sélectionnés » et son
+            // bouton d'ajout au panier, que cette barre de développement venait
+            // masquer en plein milieu. Les pages concernées déclarent la
+            // hauteur qu'elles occupent dans `--dp-bottombar-h`, et la barre
+            // se pose juste au-dessus. Valeur par défaut nulle : une page sans
+            // barre basse ne change pas.
+            insetBlockEnd: "calc(20px + var(--dp-bottombar-h, 0px))",
             insetInlineStart: "50%",
             transform: "translateX(-50%)",
             display: "flex",

@@ -140,6 +140,32 @@ export default function SampleSelector({
     [products],
   );
 
+  /**
+   * Hauteur réelle de la barre d'action, publiée dans `--dp-bottombar-h`.
+   *
+   * La barre d'aperçu du site (mobile / tablette / ordinateur) est fixée au
+   * centre-bas de l'écran et venait se poser exactement sur « N/12
+   * sélectionnés » et le bouton d'ajout au panier. Elle lit cette variable
+   * pour se décaler juste au-dessus. Mesurée plutôt que codée en dur : la
+   * barre change de hauteur selon la largeur d'écran, et une valeur figée se
+   * décalerait dès la première retouche de son garnissage.
+   */
+  const trayRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = trayRef.current;
+    if (!el) return;
+    const publish = () =>
+      document.documentElement.style.setProperty("--dp-bottombar-h", `${el.offsetHeight}px`);
+    publish();
+    const ro = new ResizeObserver(publish);
+    ro.observe(el);
+    return () => {
+      ro.disconnect();
+      // On rend la place en quittant la page : la variable est globale, la barre.
+      document.documentElement.style.removeProperty("--dp-bottombar-h");
+    };
+  }, []);
+
   // ─── N = nombre total d'échantillons (état interne, initialisé par prop) ────
   const initialN = N_OPTIONS.includes(sampleCount)
     ? sampleCount
@@ -822,7 +848,7 @@ export default function SampleSelector({
       </div>
 
       {/* ── Tray fixe ── */}
-      <div className="ss-tray">
+      <div className="ss-tray" ref={trayRef}>
         <div className="ss-tray-in">
           <div className="ss-tray-selection">
             {Object.entries(man).map(([id, qy]) => {
@@ -855,6 +881,27 @@ export default function SampleSelector({
           <div className="ss-tray-status">
             <div className="ss-n"><b>{total}</b>/<span>{MAX}</span></div>
             <small>sélectionnés</small>
+          </div>
+
+          {/* Le total se règle AUSSI d'ici. Le segment du haut sort du champ dès
+              qu'on descend dans la grille, et c'est précisément en arrivant à
+              12/12 — le coffret plein, une envie de plus — qu'on veut passer à
+              20. Il fallait alors remonter toute la page pour trouver la
+              commande. Même liste d'options que le segment du haut, jamais une
+              seconde source. */}
+          <div className="ss-tray-n" role="radiogroup" aria-label="Nombre total d'échantillons">
+            <span className="ss-tray-n-lbl">Total</span>
+            {N_OPTIONS.map((opt) => (
+              <button
+                key={opt}
+                role="radio"
+                aria-checked={opt === n}
+                className={opt === n ? "ss-on" : undefined}
+                onClick={() => changeN(opt)}
+              >
+                {opt}
+              </button>
+            ))}
           </div>
           <button className="ss-cta" disabled={total !== MAX} onClick={onSubmit}>
             {total === MAX ? "Ajouter au panier" : `Encore ${MAX - total} à choisir`}
@@ -998,6 +1045,19 @@ function StyleBlock() {
     .ss-tslot .ss-rm{position:absolute;top:-6px;inset-inline-end:-6px;width:17px;height:17px;border-radius:50%;background:#f6f1e7;color:#1c1a17;border:none;cursor:pointer;font-size:11px;line-height:1;display:none;align-items:center;justify-content:center}
     .ss-tslot.ss-man:hover .ss-rm,.ss-tslot.ss-auto:hover .ss-rm{display:flex}
     .ss-tray-status{text-align:end;flex:0 0 auto;min-width:100px}
+    /* Réglage du total dans la barre sombre : on reprend la forme du segment
+       du haut — pilule, pastille pleine sur l'option active — mais en négatif,
+       puisque le fond est sombre ici. Deux commandes qui font la même chose
+       doivent se ressembler. */
+    .ss-tray-n{flex:0 0 auto;display:inline-flex;align-items:center;gap:2px;background:rgba(246,241,231,.08);border:1px solid rgba(246,241,231,.16);border-radius:100px;padding:3px}
+    .ss-tray-n-lbl{font-family:'Jost',var(--font-sans);font-size:9px;letter-spacing:.16em;text-transform:uppercase;opacity:.55;padding:0 7px 0 6px}
+    .ss-tray-n button{border:none;background:transparent;font-family:'Cormorant Garamond',var(--font-display);font-weight:600;font-size:15px;min-width:28px;padding:5px 7px;border-radius:100px;cursor:pointer;color:#f6f1e7;line-height:1;transition:.18s}
+    .ss-tray-n button:hover{color:#c2a15b}
+    .ss-tray-n button.ss-on{background:#c2a15b;color:#1c1a17}
+    .ss-tray-n button:focus-visible{outline:2px solid #c2a15b;outline-offset:2px}
+    /* Sous 620 px la barre est déjà pleine : le réglage du total y prendrait la
+       place du bouton d'ajout. Le segment du haut reste, lui, atteignable. */
+    @media (max-width:620px){.ss-tray-n{display:none}}
     .ss-tray-status .ss-n{font-family:'Cormorant Garamond',var(--font-display);font-size:25px;font-weight:600;line-height:1}
     .ss-tray-status .ss-n b{color:#c2a15b}
     .ss-tray-status small{display:block;font-size:10px;letter-spacing:.14em;text-transform:uppercase;opacity:.6;margin-top:2px}
