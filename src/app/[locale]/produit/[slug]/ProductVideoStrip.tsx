@@ -71,13 +71,23 @@ const PINNED_CATEGORY: Record<string, CategoryId> = {
   "/assets/videos/khamrah-levitation.mp4": "spot",
   "/assets/videos/khamrah-nectar.mp4": "hypermotion",
   "/assets/videos/khamrah-fiole-fixe.mp4": "fiole-fixe",
-  // Vanilla Voyage — six films Higgsfield, dont trois seulement disent quelque
+  // Vanilla Voyage — onze films Higgsfield, dont trois seulement disent quelque
   // chose d'assez distinct pour mériter une case ; le quatrième épinglé est
   // l'ancien rendu de juin, gardé pour la seule raison que rien d'autre ne
   // montre le parfum entre des mains (voir `product-clips.ts`).
   "/assets/videos/vanilla-voyage-hf-01.mp4": "spot", // la route, la matière, le flacon : le film de marque
   "/assets/videos/vanilla-voyage-hf-03.mp4": "hypermotion", // ingrédients en lévitation autour du flacon
-  "/assets/videos/vanilla-voyage-hf-05.mp4": "fiole-fixe", // le flacon net, les éclats de caramel qui volent
+  // Une couronne d'ambre pousse derrière le flacon, qui garde la même taille et
+  // la même place du premier au dernier plan : la case demande exactement ça.
+  "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-11.mp4": "fiole-fixe",
+  // `-05` garde son épingle « fiole fixe » alors que `-11` occupe la case, pour
+  // la même raison que `khamrah-hf-05` plus haut : `product-clips.ts` le déclare
+  // après lui, il perd donc l'arbitrage de l'étage 1 et retombe en surplus.
+  // L'épingle reste sa position de repli si `-11` sortait de la banque.
+  "/assets/videos/vanilla-voyage-hf-05.mp4": "fiole-fixe", // le flacon sur fond noir, jusqu'au gros plan du capuchon
+  // Les cinq films de la seconde salve (`-07` → `-11`) n'ont pas résolu la case
+  // UGC : ils se passent tous dans la dune, sans personne à l'image. Le rendu
+  // de juin la tient donc encore, et l'attente formulée ici reste ouverte.
   "/assets/videos/vanilla-voyage.mp4": "ugc", // des mains ouvrent le coffret et vaporisent : le seul plan porté
   // Blueberry Musk — trois films dont on sait ce qu'ils montrent :
   // `blueberry-hf-01` est un plan large d'entrepôt de glace, décor construit et

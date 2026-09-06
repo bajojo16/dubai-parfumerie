@@ -81,15 +81,18 @@ export default function CommandeALaDemandePage() {
         style={{
           maxWidth: "var(--container-narrow)",
           margin: "0 auto",
-          padding: "clamp(48px, 7vw, 88px) var(--gutter) clamp(28px, 4vw, 44px)",
+          // En-tête volontairement compact : la recherche et la grille de
+          // références doivent rester au-dessus de la ligne de flottaison.
+          padding: "clamp(24px, 3.4vw, 44px) var(--gutter) clamp(16px, 2vw, 24px)",
           textAlign: "center",
         }}
       >
         <p
           style={{
-            margin: "0 0 16px",
+            margin: "0 0 8px",
             fontFamily: "var(--font-sans)",
             fontSize: "var(--t-xs)",
+            lineHeight: "var(--lh-snug)",
             fontWeight: "var(--fw-semibold)",
             letterSpacing: "var(--ls-widest)",
             textTransform: "uppercase",
@@ -103,7 +106,9 @@ export default function CommandeALaDemandePage() {
             margin: 0,
             fontFamily: "var(--font-display)",
             fontWeight: "var(--fw-medium)",
-            fontSize: "var(--t-hero)",
+            // `--t-display` plutôt que `--t-hero` : le titre reste le point
+            // d'entrée visuel sans manger la hauteur d'écran.
+            fontSize: "var(--t-display)",
             lineHeight: "var(--lh-tight)",
             color: "var(--ink-900)",
           }}
@@ -112,12 +117,13 @@ export default function CommandeALaDemandePage() {
         </h1>
         <p
           style={{
-            margin: "20px auto 0",
-            maxWidth: "62ch",
+            // Mesure élargie + interligne resserré : même texte, une ligne de moins.
+            margin: "10px auto 0",
+            maxWidth: "72ch",
             fontFamily: "var(--font-sans)",
             fontWeight: "var(--fw-light)",
-            fontSize: "var(--t-lead)",
-            lineHeight: "var(--lh-relaxed)",
+            fontSize: "var(--t-body)",
+            lineHeight: "var(--lh-normal)",
             color: "var(--ink-500)",
           }}
         >
@@ -127,12 +133,12 @@ export default function CommandeALaDemandePage() {
         </p>
         <p
           style={{
-            margin: "14px auto 0",
-            maxWidth: "62ch",
+            margin: "6px auto 0",
+            maxWidth: "72ch",
             fontFamily: "var(--font-sans)",
             fontWeight: "var(--fw-light)",
-            fontSize: "var(--t-body)",
-            lineHeight: "var(--lh-relaxed)",
+            fontSize: "var(--t-sm)",
+            lineHeight: "var(--lh-normal)",
             color: "var(--ink-500)",
           }}
         >

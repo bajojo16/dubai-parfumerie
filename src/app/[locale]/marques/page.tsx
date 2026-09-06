@@ -4,6 +4,17 @@ import { BRANDS } from "@/data/brands";
 
 const brands = BRANDS;
 
+/**
+ * Initiales de la maison, pour les cinq dont `public/brands/` n'a pas le logo.
+ * Reprend mot pour mot la règle de `_on-demand-client.tsx` : deux maisons ne
+ * peuvent pas porter deux monogrammes différents selon la page qui les affiche.
+ */
+function monogram(house: string): string {
+  const words = house.split(/\s+/).filter((w) => w.length > 2 || /^[A-Z]/.test(w));
+  if (words.length >= 2) return (words[0][0] + words[1][0]).toUpperCase();
+  return house.slice(0, 2).toUpperCase();
+}
+
 const features = [
   {
     icon: "✦",
@@ -149,7 +160,9 @@ export default function MarquesPage() {
             gap: "2rem",
           }}
         >
-          {brands.map((brand) => (
+          {brands.map((brand) => {
+            const logo = "logo" in brand ? brand.logo : undefined;
+            return (
             <article
               key={brand.name}
               style={{
@@ -184,6 +197,65 @@ export default function MarquesPage() {
                     display: "block",
                   }}
                 />
+
+                {/*
+                  Pastille du logo, posée sur la photo plutôt qu'à côté du nom :
+                  le logo est ce qui identifie la maison d'un coup d'œil, il doit
+                  être lisible avant qu'on ait lu le titre. Fond blanc plein et
+                  non transparent — les logos de `public/brands/` sont des JPEG
+                  au fond crème, un fond translucide laisserait voir la photo au
+                  travers et brouillerait le tracé.
+
+                  Les cinq maisons dont le dépôt n'a pas le logo reçoivent leur
+                  monogramme, comme les cartes de la commande à la demande. La
+                  pastille garde la même place et la même taille dans les deux
+                  cas : c'est ce qui empêche la grille de boiter d'une carte à
+                  l'autre.
+                */}
+                <span
+                  style={{
+                    position: "absolute",
+                    insetInlineStart: "1rem",
+                    bottom: "1rem",
+                    width: "56px",
+                    height: "56px",
+                    borderRadius: "50%",
+                    backgroundColor: "var(--surface-white)",
+                    border: "1px solid var(--line-100)",
+                    boxShadow: "var(--shadow-sm)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                  }}
+                >
+                  {logo ? (
+                    <Image
+                      src={logo}
+                      alt=""
+                      width={56}
+                      height={56}
+                      style={{
+                        objectFit: "contain",
+                        width: "78%",
+                        height: "78%",
+                        display: "block",
+                      }}
+                    />
+                  ) : (
+                    <span
+                      aria-hidden
+                      style={{
+                        fontFamily: "var(--font-display)",
+                        fontSize: "1.05rem",
+                        letterSpacing: "var(--ls-tight)",
+                        color: "var(--gold-700)",
+                      }}
+                    >
+                      {monogram(brand.name)}
+                    </span>
+                  )}
+                </span>
               </div>
 
               {/* Card body */}
@@ -289,7 +361,8 @@ export default function MarquesPage() {
                 </Link>
               </div>
             </article>
-          ))}
+            );
+          })}
         </div>
       </section>
 

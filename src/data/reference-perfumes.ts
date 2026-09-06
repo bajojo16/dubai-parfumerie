@@ -139,6 +139,16 @@ export const REFERENCE_PERFUMES: ReferencePerfume[] = [
   { id: "afnan-turathi-purple", name: "Turathi Purple", house: "Afnan", gender: "mixte", family: "florale", accords: ["mandarine", "cassis", "violette", "feuille de violette", "patchouli", "vanille"] },
   { id: "afnan-turathi-red", name: "Turathi Red", house: "Afnan", gender: "femme", family: "boisee", accords: ["notes florales", "agrumes", "ambre", "notes boisées", "musc", "patchouli"] },
 
+  // ─── Ahmed Al Maghribi ─────────────────────────────────────────────────────
+  // Maison marocaine installée à Dubaï, absente de la base alors que la
+  // boutique la vend et la met en avant sur sa page « Marques » : le filtre
+  // « commande à la demande » ne pouvait donc rien lui proposer. Les deux
+  // références ci-dessous sont celles que le site commercialise déjà
+  // (`product-details.ts`, pages Femme et Homme) — pas de catalogue étendu
+  // tant qu'aucune source ne documente les autres jus de la maison.
+  { id: "ahmed-al-maghribi-lor-de-saba", name: "L'Or de Saba", house: "Ahmed Al Maghribi", gender: "mixte", family: "boisee", accords: ["safran", "poivre de sichuan", "oud", "rose", "encens", "ambre"] },
+  { id: "ahmed-al-maghribi-lor-intense", name: "L'Or Intense", house: "Ahmed Al Maghribi", gender: "mixte", family: "ambree", accords: ["notes épicées", "ambre", "encens"] },
+
   // ─── Ajmal ─────────────────────────────────────────────────────────────────
   // ── Arabian Oud (العربية للعود) ──────────────────────────────────────────
   // Première maison saoudienne, fondée à Riyad en 1982 : elle manquait à la
@@ -428,6 +438,15 @@ export const REFERENCE_PERFUMES: ReferencePerfume[] = [
   { id: "arabiyat-prestige-swar-venin", name: "Prestige Swar Venin", house: "Arabiyat", gender: "femme", family: "gourmande", accords: ["cerise", "framboise", "cassis", "rose", "encens", "vanille"] },
   { id: "arabiyat-prestige-uhud", name: "Prestige Uhud", house: "Arabiyat", gender: "mixte", family: "gourmande", accords: ["fruits rouges", "rose", "caramel", "framboise", "vanille", "musc blanc"] },
   { id: "arabiyat-prestige-yumun", name: "Prestige Yumun", house: "Arabiyat", gender: "femme", family: "florale", accords: ["mandarine", "néroli", "cassis", "poire", "rose", "lys"] },
+
+  // ─── Arabiyat Prestige ─────────────────────────────────────────────────────
+  // Section distincte d'« Arabiyat » : les trente-neuf entrées « Prestige … »
+  // plus haut portent le nom de la maison mère, alors que la boutique range
+  // ces deux flacons sous celui de la ligne — et la comparaison de
+  // `on-demand-catalog.ts` se fait sur la chaîne exacte du champ `house`.
+  // Les accords reprennent la pyramide déjà publiée sur les fiches produit.
+  { id: "arabiyat-prestige-blueberry-musk", name: "Blueberry Musk", house: "Arabiyat Prestige", gender: "femme", family: "musquee", accords: ["myrtille", "cassis", "musc blanc", "framboise", "vanille", "bois blancs"] },
+  { id: "arabiyat-prestige-marwa", name: "Marwa", house: "Arabiyat Prestige", gender: "femme", family: "florale", accords: ["fleur d'oranger", "néroli", "jasmin", "iris", "musc blanc", "bois blancs"] },
 
   // ─── Ard Al Zaafaran ───────────────────────────────────────────────────────
   { id: "zaafaran-i-am-white", name: "I Am White", house: "Ard Al Zaafaran", gender: "mixte", family: "boisee", accords: ["tubéreuse", "fleurs blanches", "musc blanc", "cypriol"] },
@@ -2335,6 +2354,17 @@ export const REFERENCE_PERFUMES: ReferencePerfume[] = [
   { id: "kajal-warde", name: "Warde", house: "Kajal", gender: "mixte", family: "ambree", accords: ["pin", "cassis", "rose", "fleur d'oranger", "sapin baumier", "résines"] },
   { id: "kajal-warek", name: "Warek", house: "Kajal", gender: "mixte", family: "ambree", accords: ["safran", "encens", "rose", "patchouli", "oud", "cuir"] },
 
+  // ─── Khadlaj ───────────────────────────────────────────────────────────────
+  // Maison dubaïote au catalogue très large mais mal documenté côté dates :
+  // aucune de ces entrées ne porte de `year`, conformément à la règle du
+  // fichier — une année incertaine s'omet, elle n'exclut pas la référence.
+  // On s'en tient aux lignes dont la composition est établie ; le reste de la
+  // maison (attars, séries régionales) attend une source avant d'entrer ici.
+  { id: "khadlaj-hareem-al-sultan-gold", name: "Hareem Al Sultan Gold", house: "Khadlaj", gender: "femme", family: "ambree", accords: ["vanille", "ambre", "musc", "notes florales", "bois de santal"] },
+  { id: "khadlaj-hayaati-gold-elixir", name: "Hayaati Gold Elixir", house: "Khadlaj", gender: "mixte", family: "ambree", accords: ["safran", "ambre", "vanille", "musc", "bois de santal"] },
+  { id: "khadlaj-nasaem", name: "Nasaem", house: "Khadlaj", gender: "femme", family: "musquee", accords: ["musc blanc", "notes florales", "agrumes", "ambre"] },
+  { id: "khadlaj-shiyaka", name: "Shiyaka", house: "Khadlaj", gender: "femme", family: "florale", accords: ["rose", "jasmin", "musc blanc", "bois de santal"] },
+
   // ─── Kenzo ─────────────────────────────────────────────────────────────────
   { id: "kenzo-flower", name: "Flower by Kenzo", house: "Kenzo", year: 2000, gender: "femme", family: "florale", accords: ["coquelicot", "violette", "rose bulgare", "vanille", "musc blanc"] },
   { id: "kenzo-leau-par-kenzo-homme", name: "L'Eau par Kenzo Pour Homme", house: "Kenzo", year: 1996, gender: "homme", family: "aquatique", accords: ["menthe", "yuzu", "gingembre", "cèdre", "musc"] },
@@ -3683,6 +3713,19 @@ export const REFERENCE_PERFUMES: ReferencePerfume[] = [
   { id: "rasasi-tawahuj", name: "Tawahuj", house: "Rasasi", gender: "femme", family: "florale", accords: ["rose", "ambre", "vanille", "jasmin"] },
   { id: "rasasi-ward-noir", name: "Ward Noir", house: "Rasasi", gender: "mixte", family: "ambree", accords: ["cassis", "poivre rose", "rose de turquie", "encens", "labdanum", "patchouli"] },
   { id: "rasasi-yumn-pour-femme", name: "Yumn Pour Femme", house: "Rasasi", gender: "femme", family: "florale", accords: ["fruit de la passion", "rose", "musc", "vanille", "ambre", "lys"] },
+
+  // ─── Reef ──────────────────────────────────────────────────────────────────
+  // Reef Perfumes (Dubaï) a sa propre page de maison sur le site et son rail
+  // de best-sellers, mais pas une ligne dans la base : impossible de la
+  // proposer à la commande tant qu'elle n'y figurait pas. Les cinq références
+  // sont celles que le site vend déjà (`best-sellers.ts`, `bundle-products.ts`,
+  // `product-details.ts`) ; leurs accords reprennent les notes qui y sont
+  // publiées, sans en inventer d'autres — d'où des listes courtes.
+  { id: "reef-33", name: "Reef 33", house: "Reef", gender: "mixte", family: "aquatique", accords: ["notes aquatiques", "agrumes", "notes boisées"] },
+  { id: "reef-aurum", name: "Aurum", house: "Reef", gender: "mixte", family: "ambree", accords: ["ambre", "bois de santal", "notes boisées"] },
+  { id: "reef-opulent-blue", name: "Opulent Blue", house: "Reef", gender: "mixte", family: "aquatique", accords: ["notes marines", "concombre", "menthe poivrée", "jasmin", "cèdre", "ambre gris"] },
+  { id: "reef-summer", name: "Summer", house: "Reef", gender: "femme", family: "florale-fruitee", accords: ["poire", "notes florales", "ambre", "bois de santal"] },
+  { id: "reef-volcano", name: "Volcano", house: "Reef", gender: "homme", family: "boisee", accords: ["encens", "cuir", "notes épicées", "notes boisées"] },
 
   // ─── Risala ────────────────────────────────────────────────────────────────
   { id: "risala-ameera", name: "Ameera", house: "Risala", year: 2024, gender: "mixte", family: "florale", accords: ["safran", "osmanthus", "magnolia", "encens"] },

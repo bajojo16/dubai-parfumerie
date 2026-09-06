@@ -4,11 +4,19 @@
  * Extrait de `app/[locale]/marques/page.tsx` pour être partagé avec la recherche
  * (`search-catalog.ts`), qui propose les maisons à côté des parfums et des notes.
  * En production : résolu depuis le back-office (vendors / collections).
+ *
+ * `logo` est OPTIONNEL et le restera : `public/brands/` ne tient que les douze
+ * logos que la boutique a pu obtenir en qualité suffisante, et cinq maisons de
+ * cette liste n'en font pas partie. Une maison sans logo n'est pas une maison
+ * en défaut — la page « Marques » lui affiche son monogramme, exactement comme
+ * les cartes de la commande à la demande. Inventer un logo serait pire que ne
+ * pas en afficher : c'est une marque déposée, pas un visuel d'illustration.
  */
 
 export const BRANDS = [
   {
     name: "Lattafa",
+    logo: "/brands/lattafa.jpg",
     city: "Sharjah",
     cityFlag: "🇦🇪",
     founded: 1980,
@@ -19,6 +27,7 @@ export const BRANDS = [
   },
   {
     name: "Reef",
+    logo: "/brands/reef.jpg",
     city: "Dubai",
     cityFlag: "🇦🇪",
     founded: 2005,
@@ -29,6 +38,7 @@ export const BRANDS = [
   },
   {
     name: "Al Haramain",
+    logo: "/brands/alharamain.jpg",
     city: "La Mecque",
     cityFlag: "🇸🇦",
     founded: 1970,
@@ -39,6 +49,7 @@ export const BRANDS = [
   },
   {
     name: "Ahmed Al Maghribi",
+    logo: "/brands/ahmed.jpg",
     city: "Maroc",
     cityFlag: "🇲🇦",
     founded: 1998,
@@ -59,6 +70,7 @@ export const BRANDS = [
   },
   {
     name: "Swiss Arabian",
+    logo: "/brands/swissarabian.jpg",
     city: "Dubai",
     cityFlag: "🇦🇪",
     founded: 1974,
@@ -69,6 +81,7 @@ export const BRANDS = [
   },
   {
     name: "Paris Corner",
+    logo: "/brands/pariscorner.jpg",
     city: "Dubai",
     cityFlag: "🇦🇪",
     founded: 2010,

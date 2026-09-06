@@ -226,6 +226,25 @@ export function OnDemandClient() {
 
   const hi = suggestions.length ? Math.min(highlight, suggestions.length - 1) : 0;
 
+  /**
+   * Les maisons proposées au filtre sont celles RÉELLEMENT représentées dans
+   * le répertoire chargé, pas la liste de périmètre : une maison retenue mais
+   * dépourvue d'entrée donnerait une option qui ne renvoie rien. Tant que le
+   * chunk de données n'est pas arrivé, on affiche le périmètre — le filtre est
+   * utilisable avant les données, c'est tout l'intérêt du chargement différé.
+   */
+  const houses = useMemo(() => {
+    if (!catalog) return ON_DEMAND_HOUSES;
+    return Array.from(new Set(catalog.entries.map((e) => e.house))).sort((a, b) => a.localeCompare(b, "fr"));
+  }, [catalog]);
+
+  /**
+   * Rien ne s'affiche tant que rien n'est demandé : la grille complète pèse
+   * plusieurs milliers de cartes et ne dit rien à personne. Une maison choisie
+   * ou deux lettres tapées suffisent à la faire apparaître.
+   */
+  const hasCriteria = house !== "" || query.trim().length >= 2;
+
   const selectedIds = useMemo(() => new Set(lines.map((l) => l.id)), [lines]);
 
   /** Les lignes résolues en entrées — une ligne orpheline est simplement ignorée. */
@@ -239,11 +258,36 @@ export function OnDemandClient() {
 
   const totalUnits = selected.reduce((n, s) => n + s.line.qty, 0);
 
+  /**
+   * Ce que « OK » validerait : la suggestion surlignée quand la liste est
+   * ouverte, sinon l'unique résultat du filtre. Sans cible évidente le bouton
+   * reste désactivé plutôt que d'ajouter une référence au hasard.
+   */
+  const pending = useMemo(
+    () => (open && suggestions.length ? suggestions[hi] : filtered.length === 1 ? filtered[0] : null),
+    [open, suggestions, hi, filtered],
+  );
+
   // ── Actions ────────────────────────────────────────────────────────────────
 
   const toggle = useCallback((id: string) => {
     setLines((prev) => (prev.some((l) => l.id === id) ? prev.filter((l) => l.id !== id) : [...prev, { id, qty: 1 }]));
   }, []);
+
+  /**
+   * Ajout franc, sans bascule : « OK » et la touche Entrée valident une
+   * recherche, ils n'ont aucune raison de retirer la référence qu'on vient de
+   * viser. Le retrait reste la carte et la croix du panneau.
+   */
+  const add = useCallback((id: string) => {
+    setLines((prev) => (prev.some((l) => l.id === id) ? prev : [...prev, { id, qty: 1 }]));
+  }, []);
+
+  const confirm = useCallback(() => {
+    if (!pending) return;
+    add(pending.id);
+    setOpen(false);
+  }, [pending, add]);
 
   const changeQty = useCallback((id: string, delta: number) => {
     setLines((prev) =>
@@ -279,7 +323,7 @@ export function OnDemandClient() {
       setHighlight((h) => Math.max(h - 1, 0));
     } else if (e.key === "Enter" && open) {
       e.preventDefault();
-      toggle(suggestions[hi].id);
+      confirm();
     }
   };
 
@@ -322,7 +366,7 @@ export function OnDemandClient() {
 
   // ── Rendu ──────────────────────────────────────────────────────────────────
 
-  const shown = filtered.slice(0, visible);
+  const shown = hasCriteria ? filtered.slice(0, visible) : [];
 
   return (
     <div className="dp-od-shell">
@@ -394,11 +438,21 @@ export function OnDemandClient() {
             </ul>
           </div>
 
+          <button
+            type="button"
+            onClick={confirm}
+            disabled={!pending}
+            className="dp-od-ok"
+            aria-label={pending ? "Ajouter " + pending.name + " à ma liste" : "Ajouter à ma liste"}
+          >
+            OK
+          </button>
+
           <label className="dp-od-housewrap">
             <span className="dp-od-sr">Filtrer par maison</span>
             <select value={house} onChange={(e) => onHouse(e.target.value)} className="dp-od-house">
               <option value="">Toutes les maisons</option>
-              {ON_DEMAND_HOUSES.map((h) => (
+              {houses.map((h) => (
                 <option key={h} value={h}>
                   {h}
                 </option>
@@ -412,13 +466,20 @@ export function OnDemandClient() {
             ? "Le répertoire n'a pas pu être chargé. Écrivez-nous le nom du parfum, nous le retrouverons."
             : !catalog
               ? "Chargement du répertoire des maisons du Golfe…"
-              : filtered.length === 0
-                ? "Aucune référence ne correspond. Essayez le nom de la maison, ou écrivez-nous directement."
-                : filtered.length + " référence" + (filtered.length > 1 ? "s" : "") + " disponible" + (filtered.length > 1 ? "s" : "") + " sur commande"}
+              : !hasCriteria
+                ? "Choisissez une maison, ou tapez le nom d'un parfum."
+                : filtered.length === 0
+                  ? "Aucune référence ne correspond. Essayez le nom de la maison, ou écrivez-nous directement."
+                  : filtered.length + " référence" + (filtered.length > 1 ? "s" : "") + " disponible" + (filtered.length > 1 ? "s" : "") + " sur commande"}
         </p>
 
         {/* ── Grille de cartes typographiques ── */}
-        {catalog ? (
+        {catalog && !hasCriteria ? (
+          <p className="dp-od-hint">
+            Sélectionnez une maison dans le menu, ou tapez le nom d&apos;un parfum : les références s&apos;affichent
+            ensuite. Nous faisons venir les flacons de toutes les maisons listées.
+          </p>
+        ) : catalog ? (
           <>
             <div className="dp-od-grid">
               {shown.map((e) => {
@@ -640,6 +701,41 @@ export function OnDemandClient() {
           cursor: pointer;
         }
         .dp-od-clear:hover { background: var(--surface-cream); color: var(--ink-900); }
+
+        /* Bouton de validation du champ — même hauteur que le champ et le
+           select, il tient la ligne d'outils sans la faire retomber. */
+        .dp-od-ok {
+          flex: 0 0 auto;
+          height: 52px;
+          padding-inline: 22px;
+          border: 1px solid var(--gold-500);
+          border-radius: var(--r-pill);
+          background: var(--gold-700);
+          color: var(--surface-white);
+          font-family: var(--font-sans);
+          font-size: var(--t-sm);
+          font-weight: var(--fw-medium);
+          letter-spacing: .08em;
+          cursor: pointer;
+          transition: opacity .18s var(--ease-out), background .18s var(--ease-out);
+        }
+        .dp-od-ok:hover:not(:disabled) { background: var(--ink-900); border-color: var(--ink-900); }
+        .dp-od-ok:focus-visible { box-shadow: var(--focus-ring); outline: none; }
+        .dp-od-ok:disabled { opacity: .38; cursor: default; }
+
+        .dp-od-hint {
+          margin: 0;
+          padding: 28px 20px;
+          border: 1px dashed var(--line-300);
+          border-radius: var(--r-lg, 16px);
+          background: var(--surface-white);
+          font-family: var(--font-sans);
+          font-size: var(--t-sm);
+          font-weight: var(--fw-light);
+          line-height: 1.6;
+          color: var(--ink-500);
+          text-align: center;
+        }
 
         .dp-od-housewrap { flex: 0 1 220px; min-width: 0; display: block; }
         .dp-od-sr {
@@ -1069,6 +1165,7 @@ export function OnDemandClient() {
           .dp-od-panel-inner { position: static; }
           .dp-od-panel-body { max-height: 46vh; }
           .dp-od-housewrap { flex: 1 1 100%; }
+          .dp-od-ok { padding-inline: 18px; }
           .dp-od-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 152px), 1fr)); gap: 10px; }
           .dp-od-card { min-height: 148px; padding: 13px; }
           .dp-od-name { font-size: 1.05rem; }

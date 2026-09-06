@@ -113,9 +113,17 @@ export const PRODUCT_CLIPS: Record<string, ProductClip[]> = {
   ],
 
   // ── Vanilla Voyage ─────────────────────────────────────────────────────────
-  // Six nouveaux films, tous meilleurs que le rendu de juin — sauf sur un
-  // point : aucun des six ne montre quelqu'un. `vanilla-voyage.mp4` reste donc
+  // Onze films Higgsfield, tous meilleurs que le rendu de juin — sauf sur un
+  // point : aucun des onze ne montre quelqu'un. `vanilla-voyage.mp4` reste donc
   // déclaré ici, uniquement pour la case UGC. Ailleurs, il a été remplacé.
+  //
+  // La série `-07` → `-11` est arrivée d'une seconde salve, et elle est
+  // reconnaissable au premier coup d'œil : les six premiers films sont tournés
+  // en studio (fond noir) ou en manufacture, les cinq nouveaux se passent tous
+  // dans la dune au soleil rasant. Aucun recoupement, donc, malgré les
+  // ingrédients communs — seul `-07` s'approche de `-03` par le nid d'abeille
+  // sur fond noir, et il s'en distingue par la gousse qui se rompt et les
+  // grains qui se dispersent, que `-03` n'a pas.
   //
   // Posters : chaque film a le sien à côté du `.mp4` (sa première image). On les
   // prend plutôt qu'un packshot commun — le poster est ce qu'on voit avant le
@@ -130,11 +138,15 @@ export const PRODUCT_CLIPS: Record<string, ProductClip[]> = {
       title: "Vanilla Voyage · Le voyage",
     },
     {
-      // Les éclats de caramel volent, le flacon ne bouge pas et reste net du
-      // premier au dernier plan : la définition même de la case « fiole fixe ».
-      videoUrl: "/assets/videos/vanilla-voyage-hf-05.mp4",
-      posterUrl: "/assets/videos/vanilla-voyage-hf-05-poster.jpg",
-      title: "Vanilla Voyage · Le flacon",
+      // Prend la case « fiole fixe » à `-05`. La légende de la case demande le
+      // flacon net pendant que le décor bouge : ici une couronne d'ambre pousse
+      // en pointes derrière le flacon, qui ne change ni de taille ni de place
+      // de la première à la dernière image. `-05` finissait au contraire sur un
+      // gros plan du capuchon — le flacon y grossit, donc il n'est pas fixe — et
+      // son décor est un fond noir, c'est-à-dire rien qui puisse bouger.
+      videoUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-11.mp4",
+      posterUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-11-poster.jpg",
+      title: "Vanilla Voyage · La couronne d'ambre",
     },
     {
       // Déclaré ici pour que la fiche porte sa banque en entier : le carrousel
@@ -154,6 +166,15 @@ export const PRODUCT_CLIPS: Record<string, ProductClip[]> = {
       videoUrl: "/assets/videos/vanilla-voyage.mp4",
       posterUrl: "/assets/videos/vanilla-voyage-poster.webp",
       title: "Vanilla Voyage · Le coffret",
+    },
+    {
+      // Rétrogradé par `-11` sur la case « fiole fixe », gardé en banque : il
+      // reste le seul film qui isole le flacon sur fond noir jusqu'au gros plan
+      // du capuchon, donc le seul qui montre la torsade du bouchon et la tresse
+      // dorée d'assez près pour qu'on les lise.
+      videoUrl: "/assets/videos/vanilla-voyage-hf-05.mp4",
+      posterUrl: "/assets/videos/vanilla-voyage-hf-05-poster.jpg",
+      title: "Vanilla Voyage · Le flacon",
     },
     {
       // La manufacture : la coulée de caramel sur la bande, la halle aux
@@ -179,6 +200,49 @@ export const PRODUCT_CLIPS: Record<string, ProductClip[]> = {
       videoUrl: "/assets/videos/vanilla-voyage-hf-06.mp4",
       posterUrl: "/assets/videos/vanilla-voyage-hf-06-poster.jpg",
       title: "Vanilla Voyage · La révélation",
+    },
+    {
+      // Le seul film de la seconde salve qui reste en studio : cubes de
+      // caramel, gousse qui se rompt en deux, grains qui se dispersent, nid
+      // d'abeille qui éclate, flacon pour finir. C'est l'inventaire de la
+      // pyramide olfactive, matière par matière — mais deux de ses huit
+      // secondes sont noires entre les plans, et une vignette qui reste noire
+      // en boucle ne dit pas qu'il y a un film dessous. C'est ce qui lui coûte
+      // la case « hypermotion » face à `-03`, qui garde le flacon à l'image.
+      videoUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-07.mp4",
+      posterUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-07-poster.jpg",
+      title: "Vanilla Voyage · Les matières",
+    },
+    {
+      // La goutte d'or suspendue devant le soleil couchant, puis le flacon posé
+      // sur sa dalle entre dattes et amandes. La plus belle image fixe des
+      // cinq, et c'est justement son défaut : il ne s'y passe presque rien.
+      // Face à `-01`, qui traverse un décor pour arriver au flacon, il perd la
+      // case du film de marque.
+      videoUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-08.mp4",
+      posterUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-08-poster.jpg",
+      title: "Vanilla Voyage · La goutte",
+    },
+    {
+      // Le ruban de caramel qui descend du haut du cadre et s'enroule autour du
+      // flacon dans la dune. Presque le même plan que `-11`, au décor près :
+      // là où `-11` fait pousser une couronne, celui-ci se contente de verser.
+      // Gardé parce qu'il est la version calme de ce plan — utile le jour où la
+      // couronne paraîtrait trop démonstrative.
+      videoUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-09.mp4",
+      posterUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-09-poster.jpg",
+      title: "Vanilla Voyage · La coulée",
+    },
+    {
+      // Contre-plongée très serrée : le caramel tombe sur le capuchon, les
+      // grains de vanille volent, une gousse traverse le cadre au premier plan.
+      // Le plus mal cadré des cinq — l'étiquette n'est jamais entièrement
+      // lisible et le mouvement laisse du flou de bougé —, mais le seul à
+      // filmer le flacon d'en dessous. Dernier de la banque : c'est le film
+      // qu'on montre quand on a déjà tout montré.
+      videoUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-10.mp4",
+      posterUrl: "/assets/videos/dp_parfumerie-maison-asrar-vanilla-voyage-hf-10-poster.jpg",
+      title: "Vanilla Voyage · Les grains",
     },
   ],
 
