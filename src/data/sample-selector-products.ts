@@ -113,6 +113,12 @@ export interface SampleProduct {
   family: SampleFamilyId;
   popularity: number; // 0..100
   tags: SampleCollectionId[];
+  /**
+   * Échantillon réellement proposé. Pour l'instant seule la maison Reef a des
+   * fioles en stock ; les autres restent visibles — on veut montrer l'étendue
+   * du service — mais marquées « bientôt disponible » et non sélectionnables.
+   */
+  available: boolean;
 }
 
 // ─── Helpers de dérivation ───────────────────────────────────────────────────
@@ -150,7 +156,10 @@ const clamp = (n: number) => Math.max(5, Math.min(100, Math.round(n)));
 
 // ─── Agrégation + dérivation ─────────────────────────────────────────────────
 
-type Draft = Omit<SampleProduct, "id" | "tags"> & { tags: SampleCollectionId[] };
+type Draft = Omit<SampleProduct, "id" | "tags" | "available"> & { tags: SampleCollectionId[] };
+
+/** Maisons dont les fioles sont en stock aujourd'hui. À élargir maison par maison. */
+export const SAMPLE_BRANDS_AVAILABLE: ReadonlySet<string> = new Set(["Reef"]);
 
 function build(): SampleProduct[] {
   const drafts: Draft[] = [];
@@ -257,6 +266,7 @@ function build(): SampleProduct[] {
   return Array.from(map.values()).map((d) => ({
     id: `smp-${slugify(d.brand)}-${slugify(d.name)}`,
     ...d,
+    available: SAMPLE_BRANDS_AVAILABLE.has(d.brand),
   }));
 }
 

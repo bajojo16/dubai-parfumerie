@@ -33,7 +33,10 @@ const HARD_MAX_COLS = 6;
  * qu'un produit à l'écran. La butée basse est donc à deux — c'est aussi ce que
  * le reste du site sert en mobile.
  */
-const MIN_COLS = 2;
+// Trois au minimum : à deux par ligne les cartes dépassaient 450 px de large et
+// le packshot, prévu pour 220-300 px, sortait flou et vide. Le mobile n'est pas
+// concerné, il impose sa propre grille par requête de conteneur.
+const MIN_COLS = 3;
 
 function maxColumnsFor(width: number): number {
   if (width <= 0) return HARD_MAX_COLS;

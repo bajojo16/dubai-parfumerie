@@ -74,7 +74,11 @@ const NAV_LINKS = [
   // Libellé court volontairement : la barre est en `white-space: nowrap` et
   // « Commande à la demande » la ferait déborder sur les écrans 1024-1280.
   { label: "Sur commande", href: "/commande-a-la-demande" },
-  { label: "Bons Plans", href: "/promo-flash", highlight: true },
+  { label: "Échantillons", href: "/preview/selecteur-echantillons" },
+  // Ouvre directement l'offre phare, le 3 pour 2 — pas le listing des promos,
+  // où il fallait encore cliquer une pastille pour y arriver. Le listing reste
+  // accessible depuis l'offre (« Retour ») et depuis le pied de page.
+  { label: "Bons Plans", href: "/offres/lot-3-pour-2", highlight: true },
 ];
 
 interface MegaData {
@@ -114,7 +118,7 @@ const MEGA: Record<string, MegaData> = {
       },
     ],
     features: [
-      { img: "/assets/cat-femme.jpg", label: "Collection Femme", sub: "Sillages floraux & orientaux", href: "/parfums-femme" },
+      { img: "/assets/products/paris-corner-marshmallow-blush/dp_parfumerie-paris-corner-marshmallow-blush-banniere-01.webp", label: "Collection Femme", sub: "Sillages floraux & orientaux", href: "/parfums-femme" },
       { img: "/assets/scents/rose.jpg", label: "Rose de Taïf", sub: "L'élégance florale du Golfe", href: "/parfums-femme" },
     ],
   },
@@ -141,7 +145,7 @@ const MEGA: Record<string, MegaData> = {
       },
     ],
     features: [
-      { img: "/assets/cat-homme.jpg", label: "Collection Homme", sub: "Boisés intenses & oud noble", href: "/parfums-homme" },
+      { img: "/assets/products/oud-elite-pure-black-oud/dp_parfumerie-oud-elite-pure-black-oud-env-04.webp", label: "Collection Homme", sub: "Boisés intenses & oud noble", href: "/parfums-homme" },
       { img: "/assets/scents/oud.jpg", label: "Oud Royal", sub: "La profondeur d'un bois précieux", href: "/parfums-homme" },
     ],
   },
@@ -167,8 +171,8 @@ const MEGA: Record<string, MegaData> = {
       },
     ],
     features: [
-      { img: "/assets/coffrets.jpg", label: "Coffrets Prestige", sub: "L'art du cadeau oriental", href: "/promo-flash" },
-      { img: "/assets/cat-mixte.jpg", label: "Sélection Mixte", sub: "Des signatures qui rassemblent", href: "/marques" },
+      { img: "/assets/boutique/dp_parfumerie-boutique-01.webp", label: "Coffrets Prestige", sub: "L'art du cadeau oriental", href: "/promo-flash" },
+      { img: "/assets/boutique/dp_parfumerie-boutique-02.webp", label: "Sélection Mixte", sub: "Des signatures qui rassemblent", href: "/marques" },
     ],
   },
 };

@@ -48,11 +48,15 @@ export type OlfactiveMatch = {
 
 export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
   {
+    // Recherche recoupée du 06/09/26 : le dupe d'Aventus au catalogue est le
+    // Club de Nuit tel que la fiche le porte (`armaf-club-de-nuit`). L'ancien
+    // handle « intense-man » ne correspondait à aucun slug servi : la paire
+    // tombait en silence sur le calcul de score.
     key: "aventus",
     referenceId: "creed-aventus",
     targetName: "Creed · Aventus",
     targetPriceHint: "≈ 320 €",
-    productHandle: "armaf-club-de-nuit-intense-man",
+    productHandle: "armaf-club-de-nuit",
     family: "Fruité · Boisé · Fumé",
     description: "Ananas, bouleau, mousse de chêne. Un sillage masculin charismatique et tenace.",
     product: { name: "Club de Nuit Intense Man", brand: "Armaf", price: 19.9, image: "/assets/prod-4.jpg", href: "/produit/armaf-club-de-nuit-intense-man" },
@@ -115,8 +119,12 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
   },
   {
     key: "sauvage",
-    referenceId: "dior-sauvage",
-    targetName: "Dior · Sauvage",
+    // Salvo Elixir reproduit le flanker Elixir, pas le Sauvage EDT : toutes les
+    // sources concordent (~80 % de proximité), et le Sauvage d'origine a son
+    // propre dupe documenté au catalogue (Armaf Urban Man Elixir). Tranché le
+    // 07/09/26.
+    referenceId: "dior-sauvage-elixir",
+    targetName: "Dior · Sauvage Elixir",
     targetPriceHint: "≈ 110 €",
     // Le jumeau du Sauvage CLASSIQUE (l'eau de toilette de 2015), pas d'une de
     // ses déclinaisons : c'est la paire la plus demandée en boutique, elle doit
@@ -151,8 +159,10 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
   },
   {
     key: "1-million",
-    referenceId: "paco-rabanne-1-million",
-    targetName: "Paco Rabanne · 1 Million",
+    // Tranché le 07/09/26 sur la recherche recoupée : The Tux reproduit Tuxedo,
+    // pas 1 Million — le nom lui-même le dit.
+    referenceId: "ysl-tuxedo-epices-patchouli",
+    targetName: "Yves Saint Laurent · Tuxedo",
     targetPriceHint: "≈ 95 €",
     productHandle: "maison-alhambra-the-tux",
     family: "Épicé · Cuir · Ambré",

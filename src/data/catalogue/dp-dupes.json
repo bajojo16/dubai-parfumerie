@@ -1,0 +1,1368 @@
+[
+ {
+  "slug": "lattafa-oud-pour-elle",
+  "brand": "Lattafa",
+  "name": "Oud Pour Elle",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://pickmyclone.com/blog/lattafa-complete-guide",
+  "alternatives": [],
+  "note": "Aucune source n'associe Oud Pour Elle à un parfum de marque ; composition orientale propre à Lattafa."
+ },
+ {
+  "slug": "al-haramain-amber-oud",
+  "brand": "Al Haramain",
+  "name": "Amber Oud",
+  "referenceId": "xerjoff-erba-pura",
+  "originalHouse": "Xerjoff",
+  "originalName": "Erba Pura",
+  "confidence": "faible",
+  "source": "https://www.jeansmellgood.com/blogs/jean-smell-good/dupe-of-the-week-al-haramain-amber-oud-gold-edition",
+  "alternatives": [
+   {
+    "house": "Tom Ford",
+    "name": "Tobacco Vanille",
+    "note": "édition Tobacco uniquement"
+   }
+  ],
+  "note": "Ne vaut que pour l'édition Gold (« 90 % Erba Pura » selon les sources) ; l'Amber Oud original de 2018 n'est le clone d'aucun parfum connu. À trancher selon la référence réellement vendue."
+ },
+ {
+  "slug": "reef-opulent-blue",
+  "brand": "Reef",
+  "name": "Opulent Blue",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/designers/Reef-Perfumes.html",
+  "alternatives": [],
+  "note": "Aucune fiche Fragrantica/Parfumo ni aucune source dupe pour « Opulent Blue » de Reef (non répertorié — seul « Bluest » est documenté). Vérifier le nom exact du produit."
+ },
+ {
+  "slug": "armaf-club-de-nuit",
+  "brand": "Armaf",
+  "name": "Club de Nuit",
+  "referenceId": "creed-aventus",
+  "originalHouse": "Creed",
+  "originalName": "Aventus",
+  "confidence": "moyenne",
+  "source": "https://esencjazapachu.com/en/blogs/porownania-perfum/creed-aventus-vs-armaf-club-de-nuit-intense-porownanie",
+  "alternatives": [],
+  "note": "Correspondance notoire pour Club de Nuit INTENSE Man (le plus vendu de la gamme) ; le nom générique « Club de Nuit » ne précise pas la déclinaison (Woman → Dolce & Gabbana The One, Milestone → Armani Stronger With You…)."
+ },
+ {
+  "slug": "swiss-arabian-shaghaf",
+  "brand": "Swiss Arabian",
+  "name": "Shaghaf Oud",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Swiss-Arabian/Shaghaf-Oud-50582.html",
+  "alternatives": [],
+  "note": "Création propre à Swiss Arabian ; les commentaires Fragrantica précisent qu'il n'est PAS un dupe de Lancôme Oud Bouquet. Seul le flanker Shaghaf Oud Ahmar est rapproché d'Erba Pura."
+ },
+ {
+  "slug": "ahmed-al-maghribi-lor",
+  "brand": "Ahmed Al Maghribi",
+  "name": "L'Or de Saba",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/designers/Ahmed-Al-Maghribi.html",
+  "alternatives": [],
+  "note": "« L'Or de Saba » introuvable dans le catalogue Ahmed Al Maghribi (Fragrantica, site officiel, revendeurs). Nom à vérifier ; aucune correspondance possible."
+ },
+ {
+  "slug": "lattafa-khamrah",
+  "brand": "Lattafa",
+  "name": "Khamrah",
+  "referenceId": "kilian-angels-share",
+  "originalHouse": "Kilian",
+  "originalName": "Angels' Share",
+  "confidence": "forte",
+  "source": "https://scentclones.com/khamrah-vs-angels-share/",
+  "alternatives": [],
+  "note": "Consensus notoire ; Khamrah est plus sucré et plus daté (accord datte), Angels' Share plus cognac-boisé."
+ },
+ {
+  "slug": "arabiyat-prestige-blueberry-musk",
+  "brand": "Arabiyat Prestige",
+  "name": "Blueberry Musk",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Arabiyat-Prestige/Blueberry-Musk-88798.html",
+  "alternatives": [],
+  "note": "Création originale ; seuls rapprochements évoqués : Bath & Body Works Dark Kiss et Fenty EDP (impressions d'utilisateurs, pas un clone)."
+ },
+ {
+  "slug": "arabiyat-prestige-marwa",
+  "brand": "Arabiyat Prestige",
+  "name": "Marwa",
+  "referenceId": "louis-vuitton-imagination",
+  "originalHouse": "Louis Vuitton",
+  "originalName": "Imagination",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Arabiyat-Prestige/Marwa-107084.html",
+  "alternatives": [],
+  "note": "Fragrantica + TikTok + revendeurs : clone d'Imagination (qualité contestée par certains)."
+ },
+ {
+  "slug": "paris-corner-rifaaqat",
+  "brand": "Paris Corner",
+  "name": "Rifaaqat",
+  "referenceId": "ysl-babycat",
+  "originalHouse": "Yves Saint Laurent",
+  "originalName": "Babycat",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/PARIS-CORNER/Rifaaqat-99060.html",
+  "alternatives": [],
+  "note": "Attention : le brief mentionnait MFK Grand Soir, mais toutes les sources (Fragrantica, YouTube, Bloom) donnent YSL Babycat. Rifaaqat Adorn (autre flanker) → YSL Tuxedo."
+ },
+ {
+  "slug": "rayhaan-aquatica",
+  "brand": "Rayhaan",
+  "name": "Aquatica",
+  "referenceId": "creed-virgin-island-water",
+  "originalHouse": "Creed",
+  "originalName": "Virgin Island Water",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Rayhaan/Aquatica-120605.html",
+  "alternatives": [],
+  "note": "Fragrantica, Parfumo, YouTube : clone ~9/10."
+ },
+ {
+  "slug": "rayhaan-kiss",
+  "brand": "Rayhaan",
+  "name": "Kiss",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Rayhaan/Kiss-124585.html",
+  "alternatives": [],
+  "note": "Aucune source sérieuse ne cite un original de marque ; les commentaires le décrivent comme un « Yara/Yara Candy amplifié » (Lattafa). La mention « LV Imagination » relevée sur un agrégateur est une erreur (Kiss est un gourmand fraise-coco féminin)."
+ },
+ {
+  "slug": "rayhaan-terra",
+  "brand": "Rayhaan",
+  "name": "Terra",
+  "referenceId": "amouage-outlands",
+  "originalHouse": "Amouage",
+  "originalName": "Outlands",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Rayhaan/Terra-118549.html",
+  "alternatives": [],
+  "note": "Fragrantica + Parfumo + Bloom : « inspiré d'Outlands », version plus douce et plus jeune."
+ },
+ {
+  "slug": "lattafa-yara",
+  "brand": "Lattafa",
+  "name": "Yara",
+  "referenceId": "prada-paradoxe",
+  "originalHouse": "Prada",
+  "originalName": "Paradoxe",
+  "confidence": "faible",
+  "source": "https://scentclones.com/lattafa-yara-dupes/",
+  "alternatives": [
+   {
+    "house": "Van Cleef & Arpels",
+    "name": "Orchidée Vanille",
+    "referenceId": "vancleef-orchidee-vanille"
+   },
+   {
+    "house": "Coach",
+    "name": "Dreams",
+    "referenceId": null
+   },
+   {
+    "house": "Carolina Herrera",
+    "name": "Good Girl Blush",
+    "referenceId": null
+   }
+  ],
+  "note": "Sources divergentes : Prada Paradoxe (Lemon8/TikTok), Van Cleef Orchidée Vanille (DupeScented), Good Girl Blush (ScentClones). Yara est surtout considéré comme une création devenue autonome."
+ },
+ {
+  "slug": "khadlaj-sawaar-vanille-blanc",
+  "brand": "Khadlaj",
+  "name": "Sawaar Vanille Blanc",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://khaleejscents.co.uk/khadlaj-dupes/",
+  "alternatives": [],
+  "note": "Vanille virale sans cible de clone (khaleejscents) ; seule adjacence lâche évoquée : Phlur Vanilla Skin, explicitement refusée comme dupe par les sources."
+ },
+ {
+  "slug": "afnan-9pm",
+  "brand": "Afnan",
+  "name": "9PM",
+  "referenceId": "jpg-ultra-male",
+  "originalHouse": "Jean Paul Gaultier",
+  "originalName": "Ultra Male",
+  "confidence": "forte",
+  "source": "https://parfumhill.com/blogs/news/afnan-9pm-review-is-this-really-a-jpg-ultra-male-clone",
+  "alternatives": [],
+  "note": "Consensus notoire (similarité ~8,5/10)."
+ },
+ {
+  "slug": "paris-corner-khair-pistachio",
+  "brand": "Paris Corner",
+  "name": "Khair Pistachio",
+  "referenceId": "kayali-yum-pistachio-gelato-33",
+  "originalHouse": "Kayali",
+  "originalName": "Yum Pistachio Gelato 33",
+  "confidence": "forte",
+  "source": "https://fragbar.com/products/khair-pistachio-kayali-yum-pistachio-gelato",
+  "alternatives": [],
+  "note": "YouTube + Frag+Bar + Fragrantica : ~95 % du Kayali."
+ },
+ {
+  "slug": "paris-corner-the-show-magnifique",
+  "brand": "Paris Corner",
+  "name": "The Show Magnifique",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/PARIS-CORNER/The-Show-Magnifique-132879.html",
+  "alternatives": [],
+  "note": "Sortie 2026, fleur d'oranger/fraise/marshmallow ; Fragrantica et Parfumo précisent qu'il ne s'agit pas d'un dupe (Paris Corner a déjà Dulzura pour Cirque du Soleil)."
+ },
+ {
+  "slug": "paris-corner-marshmallow-blush",
+  "brand": "Paris Corner",
+  "name": "Marshmallow Blush",
+  "referenceId": "kayali-yum-boujee-marshmallow-81",
+  "originalHouse": "Kayali",
+  "originalName": "Yum Boujee Marshmallow 81",
+  "confidence": "moyenne",
+  "source": "https://scentclones.com/paris-corner-marshmallow-blush-review/",
+  "alternatives": [],
+  "note": "Même famille et notes communes, mais Musings of a Muse précise que ce n'est pas un clone 1:1."
+ },
+ {
+  "slug": "oud-elite-pure-black-oud",
+  "brand": "Oud Elite",
+  "name": "Pure Black Oud",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/oud-elite/",
+  "alternatives": [],
+  "note": "Marque saoudienne (Riyad, 2007) ; aucune source n'associe Pure Black Oud à un parfum de marque."
+ },
+ {
+  "slug": "afnan-supremacy-not-only-intense",
+  "brand": "Afnan",
+  "name": "Supremacy Not Only Intense",
+  "referenceId": "nishane-hacivat",
+  "originalHouse": "Nishane",
+  "originalName": "Hacivat",
+  "confidence": "moyenne",
+  "source": "https://pickmyclone.com/blog/afnan-complete-guide",
+  "alternatives": [
+   {
+    "house": "Creed",
+    "name": "Aventus",
+    "referenceId": "creed-aventus"
+   }
+  ],
+  "note": "Inspiration principale reconnue : Hacivat (~82 %) ; souvent vendu comme « twist » d'Aventus, comparaison contestée par les utilisateurs."
+ },
+ {
+  "slug": "ahmed-al-maghribi-agarwood",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Agarwood",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-al-shaikha-hind",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Al Shaikha Hind",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-arwa",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Arwa",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-bidun-esam",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Bidun Esam",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-daam-watani",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Daam Watani",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-little-hearts",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Little Hearts",
+  "referenceId": "xerjoff-erba-pura",
+  "originalHouse": "Xerjoff",
+  "originalName": "Erba Pura",
+  "confidence": "faible",
+  "source": "https://www.fragrantica.com/perfume/Ahmed-Al-Maghribi/Little-Hearts-136559.html",
+  "alternatives": [],
+  "note": "Une seule mention en commentaire Fragrantica (« inspiré d'Erba Pura, moins sucré ») ; création 2026 encore peu documentée."
+ },
+ {
+  "slug": "ahmed-al-maghribi-marj",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Marj",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-oud-and-roses",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Oud and Roses",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-oud-lavender",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Oud Lavender",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-patchouli",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Patchouli",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-pearl-oud",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Pearl Oud",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-rose-noir",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Rose Noir",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-supreme",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Supreme",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "ahmed-al-maghribi-touch-oud",
+  "brand": "Ahmed Al Maghribi",
+  "name": "Touch Oud",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/ahmed-al-maghribi/",
+  "alternatives": [],
+  "note": "Création propre à Ahmed Al Maghribi (maison qui fait elle-même l'objet de clones — Marj, Oud & Roses, Bidun Esam sont copiés par des tiers). Aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "al-majed-oud-al-adhriyah",
+  "brand": "Al Majed Oud",
+  "name": "Al Adhriyah",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/designers/Al-Majed-Oud.html",
+  "alternatives": [],
+  "note": "Aucune source dupe pour Al Majed Oud (maison saoudienne) ; les seules pages « clone » concernent des copies de ses propres parfums."
+ },
+ {
+  "slug": "al-majed-oud-abaq",
+  "brand": "Al Majed Oud",
+  "name": "Abaq",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/designers/Al-Majed-Oud.html",
+  "alternatives": [],
+  "note": "Aucune source dupe pour Al Majed Oud ; Abaq est décrit comme une création boisée-musquée propre."
+ },
+ {
+  "slug": "al-majed-oud-wood-white",
+  "brand": "Al Majed Oud",
+  "name": "Wood White",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Al-Majed-Oud/Wood-White-92411.html",
+  "alternatives": [],
+  "note": "Commentaires Fragrantica : « assez proche mais pas identique » de Versace Eros Najim, « ADN Libre Intense mais pas un dupe ». Pas de correspondance établie."
+ },
+ {
+  "slug": "al-rehab-al-fares",
+  "brand": "Al Rehab",
+  "name": "Al Fares",
+  "referenceId": "calvin-klein-eternity-for-men",
+  "originalHouse": "Calvin Klein",
+  "originalName": "Eternity for Men",
+  "confidence": "faible",
+  "source": "https://www.fragrantica.com/board/viewtopic.php?id=101957",
+  "alternatives": [],
+  "note": "Une mention sur le forum Fragrantica (« suspecté d'être un clone d'Eternity for Men ») ; un autre utilisateur évoque Sauvage Elixir — sources fragiles."
+ },
+ {
+  "slug": "armaf-club-de-nuit-urban-man-elixir",
+  "brand": "Armaf",
+  "name": "Club de Nuit Urban Man Elixir",
+  "referenceId": "dior-sauvage",
+  "originalHouse": "Dior",
+  "originalName": "Sauvage",
+  "confidence": "forte",
+  "source": "https://perfumenez.com/blogs/arabian/what-is-armaf-club-de-nuit-urban-man-elixir-a-clone-of",
+  "alternatives": [
+   {
+    "house": "Creed",
+    "name": "Aventus",
+    "referenceId": "creed-aventus"
+   }
+  ],
+  "note": "Décrit comme un hybride ~70 % Sauvage (EDT) / 30 % Aventus (ouverture ananas)."
+ },
+ {
+  "slug": "asdaaf-ameer-al-arab",
+  "brand": "Asdaaf",
+  "name": "Ameer Al Arab",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Asdaaf/Ameer-Al-Arab-105834.html",
+  "alternatives": [],
+  "note": "Version de base (2022) : comparaisons contradictoires (YSL La Nuit de l'Homme, Invictus Platinum) rejetées par les utilisateurs. Seul le flanker Ameer Al Arab IMPERIUM est un clone reconnu de YSL Y EDT."
+ },
+ {
+  "slug": "asdaaf-ameerat-al-arab",
+  "brand": "Asdaaf",
+  "name": "Ameerat Al Arab",
+  "referenceId": "giorgio-armani-my-way",
+  "originalHouse": "Giorgio Armani",
+  "originalName": "My Way",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Asdaaf/Ameerat-Al-Arab-81376.html",
+  "alternatives": [
+   {
+    "house": "Gucci",
+    "name": "Bloom",
+    "referenceId": "gucci-bloom"
+   }
+  ],
+  "note": "Fragrantica + YouTube : « My Way dupe » ; certains évoquent Gucci Bloom."
+ },
+ {
+  "slug": "asdaaf-ameerat-al-arab-50ml",
+  "brand": "Asdaaf",
+  "name": "Ameerat Al Arab 50ml",
+  "referenceId": "giorgio-armani-my-way",
+  "originalHouse": "Giorgio Armani",
+  "originalName": "My Way",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Asdaaf/Ameerat-Al-Arab-81376.html",
+  "alternatives": [
+   {
+    "house": "Gucci",
+    "name": "Bloom",
+    "referenceId": "gucci-bloom"
+   }
+  ],
+  "note": "Même jus que Ameerat Al Arab 100 ml (format 50 ml)."
+ },
+ {
+  "slug": "asdaaf-ameerat-al-arab-prive-rose",
+  "brand": "Asdaaf",
+  "name": "Ameerat Al Arab Prive Rose",
+  "referenceId": "marly-delina-exclusif",
+  "originalHouse": "Parfums de Marly",
+  "originalName": "Delina Exclusif",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Asdaaf/Ameerat-Al-Arab-Prive-Rose-81967.html",
+  "alternatives": [],
+  "note": "Commentaire Fragrantica détaillé (« 99,5 % identique côte à côte ») + guide The Sniff Test."
+ },
+ {
+  "slug": "fragrance-world-abraaj-revere",
+  "brand": "Fragrance World",
+  "name": "Abraaj Revere",
+  "referenceId": "amouage-honour-man",
+  "originalHouse": "Amouage",
+  "originalName": "Honour Man",
+  "confidence": "moyenne",
+  "source": "https://marabika.lt/en/amouage-honour-men-abraaj-revere-100ml",
+  "alternatives": [],
+  "note": "Revendeurs et fiche produit : inspiré d'Honour Man ; notes identiques (poivres, géranium, élémi, muscade, encens, vétiver)."
+ },
+ {
+  "slug": "fragrance-world-cocktail-intense",
+  "brand": "Fragrance World",
+  "name": "Cocktail Intense",
+  "referenceId": "kilian-angels-share",
+  "originalHouse": "Kilian",
+  "originalName": "Angels' Share",
+  "confidence": "forte",
+  "source": "https://aromaauthority.com/alternatives/fragrance-world-cocktail-intense-review/",
+  "alternatives": [],
+  "note": "Plusieurs revues YouTube/TikTok/blog : l'un des meilleurs clones d'Angels' Share."
+ },
+ {
+  "slug": "fragrance-world-nudo-exotic",
+  "brand": "Fragrance World",
+  "name": "Nudo Exotic",
+  "referenceId": "initio-narcotic-delight",
+  "originalHouse": "Initio Parfums Privés",
+  "originalName": "Narcotic Delight",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Fragrance-World/Nudo-Exotic-Flowers-95082.html",
+  "alternatives": [],
+  "note": "Nom complet : Nudo Exotic Flowers. Commentaires Fragrantica (« clone 1:1 ») + PickMyClone."
+ },
+ {
+  "slug": "french-avenue-sultana",
+  "brand": "French Avenue",
+  "name": "Sultana",
+  "referenceId": "gissah-one-and-only",
+  "originalHouse": "Gissah",
+  "originalName": "One & Only",
+  "confidence": "forte",
+  "source": "https://www.parfumo.com/Perfumes/french-avenue/sultana-the-joyful",
+  "alternatives": [],
+  "note": "Nom complet : Sultana The Joyful. Parfumo, TikTok, FilledWithBarakah : inspiré de Gissah One & Only."
+ },
+ {
+  "slug": "french-avenue-liquid-brun",
+  "brand": "French Avenue",
+  "name": "Liquid Brun",
+  "referenceId": "marly-althair",
+  "originalHouse": "Parfums de Marly",
+  "originalName": "Althaïr",
+  "confidence": "forte",
+  "source": "https://ifragranceofficial.com/liquid-brun-vs-althair-review-comparison/",
+  "alternatives": [],
+  "note": "Consensus notoire (clone quasi parfait, 2024)."
+ },
+ {
+  "slug": "french-avenue-grecia",
+  "brand": "French Avenue",
+  "name": "Grecia",
+  "referenceId": "les-liquides-imaginaires-blanche-bete",
+  "originalHouse": "Les Liquides Imaginaires",
+  "originalName": "Blanche Bête",
+  "confidence": "faible",
+  "source": "https://scentsquarebyghadi.com/products/grecia-french-avenue-100-ml-unisex",
+  "alternatives": [
+   {
+    "house": "Xerjoff",
+    "name": "Naxos",
+    "referenceId": "xerjoff-naxos"
+   }
+  ],
+  "note": "Sources divergentes : Blanche Bête (revendeur + Fragrantica, notes lait/ambrette/tubéreuse concordantes) vs Naxos (Scent Atlas). Grecia Rosa Extrait (autre flanker) → Dom Rosa."
+ },
+ {
+  "slug": "french-avenue-pinnace-white",
+  "brand": "French Avenue",
+  "name": "Pinnace White",
+  "referenceId": "louis-vuitton-pacific-chill",
+  "originalHouse": "Louis Vuitton",
+  "originalName": "Pacific Chill",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/French-Avenue/Pinnace-94701.html",
+  "alternatives": [],
+  "note": "Facebook, TikTok, Discovery Decants : clone de Pacific Chill."
+ },
+ {
+  "slug": "french-avenue-royal-blend-nero",
+  "brand": "French Avenue",
+  "name": "Royal Blend Nero",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://bloomperfume.com/blogs/new-similar/royal-blend-nero-by-french-avenue",
+  "alternatives": [],
+  "note": "Pas de cible de clone ; décrit comme un « Khamrah plus sombre » et une alternative à Gissah Sava — pas un dupe déclaré."
+ },
+ {
+  "slug": "hamidi-alyssa",
+  "brand": "Hamidi",
+  "name": "Alyssa",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.hamidi.us/products/hamidi-perfume-alyssa-eau-de-parfum-spray-100ml-perfumes",
+  "alternatives": [],
+  "note": "Aucune source n'associe Alyssa (safran, jasmin, ambre, résine de sapin, cèdre) à un parfum de marque."
+ },
+ {
+  "slug": "khadlaj-perfumes-empire-victor",
+  "brand": "Khadlaj Perfumes",
+  "name": "Empire Victor",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://khaleejscents.co.uk/khadlaj-dupes/",
+  "alternatives": [],
+  "note": "Un revendeur le vend « inspiré de Xerjoff Lira » mais la communauté (Fragrantica, khaleejscents) rejette ce rapprochement : pas de cible de clone."
+ },
+ {
+  "slug": "maison-alhambra-anarch",
+  "brand": "Maison Alhambra",
+  "name": "Anarch",
+  "referenceId": "terenzi-andromeda",
+  "originalHouse": "Tiziana Terenzi",
+  "originalName": "Andromeda",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Anarch-82382.html",
+  "alternatives": [],
+  "note": "YouTube, TikTok, Dubai Essence : clone d'Andromeda."
+ },
+ {
+  "slug": "maison-alhambra-candid-rose",
+  "brand": "Maison Alhambra",
+  "name": "Candid Rose",
+  "referenceId": "jpg-scandal",
+  "originalHouse": "Jean Paul Gaultier",
+  "originalName": "Scandal",
+  "confidence": "faible",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Candid-93542.html",
+  "alternatives": [],
+  "note": "« Candid Rose » n'existe pas sous ce nom ; la ligne Candid de Maison Alhambra clone JPG Scandal (Candid → Scandal, So Candid → So Scandal). Vérifier le nom exact du produit."
+ },
+ {
+  "slug": "maison-alhambra-coastal-pour-femme",
+  "brand": "Maison Alhambra",
+  "name": "Coastal pour femme",
+  "referenceId": "lacoste-pour-femme",
+  "originalHouse": "Lacoste",
+  "originalName": "Pour Femme",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Coastal-Pour-Femme-93809.html",
+  "alternatives": [],
+  "note": "Fragrantica + TikTok : dupe de Lacoste Pour Femme (notes identiques)."
+ },
+ {
+  "slug": "maison-alhambra-como-moiselle",
+  "brand": "Maison Alhambra",
+  "name": "Como Moiselle",
+  "referenceId": "chanel-coco-mademoiselle",
+  "originalHouse": "Chanel",
+  "originalName": "Coco Mademoiselle",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Como-Moiselle-95510.html",
+  "alternatives": [],
+  "note": "Consensus notoire (85-95 % selon utilisateurs)."
+ },
+ {
+  "slug": "maison-alhambra-glacier-bella",
+  "brand": "Maison Alhambra",
+  "name": "Glacier Bella",
+  "referenceId": "jpg-la-belle",
+  "originalHouse": "Jean Paul Gaultier",
+  "originalName": "La Belle",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Glacier-Bella-93644.html",
+  "alternatives": [],
+  "note": "Fragrantica, Frag+Bar, TikTok : clone de La Belle (~90 %)."
+ },
+ {
+  "slug": "maison-alhambra-jean-lowe-vibe",
+  "brand": "Maison Alhambra",
+  "name": "Jean Lowe Vibe",
+  "referenceId": "louis-vuitton-pacific-chill",
+  "originalHouse": "Louis Vuitton",
+  "originalName": "Pacific Chill",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Jean-Lowe-Vibe-103352.html",
+  "alternatives": [],
+  "note": "Attention : le brief supposait Ombre Nomade (et les notes du catalogue — oud, cacao, safran — correspondent à Ombre Nomade), mais Fragrantica/Parfumo/YouTube sont unanimes : Jean Lowe Vibe = Pacific Chill. La ligne Jean Lowe clone Louis Vuitton (Jean Lowe Ombre → Ombre Nomade). Vérifier les notes de la fiche produit."
+ },
+ {
+  "slug": "maison-alhambra-karat",
+  "brand": "Maison Alhambra",
+  "name": "Karat",
+  "referenceId": "terenzi-kirke",
+  "originalHouse": "Tiziana Terenzi",
+  "originalName": "Kirke",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Karat-89049.html",
+  "alternatives": [],
+  "note": "Fragrantica, YouTube, revendeurs : clone de Kirke."
+ },
+ {
+  "slug": "maison-alhambra-kismet-for-men",
+  "brand": "Maison Alhambra",
+  "name": "Kismet For Men",
+  "referenceId": "kilian-straight-to-heaven",
+  "originalHouse": "Kilian",
+  "originalName": "Straight to Heaven",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Kismet-for-Men-75476.html",
+  "alternatives": [
+   {
+    "house": "Yves Saint Laurent",
+    "name": "Tuxedo",
+    "referenceId": "ysl-tuxedo-epices-patchouli"
+   }
+  ],
+  "note": "Fragrantica/LMCHING : inspiré de Kilian Straight to Heaven (Extreme) ; certaines vidéos le vendent comme clone de YSL Tuxedo. Flacon et gamme Kismet = hommage Kilian."
+ },
+ {
+  "slug": "maison-alhambra-kismet-for-women",
+  "brand": "Maison Alhambra",
+  "name": "Kismet For Women",
+  "referenceId": "kilian-good-girl-gone-bad",
+  "originalHouse": "Kilian",
+  "originalName": "Good Girl Gone Bad",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Kismet-for-Women-75475.html",
+  "alternatives": [],
+  "note": "Fragrantica + Anabis : inspiré de Good Girl Gone Bad."
+ },
+ {
+  "slug": "maison-alhambra-kismet-magic",
+  "brand": "Maison Alhambra",
+  "name": "Kismet Magic",
+  "referenceId": "kilian-angels-share",
+  "originalHouse": "Kilian",
+  "originalName": "Angels' Share",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Kismet-Magic-95138.html",
+  "alternatives": [],
+  "note": "Fragrantica, Parfumo, TikTok, Dubai Essence ; proximité débattue (prune absente), Kismet Angel étant plus fidèle."
+ },
+ {
+  "slug": "maison-alhambra-la-rouge-baroque",
+  "brand": "Maison Alhambra",
+  "name": "La Rouge Baroque",
+  "referenceId": "mfk-baccarat-rouge-540-extrait",
+  "originalHouse": "Maison Francis Kurkdjian",
+  "originalName": "Baccarat Rouge 540 Extrait de Parfum",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Baroque-Rouge-Extrait-94073.html",
+  "alternatives": [
+   {
+    "house": "Maison Francis Kurkdjian",
+    "name": "Baccarat Rouge 540",
+    "referenceId": "mfk-baccarat-rouge-540"
+   }
+  ],
+  "note": "La Rouge Baroque (Extreme) = renommage de Baroque Rouge Extrait (même jus) ; les notes du catalogue (safran, amande, oud, cuir) correspondent à l'Extrait. Baroque Rouge 540 = l'EDP."
+ },
+ {
+  "slug": "maison-alhambra-la-vita-bella",
+  "brand": "Maison Alhambra",
+  "name": "La Vita Bella",
+  "referenceId": "lancome-la-vie-est-belle",
+  "originalHouse": "Lancôme",
+  "originalName": "La Vie Est Belle",
+  "confidence": "forte",
+  "source": "https://www.parfumo.com/Perfumes/maison-alhambra/la-vivacite-la-vita-bella",
+  "alternatives": [],
+  "note": "La Vita Bella = ancien nom de La Vivacité (même jus). La Vita Bella Intensa (discontinué) → La Vie Est Belle en Rose."
+ },
+ {
+  "slug": "maison-alhambra-la-vivacite",
+  "brand": "Maison Alhambra",
+  "name": "La Vivacite",
+  "referenceId": "lancome-la-vie-est-belle",
+  "originalHouse": "Lancôme",
+  "originalName": "La Vie Est Belle",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/La-Vivacite-100488.html",
+  "alternatives": [],
+  "note": "Parfumo + Fragrantica + TikTok ; notes strictement identiques."
+ },
+ {
+  "slug": "maison-alhambra-libbra-intense",
+  "brand": "Maison Alhambra",
+  "name": "Libbra Intense",
+  "referenceId": "ysl-libre-intense",
+  "originalHouse": "Yves Saint Laurent",
+  "originalName": "Libre Intense",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Libbra-92630.html",
+  "alternatives": [],
+  "note": "Aussi vendu sous le nom Léonie Intense."
+ },
+ {
+  "slug": "maison-alhambra-musk-vanille",
+  "brand": "Maison Alhambra",
+  "name": "Musk Vanille",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Musk-Vanille-104996.html",
+  "alternatives": [],
+  "note": "Fruité-gourmand (framboise, poire, cassis, muguet, vanille, musc) sans cible de clone identifiée dans aucune source."
+ },
+ {
+  "slug": "maison-alhambra-peach-narissa",
+  "brand": "Maison Alhambra",
+  "name": "Peach Narissa",
+  "referenceId": "narciso-poudree",
+  "originalHouse": "Narciso Rodriguez",
+  "originalName": "Narciso Poudrée",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Narissa-Peach-107685.html",
+  "alternatives": [
+   {
+    "house": "Narciso Rodriguez",
+    "name": "For Her Eau de Toilette",
+    "referenceId": "narciso-for-her-edt"
+   }
+  ],
+  "note": "Produit réel : Narissa Peach (2025), ex-Narissa Poudrée → clone de Narciso Poudrée (YouTube + Fragrantica). Les notes du catalogue (jasmin, musc, patchouli, rose, fleur d'oranger) ressemblent plutôt à For Her."
+ },
+ {
+  "slug": "maison-alhambra-philos-opus-noir",
+  "brand": "Maison Alhambra",
+  "name": "Philos Opus Noir",
+  "referenceId": "xerjoff-opera",
+  "originalHouse": "Xerjoff",
+  "originalName": "Opera",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Philos-Opus-Noir-93821.html",
+  "alternatives": [],
+  "note": "YouTube, Dubai Essence, PickMyClone : clone de Xerjoff (Sospiro) Opera — aussi référencé « sospiro-opera » dans la base."
+ },
+ {
+  "slug": "maison-alhambra-porto-neroli",
+  "brand": "Maison Alhambra",
+  "name": "Porto Neroli",
+  "referenceId": "tom-ford-neroli-portofino",
+  "originalHouse": "Tom Ford",
+  "originalName": "Neroli Portofino",
+  "confidence": "forte",
+  "source": "https://ifragranceofficial.com/maison-alhambra-porto-neroli-review/",
+  "alternatives": [],
+  "note": "Consensus notoire (aussi vendu sous le nom Pacific Blue)."
+ },
+ {
+  "slug": "maison-alhambra-salvo",
+  "brand": "Maison Alhambra",
+  "name": "Salvo Elixir",
+  "referenceId": "dior-sauvage-elixir",
+  "originalHouse": "Dior",
+  "originalName": "Sauvage Elixir",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Salvo-Elixir-94166.html",
+  "alternatives": [],
+  "note": "Flanker Elixir, pas le Sauvage EDT (~80 % de proximité selon les avis)."
+ },
+ {
+  "slug": "maison-alhambra-summer-forever",
+  "brand": "Maison Alhambra",
+  "name": "Summer Forever",
+  "referenceId": "xerjoff-muse",
+  "originalHouse": "Xerjoff",
+  "originalName": "Muse",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Summer-Forever-118213.html",
+  "alternatives": [],
+  "note": "Vendu partout comme « inspiré de Xerjoff (Sospiro) Muse » (TikTok, revendeurs) ; un commentaire Fragrantica conteste la ressemblance. Notes concordantes (prune, davana, framboise, benjoin)."
+ },
+ {
+  "slug": "maison-alhambra-the-tux",
+  "brand": "Maison Alhambra",
+  "name": "The Tux",
+  "referenceId": "ysl-tuxedo-epices-patchouli",
+  "originalHouse": "Yves Saint Laurent",
+  "originalName": "Tuxedo",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/The-Tux-78559.html",
+  "alternatives": [],
+  "note": "Consensus notoire (YouTube « Clone Wars », Decant House, Mazze)."
+ },
+ {
+  "slug": "maison-alhambra-toro",
+  "brand": "Maison Alhambra",
+  "name": "Toro",
+  "referenceId": "hermes-terre-dhermes",
+  "originalHouse": "Hermès",
+  "originalName": "Terre d'Hermès",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/Maison-Alhambra/Toro-Pour-Homme-84596.html",
+  "alternatives": [
+   {
+    "house": "Hermès",
+    "name": "Terre d'Hermès Eau Givrée",
+    "referenceId": "hermes-terre-dhermes-eau-givree",
+    "note": "pour Toro Pour Homme Glace"
+   }
+  ],
+  "note": "Toro Pour Homme → Terre d'Hermès (notes identiques) ; le flanker Toro Glace → Eau Givrée."
+ },
+ {
+  "slug": "maison-alhambra-toscano-leather",
+  "brand": "Maison Alhambra",
+  "name": "Toscano Leather",
+  "referenceId": "tom-ford-tuscan-leather",
+  "originalHouse": "Tom Ford",
+  "originalName": "Tuscan Leather",
+  "confidence": "forte",
+  "source": "https://basenotes.com/threads/tuscano-leather-by-maison-alhambra-inspired-by-tf-tuscan-leather.531201/",
+  "alternatives": [],
+  "note": "Consensus notoire (~95 %)."
+ },
+ {
+  "slug": "vanilla-voyage",
+  "brand": "Maison Asrar",
+  "name": "Vanilla Voyage",
+  "referenceId": "giardini-di-toscana-bianco-latte",
+  "originalHouse": "Giardini di Toscana",
+  "originalName": "Bianco Latte",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/MAISON-ASRAR/Vanilla-Voyage-101562.html",
+  "alternatives": [
+   {
+    "house": "Kayali",
+    "name": "Vanilla 28",
+    "referenceId": null
+   }
+  ],
+  "note": "Instagram/revendeurs/Fragrantica : inspiré de Bianco Latte ; certains évoquent Kayali Vanilla 28."
+ },
+ {
+  "slug": "my-perfumes-moroccan-lily",
+  "brand": "My Perfumes",
+  "name": "Moroccan Lily",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/designers/My-Perfumes.html",
+  "alternatives": [],
+  "note": "Aucune source dupe pour Moroccan Lily (My Perfumes)."
+ },
+ {
+  "slug": "my-perfumes-arabiyat-intense-oud",
+  "brand": "My Perfumes",
+  "name": "Arabiyat Intense Oud",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.parfumo.com/Perfumes/Arabiyat/intense-oud-water-perfume",
+  "alternatives": [],
+  "note": "Aucune source n'associe Arabiyat Intense Oud à un parfum de marque."
+ },
+ {
+  "slug": "my-perfumes-arabiyat-intense-musk",
+  "brand": "My Perfumes",
+  "name": "Arabiyat Intense Musk",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Arabiyat-Prestige/Intense-Musk-119256.html",
+  "alternatives": [],
+  "note": "Aucune source n'associe Arabiyat Intense Musk à un parfum de marque."
+ },
+ {
+  "slug": "my-perfumes-blueberry",
+  "brand": "My Perfumes",
+  "name": "Blueberry",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Arabiyat/Blueberry-Musk-103387.html",
+  "alternatives": [],
+  "note": "Même composition que Arabiyat Prestige Blueberry Musk ; aucune cible de clone (rapprochements anecdotiques : Bath & Body Works Dark Kiss)."
+ },
+ {
+  "slug": "my-perfumes-cranberry",
+  "brand": "My Perfumes",
+  "name": "Cranberry",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/designers/My-Perfumes.html",
+  "alternatives": [],
+  "note": "Aucune source dupe pour Cranberry (My Perfumes / Arabiyat)."
+ },
+ {
+  "slug": "nabeel-crown-of-emirates",
+  "brand": "Nabeel",
+  "name": "Crown of Emirates",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.parfumo.com/Perfumes/Nabeel/crown-of-emirates",
+  "alternatives": [],
+  "note": "Master Perfumer Collection ; Parfumo précise « pas un clone officiel ». Seule similarité évoquée : Roeya (Nabeel)."
+ },
+ {
+  "slug": "nabeel-24k-gold",
+  "brand": "Nabeel",
+  "name": "24K Gold",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Nabeel/Gold-24K-96797.html",
+  "alternatives": [],
+  "note": "Pas de dupe déclaré ; impressions d'utilisateurs seulement (Estée Lauder Beautiful Magnolia en tête, Kayali Musk 12 / Le Labo Santal 33 en fond)."
+ },
+ {
+  "slug": "nabeel-dahn-al-oud-amiri",
+  "brand": "Nabeel",
+  "name": "Dahn Al Oud Amiri",
+  "referenceId": "amouage-interlude-man",
+  "originalHouse": "Amouage",
+  "originalName": "Interlude Man",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Nabeel/Dahn-Al-Oud-Amiri-116212.html",
+  "alternatives": [],
+  "note": "Plusieurs commentaires Fragrantica/Parfumo : « interprétation d'Interlude Man, plus sèche et moins épicée »."
+ },
+ {
+  "slug": "nabeel-nader",
+  "brand": "Nabeel",
+  "name": "Nader",
+  "referenceId": "xerjoff-erba-pura",
+  "originalHouse": "Xerjoff",
+  "originalName": "Erba Pura",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/Nabeel/Nader-81489.html",
+  "alternatives": [],
+  "note": "Fragrantica/Parfumo : « clone d'Erba Pura » (notes ananas/pomme/pêche concordantes)."
+ },
+ {
+  "slug": "nabeel-ocean",
+  "brand": "Nabeel",
+  "name": "Ocean",
+  "referenceId": "dior-sauvage-elixir",
+  "originalHouse": "Dior",
+  "originalName": "Sauvage Elixir",
+  "confidence": "faible",
+  "source": "https://www.fragrantica.com/perfume/Nabeel/Ocean-81488.html",
+  "alternatives": [
+   {
+    "house": "The Spirit of Dubai",
+    "name": "Bahar",
+    "referenceId": null
+   },
+   {
+    "house": "Louis Vuitton",
+    "name": "Megamare",
+    "referenceId": null,
+    "note": "« Megamere DNA » cité par un utilisateur — probablement Orto Parisi Megamare"
+   }
+  ],
+  "note": "Sources contradictoires : « Sauvage Elixir clone » (quelques avis, surtout pour Ocean Blue), dupe de Spirit of Dubai Bahar (YouTube), ADN Megamare (avis). Rien de consensuel."
+ },
+ {
+  "slug": "nabeel-irth",
+  "brand": "Nabeel",
+  "name": "Irth",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Nabeel/Irth-81487.html",
+  "alternatives": [],
+  "note": "Création originale (hommage aux tours à vent de Dubaï) ; un avis le décrit comme « Montale Arabians Tonka + Roja Amber Aoud », sans qu'il s'agisse d'un clone."
+ },
+ {
+  "slug": "nabeel-nasaem",
+  "brand": "Nabeel",
+  "name": "Nasaem",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://thesnifftest.co.uk/nabeel/nabeel-nasaem/",
+  "alternatives": [],
+  "note": "Classique Nabeel de 1995 ; c'est lui qui est copié (Perfume Parlour, GenericPerfumes), pas l'inverse."
+ },
+ {
+  "slug": "ne-emah-laya",
+  "brand": "Ne'emah",
+  "name": "Laya",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Ne-emah-For-Fragrance-Oudh/Laya-28337.html",
+  "alternatives": [],
+  "note": "Création originale de Mohammed Ne'emah (2012) ; les discussions cherchent des alternatives À Laya (MAC Crème d'Nude…), aucun original de marque."
+ },
+ {
+  "slug": "osma-perfumes-osma-a-perfume",
+  "brand": "Osma Perfumes",
+  "name": "Osma A Perfume",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Osma-Perfumes/Osma-A-113176.html",
+  "alternatives": [],
+  "note": "Marque saoudienne Osma ; aucune source dupe pour Osma A (pêche/vanille). Seul Woody S (autre référence) est rapproché de JPG Le Male Elixir."
+ },
+ {
+  "slug": "osma-perfumes-bonsoir",
+  "brand": "Osma Perfumes",
+  "name": "Bonsoir",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Osma-Perfumes/Bonsoir-113162.html",
+  "alternatives": [],
+  "note": "Composé par Miroslav Petkov ; aucune source dupe (pamplemousse, cuir, cèdre)."
+ },
+ {
+  "slug": "osma-perfumes-citrus-f-perfume",
+  "brand": "Osma Perfumes",
+  "name": "Citrus F Perfume",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/Osma-Perfumes/Citrus-F-113163.html",
+  "alternatives": [],
+  "note": "Aucune source dupe pour Citrus' F (agrumes, rose, musc blanc)."
+ },
+ {
+  "slug": "osma-perfumes-osma-s-perfume",
+  "brand": "Osma Perfumes",
+  "name": "Osma S Perfume",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/designers/Osma-Perfumes.html",
+  "alternatives": [],
+  "note": "Aucune source dupe pour Osma S (poivre rose, jasmin sambac, santal). Ne pas confondre avec Woody S (→ JPG Le Male Elixir)."
+ },
+ {
+  "slug": "emir-lueur-d-espoir-ambre",
+  "brand": "Emir",
+  "name": "Lueur d'Espoir Ambre",
+  "referenceId": "louis-vuitton-ombre-nomade",
+  "originalHouse": "Louis Vuitton",
+  "originalName": "Ombre Nomade",
+  "confidence": "forte",
+  "source": "https://www.youtube.com/watch?v=Mb-nc3jGZjg",
+  "alternatives": [],
+  "note": "Emir = ligne de Paris Corner ; YouTube, TikTok, revendeurs unanimes : clone d'Ombre Nomade (Lueur d'Espoir Noche → Nuit de Feu, Arena → Les Sables Roses)."
+ },
+ {
+  "slug": "paris-corner-taskeen-caramel-cascade",
+  "brand": "Paris Corner",
+  "name": "Taskeen Caramel Cascade",
+  "referenceId": "giardini-di-toscana-bianco-latte",
+  "originalHouse": "Giardini di Toscana",
+  "originalName": "Bianco Latte",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/PARIS-CORNER/Taskeen-Caramel-Cascade-95545.html",
+  "alternatives": [],
+  "note": "Fragrantica, Lemon8, revendeurs : inspiré de Bianco Latte."
+ },
+ {
+  "slug": "paris-corner-december-vanilla",
+  "brand": "Paris Corner",
+  "name": "December Vanilla",
+  "referenceId": "kayali-vanilla-royale-sugared-patchouli-64",
+  "originalHouse": "Kayali",
+  "originalName": "Vanilla Royale Sugared Patchouli 64",
+  "confidence": "moyenne",
+  "source": "https://www.fragrantica.com/perfume/PARIS-CORNER/December-Vanilla-96254.html",
+  "alternatives": [
+   {
+    "house": "Kayali",
+    "name": "Vanilla 28",
+    "referenceId": null
+   },
+   {
+    "house": "Maison Margiela",
+    "name": "Replica By the Fireplace",
+    "referenceId": null
+   }
+  ],
+  "note": "Facebook/YouTube : dupe de Vanilla Royale Sugared Patchouli ; avis partagés (certains le trouvent trop clair pour Vanilla 28 ou Royale)."
+ },
+ {
+  "slug": "paris-corner-choco-cult",
+  "brand": "Paris Corner",
+  "name": "Choco Cult",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.fragrantica.com/perfume/PARIS-CORNER/Choco-Cult-108396.html",
+  "alternatives": [],
+  "note": "Ligne Ministry of Gourmand (2025) ; aucune source ne lui attribue un original de marque."
+ },
+ {
+  "slug": "paris-corner-khair-confection",
+  "brand": "Paris Corner",
+  "name": "Khair Confection",
+  "referenceId": "kayali-vanilla-candy-rock-sugar-42",
+  "originalHouse": "Kayali",
+  "originalName": "Vanilla Candy Rock Sugar 42",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/PARIS-CORNER/Khair-Confection-99069.html",
+  "alternatives": [],
+  "note": "YouTube + Lemon8 + Fragrantica : dupe (~80 %) de Vanilla Candy Rock Sugar."
+ },
+ {
+  "slug": "paris-corner-eshal-vanilla",
+  "brand": "Paris Corner",
+  "name": "Eshal Vanilla",
+  "referenceId": "kayali-vanilla-28",
+  "originalHouse": "Kayali",
+  "originalName": "Vanilla 28",
+  "confidence": "forte",
+  "source": "https://www.fragrantica.com/perfume/PARIS-CORNER/Eshal-Vanilla-110740.html",
+  "alternatives": [],
+  "note": "YouTube, Lemon8, TikTok, Mercari : dupe de Vanilla 28."
+ },
+ {
+  "slug": "paris-corner-khair",
+  "brand": "Paris Corner",
+  "name": "Khair",
+  "referenceId": "gissah-imperial-valley",
+  "originalHouse": "Gissah",
+  "originalName": "Imperial Valley",
+  "confidence": "forte",
+  "source": "https://www.parfumo.com/Perfumes/paris-corner/khair",
+  "alternatives": [],
+  "note": "Parfumo + Frag+Bar + Amazon : dupe de Gissah Imperial Valley (Khair Fusion → Kayali Eden Sparkling Lychee)."
+ },
+ {
+  "slug": "surrati-rose-tobacco",
+  "brand": "Surrati",
+  "name": "Rose Tobacco",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.anabis.com/us/Surrati-Rose-Tobacco.html",
+  "alternatives": [],
+  "note": "Aucune source n'associe Rose Tobacco (rose miellée, café, tabac, chocolat) à un parfum de marque."
+ },
+ {
+  "slug": "surrati-my-stone",
+  "brand": "Surrati",
+  "name": "My Stone",
+  "referenceId": null,
+  "originalHouse": null,
+  "originalName": null,
+  "confidence": "aucune",
+  "source": "https://www.amazon.com/Surrati-Stone-Exotic-Fragrances-Women/dp/B0CW4F8569",
+  "alternatives": [],
+  "note": "Aucune source dupe pour My Stone (bergamote, fleur d'oranger, tubéreuse, jasmin, vanille, musc)."
+ },
+ {
+  "slug": "surrati-turquoise-stone",
+  "brand": "Surrati",
+  "name": "Turquoise Stone",
+  "referenceId": "armani-bleu-turquoise",
+  "originalHouse": "Giorgio Armani",
+  "originalName": "Armani Privé Bleu Turquoise",
+  "confidence": "faible",
+  "source": "https://www.parfumo.com/Perfumes/surrati/turquoise-stone",
+  "alternatives": [],
+  "note": "Vendu « inspiration Bleu Turquoise » par des revendeurs TikTok, mais un avis Parfumo juge les deux « cousins au 3e degré »."
+ }
+]

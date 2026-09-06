@@ -53,10 +53,11 @@ export const BUNDLE_PRODUCTS: BundleProduct[] = [
     notes: "Oud, Rose, Safran",
     price: 54.9,
     was: 109.9,
-    // `oils/tanasuk.png` montrait un flacon d'huile ciselé émaillé vert et
-    // rouge — un mukhallat de la maison, pas Tanasuk, qui est un extrait de
-    // parfum en flacon rouge et noir. Packshot repris de la fiche de la
-    // boutique.
+    // Packshot de l'extrait de parfum, flacon rouge et noir, repris de la fiche
+    // de la boutique. L'entrée porte un prix d'eau de parfum : c'est ce
+    // flacon-là qu'elle vend, pas le flacon d'huile ciselé émaillé de
+    // `oils/tanasuk.png` — qui est bien un Tanasuk lui aussi, mais la version
+    // huile 12 ml, vendue moitié prix.
     image: "/assets/products/dp/al-haramain-tanasuk/dp_parfumerie-al-haramain-tanasuk-01.webp",
     available: true,
   },

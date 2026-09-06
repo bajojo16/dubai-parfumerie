@@ -228,8 +228,11 @@ export function PackCard({
   // Inclinaison ludique alternée selon la position dans la mosaïque.
   const tilt = (index % 2 === 0 ? -0.9 : 1) * dirSign;
 
-  // Fioles en éventail
-  const n = Math.max(1, Math.min(pack.sampleCount ?? 3, 6));
+  // Fioles en éventail — seulement quand le coffret EST un jeu d'échantillons.
+  // Le repli `?? 3` dessinait trois fioles sur n'importe quel pack, y compris
+  // un trio de flacons 30 ml : l'icône promettait des échantillons là où l'on
+  // vend des eaux de parfum pleines.
+  const n = pack.sampleCount ? Math.max(1, Math.min(pack.sampleCount, 6)) : 0;
   const maxFan = Math.min(46, 12 + n * 6);
   const vials = Array.from({ length: n }, (_, i) =>
     n === 1 ? 0 : (i / (n - 1) - 0.5) * 2 * maxFan

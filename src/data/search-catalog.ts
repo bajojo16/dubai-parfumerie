@@ -600,11 +600,11 @@ export const SEARCH_BRANDS: SearchBrand[] = (() => {
 
   const known = BRANDS.map((b) => ({
     name: b.name,
-    city: b.city,
+    country: b.country,
     // le logo d'abord ; `b.image` est un visuel produit, partagé entre marques
     image: brandLogo(b.name),
     count: counts.get(norm(b.name)) || 0,
-    keyAll: norm(`${b.name} ${b.city}`),
+    keyAll: norm(`${b.name} ${b.country}`),
   }));
   const knownKeys = new Set(known.map((b) => norm(b.name)));
 

@@ -28,6 +28,12 @@ export type Pack = {
   variantId: string;
   href: string;
   /** Nombre de fioles d'échantillons dans le coffret (pastille « xN »). */
+  /**
+   * Nombre de fioles, SEULEMENT pour un coffret d'échantillons. Un pack de
+   * flacons pleins n'en déclare pas : la carte ne dessine l'éventail de fioles
+   * que si ce champ est là, sinon elle promettait des échantillons sur un trio
+   * d'eaux de parfum 30 ml.
+   */
   sampleCount?: number;
 };
 
@@ -43,7 +49,6 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-trio-signature-oud",
     href: "/produit/trio-signature-oud",
-    sampleCount: 3,
   },
   {
     slug: "coffret-decouverte-prestige",
@@ -69,7 +74,6 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-duo-oud-royal",
     href: "/produit/duo-oud-royal",
-    sampleCount: 2,
   },
   {
     slug: "edition-nuit-doree",
@@ -82,7 +86,6 @@ export const DEMO: Pack[] = [
     available: false,
     variantId: "pack-edition-nuit-doree",
     href: "/produit/edition-nuit-doree",
-    sampleCount: 3,
   },
   {
     slug: "pack-jardin-d-orient",
@@ -94,7 +97,6 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-jardin-d-orient",
     href: "/produit/pack-jardin-d-orient",
-    sampleCount: 3,
   },
   {
     slug: "coffret-tendresse",
@@ -107,7 +109,6 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-coffret-tendresse",
     href: "/produit/coffret-tendresse",
-    sampleCount: 4,
   },
   {
     slug: "coffret-ambre-saphir",
@@ -120,7 +121,6 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-coffret-ambre-saphir",
     href: "/produit/coffret-ambre-saphir",
-    sampleCount: 3,
   },
   {
     slug: "edition-musc-imperial",
@@ -146,6 +146,5 @@ export const DEMO: Pack[] = [
     available: true,
     variantId: "pack-rose-de-taif",
     href: "/produit/pack-rose-de-taif",
-    sampleCount: 2,
   },
 ];

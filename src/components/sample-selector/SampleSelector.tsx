@@ -319,7 +319,9 @@ export default function SampleSelector({
       return;
     }
     const taken = new Set(Object.keys(man));
-    const pool = PRODUCTS.filter((p) => !taken.has(p.id));
+    // Une fiole « bientôt disponible » ne peut pas être glissée dans un coffret :
+    // le remplissage automatique ne pioche que dans ce qui est en stock.
+    const pool = PRODUCTS.filter((p) => p.available && !taken.has(p.id));
     const next: QtyMap = {};
 
     if (crit === "bestsellers") {
@@ -796,9 +798,10 @@ export default function SampleSelector({
                     </span>
                   )}
                   <Thumb p={p} />
+                  {!p.available && <div className="ss-soon">Bientôt disponible</div>}
                   {state === "man" && <div className="ss-qbadge">{mq}</div>}
                   {state === "auto" && <div className="ss-abadge">✦</div>}
-                  {!state && (
+                  {!state && p.available && (
                     <button
                       className="ss-addbtn"
                       title="Ajouter"
@@ -1013,6 +1016,7 @@ function StyleBlock() {
     .ss-tile:focus-visible{outline:2px solid #a9873f;outline-offset:2px}
     .ss-tile.ss-man{border-color:#a9873f;box-shadow:0 0 0 2px #c2a15b inset}
     .ss-tile.ss-auto{border-color:#a9873f;box-shadow:0 0 0 1.5px #c2a15b inset;border-style:dashed;background:linear-gradient(180deg,#fffdf8,#fff)}
+    .ss-soon{position:absolute;inset:auto 0 0 0;padding:6px 8px;text-align:center;font-size:10.5px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#6b5a3a;background:rgba(250,247,240,.92);border-top:1px solid rgba(201,162,74,.35);z-index:2}
     .ss-thumb{aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;background:linear-gradient(160deg,#faf7f0,#efe8d9);position:relative;overflow:hidden}
     .ss-tag{position:absolute;top:5px;inset-inline-start:5px;font-size:8px;letter-spacing:.06em;text-transform:uppercase;font-weight:500;padding:2px 6px;border-radius:100px;background:rgba(28,26,23,.82);color:#c2a15b;display:inline-flex;align-items:center;gap:3px;z-index:2}
     .ss-qbadge{position:absolute;top:5px;inset-inline-end:5px;width:20px;height:20px;border-radius:50%;background:#a9873f;color:#fff;font-family:'Cormorant Garamond',var(--font-display);font-weight:600;font-size:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 18px 50px -24px rgba(28,26,23,.45);z-index:2}

@@ -35,17 +35,20 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 25.8,
-   "max": 26.0,
-   "median": 25.99,
+   "min": 25.99,
+   "max": 37.1,
+   "median": 34.99,
    "sources": [
-    "https://www.idealo.fr/prix/200205559/afnan-9-pm-eau-de-parfum-100ml.html"
+    "https://www.parfumsetmoi.fr/afnan-9-pm-eau-de-parfum-homme-100-ml_z744691/",
+    "https://www.parfumsmoinschers.com/produit/45972-9pm-afnan-eau-de-parfum-spray-100-ml.html",
+    "https://www.notino.fr/afnan/9-pm-eau-de-parfum-pour-homme/"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "notes mal réparties sur DP : « Patchouli, Vanille, Cannelle, Fleur d'Oranger » est présenté comme un cœur alors qu'il mélange tête (cannelle), cœur (fleur d'oranger) et fond (patchouli, vanille) du site officiel Afnan ; pyramide officielle substituée",
-   "prix DP 30,00 € contre une médiane marché ~25,99 € (dépassement de ~15 %)"
+   "médiane recalculée sur 3 marchands français en 100 ml (25,99 € / 34,99 € / 37,10 €) : 34,99 € — prix_dp de 30,00 € désormais aligné",
+   "forte dispersion des prix français relevés (25,99 € à 37,10 €)"
   ],
   "releve": "2026-09-05"
  },
@@ -85,10 +88,12 @@
   "marche": {
    "n": 3,
    "min": 41.5,
-   "max": 50.5,
+   "max": 51.99,
    "median": 44.39,
    "sources": [
-    "https://www.idealo.fr/prix/201247600/afnan-supremacy-not-only-intense-eau-de-parfum-100ml.html"
+    "https://www.notino.fr/afnan/supremacy-not-only-intense-eau-de-parfum-pour-homme/",
+    "https://www.idealo.fr/prix/201247600/afnan-supremacy-not-only-intense-eau-de-parfum-100ml.html",
+    "https://www.parfumsmoinschers.com/produit/50498-supremacy-not-only-intense-afnan-eau-de-parfum-spray-100-ml.html"
    ]
   },
   "verdict_prix": "trop cher",
@@ -96,7 +101,9 @@
    "contenance non affichée sur la fiche dubaiparfumerie.com : laissée à null (le format de référence chez les revendeurs est 100 ml, non confirmé par DP)",
    "notes mal réparties sur DP : « Musc, Patchouli, Safran, Bergamote, Chene, Lavande » donné comme cœur unique ; pyramide officielle Afnan substituée",
    "genre : DP classe le produit en « Mixte » tout en le décrivant « pour homme » ; Afnan l'annonce Men",
-   "prix DP 55,00 € contre une médiane marché ~44,39 €"
+   "prix relevés sur le format 100 ml des revendeurs français, la fiche ne précisant pas de contenance : comparaison indicative",
+   "le prix de 44,39 € est celui de l'offre ferwer.fr relevée sur le comparateur idealo.fr (la page marchande n'était pas lisible directement)",
+   "prix_dp 55,00 € contre une médiane française de 44,39 € (+24 %)"
   ],
   "releve": "2026-09-05"
  },
@@ -133,7 +140,7 @@
    "notes affichees sur dubaiparfumerie.com identiques a un gabarit generique repete sur 8 fiches de la marque (Tangerine/Strawberry/Pineapple/Grapefruit - Jasmine/Orchid/Peony/Vanilla - Oakmoss/Musk/Woody Notes) : ecartees comme non fiables",
    "reference 'Agarwood' introuvable dans le catalogue officiel Ahmed Al Maghribi (ae/ksa/kw) ni chez les revendeurs consultes : notes et attribution de marque non verifiables",
    "contenance non indiquee sur dubaiparfumerie.com",
-   "aucun prix concurrent trouve pour cette reference ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -172,20 +179,18 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
-   "min": 33.32,
-   "max": 57.49,
-   "median": 45.41,
+   "n": 1,
+   "min": 51.73,
+   "max": 51.73,
+   "median": 51.73,
    "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi?page=2",
-    "https://ksa.ahmedalmaghribi.com/en/shop/../product-category/perfumes"
+    "https://www.parfumsetmoi.fr/unisexe-eau-de-parfum/f/ahmed-al-maghribi/?page=2"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "notes divergentes : dubaiparfumerie.com affiche safran / cannelle-clou de girofle-labdanum-oud-vanille / oud indien-cuir-iris-santal, absent de la pyramide officielle ; notes officielles retenues",
-   "contenance absente de dubaiparfumerie.com ; 50 ml releve chez deux revendeurs (filledwithbarakah.com, shop.sa-usa.com)",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "contenance absente de dubaiparfumerie.com ; 50 ml releve chez deux revendeurs (filledwithbarakah.com, shop.sa-usa.com)"
   ],
   "releve": "2026-09-05"
  },
@@ -223,20 +228,17 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
-   "min": 17.5,
-   "max": 28.74,
-   "median": 23.12,
-   "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi?page=2",
-    "https://ae.ahmedalmaghribi.com/en/shop/perfumes/oriental-fragrance/arwa"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "notes affichees sur dubaiparfumerie.com identiques a un gabarit generique repete sur 8 fiches de la marque (Tangerine/Strawberry/Pineapple/Grapefruit - Jasmine/Orchid/Peony/Vanilla - Oakmoss/Musk/Woody Notes) : ecartees comme non fiables ; notes officielles retenues",
    "contenance absente de dubaiparfumerie.com ; 100 ml confirme sur le site officiel",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -281,21 +283,18 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 16.54,
-   "max": 40.24,
-   "median": 17.5,
+   "n": 1,
+   "min": 19.82,
+   "max": 19.82,
+   "median": 19.82,
    "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi",
-    "https://ae.ahmedalmaghribi.com/en/shop/perfumes/oriental-fragrance/bidun-esam",
-    "https://ksa.ahmedalmaghribi.com/en/shop/perfumes/oriental-fragrance/bidun-esam"
+    "https://www.parfumsetmoi.fr/unisexe-eau-de-parfum/f/ahmed-al-maghribi/"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "concentration divergente : dubaiparfumerie.com annonce EDT, le site officiel indique Eau de Parfum",
-   "notes divergentes : dubaiparfumerie.com affiche ylang-ylang/fleur d'oranger/narcisse... absent de la pyramide officielle ; notes officielles retenues",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "notes divergentes : dubaiparfumerie.com affiche ylang-ylang/fleur d'oranger/narcisse... absent de la pyramide officielle ; notes officielles retenues"
   ],
   "releve": "2026-09-05"
  },
@@ -340,19 +339,17 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 1,
-   "min": 6.43,
-   "max": 6.43,
-   "median": 6.43,
-   "sources": [
-    "https://ksa.ahmedalmaghribi.com/en/shop/dakhoon/air-freshener/bidun-esam-air-freshner"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "notes divergentes : dubaiparfumerie.com affiche rose-safran / fleurs blanches / oud du Cambodge-musc-ambre, alors que la brume officielle reprend la pyramide de l'EDP Bidun Esam ; notes officielles retenues",
    "contenance non indiquee ni sur dubaiparfumerie.com ni sur la fiche officielle",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -378,20 +375,18 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 1,
-   "min": 80.49,
-   "max": 80.49,
-   "median": 80.49,
-   "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi?page=3"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": null,
   "anomalies": [
    "notes affichees sur dubaiparfumerie.com identiques a un gabarit generique repete sur 8 fiches de la marque (Tangerine/Strawberry/Pineapple/Grapefruit - Jasmine/Orchid/Peony/Vanilla - Oakmoss/Musk/Woody Notes) : ecartees comme non fiables",
    "fiche Daam Watani introuvable sur le site officiel Ahmed Al Maghribi : notes non verifiables, laissees vides",
    "contenance absente de dubaiparfumerie.com ; 90 ml annonce par un seul revendeur (filledwithbarakah.com), non retenu faute de recoupement",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -429,20 +424,18 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
-   "min": 18.38,
-   "max": 40.24,
-   "median": 29.31,
-   "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi?page=3",
-    "https://ksa.ahmedalmaghribi.com/en/shop/perfumes/occidental-fragrance/little-hearts"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": null,
   "anomalies": [
    "notes affichees sur dubaiparfumerie.com identiques a un gabarit generique repete sur 8 fiches de la marque (Tangerine/Strawberry/Pineapple/Grapefruit - Jasmine/Orchid/Peony/Vanilla - Oakmoss/Musk/Woody Notes) : ecartees comme non fiables ; notes officielles retenues",
    "contenance divergente : 100 ml sur dubaiparfumerie.com, 50 ml chez filledwithbarakah.com ; le site officiel ne precise pas la contenance ; valeur du site conservee",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé",
+   "les marchands francais (parfumsetmoi.fr, flora-parfums.com) ne referencent Little Hearts qu'en 50 ml : format different du 100 ml de la fiche, non retenu"
   ],
   "releve": "2026-09-05"
  },
@@ -480,19 +473,17 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 1,
-   "min": 10.5,
-   "max": 10.5,
-   "median": 10.5,
-   "sources": [
-    "https://ae.ahmedalmaghribi.com/en/shop/dakhoon/air-freshener/air-freshener-little-hearts"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "notes affichees sur dubaiparfumerie.com identiques a un gabarit generique repete sur 8 fiches de la marque (Tangerine/Strawberry/Pineapple/Grapefruit - Jasmine/Orchid/Peony/Vanilla - Oakmoss/Musk/Woody Notes) : ecartees comme non fiables ; notes officielles de la brume retenues",
    "contenance absente de dubaiparfumerie.com ; 300 ml sur la fiche officielle AE, 180 ml annonce par shop.sa-usa.com : divergence non tranchee, valeur officielle retenue",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -550,20 +541,19 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 43.75,
-   "max": 79.34,
-   "median": 53.9,
+   "min": 52.04,
+   "max": 93.8,
+   "median": 56.1,
    "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi",
-    "https://ae.ahmedalmaghribi.com/en/shop/perfumes/oriental-fragrance/marj",
-    "https://ksa.ahmedalmaghribi.com/en/shop/perfumes/oriental-fragrance/marj"
+    "https://www.parfumsetmoi.fr/ahmed-al-maghribi_v1458/",
+    "https://www.notino.fr/ahmed-al-maghribi/marj-eau-de-parfum-pour-homme/",
+    "https://www.anabis.com/fr/Ahmed-Al-Maghribi-Marj.html"
    ]
   },
   "verdict_prix": "aligné",
   "anomalies": [
    "contenance divergente : dubaiparfumerie.com annonce 100 ml, le site officiel vend Marj en 60 ml ; valeur officielle retenue",
-   "prix revendeur filledwithbarakah.com porte sur un format 50 ml, non strictement comparable",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "prix marche releve sur anabis.com/fr, boutique .com identifiee comme vendant en France, prix affiche en EUR"
   ],
   "releve": "2026-09-05"
  },
@@ -606,19 +596,19 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 37.5,
-   "max": 65.54,
-   "median": 44.1,
+   "min": 44.32,
+   "max": 86.4,
+   "median": 59.9,
    "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi",
-    "https://ae.ahmedalmaghribi.com/en/shop/perfumes/occidental-fragrance/oud-roses-edp-60ml",
-    "https://ksa.ahmedalmaghribi.com/en/shop/perfumes/occidental-fragrance/oud-roses"
+    "https://www.parfumsetmoi.fr/ahmed-al-maghribi-oud-roses-extrait-de-parfum-unisexe-60-ml_z1206779/",
+    "https://muscorient.com/fr/ahmed-al-maghribi-perfumes/1147-oud-roses-ahmed-al-maghribi.html",
+    "https://www.anabis.com/fr/Ahmed-Al-Maghribi-Oud-&-Roses.html"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "ecart mineur : dubaiparfumerie.com ajoute 'ambre, vanille' en fond, absents de la pyramide officielle ; notes officielles retenues",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "prix marche releve sur anabis.com/fr, boutique .com identifiee comme vendant en France, prix affiche en EUR"
   ],
   "releve": "2026-09-05"
  },
@@ -670,7 +660,8 @@
   "anomalies": [
    "notes erronees sur dubaiparfumerie.com : la fiche reprend la pyramide bergamote/baume de gurjan/cuir/safran... qui ne correspond a aucune declinaison officielle Oud & Roses ; notes officielles de la brume retenues",
    "contenance absente de dubaiparfumerie.com ; 200 ml sur la fiche officielle",
-   "aucun prix concurrent trouve pour cette declinaison ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé",
+   "seule brume Oud & Roses vue chez un marchand francais : format 180 ml (flora-parfums.com), different du 200 ml de la fiche"
   ],
   "releve": "2026-09-05"
  },
@@ -708,20 +699,18 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 1,
-   "min": 23.52,
-   "max": 23.52,
-   "median": 23.52,
-   "sources": [
-    "https://ksa.ahmedalmaghribi.com/en/shop/dakhoon/bakhoor/bakhoor-oud-roses"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "notes erronees sur dubaiparfumerie.com : la fiche encens reprend la meme pyramide que la brume et le gel corps (bergamote/baume de gurjan/cuir/safran), la fiche bakhoor officielle donne une composition differente ; notes officielles retenues",
    "aucun prix barre reellement affiche sur la fiche (le 59 EUR apparait dans le carrousel de produits associes)",
    "grammage non indique ni sur dubaiparfumerie.com ni sur la fiche officielle",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -763,20 +752,18 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 1,
-   "min": 27.59,
-   "max": 27.59,
-   "median": 27.59,
-   "sources": [
-    "https://shop.sa-usa.com/collections/ahmed-al-maghribi-perfumes"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "agressif",
+  "verdict_prix": null,
   "anomalies": [
    "dubaiparfumerie.com etiquette ce gel corps 'EDP' et le classe en Femme : il s'agit d'un gel corps sans concentration, la gamme officielle est mixte",
    "notes erronees sur dubaiparfumerie.com (pyramide bergamote/baume de gurjan/cuir/safran) ; notes officielles retenues",
    "contenance absente de dubaiparfumerie.com ; 30 ml sur la fiche officielle, 20 ml annonce par shop.sa-usa.com",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -817,21 +804,19 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 36.44,
-   "max": 63.24,
-   "median": 37.5,
+   "n": 1,
+   "min": 34.2,
+   "max": 34.2,
+   "median": 34.2,
    "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi",
-    "https://ae.ahmedalmaghribi.com/en/shop/perfumes/occidental-fragrance/oud-lavender",
-    "https://ksa.ahmedalmaghribi.com/en/shop/perfumes/occidental-fragrance/oud-lavender"
+    "https://www.anabis.com/fr/Ahmed-Al-Maghribi-Oud-Lavender.html"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "notes divergentes : dubaiparfumerie.com affiche citron-bergamote-citron vert / figue-ylang-rose-jasmin / patchouli-oud-bouleau-cannelle, absent de la pyramide officielle ; notes officielles retenues",
    "concentration : la fiche officielle AE indique Extrait de Parfum, dubaiparfumerie.com et filledwithbarakah.com indiquent Eau de Parfum ; EDP conserve",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "prix marche releve sur anabis.com/fr, boutique .com identifiee comme vendant en France, prix affiche en EUR"
   ],
   "releve": "2026-09-05"
  },
@@ -872,19 +857,18 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 1,
-   "min": 10.5,
-   "max": 10.5,
-   "median": 10.5,
-   "sources": [
-    "https://ae.ahmedalmaghribi.com/en/shop/dakhoon/air-freshener/air-freshener-oud-lavender"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "notes erronees sur dubaiparfumerie.com (jacquier / geranium-labdanum-lavande-oud-vanille / ambre-oud indien-musc-oud blanc) ; la brume officielle reprend la pyramide de l'EDP Oud Lavender ; notes officielles retenues",
    "contenance absente de dubaiparfumerie.com ; 200 ml sur la fiche officielle, 180 ml annonce par shop.sa-usa.com",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé",
+   "seule brume Oud Lavender vue chez un marchand francais : format 180 ml (flora-parfums.com), different du 200 ml de la fiche"
   ],
   "releve": "2026-09-05"
  },
@@ -910,20 +894,17 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 2,
-   "min": 5.51,
-   "max": 11.95,
-   "median": 8.73,
-   "sources": [
-    "https://shop.sa-usa.com/collections/ahmed-al-maghribi-perfumes"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": null,
   "anomalies": [
    "notes affichees sur dubaiparfumerie.com identiques a un gabarit generique repete sur 8 fiches de la marque (Tangerine/Strawberry/Pineapple/Grapefruit - Jasmine/Orchid/Peony/Vanilla - Oakmoss/Musk/Woody Notes) : ecartees comme non fiables ; un coffret de decouverte n'a de toute facon pas de pyramide propre",
    "composition du pack (references et contenances) non detaillee sur dubaiparfumerie.com",
-   "prix marche releves sur des coffrets decouverte Ahmed Al Maghribi de composition differente (shop.sa-usa.com), comparaison indicative seulement",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -961,7 +942,7 @@
    "slug errone sur dubaiparfumerie.com : 'fr-ahmed-al-maghlibi-patchouli' (maghlibi au lieu de maghribi)",
    "l'URL officielle kw.ahmedalmaghribi.com/en/shop/perfumes/occidental-fragrance/patchouli renvoie 'No Product Found' et la reference est absente des catalogues AE/KSA et des revendeurs consultes : notes non verifiables",
    "contenance non indiquee sur dubaiparfumerie.com",
-   "aucun prix concurrent trouve ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -1000,21 +981,19 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 23.52,
-   "max": 51.74,
-   "median": 36.25,
+   "n": 2,
+   "min": 39.9,
+   "max": 45.46,
+   "median": 42.68,
    "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi?page=2",
-    "https://ae.ahmedalmaghribi.com/en/shop/perfumes/occidental-fragrance/pearl-oud",
-    "https://ksa.ahmedalmaghribi.com/en/shop/perfumes/occidental-fragrance/pearl-oud"
+    "https://muscorient.com/fr/ahmed-al-maghribi-perfumes/1047-pearl-oud-ahmed-al-maghribi.html",
+    "https://www.parfumsetmoi.fr/ahmed-al-maghribi-pearl-oud-eau-de-parfum-femme-75-ml_z1007999/"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "notes de dubaiparfumerie.com conformes a la pyramide officielle",
-   "contenance absente de dubaiparfumerie.com ; 75 ml sur la fiche officielle",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "contenance absente de dubaiparfumerie.com ; 75 ml sur la fiche officielle"
   ],
   "releve": "2026-09-05"
  },
@@ -1061,7 +1040,7 @@
   "anomalies": [
    "reference 'Raheeque' introuvable sur le site officiel Ahmed Al Maghribi (AE/KSA/KW) et absente du catalogue de filledwithbarakah.com : attribution de marque non verifiee",
    "notes issues de la seule fiche dubaiparfumerie.com (source de repli), non recoupees",
-   "aucun prix concurrent trouve ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -1101,19 +1080,18 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 1,
-   "min": 29.77,
-   "max": 29.77,
-   "median": 29.77,
-   "sources": [
-    "https://ksa.ahmedalmaghribi.com/en/shop/perfumes/occidental-fragrance/rose-noir"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "notes divergentes : dubaiparfumerie.com ajoute gingembre et ambre gris et omet lys/pomme/ambroxan ; notes officielles retenues",
    "contenance divergente : 100 ml sur dubaiparfumerie.com, 75 ml chez shop.sa-usa.com et filledwithbarakah.com ; le site officiel ne precise pas la contenance, valeur du site conservee",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé",
+   "les marchands francais (notino.fr, muscorient.com, parfumsetmoi.fr, idealo.fr, cdiscount.com) ne referencent Rose Noir qu'en 75 ml : format different du 100 ml de la fiche, non retenu"
   ],
   "releve": "2026-09-05"
  },
@@ -1154,19 +1132,19 @@
   "dispo": true,
   "marche": {
    "n": 1,
-   "min": 40.24,
-   "max": 40.24,
-   "median": 40.24,
+   "min": 34.95,
+   "max": 34.95,
+   "median": 34.95,
    "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi?page=2"
+    "https://maisondesfragrances.fr/products/ahmed-al-maghribi-supreme-eau-de-parfum"
    ]
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": "trop cher",
   "anomalies": [
    "notes affichees sur dubaiparfumerie.com identiques a un gabarit generique repete sur 8 fiches de la marque (Tangerine/Strawberry/Pineapple/Grapefruit - Jasmine/Orchid/Peony/Vanilla - Oakmoss/Musk/Woody Notes) : ecartees comme non fiables",
    "aucune fiche EDP Supreme sur le site officiel : notes reprises de la fiche officielle du Supreme Body Gel (meme gamme), la marque publiant la meme pyramide sur toutes les declinaisons d'une ligne - source a considerer comme indirecte",
    "contenance absente de dubaiparfumerie.com ; 50 ml annonce par un seul revendeur (filledwithbarakah.com), non retenu faute de recoupement",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "prix marche releve sur maisondesfragrances.fr (.fr, prix en EUR) ; contenance non precisee ni sur dubaiparfumerie.com ni chez le marchand"
   ],
   "releve": "2026-09-05"
  },
@@ -1202,19 +1180,17 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 1,
-   "min": 40.24,
-   "max": 40.24,
-   "median": 40.24,
-   "sources": [
-    "https://filledwithbarakah.com/collections/ahmed-al-maghribi?page=3"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "fiche Touch Oud introuvable sur le site officiel Ahmed Al Maghribi : notes issues de la seule fiche dubaiparfumerie.com (source de repli)",
    "contenance absente de dubaiparfumerie.com ; 75 ml concordant chez filledwithbarakah.com et shop.sa-usa.com",
-   "conversions approximatives utilisees : 1 GBP=1,15 EUR ; 1 USD=0,92 EUR ; 1 AED=0,25 EUR ; 1 SAR=0,245 EUR ; prix marche releves par lecture directe des pages revendeurs/officielles (budget WebSearch de la session epuise)"
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -1259,8 +1235,8 @@
    "pyramide strictement identique à celle affichée pour Abaq sur Dubai Parfumerie : forte présomption de duplication de données, notes non fiables",
    "aucune source indépendante (site officiel ou revendeur) trouvée pour ce référence : notes invérifiables, fiche Dubai Parfumerie retenue par défaut",
    "contenance non indiquée sur la fiche : laissée à null",
-   "aucun prix concurrent trouvé — marche.n = 0, verdict null",
-   "identité de marque ambiguë : Dubai Parfumerie et les revendeurs affichent « Al Majed Oud », le site almajed4oud.com se présente sous « Almajed 4 Oud » — impossible de trancher, marque du site conservée"
+   "identité de marque ambiguë : Dubai Parfumerie et les revendeurs affichent « Al Majed Oud », le site almajed4oud.com se présente sous « Almajed 4 Oud » — impossible de trancher, marque du site conservée",
+   "aucun prix français trouvé : Al Majed Oud n'est distribué par aucun marchand français consulté (notino.fr, Al Najah, Muscorient) — marche.n = 0, verdict null"
   ],
   "releve": "2026-09-05"
  },
@@ -1294,23 +1270,19 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 85.99,
-   "max": 116.1,
-   "median": 94.51,
-   "sources": [
-    "https://khaleejibrand.com/products/abaq-75-ml",
-    "https://perfumes600.com/products/abaq-perfume-75-ml-unisex-by-al-majed-oud-perfumes",
-    "https://arabiascents.com/products/abaq-edp-75-ml"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "pyramide strictement identique à celle affichée pour Al Adhriyah sur Dubai Parfumerie : duplication de données probable",
    "notes contestées : arabiascents.com donne Bergamot – Rosewood – Sandalwood/Patchouli/Cedar Wood et perfumes600.com donne Bergamot – Woody notes – Musk ; les deux revendeurs contredisent Dubai Parfumerie sans concorder entre eux, aucune source officielle disponible — notes Dubai Parfumerie conservées faute de mieux",
    "contenance non indiquée sur la fiche alors que tous les revendeurs listent 75 ml : laissée à null (non déduite)",
    "identité de marque ambiguë : Dubai Parfumerie et les revendeurs affichent « Al Majed Oud », le site almajed4oud.com se présente sous « Almajed 4 Oud » — impossible de trancher, marque du site conservée",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "aucun prix français trouvé : les seules offres identifiées pour Abaq 75 ml sont hors France (khaleejibrand.com, perfumes600.com, arabiascents.com, noon.com) — anciens relevés convertis retirés, marche.n = 0, verdict null"
   ],
   "releve": "2026-09-05"
  },
@@ -1350,24 +1322,19 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 34.64,
-   "max": 79.1,
-   "median": 76.82,
-   "sources": [
-    "https://www.myroyalmusk.com/products/al-majed-oud-wood-white-eau-de-parfum-75ml",
-    "https://asrar-co.com/en/al-majed-oud-wood-white-perfume-eau-de-parfum-75-ml/p40667240",
-    "https://almajed4oud.com/en-om/wood-white-perfume-75-ml-02189"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "notes de Dubai Parfumerie confirmées à l'identique par myroyalmusk.com (Blood Orange/Lemon/Spices/Hyacinth – Saffron/Caramel/Leather – Moss/Sandalwood/Peppertree/Myrrh)",
    "deux autres sources divergent : almajed4oud.com donne Grapefruit/apple/caramel/geranium – Wood/oakmoss et parfoom.com donne Spicy Notes/Lavender/Bergamot/Grape Leaves – Saffiano Leather/Caramel/Leather – Cedarwood/Seaweed/Musk/Patchouli",
    "contenance non indiquée sur la fiche alors que les revendeurs listent 75 ml : laissée à null (non déduite)",
-   "forte dispersion des prix relevés (34,64 € à 79,10 €)",
    "identité de marque ambiguë : Dubai Parfumerie et les revendeurs affichent « Al Majed Oud », le site almajed4oud.com se présente sous « Almajed 4 Oud » — impossible de trancher, marque du site conservée",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "aucun prix français trouvé : les seules offres identifiées pour Wood White 75 ml sont hors France (myroyalmusk.com, asrar-co.com, almajed4oud.com) — anciens relevés convertis retirés, marche.n = 0, verdict null"
   ],
   "releve": "2026-09-05"
  },
@@ -1411,20 +1378,20 @@
   "marche": {
    "n": 3,
    "min": 5.9,
-   "max": 15.8,
-   "median": 9.9,
+   "max": 8.0,
+   "median": 6.9,
    "sources": [
     "https://www.encens-store.fr/produit/eau-de-parfum-al-fares-al-rehab/",
-    "https://www.oriental-style.de/en/products/al-rehab-al-fares-eau-de-parfum-50ml-al-rehab-vapo",
-    "https://www.anabis.com/us/Al-Rehab-Al-Fares-EdP-50ml.html"
+    "https://muscorient.com/accueil/520-parfum-al-rehab-al-fares-spray-50-ml-6291110003102.html",
+    "https://shoporiental.fr/shop/al-rehab-al-fares-parfum-al-rehab-877"
    ]
   },
-  "verdict_prix": "agressif",
+  "verdict_prix": "aligné",
   "anomalies": [
    "aucune note olfactive n'est publiée ni sur dubaiparfumerie.com ni sur le site officiel alrehab.com (page produit Al Fares 50 ml) ; notes prises chez un revendeur sérieux (intenseoud.com) et recoupées sur anabis.com — liste de notes identique",
    "genre : alrehab.com présente Al Fares comme un parfum masculin, DP le présente comme mixte",
    "en rupture de stock sur dubaiparfumerie.com",
-   "prix DP 6,00 € nettement sous la médiane marché ~9,90 €"
+   "anciens comparateurs écartés : oriental-style.de (Allemagne) et anabis.com (prix affiché en USD) ; médiane française recalculée à 6,90 €, prix_dp de 6,00 € désormais aligné"
   ],
   "releve": "2026-09-05"
  },
@@ -1470,18 +1437,20 @@
   "marche": {
    "n": 3,
    "min": 26.62,
-   "max": 30.17,
-   "median": 27.0,
+   "max": 39.99,
+   "median": 33.9,
    "sources": [
-    "https://www.idealo.fr/prix/202214727/armaf-club-de-nuit-urban-man-elixir-eau-de-parfum-105ml.html"
+    "https://www.parfumsetmoi.fr/armaf-club-de-nuit-urban-elixir-eau-de-parfum-homme-105-ml_z869233/",
+    "https://www.notino.fr/armaf/club-de-nuit-urban-man-elixir-eau-de-parfum-pour-homme/",
+    "https://www.parfumsmoinschers.com/produit/61562-club-de-nuit-urban-man-elixir-armaf-eau-de-parfum-spray-105-ml.html"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "nom tronqué sur DP : « Urban Man Elixir » ; nom officiel Armaf = « Club de Nuit Urban Man Elixir »",
    "notes erronées sur DP : la pyramide affichée (Orange, Lime, Mandarin, Calone, notes marines… / Amber, Patchouli, Oakmoss, Cedar) est celle du Club de Nuit Urban Man original (aquatique), pas de l'Elixir ; pyramide officielle armaf.com substituée",
    "concentration absente de la fiche DP ; armaf.com indique Eau de Parfum",
-   "prix DP 35,00 € contre une médiane marché ~27,00 €"
+   "médiane recalculée sur 3 marchands français en 105 ml (26,62 € / 33,90 € / 39,99 €) : 33,90 € — prix_dp de 35,00 € désormais aligné"
   ],
   "releve": "2026-09-05"
  },
@@ -1518,14 +1487,15 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 12.5,
-   "max": 21.33,
-   "median": 14.9,
+   "n": 4,
+   "min": 11.55,
+   "max": 34.9,
+   "median": 18.12,
    "sources": [
-    "https://www.anabis.com/us/Asdaaf-Ameer-Al-Arab.html?currency=EUR",
+    "https://www.idealo.fr/prix/202656454/asdaaf-ameer-al-arab-eau-de-parfum-100ml.html",
     "https://www.notino.fr/asdaaf/ameer-al-arab-eau-de-parfum-pour-homme/",
-    "https://sykz.fr/products/asdaaf-ameer-al-arab-eau-de-parfum-pour-homme"
+    "https://sykz.fr/products/asdaaf-ameer-al-arab-eau-de-parfum-pour-homme",
+    "https://prestigesenteur.fr/products/eau-de-parfum-ameer-al-arab-lattafa"
    ]
   },
   "verdict_prix": "trop cher",
@@ -1569,21 +1539,21 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 4,
-   "min": 17.21,
-   "max": 21.9,
-   "median": 18.5,
+   "n": 3,
+   "min": 16.5,
+   "max": 33.9,
+   "median": 17.21,
    "sources": [
     "https://www.idealo.fr/prix/202253448/lattafa-ameerat-al-arab-asdaaf-eau-de-parfum-100ml.html",
-    "https://www.notino.fr/asdaaf/ameerat-al-arab-eau-de-parfum-pour-femme/"
+    "https://www.notino.fr/asdaaf/ameerat-al-arab-eau-de-parfum-pour-femme/",
+    "https://prestigesenteur.fr/products/eau-de-parfum-ameerat-al-arab"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "slug trompeur contenant « lattafa ». Asdaaf est une marque distincte du groupe Lattafa ; la marque affichée par DP (Asdaaf) est correcte, seul le slug est trompeur.",
    "l'URL construite à partir du slug du catalogue (/produits/eau-de-parfum-ameerat-al-arab-lattafa/) renvoie une 404 ; la fiche vivante est /produits/fr-eau-de-parfum-ameerat-al-arab-lattafa/ (préfixe « fr- » manquant dans data.txt)",
-   "notes de la fiche DP confirmées par un revendeur indépendant (dubaiboutique.fr) ; Notino publie une pyramide contradictoire et visiblement inversée avec celle d'Ameer Al Arab — écartée",
-   "prix marché relevés sur le comparateur idealo.fr (4 marchands : 17,21 € Amazon Marketplace, 18,00 € Notino, 19,00 € Rakuten, 21,90 € Cdiscount)"
+   "notes de la fiche DP confirmées par un revendeur indépendant (dubaiboutique.fr) ; Notino publie une pyramide contradictoire et visiblement inversée avec celle d'Ameer Al Arab — écartée"
   ],
   "releve": "2026-09-05"
  },
@@ -1621,21 +1591,21 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 9.9,
+   "min": 10.99,
    "max": 15.9,
-   "median": 10.99,
+   "median": 14.9,
    "sources": [
-    "https://dubai-cosmetix.com/ameerat-lattafa-perfumes/",
     "https://myperfumeshome.com/produit/eau-de-parfum-ameerat-al-arab-asdaaf-2/",
+    "https://www.avenuedumuslim.com/fr/spray/12207-ameerat-al-arab-asdaaf-parfum-en-spray-50-ml-6423080730232.html",
     "https://prestigesenteur.fr/products/ameerat-al-arab-50-ml"
    ]
   },
   "verdict_prix": "agressif",
   "anomalies": [
    "l'URL construite à partir du slug du catalogue (/produits/eau-de-parfum-ameerat-al-arab-50ml/) renvoie une 404 ; la fiche vivante est /produits/fr-eau-de-parfum-ameerat-al-arab-50ml/",
-   "prix DP de 6,00 € nettement sous le marché (9,90 € – 15,90 € pour le 50 ml) : à vérifier côté catalogue",
    "notes non publiées sur la fiche DP pour ce format : reprises de la version 100 ml, même jus (source dubaiboutique.fr)",
-   "Asdaaf est une marque distincte du groupe Lattafa ; la marque affichée par DP (Asdaaf) est correcte, seul le slug est trompeur."
+   "Asdaaf est une marque distincte du groupe Lattafa ; la marque affichée par DP (Asdaaf) est correcte, seul le slug est trompeur.",
+   "prix DP de 6,00 € nettement sous le marché français du 50 ml (10,99 € – 15,90 €) : à vérifier côté catalogue"
   ],
   "releve": "2026-09-05"
  },
@@ -1677,13 +1647,13 @@
   "dispo": false,
   "marche": {
    "n": 3,
-   "min": 18.9,
-   "max": 22.99,
-   "median": 19.44,
+   "min": 17.39,
+   "max": 39.9,
+   "median": 19.5,
    "sources": [
+    "https://www.idealo.fr/prix/203034263/asdaaf-ameer-al-arab-prive-rose-eau-de-parfum-100ml.html",
     "https://www.notino.fr/asdaaf/ameer-al-arab-prive-rose-eau-de-parfum-pour-femme/",
-    "https://www.perfume.com/lattafa/lattafa-asdaaf-ameerat-al-arab-prive-rose/women-perfume",
-    "https://www.intenseoud.com/products/ameerat-al-arab-prive-rose-edp-100ml-3-4oz-by-asdaaf"
+    "https://oscent.fr/produit/ameerat-al-arab-prive-rose-eau-de-parfum-100ml-asdaaf-collection/"
    ]
   },
   "verdict_prix": "trop cher",
@@ -1691,7 +1661,6 @@
    "l'URL construite à partir du slug du catalogue (/produits/asdaaf-ameerat-al-arab-prive-rose/) renvoie une 404 ; la fiche vivante est /produits/ameerat-al-arab-prive-rose/",
    "notes de la fiche DP confirmées à l'identique par Intense Oud",
    "le « 59 € » visible sur la page DP appartient au bloc de recommandations : aucun prix barré réel",
-   "prix marché convertis : perfume.com 21,13 USD ≈ 19,44 EUR, Intense Oud 24,99 USD ≈ 22,99 EUR (taux retenu 1 USD = 0,92 EUR)",
    "Asdaaf est une marque distincte du groupe Lattafa ; la marque affichée par DP (Asdaaf) est correcte, seul le slug est trompeur."
   ],
   "releve": "2026-09-05"
@@ -1727,14 +1696,13 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
+   "n": 2,
    "min": 29.9,
-   "max": 40.0,
+   "max": 29.9,
    "median": 29.9,
    "sources": [
-    "https://sounnahstore.com/en/home/2776-perfume-al-khanjar-banafa.html",
     "https://www.encens-store.fr/produit/huile-parfumee-al-khanjar/",
-    "https://attarbukhoormore.com/product/al-khanjar-12ml-perfume-oil-banafa/"
+    "https://sounnahstore.com/fr/accueil/2776-parfum-al-khanjar-banafa.html"
    ]
   },
   "verdict_prix": "trop cher",
@@ -1742,7 +1710,9 @@
    "concentration affichée 'EDP' sur la fiche DP alors que le slug et le produit réel sont une huile de parfum concentrée sans alcool",
    "contenance non indiquée sur la fiche DP ; l'unique format huile Al Khanjar distribué est le 12 ml, retenu comme comparable",
    "le site officiel banafaforoud.com ne publie aucune pyramide olfactive : notes reprises de la fiche DP (règle 2b)",
-   "deux revendeurs sérieux (sounnahstore, encens-store) donnent une pyramide différente (Ambre, Miel d'abeille / Anis, Romarin, Bois de cachemire / Ambre de Moscou, Notes boisées, Vanille, Oud) : divergence non arbitrée faute de source officielle"
+   "deux revendeurs sérieux (sounnahstore, encens-store) donnent une pyramide différente (Ambre, Miel d'abeille / Anis, Romarin, Bois de cachemire / Ambre de Moscou, Notes boisées, Vanille, Oud) : divergence non arbitrée faute de source officielle",
+   "2 prix français seulement (encens-store.fr et sounnahstore.com, tous deux à 29,90 € en 12 ml) ; attarbukhoormore.com, retenu précédemment, est hors France et a été écarté",
+   "sounnahstore.com est une boutique en .com francophone, prix en EUR et livraison en France : retenue à ce titre"
   ],
   "releve": "2026-09-05"
  },
@@ -1782,15 +1752,16 @@
    "max": 17.5,
    "median": 15.9,
    "sources": [
-    "https://encens-store.fr/produit/encens-bakhour-al-khanjar-en-poudre/",
+    "https://alnajahboutique.com/produit/bakhour-khanjar-banafa-for-oud/",
     "https://muscorient.com/fr/bakhoor-al-khanjar/521-bakhoor-al-khanjar-encens-6285022001011.html",
-    "https://alnajahboutique.com/produit/bakhour-khanjar-banafa-for-oud/"
+    "https://encens-store.fr/produit/encens-bakhour-al-khanjar-en-poudre/"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "contenance non indiquée sur la fiche DP ; le format de référence distribué est le pot de 50 g, retenu comme comparable",
-   "la page officielle banafaforoud.com du Bakhoor Al Khanjar ne publie ni poids ni pyramide : notes reprises de la fiche DP (règle 2b), corroborées par alnajahboutique.com"
+   "la page officielle banafaforoud.com du Bakhoor Al Khanjar ne publie ni poids ni pyramide : notes reprises de la fiche DP (règle 2b), corroborées par alnajahboutique.com",
+   "les 3 prix retenus sont français et portent tous sur le pot de 50 g (alnajahboutique.com, muscorient.com, encens-store.fr)"
   ],
   "releve": "2026-09-05"
  },
@@ -1829,22 +1800,18 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 28.74,
-   "max": 35.0,
-   "median": 35.0,
-   "sources": [
-    "https://soghaat.co.uk/abraaj-revere-edp-fa-paris-fragrance-world/",
-    "https://ardora-parfums.com/products/abraaj-revere-fragrance-world",
-    "https://perfumeoriental.com/en/products/perfume-abraaj-revere-fa-paris-fragrance-world"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "agressif",
+  "verdict_prix": null,
   "anomalies": [
    "notes DP très incomplètes : la fiche ne donne que « Patchouli, Rose, Poivré » en cœur, sans tête ni fond ; deux revendeurs recoupés (DubaiOudh, Ardora) donnent une pyramide poivrée-boisée (poivre rose/poivre noir – géranium/élémi/muscade – vétiver/musc/cèdre de Virginie/ambre/fève tonka)",
    "aucune fiche officielle : « Abraaj » n'existe pas dans le catalogue de la boutique officielle Fragrance World (shopfragranceworld.com redirige vers frenchavenue.com, 0 résultat pour « abraaj ») ; notes retenues par recoupement (règle 2c)",
    "genre : DP affiche Mixte, les revendeurs classent Abraaj Revere en masculin",
-   "prix marché : Soghaat relevé à 24,99 GBP, converti à 28,74 EUR (taux retenu 1 GBP = 1,15 EUR)"
+   "aucun prix français trouvé : Abraaj Revere n'est distribué que par des boutiques britanniques (Soghaat, FilledWithBarakah), bulgares (Ardora) ou hors UE ; aucun marchand livrant en France"
   ],
   "releve": "2026-09-05"
  },
@@ -1880,14 +1847,13 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 9.0,
-   "max": 14.95,
-   "median": 11.49,
+   "n": 2,
+   "min": 4.5,
+   "max": 10.9,
+   "median": 7.7,
    "sources": [
-    "https://arabianscents.net/product/apa-de-parfum-fragrance-world-cocktail-intense-unisex-50-ml/",
-    "https://filledwithbarakah.com/products/cocktail-intense-eau-de-parfum-50ml-by-fragrance-world-inspired-by-angels-share",
-    "https://perfumeoriental.com/products/perfume-cocktail-intense-50-ml-fragrance-world"
+    "https://nour-orient.com/produit/cocktail-intense-world-fragrance/",
+    "https://andasparis.fr/products/cocktail-intense-50ml"
    ]
   },
   "verdict_prix": "trop cher",
@@ -1896,7 +1862,7 @@
    "notes divergentes : DP affiche cognac/cannelle/prune – myrrhe/cashmeran/iris – vanille/fève tonka/santal ; deux revendeurs recoupés (Olvio, Emirates Oud) donnent cognac – fève tonka/cannelle/chêne – vanille/praline/santal (prune, myrrhe, cashmeran et iris n'apparaissent dans aucune source)",
    "aucune fiche officielle : Cocktail Intense n'est pas au catalogue de la boutique officielle Fragrance World ; notes retenues par recoupement (règle 2c)",
    "identifiant produit purement numérique dans le catalogue (139912), sans slug parlant",
-   "prix marché : FilledWithBarakah relevé à 9,99 GBP, converti à 11,49 EUR (taux retenu 1 GBP = 1,15 EUR)"
+   "seules deux offres françaises en 50 ml : nour-orient.com à 4,50 € (prix soldé, en rupture de stock) et andasparis.fr à 10,90 € ; les autres marchands FR (parfumsmoinschers.com) ne proposent que le 100 ml"
   ],
   "releve": "2026-09-05"
  },
@@ -1946,22 +1912,20 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 26.0,
-   "max": 41.4,
-   "median": 29.0,
+   "n": 2,
+   "min": 19.66,
+   "max": 20.5,
+   "median": 20.08,
    "sources": [
-    "https://www.anabis.com/us/Fragrance-World-Nudo-Exotic-Flowers.html?currency=EUR",
-    "https://arabianscents.net/product/eau-de-parfum-nudo-exotic-flowers-by-fragrance-world-women-100-ml/",
-    "https://www.oudstore.com/products/nudo-exotic-flowers-edp-perfume-by-fragrance-world"
+    "https://www.parfumsetmoi.fr/fragrance-world-nudo-exotic-flowers-eau-de-parfum-femme-100-ml_z1010348/",
+    "https://www.notino.fr/fragrance-world/nudo-exotic-flowers-eau-de-parfum-pour-femme/"
    ]
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": "trop cher",
   "anomalies": [
    "nom tronqué sur DP : le produit officiel s'appelle « Nudo Exotic Flowers »",
    "notes DP quasi conformes à la fiche officielle, à une omission près : l'encens du fond n'est pas repris par DP",
-   "le « 59 € » visible sur la page DP appartient au bloc de recommandations : aucun prix barré réel",
-   "prix marché : The Oud Store relevé à 45,00 USD, converti à 41,40 EUR (taux retenu 1 USD = 0,92 EUR)"
+   "le « 59 € » visible sur la page DP appartient au bloc de recommandations : aucun prix barré réel"
   ],
   "releve": "2026-09-05"
  },
@@ -1999,21 +1963,21 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 29.7,
-   "max": 41.8,
-   "median": 39.99,
+   "n": 2,
+   "min": 32.7,
+   "max": 44.5,
+   "median": 38.6,
    "sources": [
-    "https://www.anabis.com/us/French-Avenue-Sultana-The-Joyful-EDP-W-80-ml.html?currency=EUR",
-    "https://arabicparfums.com/en/products/sultana-the-joyful-french-avenue-80ml",
-    "https://arabianscents.net/product/eau-de-parfum-fw-french-avenue-sultana-the-joyful-unisex-80-ml/"
+    "https://bplatz.fr/%C3%A9coresponsables/french-avenue-sultana-la-joyeuse-eau-de-parfum-80ml",
+    "https://la-barfumerie.com/products/sultana-the-joyful-eau-de-parfum-80-ml-french-avenue"
    ]
   },
   "verdict_prix": "aligné",
   "anomalies": [
    "notes erronées sur la fiche DP : DP affiche poivre/bergamote/origan – encens/labdanum/opoponax/ambre – cuir/santal/patchouli/agarwood/oud, pyramide strictement identique à celle affichée pour Grecia sur le même site ; les sources marchandes donnent bergamote/fruit de la passion/pêche – jasmin/géranium/caramel – patchouli de Madagascar/ambre gris/musc blanc",
    "nom commercial complet : « Sultana The Joyful » ; produit absent du catalogue officiel frenchavenue.com (la recherche « sultana » n'y renvoie que Sultan The Founder et Sultan The Conqueror)",
-   "French Avenue est une marque du groupe Fragrance World (confirmé sur fragranceworld.ae) ; boutique officielle frenchavenue.com."
+   "French Avenue est une marque du groupe Fragrance World (confirmé sur fragranceworld.ae) ; boutique officielle frenchavenue.com.",
+   "seulement 2 offres françaises en 80 ml : bplatz.fr le vend sous le nom francisé « Sultana la Joyeuse »"
   ],
   "releve": "2026-09-05"
  },
@@ -2052,22 +2016,26 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 29.4,
-   "max": 49.9,
-   "median": 31.85,
+   "n": 5,
+   "min": 25.37,
+   "max": 56.99,
+   "median": 49.9,
    "sources": [
-    "https://www.anabis.com/us/French-Avenue-Liquid-Brun.html?currency=EUR",
-    "https://orioudh.com/products/liquid-brun-by-french-avenue-men-perfume-edp-100-ml",
-    "https://www.french-avenue-parfum.com/en/"
+    "https://www.parfumsetmoi.fr/french-avenue-liquid-brun-eau-de-parfum-homme-100-ml_z1010339/",
+    "https://pds-shop.fr/products/eau-de-parfum-liquid-brun-french-avenue-100-ml",
+    "https://www.french-avenue-parfum.com/en/",
+    "https://www.notino.fr/french-avenue/liquid-brun-eau-de-parfum-mixte/",
+    "https://www.parfumsmoinschers.com/produit/66592-liquid-brun-french-avenue-eau-de-parfum-spray-100-ml.html"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "contenance absente de la fiche DP ; le site officiel frenchavenue.com ne commercialise Liquid Brun qu'en 100 ml — champ laissé à null faute d'indication sur DP",
    "genre : DP affiche Mixte, le site officiel classe Liquid Brun « For Men »",
    "le « 59 € » visible sur la page DP appartient au bloc de recommandations et non à ce produit : aucun prix barré réel",
-   "French Avenue est une marque du groupe Fragrance World (confirmé sur fragranceworld.ae) ; boutique officielle frenchavenue.com."
+   "French Avenue est une marque du groupe Fragrance World (confirmé sur fragranceworld.ae) ; boutique officielle frenchavenue.com.",
+   "prix marché relevés sur le format 100 ml, seul format commercialisé en France (contenance absente de la fiche DP)",
+   "écart marché FR très large : 25,37 € (parfumsetmoi.fr) contre 56,99 € (parfumsmoinschers.com) pour le même 100 ml"
   ],
   "releve": "2026-09-05"
  },
@@ -2106,13 +2074,13 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 45.9,
-   "max": 49.99,
-   "median": 49.95,
+   "min": 27.26,
+   "max": 49.9,
+   "median": 46.9,
    "sources": [
-    "https://amraee.com/en/products/grecia-french-avenue",
-    "https://perfumeoriental.com/en/products/perfume-grecia-french-avenue",
-    "https://fraganzi.com/en/products/grecia-eau-de-parfum-french-avenue"
+    "https://www.idealo.fr/prix/206253607/french-avenue-grecia-eau-de-parfum-100ml.html",
+    "https://www.notino.fr/french-avenue/grecia-eau-de-parfum-pour-femme/",
+    "https://pds-shop.fr/products/eau-de-parfum-grecia-french-avenue-100-ml"
    ]
   },
   "verdict_prix": "agressif",
@@ -2156,20 +2124,21 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 40.0,
-   "max": 59.3,
-   "median": 58.0,
+   "min": 24.0,
+   "max": 48.9,
+   "median": 45.5,
    "sources": [
-    "https://www.royalsperfume.com/products/french-avenue-pinnace-white-edp-100ml",
-    "https://marabika.lt/en/french-avenue-pinnace-100ml",
-    "https://perfumeoriental.com/products/perfume-pinnace-white-french-avenue-fragrance-world"
+    "https://www.idealo.fr/prix/206252695/french-avenue-pinnace-eau-de-parfum-100ml.html",
+    "https://www.notino.fr/french-avenue/pinnace-eau-de-parfum-pour-femme/",
+    "https://pds-shop.fr/products/eau-de-parfum-pinnace-french-avenue-100-ml"
    ]
   },
-  "verdict_prix": "agressif",
+  "verdict_prix": "aligné",
   "anomalies": [
    "« Pinnace White » est absent du catalogue officiel frenchavenue.com, qui ne liste que Pinnace, Pinnace Noir et Pinnace Oryn ; les revendeurs l'étiquettent « Fragrance World – French Avenue ». Notes recoupées : oudstore et la fiche officielle Pinnace donnent la même pyramide, identique à celle affichée par DP",
    "genre : DP affiche Mixte, la fiche officielle Pinnace est classée « Men »",
-   "French Avenue est une marque du groupe Fragrance World (confirmé sur fragranceworld.ae) ; boutique officielle frenchavenue.com."
+   "French Avenue est une marque du groupe Fragrance World (confirmé sur fragranceworld.ae) ; boutique officielle frenchavenue.com.",
+   "les marchands français (notino.fr, pds-shop.fr, idealo.fr) le vendent sous le seul nom « Pinnace » ; pyramide notino.fr (pamplemousse/orange – menthe/cassis – ambroxan/musc blanc) identique à celle de la fiche DP, produit confirmé identique"
   ],
   "releve": "2026-09-05"
  },
@@ -2210,13 +2179,13 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 34.49,
+   "min": 38.9,
    "max": 49.9,
-   "median": 49.9,
+   "median": 39.9,
    "sources": [
-    "https://www.debenhams.com/product/french-avenue-fa-paris-royal-blend-nero-100ml-extrait_p-32edc512-e691-452a-9657-16fcec97bb3a",
-    "https://www.french-avenue-parfum.com/en/",
-    "https://luxurious-fragrances.com/product/royal-blend-nero/"
+    "https://pds-shop.fr/products/extrait-de-parfum-royal-blend-nero-french-avenue-80-ml",
+    "https://muscorient.com/fr/fragrance-world/944-royal-blend-nero-french-avenue.html",
+    "https://www.french-avenue-parfum.com/en/"
    ]
   },
   "verdict_prix": "aligné",
@@ -2224,7 +2193,6 @@
    "notes DP incomplètes et divergentes : DP ne donne aucune note de tête et empile « Floral, Épicé, Fruité, Musc, Vanille, Cannelle, Tonka » en cœur ; le site officiel donne bergamote/muscade/datte/pomme – cannelle/safran/bois sec – vanille/benjoin/fève tonka/musc",
    "concentration : DP affiche Eau de parfum, le site officiel, Debenhams et luxurious-fragrances vendent tous un Extrait de Parfum",
    "genre : DP affiche Unisexe, le site officiel classe « For Men »",
-   "prix marché : Debenhams relevé à 29,99 GBP, converti à 34,49 EUR (taux retenu 1 GBP = 1,15 EUR)",
    "French Avenue est une marque du groupe Fragrance World (confirmé sur fragranceworld.ae) ; boutique officielle frenchavenue.com."
   ],
   "releve": "2026-09-05"
@@ -2260,21 +2228,17 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 9.24,
-   "max": 30.89,
-   "median": 21.53,
-   "sources": [
-    "https://nalda.de/products/6294015161670",
-    "https://www.hamidi.us/products/hamidi-perfume-alyssa-eau-de-parfum-spray-100ml-perfumes",
-    "https://www.khanelkhaliliusa.com/products/alyssa-edp-100ml-spray-by-hamidi"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "les 'notes' DP (Floral, Épicé, Jasmin, Safran, Verte, Ambre) sont des familles olfactives : pyramide officielle Hamidi retenue",
-   "prix marché : 9,24 EUR (nalda.de) + 25,00 USD et 35,88 USD convertis au taux 1 EUR = 1,16143 USD (tradingeconomics, 04/09/2026)",
-   "l'URL officielle Hamidi porte le suffixe '120ml' alors que la page décrit bien un 100 ML"
+   "l'URL officielle Hamidi porte le suffixe '120ml' alors que la page décrit bien un 100 ML",
+   "aucun prix français trouvé : Alyssa est absent du catalogue Hamidi de notino.fr comme des boutiques françaises consultées (Safwa Boutique, Muscorient, Al Najah) ; les anciens relevés (nalda.de, hamidi.us, khanelkhaliliusa.com) sont hors France et ont été retirés — marche.n = 0, verdict null"
   ],
   "releve": "2026-09-05"
  },
@@ -2316,20 +2280,19 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 12.0,
-   "max": 16.35,
+   "n": 1,
+   "min": 14.99,
+   "max": 14.99,
    "median": 14.99,
    "sources": [
-    "https://www.dubaiperfumeshop.ie/products/air-freshener-lulu-320ml-hamidi",
-    "https://safwaboutique.com/collections/hamidi-oud-perfumes",
-    "https://www.oudnaroma.com/products/hamidi-air-freshener-lulu-320-ml-10-8-oz-spray"
+    "https://safwaboutique.com/products/parfum-d-ambiance-spray-textile-lulu-320ml-hamidi-perfumes-dubai"
    ]
   },
   "verdict_prix": "agressif",
   "anomalies": [
    "la page officielle hamidi.ae ne publie aucune pyramide (mention 'delicate floral notes') : notes reprises de la fiche DP (règle 2b)",
-   "3e prix marché relevé en USD (18,99) et converti au taux 1 EUR = 1,16143 USD (tradingeconomics, 04/09/2026)"
+   "un seul prix français trouvé (Safwa Boutique, 14,99 € en 320 ml) : médiane peu robuste, verdict à prendre avec prudence",
+   "anciens comparateurs écartés : dubaiperfumeshop.ie (Irlande) et oudnaroma.com (USD) ne sont pas des marchands français"
   ],
   "releve": "2026-09-05"
  },
@@ -2372,15 +2335,16 @@
    "max": 28.99,
    "median": 15.55,
    "sources": [
-    "https://www.parfumsetmoi.fr/khadlaj-hareem-al-sultan-gold-huile-parfumee-unisexe-35-ml_z910921/",
     "https://nour-orient.com/produit/khadlaj-hareem-al-sultan-gold/",
+    "https://www.parfumsetmoi.fr/khadlaj-hareem-al-sultan-gold-huile-parfumee-unisexe-35-ml_z910921/",
     "https://www.parfumsmoinschers.com/produit/64254-hareem-al-sultan-gold-khadlaj-huile-parfumee-35-ml.html"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "genre affiché 'Unisexe' sur DP ; Khadlaj classe le produit en 'Women' sur sa page officielle",
-   "notes DP conformes à la pyramide officielle Khadlaj (aucune divergence)"
+   "notes DP conformes à la pyramide officielle Khadlaj (aucune divergence)",
+   "les 3 prix retenus sont français et portent tous sur le format 35 ml ; nour-orient.com est une boutique en .com francophone, prix en EUR et livraison en France"
   ],
   "releve": "2026-09-05"
  },
@@ -2421,15 +2385,15 @@
    "median": 29.9,
    "sources": [
     "https://www.parfumsetmoi.fr/khadlaj-empire-victor-eau-de-parfum-unisexe-100-ml_z1023182/",
-    "https://muscorient.com/fr/khadlaj/1089-eau-de-parfum-empire-victor-khadlaj.html",
-    "https://www.notino.fr/khadlaj/empire-victory-eau-de-parfum-mixte/"
+    "https://www.notino.fr/khadlaj/empire-victory-eau-de-parfum-mixte/",
+    "https://muscorient.com/fr/khadlaj/1089-eau-de-parfum-empire-victor-khadlaj.html"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "la fiche DP ajoute 'Oud léger' en note de fond, absent de la pyramide officielle Khadlaj (Vanilla, Musk) et de tous les revendeurs consultés",
-   "verdict limite : 35,00 EUR contre un seuil 'trop cher' à 34,39 EUR (médiane 29,90 x 1,15)",
-   "Notino référence le produit sous le nom 'Empire Victory' ; le nom officiel Khadlaj est 'Empire Victor'"
+   "Notino référence le produit sous le nom 'Empire Victory' ; le nom officiel Khadlaj est 'Empire Victor'",
+   "verdict limite : 35,00 € contre un seuil « trop cher » à 34,39 € (médiane française 29,90 × 1,15)"
   ],
   "releve": "2026-09-05"
  },
@@ -2474,7 +2438,7 @@
   "anomalies": [
    "contenance non indiquée sur la fiche Dubai Parfumerie (versions FR et EN vérifiées) : laissée à null",
    "site officiel khaleej-scent.com injoignable (DNS non résolu, navigateur et WebFetch) : notes non vérifiables auprès de la marque, source retenue = fiche Dubai Parfumerie",
-   "aucun prix concurrent trouvé : gamme distribuée quasi exclusivement par Dubai Parfumerie — marche.n = 0, verdict null"
+   "aucun prix français trouvé : la marque Khaleej Scent n'est référencée chez aucun marchand français consulté (notino.fr, Al Najah, Safwa Boutique, Muscorient) — marche.n = 0, verdict null"
   ],
   "releve": "2026-09-05"
  },
@@ -2524,8 +2488,8 @@
   "anomalies": [
    "contenance non indiquée sur la fiche Dubai Parfumerie (versions FR et EN vérifiées) : laissée à null",
    "site officiel khaleej-scent.com injoignable (DNS non résolu, navigateur et WebFetch) : notes non vérifiables auprès de la marque, source retenue = fiche Dubai Parfumerie",
-   "aucun prix concurrent trouvé : gamme distribuée quasi exclusivement par Dubai Parfumerie — marche.n = 0, verdict null",
-   "pyramide Dubai Parfumerie incohérente : « Amber » figure à la fois en tête et en cœur"
+   "pyramide Dubai Parfumerie incohérente : « Amber » figure à la fois en tête et en cœur",
+   "aucun prix français trouvé : la marque Khaleej Scent n'est référencée chez aucun marchand français consulté (notino.fr, Al Najah, Safwa Boutique, Muscorient) — marche.n = 0, verdict null"
   ],
   "releve": "2026-09-05"
  },
@@ -2579,7 +2543,7 @@
   "anomalies": [
    "contenance non indiquée sur la fiche Dubai Parfumerie (versions FR et EN vérifiées) : laissée à null",
    "site officiel khaleej-scent.com injoignable (DNS non résolu, navigateur et WebFetch) : notes non vérifiables auprès de la marque, source retenue = fiche Dubai Parfumerie",
-   "aucun prix concurrent trouvé : gamme distribuée quasi exclusivement par Dubai Parfumerie — marche.n = 0, verdict null"
+   "aucun prix français trouvé : la marque Khaleej Scent n'est référencée chez aucun marchand français consulté (notino.fr, Al Najah, Safwa Boutique, Muscorient) — marche.n = 0, verdict null"
   ],
   "releve": "2026-09-05"
  },
@@ -2627,7 +2591,7 @@
   "anomalies": [
    "contenance non indiquée sur la fiche Dubai Parfumerie (versions FR et EN vérifiées) : laissée à null",
    "site officiel khaleej-scent.com injoignable (DNS non résolu, navigateur et WebFetch) : notes non vérifiables auprès de la marque, source retenue = fiche Dubai Parfumerie",
-   "aucun prix concurrent trouvé : gamme distribuée quasi exclusivement par Dubai Parfumerie — marche.n = 0, verdict null"
+   "aucun prix français trouvé : la marque Khaleej Scent n'est référencée chez aucun marchand français consulté (notino.fr, Al Najah, Safwa Boutique, Muscorient) — marche.n = 0, verdict null"
   ],
   "releve": "2026-09-05"
  },
@@ -2673,13 +2637,14 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
-   "min": 17.45,
+   "n": 3,
+   "min": 15.91,
    "max": 36.99,
-   "median": 27.22,
+   "median": 17.45,
    "sources": [
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://muscorient.com/fr/72-maison-alhambra"
+    "https://www.idealo.fr/prix/202135567/maison-alhambra-anarch-100ml.html",
+    "https://muscorient.com/fr/accueil/676-anarch-maison-alhambra-6291107459080.html",
+    "https://www.parfumsmoinschers.com/produit/64414-anarch-maison-alhambra-eau-de-parfum-spray-100-ml.html"
    ]
   },
   "verdict_prix": "trop cher",
@@ -2687,7 +2652,7 @@
    "slug contenant « lattafa » : marque réelle vérifiée = Maison Alhambra (sous-marque du groupe Lattafa, distincte de Lattafa) ; marque affichée par le site correcte",
    "contenance non indiquée sur la fiche DP (référence officielle : 100 ml)"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "candid-rose-maison-al-hambra",
@@ -2740,10 +2705,10 @@
   "anomalies": [
    "référence « Candid Rose » introuvable au catalogue Maison Alhambra (existent : Candid, So Candid, So Candid Rouge, Candid Tonight, Candid Pour Homme) — nom produit non vérifiable",
    "concentration EDT atypique pour la marque (quasi tout le catalogue est en EDP)",
-   "aucun prix concurrent relevé : marche.n = 0, verdict_prix null",
+   "aucun prix français trouvé",
    "contenance non indiquée sur la fiche DP"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "coastal-pour-femme",
@@ -2779,20 +2744,22 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
-   "min": 17.19,
+   "n": 3,
+   "min": 21.85,
    "max": 40.99,
-   "median": 29.09,
+   "median": 24.36,
    "sources": [
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://fragra.de/en/products/maison-alhambra-perfume-coastal-pour-femme-eau-de-parfum-100-ml"
+    "https://www.123comparer.fr/parfums-femme/ga3d1cjtgy5uepj3grhd1.html",
+    "https://onebioshop.com/en/products/maison-alhambra-coastal-pour-femme-edp-w-100-ml",
+    "https://www.parfumsmoinschers.com/produit/56598-coastal-pour-femme-maison-alhambra-eau-de-parfum-spray-100-ml.html"
    ]
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": "trop cher",
   "anomalies": [
-   "pyramide DP recoupée et confirmée par fragra.de"
+   "pyramide DP recoupée et confirmée par fragra.de",
+   "le prix le plus bas provient du comparateur français 123comparer.fr (offre Kaufland, EUR, livraison France)"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "fr-maison-alhambra-como-moiselle",
@@ -2839,20 +2806,23 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
+   "n": 4,
    "min": 19.99,
-   "max": 29.9,
+   "max": 33.9,
    "median": 24.945,
    "sources": [
+    "https://alnajahboutique.com/produit/como-moiselle-maison-alhambra-eau-de-parfum-100-ml/",
+    "https://sykz.fr/collections/maison-alhambra",
     "https://muscorient.com/fr/72-maison-alhambra",
-    "https://sykz.fr/collections/maison-alhambra"
+    "https://prestigesenteur.fr/products/eau-de-parfum-como-moiselle-100-ml-maison-alhambra"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
-   "pyramide DP incohérente : plusieurs notes (bergamote, vanille, patchouli, rose) répétées entre les étages — reprise telle quelle, non corrigée"
+   "pyramide DP incohérente : plusieurs notes (bergamote, vanille, patchouli, rose) répétées entre les étages — reprise telle quelle, non corrigée",
+   "alnajahboutique.com : boutique en .com mais site en français, prix en EUR et stock expédié depuis la France — retenue comme source française"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "glacier-bella-maison-alhambra",
@@ -2883,13 +2853,14 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
-   "min": 36.0,
+   "n": 3,
+   "min": 26.9,
    "max": 40.99,
-   "median": 38.495,
+   "median": 36.0,
    "sources": [
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://www.idealo.fr/prix/204920662/maison-alhambra-glacier-bella-eau-de-parfum-100ml.html"
+    "https://maisondesfragrances.fr/en/products/glacier-bella-eau-de-parfum-100ml-by-maison-alhambra",
+    "https://www.idealo.fr/prix/204920662/maison-alhambra-glacier-bella-eau-de-parfum-100ml.html",
+    "https://www.parfumsmoinschers.com/produit/68324-glacier-bella-maison-alhambra-eau-de-parfum-spray-100-ml.html"
    ]
   },
   "verdict_prix": "agressif",
@@ -2897,7 +2868,7 @@
    "cœur non détaillé sur la fiche DP (« notes florales délicates ») : laissé vide plutôt qu'inventé",
    "contenance non indiquée sur la fiche DP (référence officielle : 100 ml)"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "jean-lowe-vibe",
@@ -2933,19 +2904,22 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
+   "n": 4,
    "min": 27.95,
    "max": 40.99,
-   "median": 34.9,
+   "median": 34.95,
    "sources": [
-    "https://muscorient.com/fr/72-maison-alhambra",
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://www.idealo.fr/liste/121180275/alhambra-parfum.html"
+    "https://www.idealo.fr/prix/208349591/maison-alhambra-jean-lowe-vibe-eau-de-parfum-100-ml.html",
+    "https://muscorient.com/fr/maison-alhambra/1122-jean-lowe-vibe-maison-alhambra.html",
+    "https://www.parfum-dubai-store.com/produit/jean-lowe-vibe-maison-alhambra/",
+    "https://www.parfumsmoinschers.com/produit/69355-jean-lowe-vibe-maison-alhambra-eau-de-parfum-spray-100-ml.html"
    ]
   },
   "verdict_prix": "aligné",
-  "anomalies": [],
-  "releve": "2026-09-05"
+  "anomalies": [
+   "parfum-dubai-store.com : boutique en .com mais site en français, prix en EUR et livraison en France — retenue comme source française"
+  ],
+  "releve": "2026-09-06"
  },
  {
   "id": "karat-maison-alhambra",
@@ -2978,20 +2952,22 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
-   "min": 34.9,
+   "n": 4,
+   "min": 24.9,
    "max": 40.99,
-   "median": 37.945,
+   "median": 32.4,
    "sources": [
-    "https://muscorient.com/fr/72-maison-alhambra",
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra"
+    "https://www.idealo.fr/prix/202972008/maison-alhambra-karat-eau-de-parfum-100ml.html",
+    "https://pds-shop.fr/products/karat-100ml-maison-alhambra",
+    "https://muscorient.com/fr/maison-alhambra/853-karat-maison-alhambra.html",
+    "https://www.parfumsmoinschers.com/produit/64400-karat-maison-alhambra-eau-de-parfum-spray-100-ml.html"
    ]
   },
-  "verdict_prix": "agressif",
+  "verdict_prix": "aligné",
   "anomalies": [
    "la fiche DP ne donne pas de pyramide olfactive : uniquement une liste d'accords génériques, rangée sous « cœur » ; tête et fond laissés vides"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "kismet-for-men-maison-alhambra",
@@ -3026,20 +3002,23 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 2,
-   "min": 16.0,
-   "max": 24.99,
-   "median": 20.495,
+   "n": 4,
+   "min": 18.44,
+   "max": 43.63,
+   "median": 28.945,
    "sources": [
-    "https://www.anabis.com/us/Alhambra-Kismet-For-Men.html?currency=EUR",
-    "https://sykz.fr/collections/maison-alhambra"
+    "https://www.idealo.fr/prix/201773544/maison-alhambra-kismet-for-men-eau-de-parfum-100ml.html",
+    "https://sykz.fr/collections/maison-alhambra",
+    "https://prestigesenteur.fr/products/kismet-for-men",
+    "https://www.espritoriental.fr/marques-orientales/kismet-for-men"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
-   "contenance non indiquée sur la fiche DP (référence officielle : 100 ml)"
+   "contenance non indiquée sur la fiche DP (référence officielle : 100 ml)",
+   "forte dispersion des prix français relevés (18,44 € à 43,63 € en 100 ml)"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "kismet-for-women-maison-alhambra",
@@ -3073,21 +3052,25 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
+   "n": 5,
    "min": 17.45,
-   "max": 24.99,
-   "median": 21.22,
+   "max": 43.99,
+   "median": 24.99,
    "sources": [
-    "https://muscorient.com/fr/72-maison-alhambra",
-    "https://sykz.fr/collections/maison-alhambra"
+    "https://muscorient.com/fr/maison-alhambra/1271-kismet-women.html",
+    "https://www.123comparer.fr/parfums-femme/ga3d1cjtgy5uepj3ge5de.html",
+    "https://sykz.fr/collections/maison-alhambra",
+    "https://prestigesenteur.fr/products/eau-de-parfum-kismet-for-women-maison-alhambra",
+    "https://www.parfumsmoinschers.com/produit/61419-kismet-maison-alhambra-eau-de-parfum-spray-100-ml.html"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "concentration non indiquée sur la fiche DP",
-   "contenance non indiquée sur la fiche DP"
+   "contenance non indiquée sur la fiche DP",
+   "forte dispersion des prix français relevés (17,45 € à 43,99 € en 100 ml)"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "kismet-magic",
@@ -3121,18 +3104,19 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 2,
+   "n": 3,
    "min": 19.0,
    "max": 31.99,
-   "median": 25.495,
+   "median": 27.9,
    "sources": [
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://www.idealo.fr/liste/121180275/alhambra-parfum.html"
+    "https://www.idealo.fr/prix/203281681/maison-alhambra-kismet-magic-eau-de-parfum-100ml.html",
+    "https://maisondesfragrances.fr/products/maison-alhambra-eau-de-parfum-kismet-magic-100ml",
+    "https://www.parfumsmoinschers.com/produit/68344-kismet-magic-maison-alhambra-eau-de-parfum-spray-100-ml.html"
    ]
   },
   "verdict_prix": "aligné",
   "anomalies": [],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "la-rouge-baroque",
@@ -3170,18 +3154,21 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
-   "min": 34.9,
+   "n": 3,
+   "min": 15.6,
    "max": 34.99,
-   "median": 34.945,
+   "median": 34.9,
    "sources": [
+    "https://mjbazar.fr/en/products/eau-de-parfum-la-rouge-baroque-100ml-maison-alhambra",
     "https://muscorient.com/fr/72-maison-alhambra",
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra"
+    "https://www.parfumsmoinschers.com/produit/62533-la-rouge-baroque-maison-alhambra-eau-de-parfum-spray-100-ml.html"
    ]
   },
   "verdict_prix": "aligné",
-  "anomalies": [],
-  "releve": "2026-09-05"
+  "anomalies": [
+   "prix français très dispersés : 15,60 € chez mjbazar.fr contre ~35 € chez muscorient et parfumsmoinschers"
+  ],
+  "releve": "2026-09-06"
  },
  {
   "id": "la-vita-bella-maison-alhambra",
@@ -3221,15 +3208,16 @@
    "max": 38.9,
    "median": 33.9,
    "sources": [
-    "https://muscorient.com/fr/72-maison-alhambra",
-    "https://maisondesfragrances.fr/products/la-vita-bella-edp-by-maison-alhambra-lattafa-100ml-3"
+    "https://maisondesfragrances.fr/products/la-vita-bella-edp-by-maison-alhambra-lattafa-100ml-3",
+    "https://muscorient.com/fr/accueil/679-la-vita-bella-maison-alhambra-6291108730188.html"
    ]
   },
   "verdict_prix": "agressif",
   "anomalies": [
-   "La Vita Bella et La Vivacité sont le même jus (renommage officiel) et sont vendus comme deux références distinctes sur DP"
+   "La Vita Bella et La Vivacité sont le même jus (renommage officiel) et sont vendus comme deux références distinctes sur DP",
+   "seulement 2 prix français relevés : médiane peu robuste"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "la-vivacite",
@@ -3266,19 +3254,20 @@
   "dispo": true,
   "marche": {
    "n": 2,
-   "min": 19.0,
+   "min": 24.9,
    "max": 37.99,
-   "median": 28.495,
+   "median": 31.445,
    "sources": [
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://www.anabis.com/us/Alhambra-La-Vivacit%C3%A9.html?currency=EUR"
+    "https://amiraloud.fr/products/la-vivaci-te-alhambra-100ml-eau-de-parfum",
+    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra"
    ]
   },
   "verdict_prix": "aligné",
   "anomalies": [
-   "La Vivacité est le renommage de La Vita Bella (pyramides quasi identiques) ; les deux sont référencées séparément sur DP, avec des genres différents (Mixte vs Femme)"
+   "La Vivacité est le renommage de La Vita Bella (pyramides quasi identiques) ; les deux sont référencées séparément sur DP, avec des genres différents (Mixte vs Femme)",
+   "seulement 2 prix français relevés : médiane peu robuste"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "libbra-intense-maison-alhambra",
@@ -3317,16 +3306,17 @@
    "max": 35.0,
    "median": 27.95,
    "sources": [
-    "https://prestigesenteur.fr/products/eau-de-parfum-libbra-intense-100-ml-maison-alhambra",
-    "https://maisondesfragrances.fr/products/libbra-intense-edp-maison-alhambra-100ml-womens-perfume-original-rich-fragrance-2"
+    "https://maisondesfragrances.fr/products/libbra-intense-edp-maison-alhambra-100ml-womens-perfume-original-rich-fragrance-2",
+    "https://prestigesenteur.fr/products/eau-de-parfum-libbra-intense-100-ml-maison-alhambra"
    ]
   },
   "verdict_prix": "aligné",
   "anomalies": [
    "contenance non indiquée sur la fiche DP (référence officielle : 100 ml)",
-   "genre affiché « Mixte » sur DP alors que les revendeurs le classent en féminin"
+   "genre affiché « Mixte » sur DP alors que les revendeurs le classent en féminin",
+   "seulement 2 prix français relevés : médiane peu robuste"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "eau-de-parfum-parfum-musk-vanille-maison-alhambra",
@@ -3352,20 +3342,21 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 1,
+   "n": 2,
    "min": 35.0,
    "max": 35.0,
    "median": 35.0,
    "sources": [
-    "https://dubainegoce.fr/parfum/musk-vanille-maison-alhambra/"
+    "https://dubainegoce.fr/parfum/musk-vanille-maison-alhambra/",
+    "https://www.frenchavenue.fr/musk-vanille-100ml-maison-alhambra-2/"
    ]
   },
   "verdict_prix": "agressif",
   "anomalies": [
    "pyramide DP quasi vide (seul « Musc » en cœur) : tête et fond laissés vides plutôt qu'inventés",
-   "un seul prix concurrent EUR relevé (marche.n = 1) : médiane peu robuste"
+   "seulement 2 prix français relevés, tous deux à 35,00 € : médiane peu robuste"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "narissa-peach-maison-alhambra",
@@ -3396,13 +3387,13 @@
   "dispo": false,
   "marche": {
    "n": 3,
-   "min": 10.4,
+   "min": 20.99,
    "max": 29.9,
-   "median": 20.99,
+   "median": 24.9,
    "sources": [
-    "https://muscorient.com/fr/72-maison-alhambra",
     "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://www.anabis.com/us/tag/show/Alhambra?currency=EUR"
+    "https://pds-shop.fr/products/eau-de-parfum-narissa-peach-maison-alhambra-100-ml",
+    "https://muscorient.com/fr/accueil/856-narissa-peach-maison-alhambra-6291108730225.html"
    ]
   },
   "verdict_prix": "trop cher",
@@ -3410,7 +3401,7 @@
    "nom inversé : la référence officielle est « Narissa Peach », le catalogue DP l'appelle « Peach Narissa »",
    "la fiche DP ne donne que des notes de cœur : tête et fond laissés vides"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "philos-opus-noir-maison-alhambra",
@@ -3449,16 +3440,16 @@
    "max": 37.99,
    "median": 30.0,
    "sources": [
-    "https://muscorient.com/fr/72-maison-alhambra",
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://sykz.fr/collections/maison-alhambra"
+    "https://muscorient.com/accueil/678-philos-opus-noir-maison-alhambra-6291107459332.html",
+    "https://sykz.fr/products/maison-alhambra-philos-opus-noir-eau-de-parfum-mixte",
+    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra"
    ]
   },
   "verdict_prix": "aligné",
   "anomalies": [
    "contenance non indiquée sur la fiche DP (référence officielle : 100 ml)"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "eau-de-parfum-porto-neroli-lattafa",
@@ -3498,19 +3489,20 @@
   "marche": {
    "n": 2,
    "min": 30.0,
-   "max": 56.0,
-   "median": 43.0,
+   "max": 39.9,
+   "median": 34.95,
    "sources": [
-    "https://www.anabis.com/us/Maison-Alhambra-Porto-Neroli.html?currency=EUR",
-    "https://sykz.fr/collections/maison-alhambra"
+    "https://sykz.fr/products/maison-alhambra-porto-neroli-eau-de-parfum-mixte",
+    "https://encens-store.fr/produit/porto-neroli-80ml-maison-alhambra/"
    ]
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": "trop cher",
   "anomalies": [
    "slug contenant « lattafa » : marque réelle vérifiée = Maison Alhambra (sous-marque du groupe Lattafa, distincte de Lattafa) ; marque affichée par le site correcte",
-   "contenance non indiquée sur la fiche DP ; prix concurrents relevés sur des formats différents (80 ml et 50 ml) — comparaison approximative"
+   "contenance non indiquée sur la fiche DP (référence officielle : 80 ml) ; les deux prix français retenus portent bien sur le format 80 ml",
+   "seulement 2 prix français relevés : médiane peu robuste"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "salvo-elixir",
@@ -3547,21 +3539,21 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 24.0,
-   "max": 32.99,
-   "median": 26.45,
+   "n": 2,
+   "min": 23.68,
+   "max": 24.0,
+   "median": 23.84,
    "sources": [
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
+    "https://www.123comparer.fr/parfums-homme/ga3d1cbugaadkqjogh5uc.html",
     "https://www.idealo.fr/prix/203835293/maison-alhambra-salvo-elixir-eau-de-parfum-60ml.html"
    ]
   },
   "verdict_prix": "agressif",
   "anomalies": [
    "DP annonce 100 ml alors que la référence Salvo Elixir est commercialisée en 60 ml chez tous les revendeurs relevés — contenance DP douteuse",
-   "les 3 prix concurrents portent sur le format 60 ml"
+   "les 2 prix français retenus portent sur le format 60 ml, seul format existant de la référence"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "summer-forever",
@@ -3609,15 +3601,16 @@
    "max": 17.1,
    "median": 16.025,
    "sources": [
-    "https://muscorient.com/fr/72-maison-alhambra",
+    "https://muscorient.com/accueil/682-summer-forever-maison-alhambra-6290360590714.html",
     "https://www.anabis.com/us/Alhambra-Summer-Forever-EdP-100ml.html?currency=EUR"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
-   "genre affiché « Mixte » sur DP alors que la référence est classée féminine par la marque et les revendeurs"
+   "genre affiché « Mixte » sur DP alors que la référence est classée féminine par la marque et les revendeurs",
+   "seulement 2 prix français relevés (muscorient.com et anabis.com, prix affichés en EUR) : médiane peu robuste"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "the-tux-maison-al-hambra",
@@ -3655,20 +3648,22 @@
   "marche": {
    "n": 3,
    "min": 33.88,
-   "max": 43.29,
+   "max": 39.0,
    "median": 34.99,
    "sources": [
+    "https://fr.shopping.rakuten.com/offer/buy/10672689970/the-tux-eau-de-parfum-alhambra.html",
     "https://alnajahboutique.com/produit/the-tux-maison-alhambra-eau-de-parfum-90-ml/",
-    "https://fr.shopping.rakuten.com/offer/buy/10672689970/the-tux-eau-de-parfum-alhambra.html"
+    "https://www.ebay.fr/itm/266334623560"
    ]
   },
   "verdict_prix": "agressif",
   "anomalies": [
    "pyramide DP erronée : la fiche donne cèdre / concombre / pastèque / thé vert / vétiver, qui ne correspond pas à The Tux — pyramide réelle recoupée sur 3 sources indépendantes (intenseoud.com, alnajahboutique.com, Rakuten FR)",
    "piège flacon partagé : la fiche idealo.fr intitulée « The Tux 90 ml » renvoie en réalité les offres de Winsome (même flacon) — ces prix ont été écartés",
-   "concentration et contenance non indiquées sur la fiche DP (référence officielle : EDP 90 ml)"
+   "concentration et contenance non indiquées sur la fiche DP (référence officielle : EDP 90 ml)",
+   "alnajahboutique.com : boutique en .com mais site en français, prix en EUR et stock expédié depuis la France — retenue comme source française"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "toro-pour-homme-maison-alhambra",
@@ -3708,16 +3703,17 @@
    "max": 36.99,
    "median": 28.445,
    "sources": [
-    "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://encens-store.fr/produit/eau-de-parfum-toro-pour-homme-maison-alhambra/"
+    "https://encens-store.fr/produit/eau-de-parfum-toro-pour-homme-maison-alhambra/",
+    "https://www.parfumsmoinschers.com/produit/61413-toro-pour-homme-maison-alhambra-eau-de-parfum-spray-100-ml.html"
    ]
   },
   "verdict_prix": "aligné",
   "anomalies": [
    "pyramide DP recoupée et confirmée par encens-store.fr",
-   "contenance non indiquée sur la fiche DP (référence officielle : Toro Pour Homme 100 ml)"
+   "contenance non indiquée sur la fiche DP (référence officielle : Toro Pour Homme 100 ml)",
+   "seulement 2 prix français relevés : médiane peu robuste"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "eau-de-parfum-toscano-leather-lattafa-fr",
@@ -3754,22 +3750,23 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
+   "n": 4,
    "min": 23.2,
-   "max": 32.99,
-   "median": 30.0,
+   "max": 39.9,
+   "median": 31.495,
    "sources": [
+    "https://www.idealo.fr/prix/204466378/maison-alhambra-toscano-leather-eau-de-parfum.html",
+    "https://sykz.fr/products/maison-alhambra-toscano-leather-eau-de-parfum-mixte",
     "https://www.parfumsmoinschers.com/marque/2483-maison-alhambra",
-    "https://sykz.fr/collections/maison-alhambra",
-    "https://www.idealo.fr/liste/121180275/alhambra-parfum.html"
+    "https://www.encens-store.fr/produit/toscano-leather-maison-alhambra/"
    ]
   },
   "verdict_prix": "agressif",
   "anomalies": [
    "slug contenant « lattafa » : marque réelle vérifiée = Maison Alhambra (sous-marque du groupe Lattafa, distincte de Lattafa) ; marque affichée par le site correcte",
-   "contenance non indiquée sur la fiche DP ; prix concurrents relevés en 80 ml, 50 ml et 100 ml — comparaison approximative"
+   "contenance non indiquée sur la fiche DP (référence officielle : 80 ml) ; les 4 prix français retenus portent tous sur le format 80 ml"
   ],
-  "releve": "2026-09-05"
+  "releve": "2026-09-06"
  },
  {
   "id": "vanilla-voyage",
@@ -3806,18 +3803,20 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 27.23,
-   "max": 36.7,
-   "median": 31.9,
+   "min": 38.9,
+   "max": 39.9,
+   "median": 39.9,
    "sources": [
-    "https://www.idealo.fr/prix/207131236/maison-asrar-vanilla-voyage-eau-de-parfum-100ml.html"
+    "https://www.notino.fr/maison-asrar/vanilla-voyage-eau-de-parfum-mixte/",
+    "https://muscorient.com/fr/maison-asrar/1140-vanilla-voyage-maison-asrar.html",
+    "https://pds-shop.fr/products/eau-de-parfum-vanilla-voyage-maison-asrar-100-ml"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "notes erronées sur DP : « Saffron, Red Fruits / Vanilla, Tonka Bean, Chocolate, Rose / Ambergris, Musk, Moss » ne correspond pas à la pyramide du site officiel Maison Asrar ; notes officielles substituées",
    "le « 59 € » barré vu sur la page appartient à un produit voisin : prix_dp_barre laissé à null",
-   "prix DP 49,00 € contre une médiane marché ~31,90 € (+54 %)"
+   "prix_dp 49,00 € contre une médiane française de 39,90 € (+23 %)"
   ],
   "releve": "2026-09-05"
  },
@@ -3878,7 +3877,8 @@
    "format douteux : toutes les références marché « Moroccan Lily – My Perfumes » relevées sont un parfum d'intérieur / spray d'ambiance 500 ml (houss-parfum.com 9,99 €, souk-dubai.com, yk-boutique.com), et non une eau de parfum. Aucun prix comparable pour un EDP : marche.n = 0 et verdict_prix = null",
    "notes reprises de la fiche DP faute de source officielle ou revendeur recoupé (règle 2b) ; la pyramide du spray d'intérieur 500 ml est différente (bergamote/pamplemousse – fleur de lys/jasmin/rose des sables – cèdre/ambre/musc)",
    "contenance non indiquée sur la fiche DP",
-   "coquille dans le slug DP : « mococcan » au lieu de « moroccan »"
+   "coquille dans le slug DP : « mococcan » au lieu de « moroccan »",
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -3921,12 +3921,11 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 27.59,
+   "n": 2,
+   "min": 34.9,
    "max": 37.16,
-   "median": 34.9,
+   "median": 36.03,
    "sources": [
-    "https://tripletraders.com/products/intense-oud-by-arabiyat-my-perfumes-100ml-3-4-fl-oz",
     "https://www.encens-store.fr/produit/eau-de-parfum-intense-oud/",
     "https://asasa.fr/arabiyat-intense-oud-3-4-oz-eau-de-parfum-spray-unisex/"
    ]
@@ -3935,7 +3934,6 @@
   "anomalies": [
    "notes erronées sur la fiche DP : DP affiche héliotrope/romarin – cardamome/géranium – musc/patchouli/ambre/vanille ; la fiche officielle Arabiyat donne bergamote/litsée citronnée – ylang/anis/pomme/cuir/armoise – caramel/musc/cèdre/patchouli/notes animales/pin/vétiver",
    "contenance absente de la fiche DP ; le produit officiel est un 100 ml",
-   "prix marché : Triple Traders relevé à 29,99 USD, converti à 27,59 EUR (taux retenu 1 USD = 0,92 EUR)",
    "Ligne « Arabiyat » / « Arabiyat Prestige », marques de la maison My Perfumes (myperfumes.ae) ; la marque affichée par DP reste exacte au niveau du fabricant."
   ],
   "releve": "2026-09-05"
@@ -3973,21 +3971,19 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 10.98,
-   "max": 29.43,
-   "median": 27.6,
+   "n": 2,
+   "min": 29.9,
+   "max": 29.9,
+   "median": 29.9,
    "sources": [
-    "https://abodeef.com/product/arabiyat-intense-musk-edp-for-unisex-100ml/",
-    "https://www.anabis.com/us/My-Perfumes-Intense-Musk.html?currency=EUR",
-    "https://tripletraders.com/products/intense-musk-eau-de-parfum-by-arabiyat-my-perfumes-100ml-3-4-fl-oz"
+    "https://encens-store.fr/produit/eau-de-parfum-intense-musk/",
+    "https://muscorient.com/fr/my-perfumes/348-intense-musk-eau-de-parfum-my-perfumes.html"
    ]
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": "agressif",
   "anomalies": [
    "la fiche DP ne donne qu'une seule note (« Musc » en cœur) ; pyramide complète reprise de la fiche officielle Arabiyat : violette/héliotrope – rose/muguet/cèdre – musc blanc/ambre gris/pêche",
    "contenance absente de la fiche DP ; le produit officiel est un 100 ml",
-   "prix marché convertis : abodeef 4,500 BHD ≈ 10,98 EUR, Triple Traders 31,99 USD ≈ 29,43 EUR (taux retenus 1 BHD = 2,44 EUR, 1 USD = 0,92 EUR)",
    "Ligne « Arabiyat » / « Arabiyat Prestige », marques de la maison My Perfumes (myperfumes.ae) ; la marque affichée par DP reste exacte au niveau du fabricant."
   ],
   "releve": "2026-09-05"
@@ -4026,20 +4022,19 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 25.0,
-   "max": 34.3,
-   "median": 27.59,
+   "min": 29.9,
+   "max": 41.99,
+   "median": 39.9,
    "sources": [
-    "https://arabianscents.net/product/apa-de-parfum-arabiyat-prestige-blueberry-musk-unisex/",
-    "https://orientalaromas.com/products/blueberry-musk-unisex-edp-100ml-3-4ozby-arabiyat-prestige",
-    "https://www.anabis.com/us/My-Perfumes-Arabiyat-Blueberry-Musk.html?currency=EUR"
+    "https://muscorient.com/fr/arabiyat-prestige/922-blueberry-musk-my-perfumes.html",
+    "https://oscent.fr/produit/blueberry-musk-eau-de-parfum-100ml-arabiyat-prestige/",
+    "https://www.parfumsmoinschers.com/produit/56495-blueberry-musk-arabiyat-prestige-eau-de-parfum-spray-100-ml.html"
    ]
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": "agressif",
   "anomalies": [
    "nom tronqué sur DP : le produit réel est « Blueberry Musk », ligne Arabiyat Prestige (My Perfumes)",
    "notes erronées sur la fiche DP : DP affiche pois de senteur/bergamote/mandarine/pamplemousse/citron – coing/freesia/géranium/pêche/notes vertes/gardénia/fruit de la passion – rose de Damas/rose/patchouli/musc/cuir/violette ; la fiche officielle donne mûre – rose/lavande/freesia – patchouli/framboise/vanille/mousse",
-   "prix marché : Oriental Aromas relevé à 29,99 USD, converti à 27,59 EUR (taux retenu 1 USD = 0,92 EUR)",
    "Ligne « Arabiyat » / « Arabiyat Prestige », marques de la maison My Perfumes (myperfumes.ae) ; la marque affichée par DP reste exacte au niveau du fabricant."
   ],
   "releve": "2026-09-05"
@@ -4078,23 +4073,23 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 25.0,
-   "max": 54.57,
-   "median": 25.75,
+   "min": 16.58,
+   "max": 46.99,
+   "median": 39.9,
    "sources": [
-    "https://arabianscents.net/product/eau-de-parfum-arabiyat-prestige-cranberry-musk-unisex-100-ml/",
-    "https://orientalaromas.com/collections/new-arrival/products/cranberry-musk-unisex-edp-100ml-3-4oz-by-arabiyat-prestige",
-    "https://ch.europacosmetica.com/en/products/arabiyat-prestige-arabiyat-prestige-cranberry-musk-eau-de-parfum-spray-unisex-100ml-3-4oz"
+    "https://www.idealo.fr/prix/209519000/arabiyat-prestige-cranberry-musk-eau-de-parfum-100ml.html",
+    "https://oscent.fr/produit/cranberry-musk-eau-de-parfum-100ml-arabiyat-prestige/",
+    "https://www.parfumsmoinschers.com/produit/67383-cranberry-musk-arabiyat-prestige-eau-de-parfum-spray-100-ml.html"
    ]
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": "agressif",
   "anomalies": [
    "nom tronqué sur DP : le produit réel est « Cranberry Musk », ligne Arabiyat Prestige (My Perfumes)",
    "notes erronées sur la fiche DP : DP affiche bergamote/iris – violette/patchouli/jasmin – cèdre/mousse/musc blanc/vanille ; la fiche officielle donne freesia/lotus/canneberge – musc/jasmin/poire – vanille/santal",
    "genre : DP classe le produit en Homme, la fiche officielle le donne Unisexe",
    "contenance absente de la fiche DP ; le produit officiel est un 100 ml",
-   "prix marché convertis : Oriental Aromas 27,99 USD ≈ 25,75 EUR, Europa Cosmetica 51,00 CHF ≈ 54,57 EUR (taux retenus 1 USD = 0,92 EUR, 1 CHF = 1,07 EUR)",
-   "Ligne « Arabiyat » / « Arabiyat Prestige », marques de la maison My Perfumes (myperfumes.ae) ; la marque affichée par DP reste exacte au niveau du fabricant."
+   "Ligne « Arabiyat » / « Arabiyat Prestige », marques de la maison My Perfumes (myperfumes.ae) ; la marque affichée par DP reste exacte au niveau du fabricant.",
+   "écart marché FR très large : 16,58 € (parfumsetmoi.fr via idealo.fr) contre 46,99 € (parfumsmoinschers.com) pour le même 100 ml"
   ],
   "releve": "2026-09-05"
  },
@@ -4131,21 +4126,17 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 6.88,
-   "max": 10.32,
-   "median": 10.32,
-   "sources": [
-    "https://www.intenseoud.com/products/al-ghadeer-air-freshener-300-ml-10-oz-by-nabeel",
-    "https://abeerfragrance.com/products/al-ghadeer-air-freshener-300ml-by-nabeel",
-    "https://tripletraders.com/products/al-nabeel-air-freshner-al-ghadeer-count-1-air-freshener-grab-varieties-flavors"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "agressif",
+  "verdict_prix": null,
   "anomalies": [
    "contenance non indiquée sur la fiche DP ; le seul freshner Al Ghadeer référencé par Nabeel est le 300 ml, retenu comme comparable",
-   "prix marché relevés en USD (11,99 / 11,99 / 7,99) et convertis au taux 1 EUR = 1,16143 USD (tradingeconomics, 04/09/2026)",
-   "notes DP (Tea Rose, Agarwood Oud, Spicy Notes) divergentes de la pyramide officielle Nabeel (Lemon/Orange/Jasmine - Rose/Patchouli/Sandalwood - Vanilla/Musk) : notes officielles retenues"
+   "notes DP (Tea Rose, Agarwood Oud, Spicy Notes) divergentes de la pyramide officielle Nabeel (Lemon/Orange/Jasmine - Rose/Patchouli/Sandalwood - Vanilla/Musk) : notes officielles retenues",
+   "aucun prix français trouvé : le désodorisant Al Ghadeer 300 ml n'est référencé que par des boutiques américaines (intenseoud.com, tripletraders.com, abeerfragrance.com), en USD"
   ],
   "releve": "2026-09-05"
  },
@@ -4192,20 +4183,20 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
+   "n": 2,
    "min": 52.99,
-   "max": 69.0,
-   "median": 56.33,
+   "max": 56.33,
+   "median": 54.66,
    "sources": [
     "https://maisondesfragrances.fr/collections/nabeel",
-    "https://www.profumomaniaforever.com/en/prodotto/nabeel-crown-of-emirates-eau-de-parfum-100-ml-edp-unisex-spray/",
     "https://onebioshop.com/en/products/nabeel-crown-of-emirates-eau-de-parfum-spray-100-ml"
    ]
   },
   "verdict_prix": "aligné",
   "anomalies": [
    "slug erroné sur le site : 'fr-nabeel-crow-of-emirates' (crow) au lieu de crown",
-   "genre affiché 'Homme' sur DP ; Nabeel et les revendeurs présentent Crown of Emirates comme unisexe"
+   "genre affiché 'Homme' sur DP ; Nabeel et les revendeurs présentent Crown of Emirates comme unisexe",
+   "seulement deux prix français relevés (maisondesfragrances.fr, onebioshop.com) : médiane calculée sur 2 valeurs"
   ],
   "releve": "2026-09-05"
  },
@@ -4242,23 +4233,22 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 17.21,
-   "max": 30.13,
-   "median": 27.0,
+   "n": 2,
+   "min": 21.95,
+   "max": 27.0,
+   "median": 24.48,
    "sources": [
-    "https://onebioshop.com/en/products/nabeel-gold-24k-eau-de-parfum-spray-100-ml",
-    "https://www.intenseoud.com/products/gold-24k-edp-100-ml-3-4-oz-by-nabeel",
-    "https://tripletraders.com/products/gold-24k-eau-de-parfum-by-nabeel-100ml-3-3-fl-oz"
+    "https://maisondesfragrances.fr/products/nabeel-trendy-collection-gold-24k-eau-de-parfum-spray-100ml",
+    "https://onebioshop.com/en/products/nabeel-gold-24k-eau-de-parfum-spray-100-ml"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "nom officiel Nabeel : 'Gold 24K' (DP affiche '24K Gold') ; slug DP 'gold-24h' erroné",
    "les 'notes' DP (Épicé, Fruité, Bois de Santal, Jasmin, Patchouli, Bergamote) sont des familles olfactives, sans rapport avec la pyramide officielle : pyramide officielle retenue",
-   "prix marché : 27,00 EUR + 34,99 USD et 19,99 USD convertis au taux 1 EUR = 1,16143 USD (tradingeconomics, 04/09/2026)",
    "genre affiché 'Homme' alors que la fiche DP décrit un parfum mixte",
-   "le '59 EUR' visible sur la page ne barre pas ce produit : il appartient à un produit lié (Vanilla Voyage - Maison Asrar), donc prix_dp_barre = null"
+   "le '59 EUR' visible sur la page ne barre pas ce produit : il appartient à un produit lié (Vanilla Voyage - Maison Asrar), donc prix_dp_barre = null",
+   "seulement deux prix français relevés (maisondesfragrances.fr, onebioshop.com), tous deux en rupture au moment du relevé"
   ],
   "releve": "2026-09-05"
  },
@@ -4306,8 +4296,9 @@
   "verdict_prix": null,
   "anomalies": [
    "ni contenance ni format (roll-on, spray, huile) indiqués sur la fiche DP (ref DP-NAB-97215) : aucun comparable marché fiable, Nabeel commercialisant plusieurs formats voyage (6 ml roll-on notamment)",
-   "déclinaison distincte des autres Al Ghadeer du catalogue (freshner 6,00 EUR / huile 20 ml 29,50 EUR / huile 100 ml 45,00 EUR)",
-   "notes reprises de la fiche DP : le site officiel Nabeel ne publie pas de page pour un format voyage Al Ghadeer"
+   "déclinaison distincte des autres Al Ghadeer du catalogue (freshner, huile 20 ml, huile 100 ml)",
+   "notes reprises de la fiche DP : le site officiel Nabeel ne publie pas de page pour un format voyage Al Ghadeer",
+   "aucun prix français trouvé"
   ],
   "releve": "2026-09-05"
  },
@@ -4345,20 +4336,18 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 21.52,
+   "n": 1,
+   "min": 68.43,
    "max": 68.43,
-   "median": 35.0,
+   "median": 68.43,
    "sources": [
-    "https://perfumerialaura.com/en/nabeel/",
-    "https://onebioshop.com/en/products/nabeel-dahn-al-oud-amiri-eau-de-parfum-spray-100-ml",
-    "https://www.intenseoud.com/products/dahn-al-oud-amiri-edp-100-ml-3-4-oz-by-nabeel-1"
+    "https://onebioshop.com/en/products/nabeel-dahn-al-oud-amiri-eau-de-parfum-spray-100-ml"
    ]
   },
   "verdict_prix": "agressif",
   "anomalies": [
    "la fiche DP ne donne qu'une ligne 'coeur' (Cuir, Patchouli, Bergamote, Vanille) mélangeant les trois étages : pyramide officielle Nabeel retenue",
-   "3e prix marché relevé en USD (24,99) et converti au taux 1 EUR = 1,16143 USD (tradingeconomics, 04/09/2026)"
+   "un seul prix français retenu (onebioshop.com) : médiane peu robuste ; une offre existe sur cdiscount.com mais la page ne délivre aucun prix lisible"
   ],
   "releve": "2026-09-05"
  },
@@ -4408,19 +4397,19 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
+   "n": 2,
    "min": 44.95,
-   "max": 69.0,
-   "median": 52.99,
+   "max": 52.99,
+   "median": 48.97,
    "sources": [
-    "https://perfumerialaura.com/en/nabeel/",
     "https://maisondesfragrances.fr/collections/nabeel",
     "https://www.parfumsmoinschers.com/produit/63252-nader-nabeel-eau-de-parfum-spray-100-ml.html"
    ]
   },
   "verdict_prix": "aligné",
   "anomalies": [
-   "genre affiché 'Homme' sur DP ; Nabeel et les revendeurs européens présentent Nader comme unisexe"
+   "genre affiché 'Homme' sur DP ; Nabeel et les revendeurs européens présentent Nader comme unisexe",
+   "seulement deux prix français relevés (maisondesfragrances.fr, parfumsmoinschers.com) : médiane calculée sur 2 valeurs"
   ],
   "releve": "2026-09-05"
  },
@@ -4457,21 +4446,17 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 21.52,
-   "max": 47.35,
-   "median": 21.52,
-   "sources": [
-    "https://www.intenseoud.com/products/al-ghadeer-unisex-cpo-concentrated-perfume-oil-20-ml-0-7-oz-by-nabeel",
-    "https://tripletraders.com/products/al-ghadeer-concentrated-perfume-oil-20ml-by-nabeel",
-    "https://8afragrance.com/products/al-ghadeer-concentrated-perfume-oil-20ml-by-nabeel-by-nabee"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
    "les 'notes' DP (Boisé, Oud, Épicé, Chyprée) sont des familles olfactives : pyramide officielle Nabeel retenue",
-   "prix marché relevés en USD (24,99 / 24,99 / 54,99) et convertis au taux 1 EUR = 1,16143 USD (tradingeconomics, 04/09/2026)",
-   "déclinaison distincte du freshner, du format voyage et du 100 ml du même catalogue"
+   "déclinaison distincte du freshner, du format voyage et du 100 ml du même catalogue",
+   "aucun prix français trouvé : seule une offre cdiscount.com existe pour l'huile 20 ml, mais sa page ne délivre aucun prix lisible ; les autres revendeurs sont américains et affichent en USD"
   ],
   "releve": "2026-09-05"
  },
@@ -4522,19 +4507,19 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 69.0,
+   "n": 2,
+   "min": 71.95,
    "max": 80.82,
-   "median": 71.95,
+   "median": 76.38,
    "sources": [
-    "https://perfumerialaura.com/en/nabeel/",
     "https://maisondesfragrances.fr/collections/nabeel",
     "https://onebioshop.com/en/products/nabeel-ocean-eau-de-parfum-spray-100-ml"
    ]
   },
   "verdict_prix": "agressif",
   "anomalies": [
-   "la fiche DP liste plusieurs dizaines de notes par étage (agrégat manifeste) : pyramide officielle Nabeel retenue"
+   "la fiche DP liste plusieurs dizaines de notes par étage (agrégat manifeste) : pyramide officielle Nabeel retenue",
+   "seulement deux prix français relevés (maisondesfragrances.fr, onebioshop.com), tous deux en rupture au moment du relevé"
   ],
   "releve": "2026-09-05"
  },
@@ -4601,16 +4586,17 @@
    "n": 3,
    "min": 36.99,
    "max": 79.99,
-   "median": 69.0,
+   "median": 53.76,
    "sources": [
-    "https://perfumerialaura.com/en/nabeel/irth-100-ml-nabeel.html",
-    "https://maisondesfragrances.fr/collections/nabeel",
-    "https://www.parfumsmoinschers.com/produit/67176-irth-nabeel-eau-de-parfum-spray-100-ml.html"
+    "https://www.parfumsmoinschers.com/produit/67176-irth-nabeel-eau-de-parfum-spray-100-ml.html",
+    "https://www.idealo.fr/prix/203313106/nabeel-irth-eau-de-parfum-100ml.html",
+    "https://maisondesfragrances.fr/collections/nabeel"
    ]
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": "trop cher",
   "anomalies": [
-   "la fiche DP présente toutes les notes sur une seule ligne 'coeur' : pyramide officielle Nabeel retenue"
+   "la fiche DP présente toutes les notes sur une seule ligne 'coeur' : pyramide officielle Nabeel retenue",
+   "forte dispersion des prix français sur le 100 ml : de 36,99 € (parfumsmoinschers.com) à 79,99 € (maisondesfragrances.fr)"
   ],
   "releve": "2026-09-05"
  },
@@ -4661,7 +4647,7 @@
   },
   "verdict_prix": null,
   "anomalies": [
-   "aucun revendeur occidental identifié pour le format huile 100 ml (bidon aluminium, Souq Collection) : aucun prix marché relevable, verdict impossible",
+   "aucun prix français trouvé pour le format huile 100 ml (bidon aluminium, Souq Collection)",
    "la fiche DP reprend les notes du format 20 ml alors que Nabeel publie une pyramide différente pour le 100 ml : pyramide officielle du 100 ml retenue",
    "déclinaison distincte du freshner, du format voyage et de l'huile 20 ml du même catalogue"
   ],
@@ -4714,22 +4700,18 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 22.38,
-   "max": 31.85,
-   "median": 30.03,
-   "sources": [
-    "https://tripletraders.com/products/nasaem-unisex-eau-de-parfum-50ml-by-nabeel",
-    "https://8afragrance.com/products/nasaem-perfume-spray-by-nabeel-50ml-by-nabeel",
-    "https://www.khanelkhaliliusa.com/products/nasaem-50ml"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "agressif",
+  "verdict_prix": null,
   "anomalies": [
    "contenance non indiquée sur la fiche DP ; le seul format EDP Nasaem chez Nabeel est le 50 ml, retenu comme comparable",
    "notes DP (Rose, Litchi, White Musk / Peach, Pink Pepper, Jasmine / Vanilla, Musk, Agarwood Oud) sans rapport avec la pyramide officielle Nabeel : pyramide officielle retenue",
-   "prix marché relevés en USD (25,99 / 36,99 / 34,88) et convertis au taux 1 EUR = 1,16143 USD (tradingeconomics, 04/09/2026)",
-   "genre affiché 'Homme' ; Nabeel et les revendeurs présentent Nasaem comme unisexe"
+   "genre affiché 'Homme' ; Nabeel et les revendeurs présentent Nasaem comme unisexe",
+   "aucun prix français trouvé : offres repérées chez amazon.fr et depot-dubai.com mais aucun prix EUR vérifiable ; les autres revendeurs sont américains et affichent en USD"
   ],
   "releve": "2026-09-05"
  },
@@ -4759,23 +4741,19 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 2,
-   "min": 74.4,
-   "max": 90.3,
-   "median": 82.35,
-   "sources": [
-    "https://www.firstcry.ae/laya/laya-by-ne-emah-edp-100ml/4f471ae124bb1/product-detail",
-    "https://arabiascents.com/products/laya-edp-100-ml"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
-   "prix Dubai Parfumerie de 499,00 € très largement au-dessus du marché relevé (74 € à 90 €) : anomalie tarifaire majeure à vérifier",
    "pyramide incomplète sur la fiche : tête et fond absentes, seul le cœur est renseigné (laissés à [] et non inventés)",
    "contenance non indiquée sur la fiche (FR et EN vérifiées) alors que tous les revendeurs listent 100 ml : laissée à null",
    "site officiel neemah.com injoignable (certificat TLS invalide via WebFetch, navigation refusée via le navigateur) : notes non vérifiables auprès de la marque",
-   "seulement 2 prix concurrents exploitables (marche.n = 2)",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "aucun prix français trouvé : Laya n'est référencé ni sur notino.fr (marque Ne'emah absente du catalogue), ni chez les boutiques spécialisées françaises consultées (Al Najah, Safwa Boutique, Muscorient, Encens Store) ; les seules offres identifiées sont hors France (firstcry.ae, arabiascents.com, oriental-fragrance.com) et l'annonce ubuy.fr est en rupture sans prix affiché",
+   "prix_dp de 499,00 € impossible à qualifier faute de comparateur français : verdict null, l'écart avec les offres étrangères (≈75-90 €) reste à instruire hors médiane"
   ],
   "releve": "2026-09-05"
  },
@@ -4810,20 +4788,17 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 1,
-   "min": 43.0,
-   "max": 43.0,
-   "median": 43.0,
-   "sources": [
-    "https://arabiascents.com/products/laya-body-spray-100-ml"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": null,
   "anomalies": [
-   "un seul prix concurrent trouvé (marche.n = 1) : verdict à prendre avec prudence",
    "contenance non indiquée sur la fiche alors que les revendeurs listent 100 ml : laissée à null",
    "site officiel neemah.com injoignable (certificat TLS invalide via WebFetch, navigation refusée via le navigateur) : notes non vérifiables auprès de la marque",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "aucun prix français trouvé : aucune brume corporelle Ne'emah Laya distribuée par un marchand français consulté — marche.n = 0, verdict null"
   ],
   "releve": "2026-09-05"
  },
@@ -4855,22 +4830,17 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 26.44,
-   "max": 68.99,
-   "median": 40.24,
-   "sources": [
-    "https://imperian.co.uk/products/osma-a-perfume-75ml-edp-osma",
-    "https://olvio.co.uk/products/osma-a-perfume-75ml-edp-osma",
-    "https://www.theperfumestation.co.uk/osma-perfumes"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": null,
   "anomalies": [
    "notes erronées sur le site : Dubai Parfumerie affiche Lemon/Mint/Bergamot – Nutmeg/White Ginger Lily/Geranium/Lavender – Vetiver/Labdanum/Cloves, alors que le site officiel osmaperfumes.com donne Pineapple – Coconut – Vanilla ; notes officielles retenues",
    "concentration erronée sur le site : Dubai Parfumerie indique « Eau de Cologne », le site officiel indique Eau de parfum",
-   "le 3e prix relevé (theperfumestation.co.uk, 59,99 GBP) porte sur le format 150 ml, faute de 3e offre en 75 ml",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "aucun prix français trouvé : Osma Perfumes n'est distribuée par aucun marchand livrant en France (offres uniquement britanniques, saoudiennes, suisses ou américaines)"
   ],
   "releve": "2026-09-05"
  },
@@ -4902,21 +4872,17 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 51.59,
-   "max": 75.59,
-   "median": 71.29,
-   "sources": [
-    "https://filledwithbarakah.com/products/bonsoir-eau-de-parfum-150ml-by-osma",
-    "https://www.myroyalmusk.com/products/osma-bonsoir-eau-de-parfum",
-    "https://www.oudstore.com/products/copy-osma-a-edp-perfume-by-osma-150ml"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "agressif",
+  "verdict_prix": null,
   "anomalies": [
    "notes erronées sur le site : Dubai Parfumerie affiche pour Bonsoir exactement la même pyramide que pour Osma S (Plum/Cinnamon – Chinese Osmanthus/Violet/Indian Jasmine – Madagascar Vanilla/Leather/Indonesian Patchouli Leaf) : duplication de données côté Dubai Parfumerie",
    "le site officiel osmaperfumes.com donne Grapefruit – Leather – Cedarwood ; notes officielles retenues",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "aucun prix français trouvé : Osma Perfumes n'est distribuée par aucun marchand livrant en France (offres uniquement britanniques, saoudiennes, suisses ou américaines)"
   ],
   "releve": "2026-09-05"
  },
@@ -4948,20 +4914,16 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 27.42,
-   "max": 51.59,
-   "median": 44.72,
-   "sources": [
-    "https://www.fragrancex.com/products/osma/osma-citrus-f-parfum-perfume",
-    "https://us.europacosmetica.com/products/osma-citrus-f-parfum-parfum-spray-75ml-2-5oz",
-    "https://www.perfume-valley.com/products/citrus-f-by-osma-perfumes-unisex-75ml-2-5oz-eau-de-parfum"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": null,
   "anomalies": [
    "notes erronées sur le site : Dubai Parfumerie affiche Basil/Bergamot/Green Notes/Mint/Petitgrain – Geranium/Jasmine/Magnolia/Muguet/Tuberose – Atlas Cedar/Cedar/Musk/Sandalwood/Vetiver, alors que le site officiel osmaperfumes.com donne Citrus – Rose – White Musk ; notes officielles retenues",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "aucun prix français trouvé : Osma Perfumes n'est distribuée par aucun marchand livrant en France (offres uniquement britanniques, saoudiennes, suisses ou américaines)"
   ],
   "releve": "2026-09-05"
  },
@@ -4993,22 +4955,18 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 2,
-   "min": 30.1,
-   "max": 74.96,
-   "median": 52.53,
-   "sources": [
-    "https://global.goldenscent.com/en/p/osma-osma-s-eau-de-parfum-for-women.html",
-    "https://picclick.co.uk/Osma-S-150-ML-Perfume-Long-Lasting-Fragrance-177944209417.html"
-   ]
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
   },
-  "verdict_prix": "aligné",
+  "verdict_prix": null,
   "anomalies": [
    "notes erronées sur le site : pyramide identique à celle affichée pour Bonsoir sur Dubai Parfumerie (duplication de données)",
    "le site officiel osmaperfumes.com donne Pink Pepper – Sambac Jasmine – Sandalwood ; notes officielles retenues",
    "contenance divergente : 75 ml sur Dubai Parfumerie, 150 ml sur la fiche officielle osmaperfumes.com ; contenance du site conservée",
-   "seulement 2 prix concurrents exploitables (marche.n = 2)",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "aucun prix français trouvé : Osma Perfumes n'est distribuée par aucun marchand livrant en France (offres uniquement britanniques, saoudiennes, suisses ou américaines)"
   ],
   "releve": "2026-09-05"
  },
@@ -5058,17 +5016,18 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 18.99,
-   "max": 20.5,
-   "median": 19.61,
+   "min": 20.5,
+   "max": 29.9,
+   "median": 23.9,
    "sources": [
-    "https://www.idealo.fr/prix/205114920/paris-corner-perfumes-khair-pistachio-eau-de-parfum-100ml.html"
+    "https://www.notino.fr/paris-corner/oriental-collection-khair-pistachio-eau-de-parfum-mixte/",
+    "https://pds-shop.fr/products/eau-de-parfum-khair-pistachio-paris-corner-100-ml",
+    "https://muscorient.com/fr/paris-corner/840-khair-pistachio-paris-corner.html"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
-   "notes incomplètes sur dubaiparfumerie.com : seul un cœur « Jasmin, Bergamote » est affiché, alors que le site officiel Paris Corner donne une pyramide complète (bergamote est une note de tête) ; notes remplacées par celles du site officiel",
-   "prix DP 25,00 € contre une médiale marché ~19,61 € (relevé idealo.fr, 8 marchands)"
+   "notes incomplètes sur dubaiparfumerie.com : seul un cœur « Jasmin, Bergamote » est affiché, alors que le site officiel Paris Corner donne une pyramide complète (bergamote est une note de tête) ; notes remplacées par celles du site officiel"
   ],
   "releve": "2026-09-05"
  },
@@ -5111,21 +5070,22 @@
   "dispo": false,
   "marche": {
    "n": 3,
-   "min": 28.6,
+   "min": 28.9,
    "max": 34.9,
-   "median": 28.9,
+   "median": 34.9,
    "sources": [
-    "https://www.anabis.com/us/Paris-Corner-Emir-Lueur-D-Espoir-Ambre.html",
     "https://pds-shop.fr/products/eau-de-parfum-lueur-despoir-ambre-emir-100-ml",
-    "https://amiraloud.fr/products/emir-lueur-d-espoir-ambre-100ml-eau-de-parfum-amir-al-oud"
+    "https://amiraloud.fr/products/emir-lueur-d-espoir-ambre-100ml-eau-de-parfum-amir-al-oud",
+    "https://panierexpress.fr/products/lueur-d-espoir-ambre-100ml-emir-eau-de-parfum"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "marque : le site affiche « Paris Corner » ; la marque réellement portée par le flacon est Emir (ligne du groupe Paris Corner) — confirmé par pds-shop.fr, tripletraders.com et anabis.com",
    "produit absent du catalogue pariscornerperfumes.com (404) ; notes prises chez un revendeur et recoupées sur anabis.com (framboise, rose, géranium, ambre, encens, safran, oud)",
    "notes DP (« Bergamote, Vanille, Cannelle » en cœur) non retrouvées sur aucune source : écartées",
-   "en rupture de stock sur dubaiparfumerie.com"
+   "en rupture de stock sur dubaiparfumerie.com",
+   "prix relevés sous la marque « Emir Lueur d'Espoir Ambre » ; le comparateur pds-shop.fr est affiché épuisé au moment du relevé"
   ],
   "releve": "2026-09-05"
  },
@@ -5163,17 +5123,18 @@
   "marche": {
    "n": 3,
    "min": 16.86,
-   "max": 18.27,
-   "median": 17.2,
+   "max": 24.9,
+   "median": 22.1,
    "sources": [
-    "https://www.idealo.fr/prix/207125937/paris-corner-perfumes-taskeen-caramel-cascade-eau-de-parfum.html"
+    "https://www.parfumsetmoi.fr/paris-corner-taskeen-caramel-cascade-eau-de-parfum-femme-100-ml_z985342/",
+    "https://www.notino.fr/paris-corner/oriental-collection-taskeen-caramel-cascade-eau-de-parfum-pour-femme/",
+    "https://pds-shop.fr/products/eau-de-parfum-taskeen-caramel-cascade-paris-corner-100-ml"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "fiche en doublon avec /produits/taskeen-caramel-cascade-2/ (même produit, même prix)",
-   "DP omet « Amber » en note de fond, présente sur le site officiel",
-   "prix DP 35,00 € contre une médiane marché ~17,20 € : plus du double"
+   "DP omet « Amber » en note de fond, présente sur le site officiel"
   ],
   "releve": "2026-09-05"
  },
@@ -5219,16 +5180,16 @@
   "marche": {
    "n": 3,
    "min": 18.06,
-   "max": 22.53,
-   "median": 18.55,
+   "max": 22.8,
+   "median": 22.52,
    "sources": [
-    "https://www.idealo.fr/prix/205114951/paris-corner-perfumes-december-vanilla-eau-de-parfum-85ml.html"
+    "https://www.parfumsetmoi.fr/paris-corner-december-vanilla-eau-de-parfum-unisexe-85-ml_z1009921/",
+    "https://www.notino.fr/paris-corner/oriental-collection-december-vanilla-eau-de-parfum-mixte/",
+    "https://mjbazar.fr/en/products/parfum-december-vanilla-paris-corner-85ml"
    ]
   },
   "verdict_prix": "trop cher",
-  "anomalies": [
-   "prix DP 35,00 € contre une médiane marché ~18,55 €"
-  ],
+  "anomalies": [],
   "releve": "2026-09-05"
  },
  {
@@ -5265,18 +5226,20 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 19.31,
-   "max": 21.9,
-   "median": 19.91,
+   "min": 18.84,
+   "max": 42.99,
+   "median": 24.9,
    "sources": [
-    "https://www.idealo.fr/prix/205114924/paris-corner-perfumes-rifaaqat-eau-de-parfum-85ml.html"
+    "https://www.parfumsetmoi.fr/paris-corner-rifaaqat-eau-de-parfum-unisexe-85-ml_z936636/",
+    "https://pds-shop.fr/products/eau-de-parfum-rifaaqat-paris-corner-85-ml",
+    "https://www.parfumsmoinschers.com/produit/66095-rifaaqat-paris-corner-eau-de-parfum-spray-85-ml.html"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "notes erronées sur DP : « Rose, Safran, Vanille, Poivré » en cœur ne correspond pas à la pyramide officielle (pas de rose) ; notes officielles substituées",
    "la vraie pyramide de Rifaaqat est celle que DP attribue par erreur à Choco Cult (poivre noir / elemi / oliban / safran)",
-   "prix DP 30,00 € contre une médiane marché ~19,91 €"
+   "forte dispersion des prix français relevés sur le 85 ml : de 18,84 € (parfumsetmoi.fr) à 42,99 € (parfumsmoinschers.com)"
   ],
   "releve": "2026-09-05"
  },
@@ -5317,22 +5280,20 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 30.4,
-   "max": 45.5,
-   "median": 31.3,
+   "n": 1,
+   "min": 34.9,
+   "max": 34.9,
+   "median": 34.9,
    "sources": [
-    "https://royalsperfume.com/products/choco-cult-ministry-of-gourmand-by-paris-corner-edp-100ml",
-    "https://www.anabis.com/us/Ministry-of-Gourmand-Choco-Cult-EdP-100ml.html",
-    "https://www.orientfragance.com/en/products/paris-corner-choco-cult-100ml-eau-de-parfum-perfume-unisex"
+    "https://muscorient.com/fr/ministry-of-gourmand/1161-eau-de-parfum-choco-cult-ministry-of-gourmand-by-paris-corner.html"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "notes erronées sur DP : la pyramide affichée (Black Pepper, Elemi, Pink Pepper / Olibanum, Saffron / Vanilla, Cedarwood) est en réalité celle de Rifaaqat ; notes officielles Paris Corner substituées",
    "commercialisé sous la sous-ligne « Ministry of Gourmand » de Paris Corner ; certains revendeurs (anabis) référencent « Ministry of Gourmand » comme marque",
    "le « 59 € » barré vu sur la page appartient à un produit voisin, pas à Choco Cult : prix_dp_barre laissé à null",
-   "prix DP 39,00 € contre une médiane marché ~31,30 €"
+   "un seul prix français trouvé (muscorient.com, 100 ml) : médiane peu robuste ; aucun autre marchand livrant en France identifié pour cette référence"
   ],
   "releve": "2026-09-05"
  },
@@ -5370,17 +5331,20 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 18.24,
-   "max": 18.99,
-   "median": 18.62,
+   "min": 22.6,
+   "max": 29.9,
+   "median": 24.99,
    "sources": [
-    "https://www.idealo.fr/prix/205452894/paris-corner-perfumes-khair-confection-eau-de-parfum-100ml.html"
+    "https://www.notino.fr/paris-corner/oriental-collection-khair-confection-eau-de-parfum-mixte/",
+    "https://alnajahboutique.com/produit/khair-confection-paris-corner-eau-de-parfum-100-ml/",
+    "https://pds-shop.fr/products/eau-de-parfum-khair-confection-paris-corner-100-ml"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "contenance non affichée sur la fiche dubaiparfumerie.com : laissée à null (les revendeurs et idealo réfèrent un 100 ml, non confirmé par DP)",
-   "prix DP 30,00 € contre une médiane marché ~18,62 €"
+   "faute de contenance sur la fiche DP, les comparateurs français retenus portent tous sur le format 100 ml",
+   "alnajahboutique.com : boutique en .com mais site en français, prix en EUR et stock/expédition depuis la France — retenue à ce titre"
   ],
   "releve": "2026-09-05"
  },
@@ -5419,18 +5383,19 @@
   "dispo": true,
   "marche": {
    "n": 3,
-   "min": 21.3,
-   "max": 28.82,
-   "median": 24.9,
+   "min": 34.9,
+   "max": 54.9,
+   "median": 43.9,
    "sources": [
-    "https://www.idealo.fr/prix/206253893/paris-corner-perfumes-marshmallow-blush-eau-de-parfum-100ml.html"
+    "https://www.notino.fr/paris-corner/marshmallow-blush-eau-de-parfum-mixte/",
+    "https://pds-shop.fr/products/eau-de-parfum-marshmallow-blush-paris-corner-100-ml",
+    "https://prestigesenteur.fr/products/marshmallow-blush-paris-corner"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "notes entièrement erronées sur DP : la pyramide affichée (Citrus, Bergamot, Artemisia, Lemon, Ylang-Ylang, Leather, Incense / Ginger, Sweet Orange, Jasmine, Magnolia, Patchouli / Amber, Musk, Saffron, Oakmoss) est un chypre masculin sans rapport avec ce gourmand ; notes officielles Paris Corner substituées",
-   "le « 59 € » barré vu sur la page appartient à un produit voisin : prix_dp_barre laissé à null",
-   "prix DP 39,50 € contre une médiane marché ~24,90 €"
+   "le « 59 € » barré vu sur la page appartient à un produit voisin : prix_dp_barre laissé à null"
   ],
   "releve": "2026-09-05"
  },
@@ -5466,11 +5431,11 @@
   "dispo": false,
   "marche": {
    "n": 3,
-   "min": 29.9,
+   "min": 24.9,
    "max": 34.9,
    "median": 31.8,
    "sources": [
-    "https://grossiste-elite.com/products/eshal-vanilla-paris-corner-100ml-eau-de-parfum-femme",
+    "https://arabian-mood.com/produit/eshal-vanilla-paris-corner/",
     "https://www.notino.fr/paris-corner/eshal-vanilla-eau-de-parfum-pour-femme/",
     "https://muscorient.com/fr/paris-corner/1230-eshal-vanilla-paris-corner.html"
    ]
@@ -5478,7 +5443,8 @@
   "verdict_prix": "aligné",
   "anomalies": [
    "notes erronées sur DP : la fiche reprend mot pour mot la pyramide de December Vanilla (Rum / Crème Brûlée / Oud…) ; notes officielles Paris Corner substituées (Sugary — Jasmine, Rose — Vanilla, Caramel, Musk)",
-   "en rupture de stock sur dubaiparfumerie.com"
+   "en rupture de stock sur dubaiparfumerie.com",
+   "arabian-mood.com : boutique en .com mais site en français, prix en EUR et livraison en France métropolitaine — retenue à ce titre"
   ],
   "releve": "2026-09-05"
  },
@@ -5516,17 +5482,18 @@
   "marche": {
    "n": 3,
    "min": 16.86,
-   "max": 18.27,
-   "median": 17.2,
+   "max": 24.9,
+   "median": 22.1,
    "sources": [
-    "https://www.idealo.fr/prix/207125937/paris-corner-perfumes-taskeen-caramel-cascade-eau-de-parfum.html"
+    "https://www.parfumsetmoi.fr/paris-corner-taskeen-caramel-cascade-eau-de-parfum-femme-100-ml_z985342/",
+    "https://www.notino.fr/paris-corner/oriental-collection-taskeen-caramel-cascade-eau-de-parfum-pour-femme/",
+    "https://pds-shop.fr/products/eau-de-parfum-taskeen-caramel-cascade-paris-corner-100-ml"
    ]
   },
   "verdict_prix": "trop cher",
   "anomalies": [
    "fiche en DOUBLON : produit strictement identique à /produits/taskeen-caramel-cascade/ (même nom, même contenance, même prix 35,00 €) — une des deux fiches est à supprimer",
-   "DP omet « Amber » en note de fond, présente sur le site officiel",
-   "prix DP 35,00 € contre une médiane marché ~17,20 €"
+   "DP omet « Amber » en note de fond, présente sur le site officiel"
   ],
   "releve": "2026-09-05"
  },
@@ -5565,18 +5532,21 @@
   "dispo": false,
   "marche": {
    "n": 3,
-   "min": 14.68,
-   "max": 17.5,
-   "median": 16.45,
+   "min": 12.45,
+   "max": 38.99,
+   "median": 26.99,
    "sources": [
-    "https://www.idealo.fr/prix/205115137/paris-corner-perfumes-khair-eau-de-parfum-100ml.html"
+    "https://muscorient.com/fr/paris-corner/924-khair-paris-corner.html",
+    "https://aprizo.com/products/inspire-par-imperial-valley-paris-corner-khair-100ml-eau-de-parfum-unisexe-pcpfkhair",
+    "https://www.parfumsmoinschers.com/produit/66098-khair-paris-corner-eau-de-parfum-spray-100-ml.html"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "notes incomplètes sur DP : seul un cœur « Fruité, Musc, Patchouli, Bergamote » est affiché, mélangeant tête, cœur et fond de la pyramide officielle ; notes officielles substituées",
    "en rupture de stock sur dubaiparfumerie.com",
-   "prix DP 29,90 € contre une médiane marché ~16,45 €"
+   "aprizo.com : boutique en .com mais entreprise établie en France (Stains, 93), site en français et prix en EUR — retenue à ce titre",
+   "forte dispersion des prix français sur le 100 ml : de 12,45 € (muscorient.com, promotion -50 %) à 38,99 € (parfumsmoinschers.com)"
   ],
   "releve": "2026-09-05"
  },
@@ -5616,21 +5586,21 @@
   "devise": "EUR",
   "dispo": true,
   "marche": {
-   "n": 3,
-   "min": 17.24,
+   "n": 1,
+   "min": 34.9,
    "max": 34.9,
-   "median": 24.14,
+   "median": 34.9,
    "sources": [
-    "https://iconicperfumes.co.uk/products/surrati-rose-tobacco-perfume-100ml-6281085028576",
-    "https://filledwithbarakah.com/products/rose-tobacco-eau-de-parfum-100ml-by-surrati",
     "https://alnajahboutique.com/produit/rose-tobacco-surrati-eau-de-parfum-100ml/"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "le titre produit sur Dubai Parfumerie intègre la contenance (« Rose Tobacco 100ml ») : nom normalisé en « Rose Tobacco », contenance déplacée dans le champ dédié",
    "aucun site officiel Surrati exploitable trouvé : notes issues de la fiche Dubai Parfumerie (règle 2b), non recoupées auprès de la marque",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "un seul prix français trouvé (Al Najah Boutique, 34,90 € en 100 ml) : médiane peu robuste, verdict à prendre avec prudence",
+   "alnajahboutique.com est une boutique en .com entièrement francophone, prix en EUR et livraison en France : retenue à ce titre",
+   "offres écartées : la-barfumerie.com (55 ml, format différent), flora-parfums (huile concentrée, type différent), iconicperfumes.co.uk et filledwithbarakah.com (hors France)"
   ],
   "releve": "2026-09-05"
  },
@@ -5674,22 +5644,22 @@
   "devise": "EUR",
   "dispo": false,
   "marche": {
-   "n": 3,
-   "min": 14.94,
+   "n": 1,
+   "min": 29.99,
    "max": 29.99,
-   "median": 21.84,
+   "median": 29.99,
    "sources": [
-    "https://iconicperfumes.co.uk/products/surrati-my-stone-perfume-3-9-oz-115ml-6281085033570",
-    "https://filledwithbarakah.com/products/my-stone-eau-de-parfum-100ml-by-surrati",
     "https://www.safwaboutique.com/fr/parfums-dubai/1230-eau-de-parfum-my-stone-100ml-maison-surrati-perfumes-6281085033570.html"
    ]
   },
-  "verdict_prix": "trop cher",
+  "verdict_prix": "aligné",
   "anomalies": [
    "contenance non indiquée sur la fiche : laissée à null (les revendeurs annoncent tantôt 100 ml, tantôt 115 ml — pas de déduction)",
    "« Geranium » et « Sandalwood » apparaissent chacun dans deux niveaux de la pyramide affichée par Dubai Parfumerie",
    "aucun site officiel Surrati exploitable trouvé : notes issues de la fiche Dubai Parfumerie (règle 2b), non recoupées auprès de la marque",
-   "taux de conversion utilises : USD x0,86 ; GBP x1,15 ; CAD x0,63 ; SAR x0,23 ; AED x0,2333 ; OMR x2,26"
+   "un seul marchand français trouvé (Safwa Boutique, Marseille — 29,99 € en 100 ml) ; l'annonce ebay.fr à 29,98 € émane du même vendeur et n'a pas été comptée une seconde fois",
+   "prix relevé sur le format 100 ml proposé par le revendeur, la fiche ne précisant pas de contenance : comparaison indicative",
+   "safwaboutique.com est une boutique en .com francophone, prix en EUR et livraison en France : retenue à ce titre"
   ],
   "releve": "2026-09-05"
  },
@@ -5738,7 +5708,6 @@
   },
   "verdict_prix": "aligné",
   "anomalies": [
-   "les 3 prix concurrents sont libellés en EUR : aucune conversion nécessaire",
    "aucun site officiel Surrati exploitable trouvé : notes issues de la fiche Dubai Parfumerie (règle 2b), non recoupées auprès de la marque"
   ],
   "releve": "2026-09-05"

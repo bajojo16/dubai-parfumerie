@@ -373,10 +373,10 @@ export const PRODUCTS: Record<string, Product> = {
   "paris-corner-rifaaqat": {
     name: "Rifaaqat",
     brand: "Paris Corner",
-    // Réaligné sur la médiane marché (19,91 € sur 3 relevés), arrondi au prix
-    // de boutique. Le site affichait 30 €, soit +51 % — l'écart le plus large
-    // de la maison après Marshmallow Blush.
-    price: 19.9,
+    // Réaligné sur la médiane du marché FRANÇAIS (24,90 € sur 3 relevés). Le
+    // site affiche 30 €, soit +21 %. La première vague descendait à 19,90 € sur
+    // une médiane qui incluait des boutiques du Golfe — cinq euros trop bas.
+    price: 24.9,
     oldPrice: 52.9,
     // Valeurs de démonstration stables, comme les autres fiches rédigées.
     // Volontairement sous Khamrah et Vanilla Voyage : la référence vient
@@ -449,12 +449,11 @@ export const PRODUCTS: Record<string, Product> = {
     // prix pour ce qui est peut-être le même flacon est exactement le genre
     // d'incohérence qu'on ne rattrape jamais. Barré au ratio des autres
     // fiches (~-26 %).
-    // Seule HAUSSE de la vague : le site vendait à 20 € un flacon dont la
-    // médiane marché est à 26,45 € sur 3 relevés, tous en 60 ml — le format de
-    // cette fiche. La règle vaut dans les deux sens, un prix trop bas se
-    // réaligne comme un prix trop haut. Le barré monte à 34,90 € pour rester
-    // au-dessus.
-    price: 26.9,
+    // Hausse, mais moindre qu'annoncé : la médiane française est à 23,84 € sur
+    // 2 relevés seulement — confiance moyenne, à revérifier si un troisième
+    // prix français apparaît. Le site vend à 20 €, soit −16 %. La règle vaut
+    // dans les deux sens, un prix trop bas se réaligne comme un prix trop haut.
+    price: 23.9,
     oldPrice: 34.9,
     // Valeurs de démonstration stables, comme les autres fiches rédigées : le
     // repo n'a pas de base d'avis, et un tirage au hasard ferait changer le
@@ -1119,10 +1118,11 @@ export const PRODUCTS: Record<string, Product> = {
     // aux niches qu'on lui compare. Le poser au tarif Paris Corner (39,90 €)
     // aurait contredit l'argument. Calé sous Reef 33 (49,90 €) et au-dessus de
     // Marwa (29,90 €), prix barré au ratio des autres fiches (~-26 %).
-    // Réaligné sur la médiane marché (25,99 € sur 3 relevés), arrondi au prix
-    // de boutique — règle du 06/09/26 : au-delà de 15 % d'écart avec le marché,
-    // le prix suit la médiane. Le site affichait 30 €, soit +15 %.
-    price: 25.9,
+    // Retour à 30 €, le prix du site. La baisse à 25,90 € s'appuyait sur une
+    // médiane qui mélangeait des revendeurs du Golfe et des prix convertis
+    // depuis d'autres devises ; relevée sur le seul marché français, elle est à
+    // 34,99 € et la fiche est alignée.
+    price: 30.0,
     oldPrice: 46.9,
     // Valeurs de démonstration stables, comme les autres fiches rédigées.
     // C'est le seul compteur d'avis du catalogue à passer les 500 : 9PM est
@@ -1210,9 +1210,9 @@ export const PRODUCTS: Record<string, Product> = {
     // la même maison déjà en fiche. Même maison, même format, même position de
     // gamme : deux prix différents pour deux flacons interchangeables sur le
     // linéaire est exactement ce qui fait douter un visiteur.
-    // Réaligné sur la médiane marché (19,61 € sur 3 relevés), arrondi au prix
-    // de boutique. Le site affichait 25 €, soit +27 %.
-    price: 19.9,
+    // Retour à 25 €, le prix du site : la médiane française est à 23,90 € sur
+    // 3 relevés, soit +4,6 % — dans la fourchette, la règle n'y touche pas.
+    price: 25.0,
     oldPrice: 39.9,
     // Valeurs de démonstration stables. Au-dessus de Rifaaqat (142) parce que
     // Khair Pistachio est sorti deux ans plus tôt et a eu le temps d'accumuler,
@@ -1347,11 +1347,12 @@ export const PRODUCTS: Record<string, Product> = {
   "paris-corner-marshmallow-blush": {
     name: "Marshmallow Blush",
     brand: "Paris Corner",
-    // Réaligné sur la médiane marché (24,90 € sur 3 relevés) — le site
-    // affichait 39,50 €, soit +59 %, l'écart le plus large des fiches rédigées.
-    // La carte du rail promo dans `_home-client.tsx` porte le même nombre : les
-    // deux doivent bouger ensemble, sinon un flacon a deux prix.
-    price: 24.9,
+    // Retour à 39,50 €, le prix du site. La médiane française est à 43,90 € sur
+    // 3 relevés : la fiche est alignée, et même légèrement en dessous. La
+    // première vague la descendait à 24,90 € sur une médiane tirée vers le bas
+    // par des revendeurs américains. La carte du rail promo dans
+    // `_home-client.tsx` porte le même nombre : les deux bougent ensemble.
+    price: 39.5,
     oldPrice: 52.9,
     // Valeurs de démonstration stables. Entre Rifaaqat (142) et Khair Pistachio
     // (214) : sortie 2025, plus récente que l'un, plus ancienne que l'autre.
@@ -1379,7 +1380,10 @@ export const PRODUCTS: Record<string, Product> = {
     // une seule image à tenir pour la carte produit et pour le rail promo. Le
     // flacon entier y tient, fraise et framboises au pied — le fruit rouge de la
     // tête se lit dès le rond de 68 px.
-    image: "/assets/products/dp_parfumerie-paris-corner-marshmallow-blush-vignette.webp",
+    // Remplacée par la scène sur marbre rose du 01/07/26 : les guimauves au
+    // pied du flacon nomment le parfum, là où les fruits rouges de la vignette
+    // n'en disaient que la tête.
+    image: "/assets/products/paris-corner-marshmallow-blush/dp_parfumerie-paris-corner-marshmallow-blush-packshot-04.webp",
     // Cinq vues sur dix-neuf. Sept packshots fond blanc, quasi identiques : on
     // garde le flacon nu et celui posé devant les fraises, framboises et gousses
     // de vanille, qui énumère la pyramide sans une ligne de texte. Des douze
@@ -1389,6 +1393,7 @@ export const PRODUCTS: Record<string, Product> = {
     // texture cotonneuse du fond. Écartées : les scènes bleu nuit et la ruelle,
     // où le flacon rose passe au rouge et ne ressemble plus à ce qu'on livre.
     gallery: [
+      "/assets/products/paris-corner-marshmallow-blush/dp_parfumerie-paris-corner-marshmallow-blush-packshot-04.webp",
       "/assets/products/paris-corner-marshmallow-blush/dp_parfumerie-paris-corner-marshmallow-blush-packshot-01.webp",
       "/assets/products/paris-corner-marshmallow-blush/dp_parfumerie-paris-corner-marshmallow-blush-ingredients-01.webp",
       "/assets/products/paris-corner-marshmallow-blush/dp_parfumerie-paris-corner-marshmallow-blush-env-01.webp",

@@ -295,8 +295,8 @@ export default function MarquesPage() {
                     gap: "0.375rem",
                   }}
                 >
-                  <span>{brand.cityFlag}</span>
-                  <span>{brand.city}</span>
+                  <span>{brand.countryFlag}</span>
+                  <span>{brand.country}</span>
                   <span style={{ color: "var(--line-300)" }}>·</span>
                   <span>Fondée en {brand.founded}</span>
                 </p>

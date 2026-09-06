@@ -4413,4 +4413,22 @@ export const REFERENCE_PERFUMES: ReferencePerfume[] = [
   { id: "zimaya-vigour", name: "Vigour", house: "Zimaya", gender: "homme", family: "hesperidee", accords: ["cannelle", "muscade", "bergamote", "citron", "verveine citronnée", "cypriol"] },
   { id: "zimaya-zukhruf-black", name: "Zukhruf Black", house: "Zimaya", gender: "homme", family: "aromatique", accords: ["poivre noir", "muscade", "cannelle", "pamplemousse", "iris", "lavande"] },
 
+  // ── Originaux ajoutés le 06/09/26 pour la table des dupes documentés
+  //    (`catalogue/dp-dupes.json`). La base n'avait ni Louis Vuitton ni
+  //    Kayali alors que huit produits du catalogue en sont des dupes connus.
+  { id: "louis-vuitton-ombre-nomade", name: "Ombre Nomade", house: "Louis Vuitton", gender: "mixte", family: "boisee", accords: ["oud", "encens", "framboise", "benjoin", "rose", "géranium", "safran", "ambre gris"] },
+  { id: "louis-vuitton-pacific-chill", name: "Pacific Chill", house: "Louis Vuitton", gender: "mixte", family: "hesperidee", accords: ["cassis", "citron", "orange", "menthe", "carotte", "coriandre", "basilic", "figue", "datte", "ambrette", "fève tonka"] },
+  { id: "louis-vuitton-imagination", name: "Imagination", house: "Louis Vuitton", gender: "homme", family: "hesperidee", accords: ["agrumes", "cédrat", "néroli", "thé noir", "gingembre", "cannelle", "ambre"] },
+  { id: "kayali-vanilla-28", name: "Vanilla | 28", house: "Kayali", gender: "mixte", family: "gourmande", accords: ["vanille", "jasmin", "fleur d'oranger", "ambre", "musc", "bois de santal", "fève tonka", "sucre roux"] },
+  { id: "kayali-vanilla-candy-rock-sugar-42", name: "Vanilla Candy Rock Sugar | 42", house: "Kayali", gender: "mixte", family: "gourmande", accords: ["vanille", "caramel", "fruits rouges", "praline", "musc", "bois ambrés"] },
+  { id: "kayali-vanilla-royale-sugared-patchouli-64", name: "Vanilla Royale Sugared Patchouli | 64", house: "Kayali", gender: "mixte", family: "gourmande", accords: ["vanille", "patchouli", "sucre", "ambre", "bois de santal", "musc"] },
+  { id: "kayali-yum-pistachio-gelato-33", name: "Yum Pistachio Gelato | 33", house: "Kayali", gender: "mixte", family: "gourmande", accords: ["pistache", "noisette", "rhum", "cardamome", "géranium", "pivoine", "guimauve", "barbe à papa", "cacao", "fève tonka"] },
+  { id: "kayali-yum-boujee-marshmallow-81", name: "Yum Boujee Marshmallow | 81", house: "Kayali", gender: "mixte", family: "gourmande", accords: ["guimauve", "fraise", "framboise", "fleur d'oranger", "crème fouettée", "vanille", "musc"] },
+  { id: "gissah-imperial-valley", name: "Imperial Valley", house: "Gissah", gender: "mixte", family: "gourmande", accords: ["cerise", "fraise", "fruits rouges", "rose", "praline", "vanille", "ambre", "musc"] },
+  { id: "gissah-one-and-only", name: "One & Only", house: "Gissah", gender: "mixte", family: "gourmande", accords: ["fruits rouges", "poire", "framboise", "fleurs blanches", "vanille", "musc", "ambre"] },
+  { id: "giardini-di-toscana-bianco-latte", name: "Bianco Latte", house: "Giardini di Toscana", gender: "mixte", family: "gourmande", accords: ["lait", "caramel", "miel", "vanille", "coumarine", "musc blanc"] },
+  { id: "giorgio-armani-my-way", name: "My Way", house: "Giorgio Armani", gender: "femme", family: "florale", accords: ["bergamote", "fleur d'oranger", "tubéreuse", "jasmin d'Inde", "cèdre de Virginie", "vanille de Madagascar", "musc blanc"] },
+  { id: "lacoste-pour-femme", name: "Pour Femme", house: "Lacoste", gender: "femme", family: "florale", accords: ["pomme", "poivre rose", "framboise", "freesia", "jasmin", "cèdre", "bois de santal", "vanille", "musc"] },
+  { id: "les-liquides-imaginaires-blanche-bete", name: "Blanche Bête", house: "Les Liquides Imaginaires", gender: "mixte", family: "musquee", accords: ["poivre blanc", "sauge", "lait", "musc blanc", "ambre", "cachemire", "bois de santal"] },
+
 ];

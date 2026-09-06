@@ -29,6 +29,7 @@ import {
   type OlfactiveMatch,
 } from "@/data/olfactive-twins";
 import { REFERENCE_PERFUMES, FAMILY_LABELS, type ReferenceFamily, type ReferencePerfume } from "@/data/reference-perfumes";
+import { DUPES_BY_REFERENCE, dupesOf } from "@/data/catalogue/dp-dupes";
 
 // ─── Vocabulaire de notes ────────────────────────────────────────────────────
 // Les deux sources n'écrivent pas les notes de la même façon : la base de
@@ -209,7 +210,9 @@ const CURATED_BY_REFERENCE: Record<string, string> = Object.fromEntries(
 const CURATED_BY_KEY = new Map(OLFACTIVE_TWINS.map((m) => [m.key, m]));
 
 /** Les références validées font de bonnes suggestions : elles sont célèbres et documentées. */
-export const SUGGESTED_REFERENCE_IDS: string[] = Object.keys(CURATED_BY_REFERENCE);
+export const SUGGESTED_REFERENCE_IDS: string[] = [
+  ...new Set([...Object.keys(CURATED_BY_REFERENCE), ...DUPES_BY_REFERENCE.keys()]),
+];
 
 // ─── Résultat ────────────────────────────────────────────────────────────────
 
@@ -435,11 +438,23 @@ function scoreProduct(ref: ReferencePerfume, profile: ProductProfile) {
  * qui affiche un résultat doit passer par `findTwin`, jamais par ce classement.
  */
 export function rankTwins(ref: ReferencePerfume, limit = 3): TwinResult[] {
+  const documented = new Set(dupesOf(ref.id));
   const scored = PRODUCT_PROFILES.map((profile) => ({ profile, ...scoreProduct(ref, profile) }));
 
-  scored.sort((a, b) => b.score - a.score || a.profile.product.slug.localeCompare(b.profile.product.slug));
+  // Les dupes documentés passent devant, entre eux par score ; le reste suit.
+  scored.sort(
+    (a, b) =>
+      Number(documented.has(b.profile.product.slug)) - Number(documented.has(a.profile.product.slug)) ||
+      b.score - a.score ||
+      a.profile.product.slug.localeCompare(b.profile.product.slug)
+  );
 
-  return scored.slice(0, Math.max(1, limit)).map((s) => buildResult(ref, s.profile, s));
+  return scored.slice(0, Math.max(1, limit)).map((s) => {
+    const r = buildResult(ref, s.profile, s);
+    return documented.has(s.profile.product.slug)
+      ? { ...r, strength: "tres-proche" as const, verified: true, score: Math.max(r.score, 0.9) }
+      : r;
+  });
 }
 
 type Scored = { score: number; shared: string[]; family: number; accords: number; exact: number; overlap: number; exactRecall: number; refGroupCount: number };
@@ -488,6 +503,19 @@ export function findTwin(ref: ReferencePerfume): TwinResult | null {
       // générique et son niveau ne redescend pas sous « très proche ».
       return { ...result, strength: "tres-proche", verified: true, score: Math.max(result.score, 0.9), curated };
     }
+  }
+  // Dupe documenté (`catalogue/dp-dupes.json`) : la correspondance est publique
+  // et sourcée, elle prime sur le calcul. Le premier slug de la liste dont le
+  // catalogue tient encore le produit gagne ; s'il en a plusieurs, le score
+  // départage entre eux seulement.
+  const documented = dupesOf(ref.id)
+    .map((slug) => PRODUCT_PROFILES.find((p) => p.product.slug === slug))
+    .filter((p): p is ProductProfile => Boolean(p));
+  if (documented.length) {
+    const best = documented
+      .map((p) => buildResult(ref, p, scoreProduct(ref, p)))
+      .sort((a, b) => b.score - a.score)[0];
+    return { ...best, strength: "tres-proche", verified: true, score: Math.max(best.score, 0.9) };
   }
   // On prend le premier candidat qui franchit le seuil, PAS le premier du
   // classement. Les deux ne coïncident pas, et c'est voulu : le score inclut le
