@@ -91,7 +91,7 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     // Cadre serré et carré plutôt que le portrait large de `khamrah-packshot.webp` :
     // la vignette du jumeau fait 96–116 px en `objectFit: contain`, donc tout ce
     // que le cadrage laisse de vide autour du flacon est perdu à l'affichage.
-    product: { name: "Khamrah", brand: "Lattafa", price: 21.9, image: "/assets/products/khamrah/khamrah-hf-05.jpg", href: "/produit/lattafa-khamrah" },
+    product: { name: "Khamrah", brand: "Lattafa", price: 29, image: "/assets/products/khamrah/khamrah-hf-05.jpg", href: "/produit/lattafa-khamrah" },
   },
   {
     key: "oud-wood",
@@ -101,7 +101,7 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     productHandle: "al-haramain-amber-oud",
     family: "Oud · Boisé · Épicé",
     description: "Oud fumé, santal et poivre — une profondeur orientale racée.",
-    product: { name: "Amber Oud", brand: "Al Haramain", price: 29.9, image: "/assets/prod-2.jpg", href: "/produit/al-haramain-amber-oud" },
+    product: { name: "Amber Oud", brand: "Al Haramain", price: 75, image: "/assets/prod-2.jpg", href: "/produit/al-haramain-amber-oud" },
   },
   {
     key: "black-opium",
@@ -157,7 +157,11 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     productHandle: "maison-alhambra-the-tux",
     family: "Épicé · Cuir · Ambré",
     description: "Cuir, cannelle et ambre — une signature chaude et opulente.",
-    product: { name: "The Tux", brand: "Maison Alhambra", price: 16.9, image: "/assets/prod-4.jpg", href: "/produit/maison-alhambra-the-tux" },
+    // prod-4.jpg est le placeholder partagé du dépôt — Shaghaf Oud, Amber Elixir,
+    // Rose pour Elle et la pastille « Floral · Musc » pointent le même fichier.
+    // The Tux a désormais son propre packshot (lot Higgsfield du 05/09/26),
+    // posé à côté plutôt qu'à la place du placeholder, qui reste utilisé ailleurs.
+    product: { name: "The Tux", brand: "Maison Alhambra", price: 16.9, image: "/assets/products/dp_parfumerie-maison-alhambra-the-tux-vignette.webp", href: "/produit/maison-alhambra-the-tux" },
   },
 ];
 

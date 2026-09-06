@@ -27,8 +27,8 @@ export const REEF_PRODUCTS: RailProduct[] = [
     notes: "Boisé · Ambré · Doré",
     family: "Boisé",
     image: "/assets/products/aurum.webp",
-    price: { amount: 64.9, currency: CURRENCY },
-    compareAtPrice: { amount: 84.9, currency: CURRENCY },
+    price: { amount: 75, currency: CURRENCY },
+    compareAtPrice: { amount: 99.9, currency: CURRENCY },
     onSale: true,
   },
   {
@@ -39,8 +39,8 @@ export const REEF_PRODUCTS: RailProduct[] = [
     notes: "Frais · Aquatique · Boisé",
     family: "Frais",
     image: "/assets/products/reef-33.webp",
-    price: { amount: 49.9, currency: CURRENCY },
-    compareAtPrice: { amount: 62.9, currency: CURRENCY },
+    price: { amount: 70, currency: CURRENCY },
+    compareAtPrice: { amount: 89.9, currency: CURRENCY },
     onSale: true,
   },
   {

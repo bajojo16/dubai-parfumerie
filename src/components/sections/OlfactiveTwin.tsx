@@ -451,7 +451,7 @@ export function OlfactiveTwin({
 
   const fmt = (n: number) => {
     try {
-      return new Intl.NumberFormat(locale, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+      return new Intl.NumberFormat(locale, { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
     } catch {
       return `${Math.round(n)} €`;
     }

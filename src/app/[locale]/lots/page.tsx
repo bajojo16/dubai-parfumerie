@@ -195,7 +195,7 @@ export default function LotsPage() {
           }}
         >
           {[
-            { label: "Achète 2 = 3 offert", href: "/offres/lot-3-pour-2" },
+            { label: "Achetez 2 = 3 offert", href: "/offres/lot-3-pour-2" },
             { label: "Tous les parfums", href: "/catalogue" },
             { label: "Coffret d'échantillons", href: "/preview/selecteur-echantillons" },
           ].map((l) => (

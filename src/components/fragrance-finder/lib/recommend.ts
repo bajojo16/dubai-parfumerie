@@ -222,7 +222,7 @@ export function recommend(criteria: QuizCriteria, products = SEARCH_PRODUCTS): S
  * trois) qui coexistaient ici. Deux barèmes concurrents pour la même sélection
  * obligeaient le client à calculer pour savoir lequel s'appliquait, et le
  * −20 % ne correspondait à aucune offre annoncée ailleurs sur le site — la
- * pastille de la page des promotions dit « Achète 2 = 3 offert », c'est elle
+ * pastille de la page des promotions dit « Achetez 2 = 3 offert », c'est elle
  * qui fait foi.
  *
  * On rend un MONTANT en euros et non un taux : le cadeau est le flacon le

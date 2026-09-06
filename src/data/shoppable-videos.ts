@@ -36,7 +36,7 @@ export const DEMO: ShoppableVideo[] = [
     productHandle: "vanilla-voyage",
     product: {
       name: "Vanilla Voyage",
-      price: 59,
+      price: 49,
       // Le même packshot que celui de la fiche (`product-details.ts`) : la
       // vignette de 68 px et la page qu'elle ouvre doivent montrer le même
       // flacon sous le même angle, sinon le clic ressemble à une erreur.
@@ -53,7 +53,7 @@ export const DEMO: ShoppableVideo[] = [
     productHandle: "oud-roses",
     product: {
       name: "Oud & Roses",
-      price: 79,
+      price: 74.5,
       thumbnailUrl: "/assets/products/oud-roses.webp",
       available: false,
       href: "/produit/oud-roses",
@@ -67,7 +67,7 @@ export const DEMO: ShoppableVideo[] = [
     productHandle: "aurum",
     product: {
       name: "Aurum",
-      price: 49,
+      price: 75,
       thumbnailUrl: "/assets/products/aurum.webp",
       available: true,
       href: "/produit/aurum",
@@ -81,7 +81,7 @@ export const DEMO: ShoppableVideo[] = [
     productHandle: "reef-33",
     product: {
       name: "Reef 33",
-      price: 39,
+      price: 70,
       thumbnailUrl: "/assets/products/reef-33.webp",
       available: true,
       href: "/produit/reef-33",
@@ -102,7 +102,7 @@ export const DEMO: ShoppableVideo[] = [
       name: "Khamrah",
       // Aligné sur la fiche rédigée (`product-details.ts`) : le prix de la carte
       // et celui de la fiche qu'elle ouvre doivent être le même nombre.
-      price: 21.9,
+      price: 29,
       // Vignette 68 px : il faut le packshot le plus serré, pas le plus large.
       thumbnailUrl: "/assets/products/khamrah/khamrah-hf-05.jpg",
       available: true,

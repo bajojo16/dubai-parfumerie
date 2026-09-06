@@ -21,7 +21,7 @@ const PROMO_PRODUCTS = [
   { id: 12, name: "Lot Découverte Huiles 6×3ml", brand: "Dubaï Parfumerie", price: 24.90, oldPrice: 54.90, discount: 55, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
 ];
 
-const OFFER_2_3 = "Achète 2 = 3 offert";
+const OFFER_2_3 = "Achetez 2 = 3 offert";
 
 /**
  * Les raccourcis de la rangée. `star` distingue l'offre phare des rayons
@@ -112,7 +112,7 @@ export default function PromoFlashPage() {
         >
           {/* Rangée de raccourcis, pas de filtres : chaque pastille MÈNE
               quelque part, aucune ne trie la grille du dessous. C'est ce qui
-              manquait à l'ancienne version, où « Achète 2 = 3 » naviguait
+              manquait à l'ancienne version, où « Achetez 2 = 3 » naviguait
               pendant que « Achat en volume » filtrait, sans qu'aucun signe
               visuel ne distingue les deux comportements. La flèche finale est
               donc portée par toutes, et l'étoile réservée à l'offre phare. */}

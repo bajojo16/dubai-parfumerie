@@ -31,8 +31,8 @@ export const TOP_PRODUCTS: RailProduct[] = [
     // aurait voté, et « Ambré » aussi — l'égalité se serait jouée ailleurs.
     family: "Boisé",
     image: "/assets/products/aurum.webp",
-    price: { amount: 64.9, currency: CURRENCY },
-    compareAtPrice: { amount: 84.9, currency: CURRENCY },
+    price: { amount: 75, currency: CURRENCY },
+    compareAtPrice: { amount: 99.9, currency: CURRENCY },
     onSale: true,
   },
   {
@@ -44,7 +44,7 @@ export const TOP_PRODUCTS: RailProduct[] = [
     // Un oud-rose : l'oud porte, la rose se pose dessus — et le nom le dit.
     family: "Boisé",
     image: "/assets/products/oud-roses.webp",
-    price: { amount: 79.9, currency: CURRENCY },
+    price: { amount: 74.5, currency: CURRENCY },
   },
   {
     id: "top-vanilla-voyage",
@@ -53,8 +53,8 @@ export const TOP_PRODUCTS: RailProduct[] = [
     name: "Vanilla Voyage",
     notes: "Vanille · Tonka · Ambre",
     family: "Gourmand",
-    image: "/assets/products/vanilla-voyage.webp",
-    price: { amount: 58.9, currency: CURRENCY },
+    image: "/assets/products/dp_parfumerie-maison-asrar-vanilla-voyage-env-04.webp",
+    price: { amount: 49, currency: CURRENCY },
     compareAtPrice: { amount: 69.9, currency: CURRENCY },
     onSale: true,
   },
@@ -66,8 +66,8 @@ export const TOP_PRODUCTS: RailProduct[] = [
     notes: "Frais · Aquatique · Boisé",
     family: "Frais",
     image: "/assets/products/reef-33.webp",
-    price: { amount: 49.9, currency: CURRENCY },
-    compareAtPrice: { amount: 62.9, currency: CURRENCY },
+    price: { amount: 70, currency: CURRENCY },
+    compareAtPrice: { amount: 89.9, currency: CURRENCY },
     onSale: true,
   },
   {

@@ -82,21 +82,21 @@ const TRUST_ITEMS: { icon: React.ReactNode; label: string }[] = [
 // ─── Static data ─────────────────────────────────────────────────────────────
 
 const products = [
-  { id: 1, image: "/assets/prod-1.jpg", brand: "Lattafa", name: "Oud Pour Elle", price: 28.90, oldPrice: 49.90, rating: 4.8, reviews: 342, badge: "-42%", notes: "Oud · Rose · Musc blanc" },
-  { id: 2, image: "/assets/prod-2.jpg", brand: "Al Haramain", name: "Amber Oud", price: 34.90, oldPrice: 59.90, rating: 4.9, reviews: 287, badge: "-42%", notes: "Ambre · Vanille · Bois de oud" },
-  { id: 3, image: "/assets/prod-3.jpg", brand: "Reef", name: "Opulent Blue", price: 22.90, oldPrice: 39.90, rating: 4.7, reviews: 156, badge: "-43%", notes: "Musc · Cèdre · Bergamote" },
-  { id: 4, image: "/assets/prod-4.jpg", brand: "Swiss Arabian", name: "Shaghaf Oud", price: 42.90, oldPrice: 74.90, rating: 4.9, reviews: 421, badge: "-43%", notes: "Oud · Santal · Rose de Taïf" },
-  { id: 5, image: "/assets/prod-5.jpg", brand: "Armaf", name: "Club de Nuit", price: 19.90, oldPrice: 34.90, rating: 4.6, reviews: 198, badge: "-43%", notes: "Agrumes · Bois · Musc" },
-  { id: 6, image: "/assets/prod-6.jpg", brand: "Ahmed Al Maghribi", name: "L'Or Intense", price: 36.90, oldPrice: 64.90, rating: 4.8, reviews: 134, badge: "-43%", notes: "Épices · Ambre · Encens" },
+  { id: 1, slug: "lattafa-oud-pour-elle", image: "/assets/prod-1.jpg", brand: "Lattafa", name: "Oud Pour Elle", price: 28.90, oldPrice: 49.90, rating: 4.8, reviews: 342, badge: "-42%", notes: "Oud · Rose · Musc blanc" },
+  { id: 2, slug: "al-haramain-amber-oud", image: "/assets/prod-2.jpg", brand: "Al Haramain", name: "Amber Oud", price: 34.90, oldPrice: 59.90, rating: 4.9, reviews: 287, badge: "-42%", notes: "Ambre · Vanille · Bois de oud" },
+  { id: 3, slug: "reef-opulent-blue", image: "/assets/prod-3.jpg", brand: "Reef", name: "Opulent Blue", price: 22.90, oldPrice: 39.90, rating: 4.7, reviews: 156, badge: "-43%", notes: "Musc · Cèdre · Bergamote" },
+  { id: 4, slug: "swiss-arabian-shaghaf", image: "/assets/prod-4.jpg", brand: "Swiss Arabian", name: "Shaghaf Oud", price: 42.90, oldPrice: 74.90, rating: 4.9, reviews: 421, badge: "-43%", notes: "Oud · Santal · Rose de Taïf" },
+  { id: 5, slug: "armaf-club-de-nuit", image: "/assets/prod-5.jpg", brand: "Armaf", name: "Club de Nuit", price: 19.90, oldPrice: 34.90, rating: 4.6, reviews: 198, badge: "-43%", notes: "Agrumes · Bois · Musc" },
+  { id: 6, slug: "ahmed-al-maghribi-lor", image: "/assets/prod-6.jpg", brand: "Ahmed Al Maghribi", name: "L'Or Intense", price: 36.90, oldPrice: 64.90, rating: 4.8, reviews: 134, badge: "-43%", notes: "Épices · Ambre · Encens" },
 ];
 
 // Sélection « Les parfums de l'été » — liste dédiée : `products` alimente aussi
 // bestSellers et oilItems, la modifier changerait ces deux sections.
 const summerProducts: (LuxeProduct & { id: number })[] = [
   { id: 101, image: "/assets/products/blueberry/blueberry-packshot.jpg", brand: "Arabiyat Prestige", title: "Blueberry Musk", price: 20, oldPrice: 25, href: "/produit/arabiyat-prestige-blueberry-musk" },
-  { id: 102, image: "/assets/products/reef-33.webp", brand: "Reef Perfumes", title: "Reef 33", price: 70, href: "/promo-flash" },
-  { id: 103, image: "/assets/products/marshmallow-blush.webp", brand: "Paris Corner", title: "Marshmallow Blush", price: 39.5, href: "/promo-flash" },
-  { id: 104, image: "/assets/products/khamrah/khamrah-hf-05.jpg", brand: "Lattafa", title: "Khamrah", price: 21.9, href: "/produit/lattafa-khamrah", rating: 5, reviewCount: 1 },
+  { id: 102, image: "/assets/products/reef-33.webp", brand: "Reef Perfumes", title: "Reef 33", price: 70, href: "/produit/reef-33" },
+  { id: 103, image: "/assets/products/marshmallow-blush.webp", brand: "Paris Corner", title: "Marshmallow Blush", price: 39.5, href: "/produit/paris-corner-marshmallow-blush" },
+  { id: 104, image: "/assets/products/khamrah/khamrah-hf-05.jpg", brand: "Lattafa", title: "Khamrah", price: 29, href: "/produit/lattafa-khamrah", rating: 5, reviewCount: 1 },
 ];
 
 const bestSellers = products.slice(2, 6);
@@ -113,7 +113,10 @@ function toLuxe(p: CatalogProduct): LuxeProduct {
     oldPrice: p.oldPrice,
     rating: p.rating,
     reviewCount: p.reviews,
-    href: "/promo-flash",
+    // Le nom de la carte ouvre LA fiche du parfum. Un `/promo-flash` en dur
+    // renvoyait les six cartes sur le même listing, où il fallait retrouver
+    // à la main le flacon qu'on venait de cliquer.
+    href: `/produit/${p.slug}`,
   };
 }
 
@@ -941,15 +944,47 @@ export default function HomePageClient() {
           instances peuvent coexister : chacune a son propre état, ce qui est le
           comportement voulu — on ne veut pas qu'ouvrir la modale efface les
           réponses déjà données plus bas dans la page. */}
-      <section id="guide" style={{ background: "var(--surface-page)", padding: "80px 20px" }}>
-        <div style={{ maxWidth: 1240, margin: "0 auto" }}>
-          <SectionHeader
-            eyebrow="Notre expertise"
-            title={<>Trouvez votre <em>signature</em></>}
-            subtitle="Quelques questions, deux minutes : nous composons un trio de parfums accordé à votre famille olfactive."
-          />
-          <FragranceFinderQuiz variant="inline" locale={locale} />
+      <section id="guide" style={{ background: "var(--surface-page)", padding: "72px 20px" }}>
+        {/* Deux colonnes plutôt qu'un empilement : centré, le bloc mesurait
+            près de 900 px de haut pour trois pilules de réponse, avec deux
+            larges bandes vides à gauche et à droite du panneau. Le titre passe
+            à côté du quiz, la section perd un tiers de sa hauteur et l'espace
+            horizontal enfin sert à quelque chose. */}
+        <div className="dp-guide-grid" style={{ maxWidth: 1240, margin: "0 auto" }}>
+          <div className="dp-guide-copy">
+            <SectionHeader
+              eyebrow="Notre expertise"
+              title={<>Trouvez votre <em>signature</em></>}
+              subtitle="Quelques questions, deux minutes : nous composons un trio de parfums accordé à votre famille olfactive."
+            />
+          </div>
+          <div className="dp-guide-quiz">
+            <FragranceFinderQuiz variant="inline" locale={locale} />
+          </div>
         </div>
+        <style>{`
+          .dp-guide-grid {
+            display: grid;
+            gap: clamp(20px, 3vw, 48px);
+            align-items: center;
+          }
+          @media (min-width: 1000px) {
+            .dp-guide-grid { grid-template-columns: minmax(0, 0.82fr) minmax(0, 1.18fr); }
+            /* Le titre s'aligne sur sa colonne : centré, il flottait au milieu
+               d'une demi-largeur sans rien pour le tenir. */
+            .dp-guide-copy .dp-section-header { text-align: start; margin-bottom: 0; }
+            .dp-guide-copy .dp-section-header p { margin-inline: 0; }
+            /* Le panneau du quiz est borné à 820 px pour ne pas étirer ses
+               pilules en pleine page ; dans sa propre colonne, c'est la colonne
+               qui le borne déjà. */
+            .dp-guide-quiz .dp-ff.is-inline .dp-ff-panel { max-width: none; margin-inline: 0; }
+            /* L'écran de résultat porte trois colonnes de produits : il reprend
+               toute la largeur, et le titre revient au centre au-dessus. */
+            .dp-guide-grid:has(.dp-ff-panel.is-result) { grid-template-columns: 1fr; }
+            .dp-guide-grid:has(.dp-ff-panel.is-result) .dp-guide-copy .dp-section-header { text-align: center; margin-bottom: 0; }
+            .dp-guide-grid:has(.dp-ff-panel.is-result) .dp-guide-copy .dp-section-header p { margin-inline: auto; }
+          }
+        `}</style>
       </section>
 
       {/* ── 10. ROUE DES SENTEURS — retirée ───────────────────────── */}

@@ -66,7 +66,7 @@ export const DEMO_SCENT_FAMILIES: ScentFamily[] = [
     ingredientImage: "/assets/scents/ambre.jpg",
     collectionSlug: "ambre",
     products: [
-      { name: "Amber Oud", brand: "Al Haramain", price: 34.9, image: "/assets/products/aurum.webp", href: "/produit/amber-oud" },
+      { name: "Amber Oud", brand: "Al Haramain", price: 75, image: "/assets/products/aurum.webp", href: "/produit/amber-oud" },
       { name: "Ambar Gold", brand: "Rasasi", price: 37.9, image: "/assets/oils/noora.png", href: "/produit/ambar-gold" },
     ],
   },

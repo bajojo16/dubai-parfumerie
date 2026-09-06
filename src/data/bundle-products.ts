@@ -40,7 +40,7 @@ export const BUNDLE_PRODUCTS: BundleProduct[] = [
     name: "Aurum",
     brand: "Reef",
     notes: "Ambre, Bois de santal",
-    price: 64.9,
+    price: 75,
     was: 129.9,
     image: "/assets/products/aurum.webp",
     available: true,

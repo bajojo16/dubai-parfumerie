@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { ProductStory } from "@/data/product-stories";
+import { QtyStepper } from "@/components/ui/QtyStepper";
+import { addItem } from "@/lib/cart";
 
 export type StoryLabels = {
   close: string;
@@ -9,6 +11,8 @@ export type StoryLabels = {
   unmute: string;
   share: string;
   shopCta: string; // "Voir le produit" / inclut {name}
+  addToCart: string;
+  added: string;
   more: string; // aria-label liste vignettes
 };
 
@@ -17,7 +21,9 @@ const DEFAULT_LABELS: StoryLabels = {
   mute: "Couper le son",
   unmute: "Activer le son",
   share: "Partager",
-  shopCta: "Voir le produit",
+  shopCta: "Voir la fiche produit",
+  addToCart: "Ajouter au panier",
+  added: "Ajouté au panier",
   more: "Autres vidéos",
 };
 
@@ -43,15 +49,19 @@ export function StoryPlayer({
   const closeRef = useRef<HTMLButtonElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const touchStart = useRef<{ x: number; y: number } | null>(null);
+  // Quantité du panneau produit. Remise à 1 quand on change de story : la
+  // quantité choisie pour un flacon n'a aucun sens reportée sur le suivant.
+  const [qty, setQty] = useState(1);
+  const [added, setAdded] = useState(false);
 
   const active = stories[index];
 
   const fmtPrice = useCallback(
     (n: number) => {
       try {
-        return new Intl.NumberFormat(locale, { style: "currency", currency: "EUR", maximumFractionDigits: 0 }).format(n);
+        return new Intl.NumberFormat(locale, { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
       } catch {
-        return `${n} €`;
+        return `${n.toFixed(2).replace(".", ",")} €`;
       }
     },
     [locale]
@@ -60,6 +70,13 @@ export function StoryPlayer({
   const go = useCallback(
     (next: number) => {
       setProgress(0);
+      // La quantité et l'accusé d'ajout appartiennent à la story affichée, pas
+      // au lecteur : les laisser vivre d'une story à l'autre faisait acheter
+      // trois flacons du deuxième parfum parce qu'on en avait choisi trois du
+      // premier. Remis ici plutôt que dans un effet sur `index` — un effet qui
+      // n'appelle que des setState relance un rendu pour rien.
+      setQty(1);
+      setAdded(false);
       setIndex((i) => {
         const n = next < 0 ? 0 : next >= stories.length ? stories.length - 1 : next;
         return n;
@@ -201,6 +218,79 @@ export function StoryPlayer({
         justifyContent: "center",
       }}
     >
+      <style>{`
+        .sp-stage {
+          position: relative;
+          z-index: 4;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 20px;
+          width: 100%;
+          height: 100%;
+          padding: 64px 18px 18px;
+          box-sizing: border-box;
+        }
+        .sp-video {
+          position: relative;
+          height: 100%;
+          aspect-ratio: 9 / 16;
+          flex-shrink: 0;
+        }
+        .sp-thumbs {
+          display: flex;
+          flex-direction: column;
+          gap: 8px;
+          width: 258px;
+          max-height: 100%;
+          overflow-y: auto;
+          scrollbar-width: none;
+          flex-shrink: 0;
+        }
+        .sp-thumbs::-webkit-scrollbar { display: none; }
+        .sp-thumb {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 8px;
+          border-radius: 14px;
+          cursor: pointer;
+          flex-shrink: 0;
+          transition: background .2s, border-color .2s;
+        }
+        .sp-panel {
+          display: flex;
+          flex-direction: column;
+          gap: 16px;
+          width: 380px;
+          flex-shrink: 0;
+          max-height: 100%;
+          overflow-y: auto;
+          scrollbar-width: none;
+          padding: 22px;
+          box-sizing: border-box;
+          border-radius: 18px;
+          border: 1px solid rgba(255,255,255,.12);
+          background: rgba(20,14,10,.55);
+          backdrop-filter: blur(18px);
+        }
+        .sp-panel::-webkit-scrollbar { display: none; }
+        .sp-cta-mobile { display: none; }
+        /* Sous 1400 px la fiche latérale rogne la vidéo : on retire d'abord les
+           vignettes, qui restent atteignables au swipe et aux flèches. */
+        @media (max-width: 1400px) {
+          .sp-thumbs { display: none; }
+        }
+        /* Sous 1100 px la fiche elle-même ne tient plus. Le bandeau compact
+           reprend alors son rôle, en bas de la vidéo. */
+        @media (max-width: 1100px) {
+          .sp-panel { display: none; }
+          .sp-cta-mobile { display: flex; }
+          .sp-stage { padding: 0; gap: 0; }
+          .sp-video { height: 100vh; max-height: 100vh; }
+        }
+      `}</style>
+
       {/* Backdrop vidéo floutée */}
       {active && (
         <video
@@ -288,22 +378,15 @@ export function StoryPlayer({
         </button>
       </div>
 
-      {/* Colonne vignettes (côté début) */}
-      <div
-        style={{
-          position: "absolute",
-          [startSide]: 18,
-          top: "50%",
-          transform: "translateY(-50%)",
-          zIndex: 6,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          gap: 10,
-          maxHeight: "70vh",
-        }}
-      >
-        <div style={{ display: "flex", flexDirection: "column", gap: 10, overflowY: "auto", scrollbarWidth: "none", paddingBottom: 4 }}>
+      {/* Scène : vignettes · vidéo · fiche produit.
+          Les trois colonnes tiennent dans UNE rangée en flux. Auparavant la
+          colonne de vignettes et la vidéo étaient empilées en `position:
+          absolute`, ce qui interdisait toute fiche à droite — elle serait
+          passée sous la vidéo. En flux, la rangée se centre seule et chaque
+          colonne se retire proprement quand l'écran rétrécit. */}
+      <div className="sp-stage">
+        {/* Colonne vignettes */}
+        <div className="sp-thumbs" aria-label={L.more}>
           {thumbs.map((s, i) => (
             <button
               key={s.id}
@@ -311,70 +394,66 @@ export function StoryPlayer({
               onClick={() => go(i)}
               aria-label={s.title ?? `Story ${i + 1}`}
               aria-current={i === index}
+              className="sp-thumb"
               style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 10,
-                cursor: "pointer",
-                padding: 0,
-                border: "none",
-                background: "transparent",
-                flexShrink: 0,
                 // Le nom se lit du côté de la colonne : à droite des vignettes
                 // en lecture latine, à leur gauche en arabe.
                 flexDirection: isRTL ? "row-reverse" : "row",
                 textAlign: isRTL ? "right" : "left",
+                background: i === index ? "rgba(255,255,255,.10)" : "rgba(255,255,255,.04)",
+                border: i === index ? "1px solid rgba(255,255,255,.45)" : "1px solid rgba(255,255,255,.08)",
               }}
             >
               <span
                 style={{
                   position: "relative",
-                  width: 82,
-                  height: 108,
-                  borderRadius: 12,
+                  width: 64,
+                  height: 82,
+                  borderRadius: 10,
                   overflow: "hidden",
-                  border: i === index ? "2px solid #fff" : "2px solid transparent",
                   background: "#222",
                   flexShrink: 0,
                   display: "block",
                 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img src={s.posterUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: i === index ? 1 : 0.7 }} />
+                <img src={s.posterUrl} alt="" style={{ width: "100%", height: "100%", objectFit: "cover", opacity: i === index ? 1 : 0.72 }} />
               </span>
 
-              {/* Nom et prix SORTIS du cadre. Posés dessus, ils imposaient un
-                  dégradé noir sur le tiers bas de chaque poster — c'est-à-dire
-                  sur le flacon, qui est justement ce qu'on vient reconnaître.
-                  À côté, ils se lisent sans rien masquer, et le titre n'a plus
-                  à tenir en deux lignes de 9 px. */}
+              {/* Nom, marque et prix SORTIS du cadre. Posés dessus, ils
+                  imposaient un dégradé noir sur le tiers bas de chaque poster —
+                  c'est-à-dire sur le flacon, qui est justement ce qu'on vient
+                  reconnaître. À côté, ils se lisent sans rien masquer. */}
               {(s.title || s.shop) && (
-                <span
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: 2,
-                    maxWidth: 120,
-                    fontFamily: "var(--font-sans)",
-                    // Ombre portée plutôt qu'un fond : la colonne flotte sur la
-                    // vidéo, dont la luminosité change à chaque story.
-                    textShadow: "0 1px 6px rgba(0,0,0,.85)",
-                  }}
-                >
+                <span style={{ display: "flex", flexDirection: "column", gap: 3, minWidth: 0, flex: 1 }}>
                   {s.title && (
                     <span
                       style={{
-                        fontSize: 12,
-                        lineHeight: 1.2,
-                        fontWeight: 600,
-                        color: i === index ? "#fff" : "rgba(255,255,255,.72)",
+                        fontFamily: "var(--font-display)",
+                        fontSize: 15,
+                        lineHeight: 1.15,
+                        color: i === index ? "#fff" : "rgba(255,255,255,.82)",
                       }}
                     >
                       {s.title}
                     </span>
                   )}
+                  {s.shop?.brand && (
+                    <span
+                      style={{
+                        fontFamily: "var(--font-sans)",
+                        fontSize: 10.5,
+                        fontWeight: 600,
+                        letterSpacing: ".09em",
+                        textTransform: "uppercase",
+                        color: "rgba(255,255,255,.52)",
+                      }}
+                    >
+                      {s.shop.brand}
+                    </span>
+                  )}
                   {s.shop && (
-                    <span style={{ fontSize: 11.5, fontWeight: 700, color: "var(--gold-300)" }}>
+                    <span style={{ fontFamily: "var(--font-sans)", fontSize: 12.5, fontWeight: 700, color: "var(--gold-300)" }}>
                       {fmtPrice(s.shop.price)}
                     </span>
                   )}
@@ -383,86 +462,220 @@ export function StoryPlayer({
             </button>
           ))}
         </div>
-        {thumbs.length > 4 && (
-          <span aria-hidden style={{ color: "rgba(255,255,255,.6)" }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><path d="M6 9l6 6 6-6" /></svg>
-          </span>
-        )}
-      </div>
 
-      {/* Vidéo nette centrale 9:16 */}
-      <div
-        style={{ position: "relative", height: "100vh", maxHeight: "100vh", aspectRatio: "9 / 16", zIndex: 4 }}
-        onTouchStart={onTouchStart}
-        onTouchEnd={onTouchEnd}
-      >
-        {active && (
-          <video
-            ref={videoRef}
-            key={active.id}
-            src={active.videoUrl}
-            autoPlay
-            muted={muted}
-            playsInline
-            onTimeUpdate={(e) => {
-              const v = e.currentTarget;
-              if (v.duration) setProgress(v.currentTime / v.duration);
-            }}
-            onEnded={nextOrClose}
-            onClick={() => {
-              const v = videoRef.current;
-              if (!v) return;
-              if (v.paused) v.play().catch(() => {});
-              else v.pause();
-            }}
-            style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 14, background: "#000", cursor: "pointer" }}
-          />
-        )}
+        {/* Vidéo nette 9:16 */}
+        <div
+          className="sp-video"
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
+          {active && (
+            <video
+              ref={videoRef}
+              key={active.id}
+              src={active.videoUrl}
+              autoPlay
+              muted={muted}
+              playsInline
+              onTimeUpdate={(e) => {
+                const v = e.currentTarget;
+                if (v.duration) setProgress(v.currentTime / v.duration);
+              }}
+              onEnded={nextOrClose}
+              onClick={() => {
+                const v = videoRef.current;
+                if (!v) return;
+                if (v.paused) v.play().catch(() => {});
+                else v.pause();
+              }}
+              style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 14, background: "#000", cursor: "pointer" }}
+            />
+          )}
 
-        {/* Zones tap seek (gauche/droite) */}
-        <button type="button" aria-hidden tabIndex={-1} onClick={() => onTapZone("back")} style={{ position: "absolute", insetBlock: 0, insetInlineStart: 0, width: "30%", border: "none", background: "transparent", cursor: "pointer" }} />
-        <button type="button" aria-hidden tabIndex={-1} onClick={() => onTapZone("fwd")} style={{ position: "absolute", insetBlock: 0, insetInlineEnd: 0, width: "30%", border: "none", background: "transparent", cursor: "pointer" }} />
+          {/* Zones tap seek (gauche/droite) */}
+          <button type="button" aria-hidden tabIndex={-1} onClick={() => onTapZone("back")} style={{ position: "absolute", insetBlock: 0, insetInlineStart: 0, width: "30%", border: "none", background: "transparent", cursor: "pointer" }} />
+          <button type="button" aria-hidden tabIndex={-1} onClick={() => onTapZone("fwd")} style={{ position: "absolute", insetBlock: 0, insetInlineEnd: 0, width: "30%", border: "none", background: "transparent", cursor: "pointer" }} />
 
-        {/* CTA shoppable */}
-        {active?.shop && (
-          <a
-            href={active.shop.href}
-            style={{
-              position: "absolute",
-              bottom: 20,
-              insetInline: 16,
-              zIndex: 5,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              gap: 12,
-              textDecoration: "none",
-              background: "rgba(255,255,255,.92)",
-              borderRadius: 14,
-              padding: "10px 14px",
-            }}
-          >
-            <span style={{ display: "flex", flexDirection: "column" }}>
-              <span style={{ fontFamily: "var(--font-display)", fontSize: 16, color: "#2C2620" }}>{active.shop.name}</span>
-              <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: "#A8801F", fontWeight: 700 }}>{fmtPrice(active.shop.price)}</span>
-            </span>
-            <span
+          {/* CTA compact — la fiche latérale ne tient pas sous 1100 px, ce
+              bandeau la remplace alors et disparaît dès qu'elle s'affiche. */}
+          {active?.shop && (
+            <a
+              href={active.shop.href}
+              className="sp-cta-mobile"
               style={{
-                fontFamily: "var(--font-sans)",
-                fontSize: 12,
-                fontWeight: 700,
-                letterSpacing: ".04em",
-                textTransform: "uppercase",
-                color: "#fff",
-                background: "#C4A24F",
-                borderRadius: 999,
-                padding: "9px 16px",
-                whiteSpace: "nowrap",
+                position: "absolute",
+                bottom: 20,
+                insetInline: 16,
+                zIndex: 5,
+                alignItems: "center",
+                justifyContent: "space-between",
+                gap: 12,
+                textDecoration: "none",
+                background: "rgba(255,255,255,.92)",
+                borderRadius: 14,
+                padding: "10px 14px",
               }}
             >
-              {L.shopCta} →
+              <span style={{ display: "flex", flexDirection: "column" }}>
+                <span style={{ fontFamily: "var(--font-display)", fontSize: 16, color: "#2C2620" }}>{active.shop.name}</span>
+                <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: "#A8801F", fontWeight: 700 }}>{fmtPrice(active.shop.price)}</span>
+              </span>
+              <span
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: 12,
+                  fontWeight: 700,
+                  letterSpacing: ".04em",
+                  textTransform: "uppercase",
+                  color: "#fff",
+                  background: "#C4A24F",
+                  borderRadius: 999,
+                  padding: "9px 16px",
+                  whiteSpace: "nowrap",
+                }}
+              >
+                {L.shopCta} →
+              </span>
+            </a>
+          )}
+        </div>
+
+        {/* Fiche produit — le contenu que la story raconte, lisible sans la
+            quitter : packshot, accroche, notes, prix et ajout au panier. */}
+        {active?.shop && (
+          <aside className="sp-panel">
+            {active.shop.image && (
+              <span
+                style={{
+                  display: "block",
+                  background: "#fff",
+                  borderRadius: 12,
+                  overflow: "hidden",
+                  aspectRatio: "1 / 1",
+                }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={active.shop.image}
+                  alt={active.shop.name}
+                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                />
+              </span>
+            )}
+
+            <span style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <span style={{ fontFamily: "var(--font-display)", fontSize: 26, lineHeight: 1.15, color: "#fff" }}>
+                {active.shop.name}
+              </span>
+              {active.shop.brand && (
+                <span
+                  style={{
+                    fontFamily: "var(--font-sans)",
+                    fontSize: 11.5,
+                    fontWeight: 600,
+                    letterSpacing: ".12em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,.55)",
+                  }}
+                >
+                  {active.shop.brand}
+                </span>
+              )}
             </span>
-          </a>
+
+            {active.shop.description && (
+              <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: 14, lineHeight: 1.6, color: "rgba(255,255,255,.78)" }}>
+                {active.shop.description}
+              </p>
+            )}
+
+            {active.shop.notes && active.shop.notes.length > 0 && (
+              <span style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+                {active.shop.notes.map((n) => (
+                  <span
+                    key={n}
+                    style={{
+                      fontFamily: "var(--font-sans)",
+                      fontSize: 10.5,
+                      fontWeight: 600,
+                      letterSpacing: ".08em",
+                      textTransform: "uppercase",
+                      color: "rgba(255,255,255,.72)",
+                      border: "1px solid rgba(255,255,255,.22)",
+                      borderRadius: 999,
+                      padding: "6px 12px",
+                    }}
+                  >
+                    {n}
+                  </span>
+                ))}
+              </span>
+            )}
+
+            <span style={{ height: 1, background: "rgba(255,255,255,.14)" }} />
+
+            <span style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 }}>
+              <span style={{ fontFamily: "var(--font-sans)", fontSize: 22, fontWeight: 700, color: "#fff" }}>
+                {fmtPrice(active.shop.price)}
+              </span>
+              <QtyStepper value={qty} onChange={setQty} locale={locale} />
+            </span>
+
+            <button
+              type="button"
+              onClick={() => {
+                const shop = active.shop;
+                if (!shop) return;
+                addItem(
+                  {
+                    // L'identifiant panier est le slug de la fiche : deux
+                    // stories du même parfum doivent s'additionner sur une
+                    // seule ligne, pas en créer deux.
+                    id: shop.href.split("/").pop() ?? shop.name,
+                    name: shop.name,
+                    brand: shop.brand ?? "Dubaï Parfumerie",
+                    price: shop.price,
+                    image: shop.image ?? active.posterUrl,
+                  },
+                  qty
+                );
+                setAdded(true);
+              }}
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: 12.5,
+                fontWeight: 700,
+                letterSpacing: ".1em",
+                textTransform: "uppercase",
+                color: added ? "#fff" : "#2C2620",
+                background: added ? "#5A7D5A" : "#fff",
+                border: "none",
+                borderRadius: 999,
+                padding: "16px 20px",
+                cursor: "pointer",
+                transition: "background .2s, color .2s",
+              }}
+            >
+              {added ? `✓ ${L.added}` : L.addToCart}
+            </button>
+
+            <a
+              href={active.shop.href}
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: 11.5,
+                fontWeight: 700,
+                letterSpacing: ".1em",
+                textTransform: "uppercase",
+                color: "rgba(255,255,255,.78)",
+                textAlign: "center",
+                textDecorationThickness: "1px",
+                textUnderlineOffset: 4,
+              }}
+            >
+              {L.shopCta}
+            </a>
+          </aside>
         )}
       </div>
     </div>

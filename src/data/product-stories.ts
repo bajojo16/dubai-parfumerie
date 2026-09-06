@@ -9,8 +9,20 @@ export type ProductStory = {
   posterUrl: string;
   title?: string;
   shopProductHandle?: string;
-  // Résolu côté serveur en prod ; embarqué ici pour la démo
-  shop?: { price: number; href: string; name: string };
+  // Résolu côté serveur en prod ; embarqué ici pour la démo.
+  // `brand`, `image`, `description` et `notes` alimentent le panneau produit
+  // affiché À CÔTÉ de la vidéo en plein écran : sans eux le lecteur ne pouvait
+  // montrer qu'un nom et un prix posés sur l'image, et il fallait quitter la
+  // story pour savoir ce que le flacon sentait.
+  shop?: {
+    price: number;
+    href: string;
+    name: string;
+    brand?: string;
+    image?: string;
+    description?: string;
+    notes?: string[];
+  };
 };
 
 export const DEMO_STORIES: ProductStory[] = [
@@ -29,7 +41,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/videos/vanilla-voyage-hf-05-poster.jpg",
     title: "Vanilla Voyage",
     shopProductHandle: "vanilla-voyage",
-    shop: { price: 59, href: "/promo-flash", name: "Vanilla Voyage" },
+    shop: {
+      price: 49,
+      href: "/produit/vanilla-voyage",
+      name: "Vanilla Voyage",
+      brand: "Maison Asrar",
+      image: "/assets/products/vanilla-voyage/vanilla-voyage-packshot-01.jpg",
+      description: "Une vanille de voyage, ni sucrée ni sage : fève tonka, ambre et bois blond sur un sillage qui tient la journée entière.",
+      notes: ["Vanille","Fève tonka","Ambre","Bois blond"],
+    },
   },
   {
     // La route sous la brume, la matière, le flacon. Trop lent pour tenir dans
@@ -41,7 +61,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/videos/vanilla-voyage-hf-01-poster.jpg",
     title: "Vanilla Voyage · Le voyage",
     shopProductHandle: "vanilla-voyage",
-    shop: { price: 59, href: "/promo-flash", name: "Vanilla Voyage" },
+    shop: {
+      price: 49,
+      href: "/produit/vanilla-voyage",
+      name: "Vanilla Voyage",
+      brand: "Maison Asrar",
+      image: "/assets/products/vanilla-voyage/vanilla-voyage-packshot-01.jpg",
+      description: "Une vanille de voyage, ni sucrée ni sage : fève tonka, ambre et bois blond sur un sillage qui tient la journée entière.",
+      notes: ["Vanille","Fève tonka","Ambre","Bois blond"],
+    },
   },
   {
     id: "reef-33",
@@ -49,7 +77,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/videos/reef33-poster.webp",
     title: "Reef 33",
     shopProductHandle: "reef-33",
-    shop: { price: 49.9, href: "/produit/reef-33", name: "Reef 33" },
+    shop: {
+      price: 70,
+      href: "/produit/reef-33",
+      name: "Reef 33",
+      brand: "Reef Perfumes",
+      image: "/assets/products/reef-33.webp",
+      description: "L'air marin d'un matin du Golfe : agrumes, notes aquatiques et cèdre, une fraîcheur nette qui ne retombe pas.",
+      notes: ["Agrumes","Aquatique","Cèdre","Musc"],
+    },
   },
   {
     id: "oud-roses",
@@ -57,7 +93,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/videos/oud-roses-poster.webp",
     title: "Oud & Roses",
     shopProductHandle: "oud-roses",
-    shop: { price: 79.9, href: "/produit/oud-roses", name: "Oud & Roses" },
+    shop: {
+      price: 74.5,
+      href: "/produit/oud-roses",
+      name: "Oud & Roses",
+      brand: "Ahmed Al Maghribi",
+      image: "/assets/products/oud-roses.webp",
+      description: "Le duo classique de la parfumerie orientale, tenu au cordeau : rose de Taïf posée sur un oud fumé, safran en liant.",
+      notes: ["Oud","Rose de Taïf","Safran","Santal"],
+    },
   },
   {
     id: "aurum",
@@ -65,7 +109,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/videos/aurum-poster.webp",
     title: "Aurum",
     shopProductHandle: "aurum",
-    shop: { price: 49, href: "/promo-flash", name: "Aurum" },
+    shop: {
+      price: 75,
+      href: "/produit/reef-aurum",
+      name: "Aurum",
+      brand: "Reef Perfumes",
+      image: "/assets/products/aurum.webp",
+      description: "Ambre et santal doré dans un flacon ciselé : chaud, résineux, pensé pour les soirées fraîches.",
+      notes: ["Ambre","Santal","Résines","Musc"],
+    },
   },
   {
     // En tête depuis l'arrivée des seize films : la fiche produit ne garde
@@ -79,7 +131,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/videos/khamrah-hf-14-poster.jpg",
     title: "Khamrah · Porté",
     shopProductHandle: "lattafa-khamrah",
-    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+    shop: {
+      price: 29,
+      href: "/produit/lattafa-khamrah",
+      name: "Khamrah",
+      brand: "Lattafa",
+      image: "/assets/products/khamrah/khamrah-hf-05.jpg",
+      description: "La datte confite et la cannelle sur un fond de praline et de tonka — le gourmand oriental qui a fait le succès de la maison.",
+      notes: ["Datte","Cannelle","Praline","Fève tonka"],
+    },
   },
   {
     // Nouvelle prise de vue Higgsfield — le flacon reste immobile et net pendant
@@ -92,7 +152,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     title: "Khamrah",
     shopProductHandle: "lattafa-khamrah",
-    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+    shop: {
+      price: 29,
+      href: "/produit/lattafa-khamrah",
+      name: "Khamrah",
+      brand: "Lattafa",
+      image: "/assets/products/khamrah/khamrah-hf-05.jpg",
+      description: "La datte confite et la cannelle sur un fond de praline et de tonka — le gourmand oriental qui a fait le succès de la maison.",
+      notes: ["Datte","Cannelle","Praline","Fève tonka"],
+    },
   },
   {
     // La cristallerie : la verrière de l'atelier, le bloc de verre sous la
@@ -105,7 +173,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/videos/khamrah-hf-11-poster.jpg",
     title: "Khamrah · L'atelier",
     shopProductHandle: "lattafa-khamrah",
-    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+    shop: {
+      price: 29,
+      href: "/produit/lattafa-khamrah",
+      name: "Khamrah",
+      brand: "Lattafa",
+      image: "/assets/products/khamrah/khamrah-hf-05.jpg",
+      description: "La datte confite et la cannelle sur un fond de praline et de tonka — le gourmand oriental qui a fait le succès de la maison.",
+      notes: ["Datte","Cannelle","Praline","Fève tonka"],
+    },
   },
   {
     // La coulée d'ambre sur le flacon dit le côté gourmand du parfum mieux
@@ -117,7 +193,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     title: "Khamrah",
     shopProductHandle: "lattafa-khamrah",
-    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+    shop: {
+      price: 29,
+      href: "/produit/lattafa-khamrah",
+      name: "Khamrah",
+      brand: "Lattafa",
+      image: "/assets/products/khamrah/khamrah-hf-05.jpg",
+      description: "La datte confite et la cannelle sur un fond de praline et de tonka — le gourmand oriental qui a fait le succès de la maison.",
+      notes: ["Datte","Cannelle","Praline","Fève tonka"],
+    },
   },
   {
     // « Fiole fixe » : le flacon reste net sur sa pierre sombre pendant que le
@@ -128,7 +212,15 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     title: "Khamrah · Fiole fixe",
     shopProductHandle: "lattafa-khamrah",
-    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+    shop: {
+      price: 29,
+      href: "/produit/lattafa-khamrah",
+      name: "Khamrah",
+      brand: "Lattafa",
+      image: "/assets/products/khamrah/khamrah-hf-05.jpg",
+      description: "La datte confite et la cannelle sur un fond de praline et de tonka — le gourmand oriental qui a fait le succès de la maison.",
+      notes: ["Datte","Cannelle","Praline","Fève tonka"],
+    },
   },
   {
     // La datte ouverte puis le sirop qu'on en tire : la note de tête montrée
@@ -139,6 +231,14 @@ export const DEMO_STORIES: ProductStory[] = [
     posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     title: "Khamrah · Datte",
     shopProductHandle: "lattafa-khamrah",
-    shop: { price: 21.9, href: "/produit/lattafa-khamrah", name: "Khamrah" },
+    shop: {
+      price: 29,
+      href: "/produit/lattafa-khamrah",
+      name: "Khamrah",
+      brand: "Lattafa",
+      image: "/assets/products/khamrah/khamrah-hf-05.jpg",
+      description: "La datte confite et la cannelle sur un fond de praline et de tonka — le gourmand oriental qui a fait le succès de la maison.",
+      notes: ["Datte","Cannelle","Praline","Fève tonka"],
+    },
   },
 ];

@@ -188,7 +188,8 @@ export function PackCard({
       return new Intl.NumberFormat(locale, {
         style: "currency",
         currency: "EUR",
-        maximumFractionDigits: 0,
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
       }).format(n);
     } catch {
       return `${Math.round(n)} €`;
