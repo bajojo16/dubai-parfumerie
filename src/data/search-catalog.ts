@@ -29,6 +29,7 @@ import { OLFACTIVE_TWINS } from "@/data/olfactive-twins";
 import { BUNDLE_PRODUCTS } from "@/data/bundle-products";
 import { BRANDS } from "@/data/brands";
 import { CATALOGUE_SEARCH_ENTRIES } from "@/data/catalogue/catalogue-to-search";
+import { BOUTIQUE_SEARCH_ENTRIES } from "@/data/catalogue/boutique-to-search";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -472,6 +473,11 @@ function collect(): RawProduct[] {
   //    n'existaient nulle part : elles étaient au catalogue de la boutique mais
   //    introuvables sur le site, y compris par leur nom exact.
   out.push(...CATALOGUE_SEARCH_ENTRIES.map((p) => ({ ...p })));
+
+  // 9. Le reste de la boutique, tel que dubaiparfumerie.com le publie, sans la
+  //    vérification du catalogue. En tout dernier : une fiche rédigée ou une
+  //    fiche vérifiée du même flacon l'emporte toujours.
+  out.push(...BOUTIQUE_SEARCH_ENTRIES.map((p) => ({ ...p })));
 
   return out;
 }
