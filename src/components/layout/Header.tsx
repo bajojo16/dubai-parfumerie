@@ -1310,7 +1310,11 @@ export function Header() {
         }}
       >
         <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", padding: "18px 20px", borderBottom: "1px solid rgba(0,0,0,.08)" }}>
-          <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 24, width: "auto" }} />
+          {/* Le logo du tiroir ramène à l'accueil, comme celui de la barre : un
+              logo qui ne mène nulle part est un bouton cassé. */}
+          <Link href="/" aria-label="Accueil" style={{ display: "flex", alignItems: "center" }}>
+            <img src="/assets/logo.png" alt="Dubaï Parfumerie" style={{ height: 24, width: "auto" }} />
+          </Link>
           <button onClick={() => setMobileMenuOpen(false)} aria-label="Fermer" style={{ background: "none", border: "none", cursor: "pointer", color: "var(--ink-500)", display: "flex" }}>
             <IconClose />
           </button>

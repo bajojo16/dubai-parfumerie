@@ -224,7 +224,15 @@ function HouseMark({ house, size = 36 }: { house: PartnerHouse | undefined | str
   if (h?.logo) {
     return (
       <Image
-        src={h.logo}
+        // Version détourée et resserrée du logo (`/brands/marks/`) : le fichier
+        // de carte garde 15 % de marge, et à 30 px un logo fin y disparaissait —
+        // quatre puces sur dix-sept sortaient blanches.
+        src={h.logo.replace("/brands/", "/brands/marks/")}
+        // Servi tel quel, sans l'optimiseur : 240 px pour une puce de 30, le gain
+        // serait nul — et les premières puces ont été servies pendant que ces
+        // fichiers n'existaient pas encore, le navigateur a gardé ces 404 de
+        // `/_next/image` en cache. L'URL directe les contourne.
+        unoptimized
         alt=""
         width={size}
         height={size}
@@ -337,6 +345,8 @@ export function OnDemandClient() {
   // Sélection
   const [house, setHouse] = useState("");
   const [allHouses, setAllHouses] = useState(false);
+  // Recherche dans les maisons : à 60 puces, on ne balaie plus des yeux, on tape.
+  const [houseLetter, setHouseLetter] = useState("");
   const [query, setQuery] = useState("");
   const [open, setOpen] = useState(false);
   const [highlight, setHighlight] = useState(0);
@@ -438,10 +448,28 @@ export function OnDemandClient() {
 
   // ── Dérivations ────────────────────────────────────────────────────────────
 
-  const visibleHouses = useMemo(
-    () => (allHouses ? PARTNER_HOUSES : PARTNER_HOUSES.filter((h) => !!h.logo)),
-    [allHouses],
-  );
+  const visibleHouses = useMemo(() => {
+    const q = query
+      .trim()
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "");
+    // Le champ du parfum est aussi celui des maisons : une seule recherche pour
+    // les deux. Elle cherche dans TOUTES les maisons, repliées ou pas — taper
+    // « rehab » pour tomber sur « aucune maison » parce que la liste était
+    // réduite serait un piège.
+    if (q) {
+      return PARTNER_HOUSES.filter((h) =>
+        h.name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").includes(q),
+      );
+    }
+    // Une lettre choisie filtre la liste complète, comme la recherche.
+    if (houseLetter) return PARTNER_HOUSES.filter((h) => h.name[0].toUpperCase() === houseLetter);
+    return allHouses ? PARTNER_HOUSES : PARTNER_HOUSES.filter((h) => !!h.logo);
+  }, [allHouses, query, houseLetter]);
+
+  /** Les lettres qui ont au moins une maison : les autres sont grisées, pas cachées, pour garder l'alphabet lisible. */
+  const houseLetters = useMemo(() => new Set(PARTNER_HOUSES.map((h) => h.name[0].toUpperCase())), []);
 
   const suggestions = useMemo(() => {
     if (!catalog || query.trim().length < 2) return [];
@@ -452,13 +480,16 @@ export function OnDemandClient() {
     const starts: Entry[] = [];
     const contains: Entry[] = [];
     for (const e of catalog.entries) {
-      if (house && e.house !== house) continue;
       if (!e.searchKey.includes(key)) continue;
       if (catalog.norm(e.name).startsWith(key)) starts.push(e);
       else contains.push(e);
-      if (starts.length >= MAX_SUGGESTIONS) break;
     }
-    return [...starts, ...contains].slice(0, MAX_SUGGESTIONS);
+    // La maison cochée est une préférence, pas un mur : « kham » avec Afnan
+    // cochée doit trouver Khamrah (Lattafa). Ses résultats passent devant, les
+    // autres suivent — et la recherche reste commune aux deux blocs.
+    const rank = (e: Entry) => (house && e.house === house ? 0 : 1);
+    const byHouse = (a: Entry, b: Entry) => rank(a) - rank(b);
+    return [...starts.sort(byHouse), ...contains.sort(byHouse)].slice(0, MAX_SUGGESTIONS);
   }, [catalog, query, house]);
 
   const hi = suggestions.length ? Math.min(highlight, suggestions.length - 1) : 0;
@@ -482,6 +513,20 @@ export function OnDemandClient() {
       .filter((e): e is Entry => !!e)
       .map((e) => ({ entry: e, stock: catalog.stock(e.name, e.house) }));
   }, [catalog]);
+
+  /**
+   * Les cinq parfums les plus connus de la maison cochée. « Connu » se lit sur ce
+   * que la boutique tient : un flacon en rayon, avec sa photo, passe devant une
+   * référence de la base sans stock. À égalité, l'ordre de la base.
+   */
+  const houseTop = useMemo(() => {
+    if (!catalog || !house) return [];
+    return catalog.entries
+      .filter((e) => e.house === house)
+      .map((e) => ({ entry: e, stock: catalog.stock(e.name, e.house) }))
+      .sort((a, b) => Number(!!b.stock?.image) - Number(!!a.stock?.image) || Number(!!b.stock) - Number(!!a.stock))
+      .slice(0, 5);
+  }, [catalog, house]);
 
   /** Saisie libre proposée quand le texte tapé n'est pas exactement une entrée connue. */
   const freeText = query.trim();
@@ -680,43 +725,9 @@ export function OnDemandClient() {
         <div className="dp-odc-grid">
           {/* ══ Colonne 1 : la maison, le parfum, les demandes fréquentes ══ */}
           <div className="dp-odc-col" style={{ minWidth: 0 }}>
-            {/* ── A. La maison ── */}
+            {/* ── A. Le parfum — d'abord : qui arrive ici a un nom en tête, la maison se déduit ── */}
             <div className="dp-odc-block">
-              <BlockLabel step="A">La maison</BlockLabel>
-              <div className="dp-odc-houses" role="group" aria-label="Maisons partenaires">
-                <button
-                  type="button"
-                  className={"dp-odc-chip" + (house === "" ? " is-on" : "")}
-                  aria-pressed={house === ""}
-                  onClick={() => onHouse("")}
-                >
-                  <span className="dp-odc-chip-all" aria-hidden>
-                    ✦
-                  </span>
-                  <span className="dp-odc-chip-name">Toutes les maisons</span>
-                </button>
-                {visibleHouses.map((h) => (
-                  <button
-                    key={h.name}
-                    type="button"
-                    className={"dp-odc-chip" + (house === h.name ? " is-on" : "")}
-                    aria-pressed={house === h.name}
-                    onClick={() => onHouse(house === h.name ? "" : h.name)}
-                    title={h.country ? h.name + " — " + h.country : h.name}
-                  >
-                    <HouseMark house={h} size={30} />
-                    <span className="dp-odc-chip-name">{h.name}</span>
-                  </button>
-                ))}
-              </div>
-              <button type="button" className="dp-odc-linkbtn" onClick={() => setAllHouses((v) => !v)} aria-expanded={allHouses}>
-                {allHouses ? "Réduire la liste" : "Afficher les " + PARTNER_HOUSES.length + " maisons partenaires"}
-              </button>
-            </div>
-
-            {/* ── B. Le parfum ── */}
-            <div className="dp-odc-block">
-              <BlockLabel step="B">Le parfum</BlockLabel>
+              <BlockLabel step="A">Le parfum ou la marque</BlockLabel>
               <div ref={boxRef} className="dp-odc-searchbox">
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="var(--gold-700)" strokeWidth="1.7" aria-hidden className="dp-odc-searchicon">
                   <circle cx="11" cy="11" r="7" />
@@ -731,7 +742,7 @@ export function OnDemandClient() {
                   aria-autocomplete="list"
                   aria-activedescendant={open && suggestions.length ? uid + "-opt-" + hi : undefined}
                   aria-label="Nom du parfum"
-                  placeholder={house ? "Nom du parfum " + house + "…" : "Khamrah, Yara, Hawas, Club de Nuit…"}
+                  placeholder={house ? "Nom du parfum " + house + ", ou une autre marque…" : "Un parfum ou une marque — Khamrah, Lattafa, Sauvage…"}
                   value={query}
                   onChange={(e) => onQuery(e.target.value)}
                   onFocus={() => setOpen(query.trim().length >= 2 && !picked)}
@@ -856,6 +867,89 @@ export function OnDemandClient() {
                   « {justAdded} » ajouté à votre demande.
                 </p>
               ) : null}
+            </div>
+
+            {/* ── B. La maison — filtre optionnel, partagé avec la recherche du parfum ── */}
+            <div className="dp-odc-block">
+              <BlockLabel step="B">La maison</BlockLabel>
+              <div className="dp-odc-alpha" role="group" aria-label="Filtrer par initiale">
+                {"ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("").map((l) => (
+                  <button
+                    key={l}
+                    type="button"
+                    className={"dp-odc-alpha-btn" + (houseLetter === l ? " is-on" : "")}
+                    disabled={!houseLetters.has(l)}
+                    aria-pressed={houseLetter === l}
+                    onClick={() => setHouseLetter(houseLetter === l ? "" : l)}
+                  >
+                    {l}
+                  </button>
+                ))}
+              </div>
+              <div className="dp-odc-houses" role="group" aria-label="Maisons partenaires">
+                <button
+                  type="button"
+                  className={"dp-odc-chip" + (house === "" ? " is-on" : "")}
+                  aria-pressed={house === ""}
+                  onClick={() => onHouse("")}
+                >
+                  <span className="dp-odc-chip-all" aria-hidden>
+                    ✦
+                  </span>
+                  <span className="dp-odc-chip-name">Toutes les maisons</span>
+                </button>
+                {visibleHouses.map((h) => (
+                  <button
+                    key={h.name}
+                    type="button"
+                    className={"dp-odc-chip" + (house === h.name ? " is-on" : "")}
+                    aria-pressed={house === h.name}
+                    onClick={() => onHouse(house === h.name ? "" : h.name)}
+                    title={h.country ? h.name + " — " + h.country : h.name}
+                  >
+                    <HouseMark house={h} size={30} />
+                    <span className="dp-odc-chip-name">{h.name}</span>
+                  </button>
+                ))}
+              </div>
+              {house && houseTop.length > 0 && (
+                <div className="dp-odc-housetop">
+                  <p className="dp-odc-status" style={{ marginTop: 0 }}>Les plus connus chez {house} — un clic les ajoute.</p>
+                  <ul className="dp-odc-freq">
+                    {houseTop.map(({ entry, stock }) => {
+                      const on = lineKeys.has(entry.id);
+                      return (
+                        <li key={entry.id} className="dp-odc-freq-card">
+                          <div className="dp-odc-freq-media">
+                            {stock?.image ? (
+                              <Image src={stock.image} alt={entry.name + " — " + entry.house} fill sizes="(max-width: 760px) 45vw, 180px" style={{ objectFit: "cover" }} />
+                            ) : (
+                              <span className="dp-odc-freq-mark"><HouseMark house={entry.house} size={52} /></span>
+                            )}
+                          </div>
+                          <p className="dp-odc-freq-house">{entry.house}</p>
+                          <p className="dp-odc-freq-name">{entry.name}</p>
+                          <p className="dp-odc-freq-meta">
+                            {catalog?.familyLabel[entry.family]}
+                            {stock?.price ? " · " + fmtPrice(stock.price) : ""}
+                          </p>
+                          <button type="button" className={"dp-odc-freq-btn" + (on ? " is-on" : "")} onClick={() => (on ? removeLine(entry.id) : addEntry(entry))} aria-pressed={on}>
+                            {on ? "✓ Dans ma demande" : "+ Ajouter"}
+                          </button>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </div>
+              )}
+              {visibleHouses.length === 0 && (
+                <p className="dp-odc-hint">Aucune maison ne correspond — choisissez « Toutes les maisons » et saisissez le parfum librement.</p>
+              )}
+              {!query.trim() && !houseLetter && (
+              <button type="button" className="dp-odc-linkbtn" onClick={() => setAllHouses((v) => !v)} aria-expanded={allHouses}>
+                {allHouses ? "Réduire la liste" : "Afficher les " + PARTNER_HOUSES.length + " maisons partenaires"}
+              </button>
+              )}
             </div>
 
             {/* ── Demandes fréquentes ── */}
@@ -1026,6 +1120,8 @@ export function OnDemandClient() {
 
                   <fieldset className="dp-odc-fieldset">
                     <legend>Je préfère une réponse par</legend>
+                    {/* WhatsApp d'abord et recommandé : c'est le canal du comptoir, la
+                        réponse y vient en heures là où l'e-mail attend le lendemain. */}
                     <div className="dp-odc-radios">
                       {(
                         [
@@ -1035,7 +1131,10 @@ export function OnDemandClient() {
                       ).map(([value, label]) => (
                         <label key={value} className={"dp-odc-radio" + (form.channel === value ? " is-on" : "")}>
                           <input type="radio" name="channel" value={value} checked={form.channel === value} onChange={() => setField("channel", value)} />
-                          <span>{label}</span>
+                          <span>
+                            {label}
+                            {value === "whatsapp" && <em className="dp-odc-reco">Recommandé</em>}
+                          </span>
                         </label>
                       ))}
                     </div>
@@ -1096,6 +1195,7 @@ export function OnDemandClient() {
                     <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.3 14c-.2.6-1.2 1.2-1.7 1.2-.4 0-1 .1-3.2-.8-2.7-1.1-4.4-3.9-4.5-4.1-.1-.2-1.1-1.4-1.1-2.7 0-1.2.7-1.8 1-2 .2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5l.8 2c.1.2.1.4 0 .6l-.4.5c-.1.2-.3.3-.1.6.2.3.8 1.3 1.7 2.1 1.2 1 2.1 1.3 2.4 1.5.2.1.4.1.6-.1l.8-1c.2-.2.3-.2.6-.1l2 1c.2.1.4.2.5.3.1.2.1.5 0 .8Z" />
                   </svg>
                   Envoyer par WhatsApp
+                  <em className="dp-odc-reco dp-odc-reco-dark">Recommandé</em>
                 </a>
                 <p className="dp-odc-note" style={{ textAlign: "center" }}>
                   Réponse sous {QUOTE_DELAY} · rien n&apos;est engagé avant votre validation.
@@ -1157,6 +1257,32 @@ export function OnDemandClient() {
           background: var(--gold-500); color: var(--espresso-900); font-size: 13px;
         }
         .dp-odc-chip-name { white-space: nowrap; }
+        .dp-odc-housesearch{width:100%;max-width:420px;margin:0 0 12px;padding:10px 14px;font:inherit;font-size:.92rem;color:var(--ink-900);background:var(--surface-white);border:1px solid var(--line-100);border-radius:999px;outline:none}
+
+        .dp-odc-housesearch:focus-visible{border-color:var(--gold-500);box-shadow:0 0 0 3px rgba(200,144,30,.18)}
+
+        .dp-odc-alpha{display:flex;flex-wrap:wrap;gap:4px;margin:0 0 12px}
+
+
+        .dp-odc-alpha-btn{width:30px;height:30px;padding:0;font:inherit;font-size:.78rem;font-weight:600;letter-spacing:.04em;color:var(--ink-700);background:var(--surface-white);border:1px solid var(--line-100);border-radius:8px;cursor:pointer}
+
+
+        .dp-odc-alpha-btn:hover:not(:disabled){border-color:var(--gold-500);color:var(--gold-700)}
+
+
+        .dp-odc-alpha-btn.is-on{background:var(--gold-500);border-color:var(--gold-500);color:#fff}
+
+
+        .dp-odc-alpha-btn:disabled{opacity:.28;cursor:default}
+
+        .dp-odc-housetop{margin:14px 0 4px}
+
+        .dp-odc-reco{display:inline-block;margin-left:8px;padding:2px 8px;font-style:normal;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--gold-700);background:rgba(200,144,30,.14);border-radius:999px;vertical-align:middle}
+
+
+        .dp-odc-reco-dark{color:#fff;background:rgba(255,255,255,.22)}
+
+        .dp-odc-hint{margin:6px 0 0;font-size:.85rem;color:var(--ink-500)}
         .dp-odc-linkbtn {
           margin-top: 12px;
           padding: 0;

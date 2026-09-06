@@ -228,6 +228,13 @@ export default function CommandeALaDemandePage() {
       </section>
 
       {/* ── 2. Comment ça marche ── */}
+      {/* La demande AVANT le parcours : qui arrive ici sait ce qu'il cherche, il
+          veut composer, pas lire quatre étapes d'abord. Le parcours reste juste
+          dessous pour qui veut comprendre ce qui se passe après l'envoi. */}
+      <section id="demande" style={{ scrollMarginTop: 80 }}>
+        <OnDemandClient />
+      </section>
+
       <section
         id="comment-ca-marche"
         style={{
@@ -296,9 +303,6 @@ export default function CommandeALaDemandePage() {
 
       {/* ── 3 à 5 + 8. Outil de demande (client) : maison, parfum, panier de
              demande, coordonnées, demandes fréquentes ── */}
-      <section id="demande" style={{ scrollMarginTop: 80 }}>
-        <OnDemandClient />
-      </section>
 
       {/* ── 7. Réassurance ── */}
       <section style={{ background: "var(--surface-cream)", borderTop: "1px solid var(--line-100)", borderBottom: "1px solid var(--line-100)" }}>

@@ -35,6 +35,9 @@ const COLUMNS = [
   {
     title: "Boutique",
     links: [
+      // En tête de colonne : l'entrée vers tout le rayon, avant les découpes.
+
+      { label: "Tous les produits", href: "/catalogue" },
       { label: "Parfums Femme", href: "/parfums-femme" },
       { label: "Parfums Homme", href: "/parfums-homme" },
       { label: "Huile de Parfum", href: "/huile-de-parfum" },
@@ -280,7 +283,9 @@ export function Footer() {
         }}
       >
         <div style={{ maxWidth: 280 }}>
-          <img src="/assets/logo.png" alt="Dubaï Parfumerie" className="dp-footer-logo" style={{ height: 32, width: "auto", display: "block", marginBottom: 14, filter: "brightness(0) invert(1)" }} />
+          <Link href="/" aria-label="Accueil" style={{ display: "inline-block", marginBottom: 14 }}>
+            <img src="/assets/logo.png" alt="Dubaï Parfumerie" className="dp-footer-logo" style={{ height: 32, width: "auto", display: "block", filter: "brightness(0) invert(1)" }} />
+          </Link>
           <p
             style={{
               fontFamily: "var(--font-sans)",
