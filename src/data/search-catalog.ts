@@ -28,6 +28,7 @@ import { DEMO as OIL_PRODUCTS } from "@/data/oil-products";
 import { OLFACTIVE_TWINS } from "@/data/olfactive-twins";
 import { BUNDLE_PRODUCTS } from "@/data/bundle-products";
 import { BRANDS } from "@/data/brands";
+import { CATALOGUE_SEARCH_ENTRIES } from "@/data/catalogue/catalogue-to-search";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -462,6 +463,15 @@ function collect(): RawProduct[] {
   // 7. Références sans fiche rédigée — en dernier : toute autre source qui
   //    porterait déjà le même flacon (une fiche, un lot) doit l'emporter.
   out.push(...SANS_FICHE_REDIGEE.map((p) => ({ ...p })));
+
+  // 8. Catalogue vérifié de dubaiparfumerie.com. Les 111 fiches relevées à la
+  //    source : marque recoupée sur le site officiel de la maison, pyramide
+  //    idem, prix comparé au marché. Cinq d'entre elles ont déjà une fiche
+  //    rédigée plus haut — la déduplication les fera gagner, et le catalogue ne
+  //    servira qu'à combler leurs trous. Les cent et quelques autres
+  //    n'existaient nulle part : elles étaient au catalogue de la boutique mais
+  //    introuvables sur le site, y compris par leur nom exact.
+  out.push(...CATALOGUE_SEARCH_ENTRIES.map((p) => ({ ...p })));
 
   return out;
 }

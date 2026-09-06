@@ -52,7 +52,7 @@ export const DEMO: ShoppableVideo[] = [
     posterUrl: "/assets/videos/oud-roses-poster.webp",
     productHandle: "oud-roses",
     product: {
-      name: "Oud & Roses",
+      name: "Oud and Roses",
       price: 74.5,
       thumbnailUrl: "/assets/products/oud-roses.webp",
       available: false,

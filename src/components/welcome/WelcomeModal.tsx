@@ -105,7 +105,7 @@ export function WelcomeModal({
   delayMs = 1800,
 
   imageSrc = "/assets/popup-oud-roses.jpg",
-  imageAlt = "Oud & Roses — parfums orientaux",
+  imageAlt = "Oud and Roses — parfums orientaux",
   leftTitle = "Nos Coffrets Découverte",
   leftText = "Explorez la richesse de la parfumerie orientale avec nos coffrets échantillons. Le meilleur moyen de trouver votre signature olfactive.",
   leftPrice = "À partir de 9€",

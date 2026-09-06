@@ -95,7 +95,7 @@ const products = [
 const summerProducts: (LuxeProduct & { id: number })[] = [
   { id: 101, image: "/assets/products/blueberry/blueberry-packshot.jpg", brand: "Arabiyat Prestige", title: "Blueberry Musk", price: 20, oldPrice: 25, href: "/produit/arabiyat-prestige-blueberry-musk" },
   { id: 102, image: "/assets/products/reef-33.webp", brand: "Reef Perfumes", title: "Reef 33", price: 70, href: "/produit/reef-33" },
-  { id: 103, image: "/assets/products/marshmallow-blush.webp", brand: "Paris Corner", title: "Marshmallow Blush", price: 39.5, href: "/produit/paris-corner-marshmallow-blush" },
+  { id: 103, image: "/assets/products/marshmallow-blush.webp", brand: "Paris Corner", title: "Marshmallow Blush", price: 24.9, href: "/produit/paris-corner-marshmallow-blush" },
   { id: 104, image: "/assets/products/khamrah/khamrah-hf-05.jpg", brand: "Lattafa", title: "Khamrah", price: 29, href: "/produit/lattafa-khamrah", rating: 5, reviewCount: 1 },
 ];
 
@@ -897,7 +897,7 @@ export default function HomePageClient() {
               { name: "Vanilla Voyage", desc: "Démonstration produit", src: "/assets/videos/vanilla-voyage.mp4" },
               { name: "Reef 33", desc: "Démonstration produit", src: "/assets/videos/reef33.mp4" },
               { name: "Aurum", desc: "Présentation produit", src: "/assets/videos/aurum-v4.mp4" },
-              { name: "Oud & Roses", desc: "Démonstration produit", src: "/assets/videos/oud-roses.mp4" },
+              { name: "Oud and Roses", desc: "Démonstration produit", src: "/assets/videos/oud-roses.mp4" },
             ].map((v, i) => (
               <div key={i}>
                 <VideoPlaceholder

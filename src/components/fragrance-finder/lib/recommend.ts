@@ -137,7 +137,7 @@ export function scoreCatalog(criteria: QuizCriteria, products = SEARCH_PRODUCTS)
 
 /**
  * Le catalogue agrégé porte quatre doublons de nom (« Aurum », « Reef 33 »,
- * « Oud & Roses », « Vanilla Voyage » existent sous deux maisons, avec le même
+ * « Oud and Roses », « Vanilla Voyage » existent sous deux maisons, avec le même
  * visuel). Trois cartes dont deux identiques à l'œil ne racontent rien : on ne
  * garde qu'une référence par nom, la mieux classée.
  */

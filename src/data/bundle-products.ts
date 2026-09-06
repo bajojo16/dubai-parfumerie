@@ -53,7 +53,11 @@ export const BUNDLE_PRODUCTS: BundleProduct[] = [
     notes: "Oud, Rose, Safran",
     price: 54.9,
     was: 109.9,
-    image: "/assets/oils/tanasuk.png",
+    // `oils/tanasuk.png` montrait un flacon d'huile ciselé émaillé vert et
+    // rouge — un mukhallat de la maison, pas Tanasuk, qui est un extrait de
+    // parfum en flacon rouge et noir. Packshot repris de la fiche de la
+    // boutique.
+    image: "/assets/products/dp/al-haramain-tanasuk/dp_parfumerie-al-haramain-tanasuk-01.webp",
     available: true,
   },
   {
@@ -63,7 +67,10 @@ export const BUNDLE_PRODUCTS: BundleProduct[] = [
     notes: "Vanille, Musc blanc",
     price: 44.9,
     was: 89.9,
-    image: "/assets/oils/noora.png",
+    // `oils/noora.png` était un gros plan du bouchon : recadré en carte, il ne
+    // laissait voir qu'une bande dorée et la moitié du mot « NOORA ». Packshot
+    // entier repris de la fiche de la boutique.
+    image: "/assets/products/dp/al-haramain-noora/dp_parfumerie-al-haramain-noora-01.webp",
     available: true,
   },
   {
@@ -107,8 +114,11 @@ export const BUNDLE_PRODUCTS: BundleProduct[] = [
     family: "Floral",
     price: 39.9,
     was: 79.9,
-    // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
-    image: "/assets/prod-1.jpg",
+    // « Silk Rose » de Lattafa n'existe ni en banque ni au catalogue de la
+    // boutique : c'est une référence de démonstration. `prod-1.jpg` montrait un
+    // Reef Al Hub, étiquette lisible — un autre parfum, nommément identifiable.
+    // Le flacon d'huile détouré ne prétend au moins être personne.
+    image: "/assets/oils/silk.png",
     available: true,
   },
 ];

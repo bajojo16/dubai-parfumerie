@@ -72,12 +72,12 @@ export const DEMO_TRENDS: TrendProduct[] = [
   },
   {
     slug: "oud-roses",
-    name: "Oud & Roses",
+    name: "Oud and Roses",
     brand: "Dubaï Parfumerie",
     href: "/produit/oud-roses",
     variantId: "oud-roses-50",
     image: "/assets/products/oud-roses.webp",
-    // grecia-trend.mp4 montre Grecia, pas Oud & Roses.
+    // grecia-trend.mp4 montre Grecia, pas Oud and Roses.
     cardVideo: "/assets/videos/oud-roses.mp4",
     video: "/assets/videos/oud-roses.mp4",
     rank: 2,

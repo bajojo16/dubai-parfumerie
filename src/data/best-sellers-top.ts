@@ -39,7 +39,7 @@ export const TOP_PRODUCTS: RailProduct[] = [
     id: "top-oud-roses",
     slug: "oud-roses",
     brand: "Atelier Oud",
-    name: "Oud & Roses",
+    name: "Oud and Roses",
     notes: "Oud · Rose · Safran",
     // Un oud-rose : l'oud porte, la rose se pose dessus — et le nom le dit.
     family: "Boisé",

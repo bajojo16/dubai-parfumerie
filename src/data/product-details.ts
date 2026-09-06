@@ -373,11 +373,10 @@ export const PRODUCTS: Record<string, Product> = {
   "paris-corner-rifaaqat": {
     name: "Rifaaqat",
     brand: "Paris Corner",
-    // Prix et prix barré repris tels quels de l'entrée que `search-catalog.ts`
-    // portait en attendant cette fiche, pour ne pas créer un troisième chiffre
-    // sur un flacon qui n'en avait aucun : ils s'appuient sur le seul repère
-    // Paris Corner du dépôt, Marshmallow Blush à 39,50 € dans le rail promo.
-    price: 39.9,
+    // Réaligné sur la médiane marché (19,91 € sur 3 relevés), arrondi au prix
+    // de boutique. Le site affichait 30 €, soit +51 % — l'écart le plus large
+    // de la maison après Marshmallow Blush.
+    price: 19.9,
     oldPrice: 52.9,
     // Valeurs de démonstration stables, comme les autres fiches rédigées.
     // Volontairement sous Khamrah et Vanilla Voyage : la référence vient
@@ -386,7 +385,9 @@ export const PRODUCTS: Record<string, Product> = {
     rating: 4.7,
     reviews: 142,
     concentration: "Eau de parfum",
-    volume: "100ml",
+    // 85 ml et non 100 : c'est le format que Paris Corner commercialise, et
+    // celui sur lequel porte la fiche officielle.
+    volume: "85ml",
     origin: "Fabriqué à Dubaï",
     description:
       "Rifaaqat ouvre sur une gorgée d'alcool ambré : un cognac chaud et sec, cerclé de cannelle, qui pique avant de retomber. La praline fond dessus presque aussitôt et arrondit l'attaque, sans jamais la confire — c'est une praline grillée, un peu amère au bord, pas un caramel. Le cœur laisse monter la fève tonka, foin et coumarine, qui ramène le gourmand vers la peau. Le fond est un lit de vanille sombre posé sur des bois secs, santal et cèdre, dont la sécheresse empêche l'ensemble de tourner au sirop. Sillage dense et tenue longue, à l'image du flacon rectangulaire à capuchon noir mat et à l'étiquette calligraphiée.",
@@ -398,9 +399,12 @@ export const PRODUCTS: Record<string, Product> = {
     // C'est ce moteur qui doit le dire à l'écran, pas une phrase écrite ici.
     viralNote:
       "Très partagé sur les réseaux sociaux, où il est cherché pour sa parenté avec un grand classique gourmand au cognac, dont il rappelle l'axe praline, tonka et bois secs sans jamais prétendre s'y substituer.",
-    topNotes: ["Cognac", "Cannelle"],
-    heartNotes: ["Praline", "Fève tonka"],
-    baseNotes: ["Vanille", "Bois de santal", "Cèdre"],
+    // Pyramide officielle Paris Corner (pariscorner.ae/product/rifaaqat-85ml).
+    // La composition affichée jusqu'ici — cognac, cannelle, praline — décrivait
+    // un gourmand ; la maison publie un boisé épicé encensé, tout autre parfum.
+    topNotes: ["Poivre noir", "Poivre rose", "Élémi"],
+    heartNotes: ["Oliban", "Safran"],
+    baseNotes: ["Vanille Bourbon", "Daim", "Cèdre"],
     // Cognac, cannelle, praline, tonka : le registre est celui de la liqueur.
     family: "Gourmand",
     badges: ["Ambré", "Eau de parfum", "Fabriqué à Dubaï", "Authenticité garantie"],
@@ -445,8 +449,13 @@ export const PRODUCTS: Record<string, Product> = {
     // prix pour ce qui est peut-être le même flacon est exactement le genre
     // d'incohérence qu'on ne rattrape jamais. Barré au ratio des autres
     // fiches (~-26 %).
-    price: 16.9,
-    oldPrice: 22.9,
+    // Seule HAUSSE de la vague : le site vendait à 20 € un flacon dont la
+    // médiane marché est à 26,45 € sur 3 relevés, tous en 60 ml — le format de
+    // cette fiche. La règle vaut dans les deux sens, un prix trop bas se
+    // réaligne comme un prix trop haut. Le barré monte à 34,90 € pour rester
+    // au-dessus.
+    price: 26.9,
+    oldPrice: 34.9,
     // Valeurs de démonstration stables, comme les autres fiches rédigées : le
     // repo n'a pas de base d'avis, et un tirage au hasard ferait changer le
     // JSON-LD d'un rendu à l'autre.
@@ -481,9 +490,12 @@ export const PRODUCTS: Record<string, Product> = {
     // `salvo-hf-10` est du Sichuan — cosses ouvertes, graine noire — pas du
     // poivre rose : c'est aussi l'épice que `reference-perfumes.ts` liste pour
     // la maison, les deux sources concordent donc.
-    topNotes: ["Citron vert", "Bergamote", "Poivre de Sichuan"],
-    heartNotes: ["Lavande", "Anis étoilé", "Cannelle", "Muscade"],
-    baseNotes: ["Réglisse", "Bois ambrés", "Vanille", "Accord minéral"],
+    // Pyramide du catalogue vérifié. Maison Alhambra ne publie pas de fiche
+    // pour cette référence : la source retenue est la page marchande, recoupée,
+    // et non une composition reconstituée.
+    topNotes: ["Citron vert", "Pamplemousse", "Cardamome"],
+    heartNotes: ["Lavande", "Muscade", "Bois de santal", "Patchouli"],
+    baseNotes: ["Ambre", "Patchouli", "Bois"],
     // Lavande, anis, poivre de Sichuan : aromatique en tête, comme la référence
     // dont il est le jumeau relu (Dior Sauvage, famille « aromatique »).
     family: "Aromatique",
@@ -1107,7 +1119,10 @@ export const PRODUCTS: Record<string, Product> = {
     // aux niches qu'on lui compare. Le poser au tarif Paris Corner (39,90 €)
     // aurait contredit l'argument. Calé sous Reef 33 (49,90 €) et au-dessus de
     // Marwa (29,90 €), prix barré au ratio des autres fiches (~-26 %).
-    price: 34.9,
+    // Réaligné sur la médiane marché (25,99 € sur 3 relevés), arrondi au prix
+    // de boutique — règle du 06/09/26 : au-delà de 15 % d'écart avec le marché,
+    // le prix suit la médiane. Le site affichait 30 €, soit +15 %.
+    price: 25.9,
     oldPrice: 46.9,
     // Valeurs de démonstration stables, comme les autres fiches rédigées.
     // C'est le seul compteur d'avis du catalogue à passer les 500 : 9PM est
@@ -1136,9 +1151,13 @@ export const PRODUCTS: Record<string, Product> = {
     // le rapport tenue/prix que les vidéos mettent en avant.
     viralNote:
       "L'un des flacons les plus commentés des réseaux sociaux depuis 2020, où il est cherché pour son accord pomme-cannelle-vanille et pour une tenue que les vidéos comparent volontiers à celle de parfums bien plus chers.",
-    topNotes: ["Pomme", "Cannelle", "Lavande sauvage", "Bergamote"],
-    heartNotes: ["Fleur d'oranger", "Muguet"],
-    baseNotes: ["Vanille", "Fève tonka", "Ambre", "Patchouli"],
+    // Pyramide officielle Afnan (us.afnan.com/products/9-pm). Le site marchand
+    // présentait « Patchouli, Vanille, Cannelle, Fleur d'oranger » comme un
+    // cœur, alors que ce paquet mélange une tête (cannelle), un cœur (fleur
+    // d'oranger) et un fond (patchouli, vanille).
+    topNotes: ["Bergamote", "Lavandin", "Cannelle", "Pomme"],
+    heartNotes: ["Muguet", "Fleur d'oranger"],
+    baseNotes: ["Patchouli", "Ambre", "Vanille", "Fève tonka"],
     // « Ambré » et non « Aromatique », bien que `reference-perfumes.ts` classe
     // `afnan-9pm` en famille aromatique. Les deux taxonomies ne parlent pas de
     // la même chose : celle des références décrit l'ouverture (lavande,
@@ -1191,8 +1210,10 @@ export const PRODUCTS: Record<string, Product> = {
     // la même maison déjà en fiche. Même maison, même format, même position de
     // gamme : deux prix différents pour deux flacons interchangeables sur le
     // linéaire est exactement ce qui fait douter un visiteur.
-    price: 39.9,
-    oldPrice: 52.9,
+    // Réaligné sur la médiane marché (19,61 € sur 3 relevés), arrondi au prix
+    // de boutique. Le site affichait 25 €, soit +27 %.
+    price: 19.9,
+    oldPrice: 39.9,
     // Valeurs de démonstration stables. Au-dessus de Rifaaqat (142) parce que
     // Khair Pistachio est sorti deux ans plus tôt et a eu le temps d'accumuler,
     // en dessous des best-sellers Lattafa qui portent le catalogue.
@@ -1208,9 +1229,13 @@ export const PRODUCTS: Record<string, Product> = {
     // Pas de `viralNote` : Khair Pistachio circule bien sur les réseaux, mais
     // aucune source du dépôt ne documente de rapprochement avec un original, et
     // le champ n'est pas là pour meubler.
-    topNotes: ["Pistache", "Bergamote", "Noisette", "Cardamome"],
-    heartNotes: ["Poire", "Jasmin", "Pivoine", "Pêche blanche"],
-    baseNotes: ["Crème fouettée", "Guimauve", "Fève tonka", "Cèdre"],
+    // Pyramide officielle Paris Corner
+    // (pariscornerperfumes.com/products/khair-pistachio) — plus fournie que la
+    // version abrégée d'ici, qui laissait de côté le rhum, la barbe à papa et
+    // l'accord loukoum, c'est-à-dire ce qui distingue ce gourmand des autres.
+    topNotes: ["Bergamote d'Italie", "Glace à la pistache", "Noisette", "Rhum", "Cardamome"],
+    heartNotes: ["Géranium", "Pivoine blanche", "Muguet", "Jasmin", "Framboise", "Pêche blanche", "Poire"],
+    baseNotes: ["Crème fouettée", "Guimauve", "Barbe à papa", "Accord loukoum", "Cacao", "Cèdre", "Santal", "Fève tonka"],
     // Le cœur est floral et le fond boisé, mais ni l'un ni l'autre ne mène :
     // ce qu'on sent à l'ouverture comme à la fin, c'est la pistache crémeuse.
     // La maison vend d'ailleurs le jus sous ce seul argument.
@@ -1322,11 +1347,11 @@ export const PRODUCTS: Record<string, Product> = {
   "paris-corner-marshmallow-blush": {
     name: "Marshmallow Blush",
     brand: "Paris Corner",
-    // 39,50 € n'est pas un choix : c'est le prix déjà affiché par la carte du
-    // rail promo dans `_home-client.tsx`, et c'est aussi le repère sur lequel
-    // la fiche Rifaaqat s'est calée pour toute la maison. Le recalculer ici
-    // aurait créé un second prix pour un flacon déjà en vitrine.
-    price: 39.5,
+    // Réaligné sur la médiane marché (24,90 € sur 3 relevés) — le site
+    // affichait 39,50 €, soit +59 %, l'écart le plus large des fiches rédigées.
+    // La carte du rail promo dans `_home-client.tsx` porte le même nombre : les
+    // deux doivent bouger ensemble, sinon un flacon a deux prix.
+    price: 24.9,
     oldPrice: 52.9,
     // Valeurs de démonstration stables. Entre Rifaaqat (142) et Khair Pistachio
     // (214) : sortie 2025, plus récente que l'un, plus ancienne que l'autre.
@@ -1337,9 +1362,13 @@ export const PRODUCTS: Record<string, Product> = {
     origin: "Fabriqué à Dubaï",
     description:
       "Marshmallow Blush attaque sur un panier de fruits rouges — fraise et framboise, franches et acidulées — qu'un trait de citron rend nettes plutôt que confites. La transition est rapide : l'ambroxan s'installe au cœur et change la texture, sèche le fruit, l'étire et lui donne cette rondeur cotonneuse que la fleur d'oranger vient éclairer sans l'alourdir. Puis vient la guimauve, qui donne son nom au parfum et son grain au sillage : sucrée, poudreuse, un peu lactée, jamais collante. Le musc du fond la lisse et la colle à la peau, où elle reste plusieurs heures en se rapprochant progressivement. Un gourmand rose et léger, très fidèle à son flacon de résine marbrée et à sa coulée d'or.",
+    // Pyramide officielle Paris Corner
+    // (pariscornerperfumes.com/products/marshmallow-blush) : la crème fouettée
+    // du cœur et la vanille du fond manquaient, or ce sont elles qui font la
+    // texture lactée du sillage.
     topNotes: ["Fraise", "Framboise", "Citron"],
-    heartNotes: ["Ambroxan", "Fleur d'oranger"],
-    baseNotes: ["Guimauve", "Musc"],
+    heartNotes: ["Ambroxan", "Fleur d'oranger", "Crème fouettée"],
+    baseNotes: ["Musc", "Guimauve", "Vanille"],
     // La guimauve du fond porte le parfum et lui donne son nom ; les fruits
     // rouges ne sont qu'une entrée en matière de quelques minutes.
     family: "Gourmand",
