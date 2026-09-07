@@ -42,7 +42,7 @@ const COLUMNS = [
       { label: "Parfums Homme", href: "/parfums-homme" },
       { label: "Huile de Parfum", href: "/huile-de-parfum" },
       { label: "Marques", href: "/marques" },
-      { label: "Bons Plans", href: "/promo-flash" },
+      { label: "Bons Plans", href: "/offres/lot-3-pour-2" },
       { label: "Nouveautés", href: "/nouveautes" },
     ],
   },
@@ -54,6 +54,7 @@ const COLUMNS = [
       { label: "Familles olfactives", href: "/familles-olfactives" },
       { label: "Roue des senteurs", href: "/roue-des-senteurs" },
       { label: "Quiz signature", href: "/quiz" },
+      { label: "Mur des éloges", href: "/mur-des-eloges" },
     ],
   },
   {
