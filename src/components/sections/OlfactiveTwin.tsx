@@ -1090,23 +1090,18 @@ export function OlfactiveTwin({
                       ? t("badge_documented_text")
                       : t("badge_scored_text", { count: view.accordsFound })}
                   {/* On NOMME la source plutôt que d'écrire « voir la source » :
-                      « Source : Fragrantica » se juge sans cliquer. Le nom est
-                      dérivé du domaine de l'URL déjà stockée ; sans URL
-                      exploitable, ni mention ni lien — on n'invente pas de
-                      source (voir `sourceNameOf`). */}
+                      « Source : Fragrantica » se juge sans cliquer. Le nom seul,
+                      sans lien ni URL (demande du 07/09) : le bandeau dit d'où
+                      vient la correspondance, il n'envoie pas le visiteur chez
+                      un concurrent. Le nom est dérivé du domaine de l'URL déjà
+                      stockée ; sans URL exploitable, pas de mention — on
+                      n'invente pas de source (voir `sourceNameOf`). */}
                   {view.origin !== "scored" && view.documentedSource && sourceNameOf(view.documentedSource) && (
                     <>
                       {" · "}
                       {t("badge_source")}
                       {" "}
-                      <a
-                        className="otw-trust-link"
-                        href={view.documentedSource}
-                        target="_blank"
-                        rel="nofollow noopener noreferrer"
-                      >
-                        {sourceNameOf(view.documentedSource)}
-                      </a>
+                      <span className="otw-trust-source">{sourceNameOf(view.documentedSource)}</span>
                     </>
                   )}
                 </div>
@@ -1393,7 +1388,7 @@ export function OlfactiveTwin({
     .otw-trust-sub { font-family: var(--font-sans); font-size: 11.5px; line-height: 1.4; margin-top: 2px; }
     .otw-trust-solid .otw-trust-sub { opacity: .93; }
     .otw-trust-soft .otw-trust-sub { color: ${C.muted}; }
-    .otw-trust-link { color: inherit; text-decoration: underline; }
+    .otw-trust-source { color: inherit; font-weight: 500; }
 
     /* ── 03. La jauge de proximite ────────────────────────────────────────── */
     .otw-gauge { margin: ${compact ? 12 : 16}px ${compact ? 14 : 26}px 0; }
