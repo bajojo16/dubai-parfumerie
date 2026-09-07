@@ -17,8 +17,7 @@ const PROMO_PRODUCTS = [
   { id: 8, name: "Surrati Black Oud", brand: "Surrati", price: 21.90, oldPrice: 54.90, discount: 60, category: "Homme", image: "prod-2.jpg" },
   { id: 9, name: "Trio Signature · Khamrah, Yara, Bidun Esam", brand: "Dubaï Parfumerie", price: 58.00, oldPrice: 80.90, discount: 28, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-khamrah-yara-bidun-esam-01.webp" },
   { id: 10, name: "Trio Best-Of · 9PM, Yara, Ameerat Al Arab", brand: "Dubaï Parfumerie", price: 55.00, oldPrice: 77.90, discount: 29, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-9pm-yara-ameerat-al-arab-01.webp" },
-  { id: 11, name: "Coffret Miniatures Floral", brand: "Dubaï Parfumerie", price: 29.90, oldPrice: 64.90, discount: 54, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
-  { id: 12, name: "Lot Découverte Huiles 6×3ml", brand: "Dubaï Parfumerie", price: 24.90, oldPrice: 54.90, discount: 55, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
+  { id: 11, name: "Trio Reef · 33, Aurom, Summer Pink", brand: "Dubaï Parfumerie", price: 165.00, oldPrice: 235.00, discount: 30, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
 ];
 
 const OFFER_2_3 = "Achetez 2 = 3 offert";

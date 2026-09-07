@@ -68,8 +68,12 @@ const BundleBuilder = dynamic(() => import("@/components/bundle/BundleBuilder").
 const COFFRETS_HOME: LuxeProduct[] = [
   { image: "/assets/lots/dp_parfumerie-lot-khamrah-yara-bidun-esam-01.webp", brand: "Dubaï Parfumerie", title: "Trio Signature · Khamrah, Yara, Bidun Esam", price: 58, oldPrice: 80.9, limitedStock: true, href: "/offres/lot-3-pour-2", rating: 4.5, reviewCount: 97 },
   { image: "/assets/lots/dp_parfumerie-lot-9pm-yara-ameerat-al-arab-01.webp", brand: "Dubaï Parfumerie", title: "Trio Best-Of · 9PM, Yara, Ameerat Al Arab", price: 55, oldPrice: 77.9, href: "/offres/lot-3-pour-2", rating: 5, reviewCount: 64 },
-  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Coffret Miniatures Floral", price: 29.9, oldPrice: 64.9, href: "/promo-flash", rating: 4, reviewCount: 38 },
-  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Lot Découverte Huiles 6×3ml", price: 24.9, oldPrice: 54.9, limitedStock: true, href: "/promo-flash", rating: 4.5, reviewCount: 51 },
+  // `coffret-reef.jpg` montre trois Reef identifiables : le 33 noir, l'Aurom
+  // dore et le Summer Pink. La carte porte donc leurs noms et leurs prix
+  // (70 + 75 + 90 = 235), pas un « Coffret Miniatures Floral » que la photo
+  // dementait. La quatrieme carte, elle, servait la MEME photo sous un autre
+  // nom : elle disparait tant que le lot d'huiles n'a pas son propre visuel.
+  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Trio Reef · 33, Aurom, Summer Pink", price: 165, oldPrice: 235, href: "/offres/lot-3-pour-2", rating: 4, reviewCount: 38 },
 ];
 
 // ─── Trust marquee (icônes ligne, fini les emojis) ───────────────────────────
