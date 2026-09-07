@@ -8,15 +8,21 @@
  *
  * Mobile : le panneau prend tout l'écran et la barre d'enchère reste collée
  * en bas (`au-bidbar`, position sticky dans le conteneur qui défile).
+ *
+ * État du flacon : pour une occasion, la photo du niveau (flacon réel, à
+ * contre-jour) est montrée en grand avec un repère sur la ligne de jus, la
+ * jauge et la note d'état — AVANT le bouton d'enchère, parce que c'est ce qui
+ * décide si l'on enchérit sur un flacon entamé. Elle est aussi dans la galerie.
  */
 
 import Image from "next/image";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { WHATSAPP_URL } from "@/lib/contact";
-import { MAX_DEMO_RATIO, REMIND_BEFORE_MS, SNIPE_EXTEND_MS, SNIPE_WINDOW_MS } from "@/data/auctions";
+import { MAX_DEMO_RATIO, REMIND_BEFORE_MS, SNIPE_EXTEND_MS, SNIPE_WINDOW_MS, conditionLabel, type AuctionLot } from "@/data/auctions";
 import { fmtAgo, fmtPrice, type LotView } from "./auction-store";
 import { Countdown } from "./Countdown";
+import { FillGauge } from "./FillGauge";
 import { StatusBadge } from "./StatusBadge";
 
 export interface AuctionModalProps {
@@ -37,7 +43,8 @@ export function AuctionModal({ view, now, onClose, onBid, onSetMax, onReminder, 
   /* Le parent monte la modale avec `key={slug}` : changer de lot remonte le
      composant, l'index d'image et le brouillon repartent de zéro sans effet. */
   const [imgIndex, setImgIndex] = useState(0);
-  const images = useMemo(() => [lot.image, ...lot.gallery], [lot]);
+  // La photo du niveau (occasion) ferme la galerie : on peut la voir en grand.
+  const images = useMemo(() => [lot.image, ...lot.gallery, ...(lot.fillPhoto ? [lot.fillPhoto] : [])], [lot]);
   const [maxDraft, setMaxDraft] = useState(state.myMax !== null ? String(state.myMax) : "");
   /* Le champ suit le plafond du magasin quand celui-ci change (ajustement
      d'état pendant le rendu — le motif recommandé, pas un effet). */
@@ -84,7 +91,7 @@ export function AuctionModal({ view, now, onClose, onBid, onSetMax, onReminder, 
 
   const share = useCallback(async () => {
     const url = `${window.location.origin}${window.location.pathname}?lot=${lot.slug}`;
-    const text = `${lot.brand} ${lot.name} — enchère en cours à ${fmtPrice(price)} (boutique ${fmtPrice(lot.shopPrice)})`;
+    const text = `${lot.brand} ${lot.name} (${conditionLabel(lot)}) — enchère en cours à ${fmtPrice(price)} (boutique ${fmtPrice(lot.shopPrice)})`;
     try {
       if (navigator.share) {
         await navigator.share({ title: `Enchère · ${lot.brand} ${lot.name}`, text, url });
@@ -192,15 +199,18 @@ export function AuctionModal({ view, now, onClose, onBid, onSetMax, onReminder, 
             <Image
               key={images[imgIndex]}
               src={images[imgIndex]}
-              alt={`${lot.brand} ${lot.name} — visuel ${imgIndex + 1}`}
+              alt={images[imgIndex] === lot.fillPhoto ? `${lot.brand} ${lot.name} — niveau de jus du flacon réel` : `${lot.brand} ${lot.name} — visuel ${imgIndex + 1}`}
               fill
               sizes="(max-width: 760px) 100vw, 420px"
               priority
               className="au-fade-in"
               style={{ objectFit: "cover" }}
             />
-            <div style={{ position: "absolute", top: 14, insetInlineStart: 14, display: "flex", gap: 6 }}>
+            <div style={{ position: "absolute", top: 14, insetInlineStart: 14, display: "flex", gap: 6, flexWrap: "wrap" }}>
               <StatusBadge status={status} />
+              <span style={{ display: "inline-flex", alignItems: "center", padding: "5px 10px", borderRadius: 999, fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 600, letterSpacing: ".14em", textTransform: "uppercase", background: lot.condition === "occasion" ? "var(--surface-cream)" : "rgba(21,16,11,.55)", color: lot.condition === "occasion" ? "var(--espresso-900)" : "var(--on-dark-strong)", border: lot.condition === "occasion" ? "none" : "1px solid rgba(255,255,255,.14)", whiteSpace: "nowrap" }}>
+                {conditionLabel(lot)}
+              </span>
             </div>
           </div>
           {images.length > 1 && (
@@ -210,7 +220,7 @@ export function AuctionModal({ view, now, onClose, onBid, onSetMax, onReminder, 
                   key={src}
                   type="button"
                   onClick={() => setImgIndex(i)}
-                  aria-label={`Visuel ${i + 1}`}
+                  aria-label={src === lot.fillPhoto ? "Photo du niveau de jus" : `Visuel ${i + 1}`}
                   aria-pressed={i === imgIndex}
                   style={{
                     position: "relative",
@@ -273,6 +283,9 @@ export function AuctionModal({ view, now, onClose, onBid, onSetMax, onReminder, 
               <Countdown remainingMs={remainingMs} size="lg" />
             </div>
           </div>
+
+          {/* État du flacon — avant les avis de statut et le bouton d'enchère. */}
+          <ConditionPanel lot={lot} />
 
           {/* État */}
           {status === "outbid" && (
@@ -467,12 +480,73 @@ export function AuctionRules() {
         <strong>Paiement</strong> : à la clôture, le gagnant finalise par WhatsApp ou par le lien envoyé — rien n&apos;est débité avant.
       </li>
       <li>
-        <strong>Authenticité garantie</strong> : les flacons sont ceux de la boutique, neufs, scellés, sourcés au Golfe.
+        <strong>Authenticité garantie</strong> : les flacons sont ceux de la boutique, sourcés au Golfe — <strong>neufs</strong> et scellés, ou <strong>d&apos;occasion</strong> avec le niveau de jus photographié sur le flacon réel et une note d&apos;état factuelle.
       </li>
       <li>
         <strong>Démonstration</strong> : cette salle est une maquette. Les autres enchérisseurs sont simulés et ne relancent jamais au-delà de {MAX_DEMO_RATIO.toLocaleString("fr-FR")} × le prix boutique ; le rappel « Me prévenir » part {REMIND_BEFORE_MS / 60000} min avant la fin, onglet ouvert.
       </li>
     </ol>
+  );
+}
+
+/**
+ * Bloc « État du flacon ». Neuf : une ligne, rien de plus à prouver.
+ * Occasion : la photo du niveau en grand (jamais recadrée : `objectFit:
+ * contain`, la ligne de jus doit rester dans le cadre), un repère tracé à la
+ * hauteur relevée sur la photo (`fillMarkY`), la jauge, la note d'état et le
+ * rappel que c'est le flacon réel — sans photo, la jauge seule et « photo à
+ * venir » : on n'affiche pas un visuel de catalogue à la place.
+ */
+function ConditionPanel({ lot }: { lot: AuctionLot }) {
+  if (lot.condition === "neuf") {
+    return (
+      <p data-testid="au-condition" style={{ display: "flex", alignItems: "center", gap: 8, margin: "12px 0 0", fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--ink-500)" }}>
+        <span aria-hidden style={{ color: "#3F7A47", fontWeight: 700 }}>✓</span>
+        <strong style={{ color: "var(--ink-900)", fontWeight: 600 }}>Neuf</strong> — scellé, jamais ouvert, boîte d&apos;origine.
+      </p>
+    );
+  }
+  const level = lot.fillLevel ?? 0;
+  return (
+    <section
+      data-testid="au-condition"
+      aria-label="État du flacon"
+      style={{ marginTop: 14, padding: 14, borderRadius: 16, background: "var(--surface-cream)", border: "1px solid var(--line-200)" }}
+    >
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "baseline", gap: 10, marginBottom: 10 }}>
+        <h3 style={{ fontFamily: "var(--font-sans)", fontSize: 11, letterSpacing: ".18em", textTransform: "uppercase", color: "var(--ink-500)", margin: 0 }}>État du flacon</h3>
+        <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, fontWeight: 600, color: "var(--gold-700)" }}>Occasion · {level} % restants</span>
+      </div>
+      <div className="au-cond">
+        {lot.fillPhoto ? (
+          <div data-testid="au-fill-photo" style={{ position: "relative", aspectRatio: "4 / 5", borderRadius: 12, overflow: "hidden", background: "var(--surface-cream-2)" }}>
+            <Image src={lot.fillPhoto} alt={`${lot.brand} ${lot.name} — niveau de jus du flacon réel, environ ${level} %`} fill sizes="(max-width: 760px) 100vw, 240px" style={{ objectFit: "contain" }} />
+            {lot.fillMarkY !== null && (
+              // Repère : ligne pointillée or à la hauteur de la ligne de jus, étiquette à droite.
+              <div aria-hidden style={{ position: "absolute", insetInline: 0, top: `${lot.fillMarkY}%`, display: "flex", alignItems: "center", pointerEvents: "none" }}>
+                <span style={{ flex: 1, borderTop: "2px dashed var(--gold-500)", opacity: 0.9 }} />
+                <span style={{ background: "var(--gold-500)", color: "var(--espresso-900)", fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 700, padding: "3px 7px", borderRadius: 6, marginInlineEnd: 6, whiteSpace: "nowrap" }}>
+                  ≈ {level} %
+                </span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div style={{ aspectRatio: "4 / 5", borderRadius: 12, background: "var(--surface-cream-2)", border: "1px dashed var(--line-300)", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--ink-400)", textAlign: "center", padding: 12 }}>
+            Photo du niveau à venir
+          </div>
+        )}
+        <div style={{ display: "flex", gap: 14, alignItems: "stretch", minWidth: 0 }}>
+          <FillGauge level={level} orientation="vertical" length={120} thickness={10} />
+          <div style={{ fontFamily: "var(--font-sans)", fontSize: 13, lineHeight: 1.55, color: "var(--ink-700)", minWidth: 0 }}>
+            <p style={{ margin: "0 0 8px" }}>{lot.conditionNote}</p>
+            <p style={{ margin: 0, fontSize: 12, color: "var(--ink-500)" }}>
+              {lot.fillPhoto ? "Photo du flacon réel mis en vente, à contre-jour pour lire le niveau — pas un visuel de catalogue." : "Le niveau annoncé sera confirmé par une photo du flacon réel avant la clôture."}
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
   );
 }
 

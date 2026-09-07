@@ -4,9 +4,10 @@
  * La salle des enchères — composant racine client de `/encheres`.
  *
  * Il tient le magasin (`useAuctions`), la modale ouverte (synchronisée avec
- * `?lot=<slug>` pour le partage), les toasts, la notification « Me prévenir »
- * et les confettis du lot remporté. Les cartes et le panneau ne reçoivent que
- * des vues et des rappels.
+ * `?lot=<slug>` pour le partage), la recherche et les filtres (eux aussi dans
+ * l'URL : `?q=&statut=&etat=&tri=`, pour qu'une sélection se partage comme un
+ * lot), les toasts, la notification « Me prévenir » et les confettis du lot
+ * remporté. Les cartes et le panneau ne reçoivent que des vues et des rappels.
  *
  * Un seul bloc <style> pour ce que l'inline ne sait pas faire : keyframes,
  * media queries (grille, modale plein écran sur mobile), hover. Pas de
@@ -15,25 +16,104 @@
 
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { AUCTION_LOTS, REMIND_BEFORE_MS } from "@/data/auctions";
-import { bidsToday, fmtPrice, fmtRemaining, useAuctions } from "./auction-store";
+import { AUCTION_LOTS, REMIND_BEFORE_MS, type LotCondition } from "@/data/auctions";
+import { bidsToday, fmtPrice, fmtRemaining, useAuctions, type LotView } from "./auction-store";
 import { AuctionCard } from "./AuctionCard";
 import { AuctionModal, AuctionRules } from "./AuctionModal";
 import { Confetti } from "./Confetti";
 
 const LOT_PARAM = "lot";
+const QUERY_PARAM = "q";
+const STATUS_PARAM = "statut";
+const CONDITION_PARAM = "etat";
+const SORT_PARAM = "tri";
+
+/** « Se termine bientôt » : moins d'une heure. */
+const SOON_MS = 60 * 60 * 1000;
+
+/* Les clés sont celles qui apparaissent dans l'URL : en français, lisibles
+   dans un lien partagé (`?statut=bientot&etat=occasion`). */
+const STATUS_FILTERS = [
+  { key: "tous", label: "Tous" },
+  { key: "en-cours", label: "En cours" },
+  { key: "bientot", label: "Se termine bientôt" },
+  { key: "terminees", label: "Terminées" },
+  { key: "mes-encheres", label: "Mes enchères" },
+  { key: "remportees", label: "Remportées" },
+] as const;
+type StatusFilter = (typeof STATUS_FILTERS)[number]["key"];
+
+const CONDITION_FILTERS = [
+  { key: "tous", label: "Tous" },
+  { key: "neuf", label: "Neuf" },
+  { key: "occasion", label: "Occasion" },
+] as const;
+type ConditionFilter = (typeof CONDITION_FILTERS)[number]["key"];
+
+const SORTS = [
+  { key: "fin", label: "Fin la plus proche" },
+  { key: "prix", label: "Prix courant" },
+  { key: "encheres", label: "Nombre d'enchères" },
+] as const;
+type SortKey = (typeof SORTS)[number]["key"];
+
+/** Une valeur d'URL inconnue (lien bricolé, ancienne clé) retombe sur le défaut, sans erreur. */
+function readParam<T extends string>(value: string | null, allowed: readonly { key: T }[], fallback: T): T {
+  return allowed.some((f) => f.key === value) ? (value as T) : fallback;
+}
 
 /**
- * L'URL est la seule source de vérité du lot ouvert : `?lot=<slug>` ouvre le
- * panneau, son absence le ferme. Next synchronise `useSearchParams` avec
- * `history.replaceState`, donc pas de second état à tenir à jour — et le lien
- * partagé rouvre le bon lot sans effet au montage.
+ * L'URL est la seule source de vérité du lot ouvert ET des filtres : `?lot=`
+ * ouvre le panneau, `?statut=…&etat=…&q=…&tri=…` règlent la grille. Next
+ * synchronise `useSearchParams` avec `history.replaceState`, donc pas de
+ * second état à tenir à jour — et le lien partagé rouvre la même sélection
+ * sans effet au montage. `null` ou la valeur par défaut retire la clé : une
+ * URL sans filtre reste `/encheres`.
  */
-function writeLotParam(slug: string | null) {
+function writeParams(patch: Record<string, string | null>) {
   const url = new URL(window.location.href);
-  if (slug) url.searchParams.set(LOT_PARAM, slug);
-  else url.searchParams.delete(LOT_PARAM);
+  Object.entries(patch).forEach(([key, value]) => {
+    if (value) url.searchParams.set(key, value);
+    else url.searchParams.delete(key);
+  });
   window.history.replaceState(null, "", url.toString());
+}
+
+/** Minuscules sans accents : « kham » trouve Khamrah, « elite » trouve Oud Elite. */
+const fold = (text: string) =>
+  text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .trim();
+
+function matchesStatus(v: LotView, filter: StatusFilter): boolean {
+  switch (filter) {
+    case "en-cours":
+      return v.remainingMs > 0;
+    case "bientot":
+      return v.remainingMs > 0 && v.remainingMs <= SOON_MS;
+    case "terminees":
+      return v.remainingMs <= 0;
+    case "mes-encheres":
+      return v.state.bids.some((b) => b.mine);
+    case "remportees":
+      return v.status === "won";
+    default:
+      return true;
+  }
+}
+
+/** Quel que soit le tri, les lots terminés passent après les lots ouverts. */
+function compareBy(sort: SortKey) {
+  return (a: LotView, b: LotView): number => {
+    const aOpen = a.remainingMs > 0;
+    const bOpen = b.remainingMs > 0;
+    if (aOpen !== bOpen) return aOpen ? -1 : 1;
+    if (sort === "prix") return a.price - b.price || a.remainingMs - b.remainingMs;
+    if (sort === "encheres") return b.state.bids.length - a.state.bids.length || a.remainingMs - b.remainingMs;
+    return a.remainingMs - b.remainingMs;
+  };
 }
 
 export function AuctionsPage() {
@@ -45,8 +125,28 @@ export function AuctionsPage() {
   const [toast, setToast] = useState<string | null>(null);
   const toastTimer = useRef<number | null>(null);
 
-  const open = useCallback((slug: string) => writeLotParam(slug), []);
-  const close = useCallback(() => writeLotParam(null), []);
+  const open = useCallback((slug: string) => writeParams({ [LOT_PARAM]: slug }), []);
+  const close = useCallback(() => writeParams({ [LOT_PARAM]: null }), []);
+
+  /* Filtres : lus dans l'URL. La recherche garde en plus un brouillon local —
+     un champ contrôlé par l'URL perdrait le curseur et l'accent en cours de
+     composition ; le brouillon est ce qui filtre, l'URL suit à chaque frappe. */
+  const statusFilter = readParam(searchParams.get(STATUS_PARAM), STATUS_FILTERS, "tous");
+  const conditionFilter = readParam(searchParams.get(CONDITION_PARAM), CONDITION_FILTERS, "tous");
+  const sort = readParam(searchParams.get(SORT_PARAM), SORTS, "fin");
+  const [query, setQuery] = useState(() => searchParams.get(QUERY_PARAM) ?? "");
+  const setStatusFilter = useCallback((k: StatusFilter) => writeParams({ [STATUS_PARAM]: k === "tous" ? null : k }), []);
+  const setConditionFilter = useCallback((k: ConditionFilter) => writeParams({ [CONDITION_PARAM]: k === "tous" ? null : k }), []);
+  const setSort = useCallback((k: SortKey) => writeParams({ [SORT_PARAM]: k === "fin" ? null : k }), []);
+  const changeQuery = useCallback((q: string) => {
+    setQuery(q);
+    writeParams({ [QUERY_PARAM]: q.trim() || null });
+  }, []);
+  const filtersActive = statusFilter !== "tous" || conditionFilter !== "tous" || sort !== "fin" || query.trim() !== "";
+  const clearFilters = useCallback(() => {
+    setQuery("");
+    writeParams({ [QUERY_PARAM]: null, [STATUS_PARAM]: null, [CONDITION_PARAM]: null, [SORT_PARAM]: null });
+  }, []);
 
   const showToast = useCallback((msg: string) => {
     setToast(msg);
@@ -54,19 +154,32 @@ export function AuctionsPage() {
     toastTimer.current = window.setTimeout(() => setToast(null), 2800);
   }, []);
 
-  /* Tri : ouverts par clôture croissante, puis les terminés. La première
-     carte ouverte est « à la une ». */
-  const sorted = useMemo(() => {
-    const openLots = views.filter((v) => v.remainingMs > 0).sort((a, b) => a.remainingMs - b.remainingMs);
-    const closed = views.filter((v) => v.remainingMs <= 0);
-    return [...openLots, ...closed];
-  }, [views]);
-  const featuredSlug = sorted[0]?.remainingMs > 0 ? sorted[0].lot.slug : null;
+  /* Les filtres se combinent (ET). Puis tri choisi, terminés toujours en
+     queue. Le lot « à la une » est celui qui ferme le premier PARMI les lots
+     filtrés, quel que soit le tri : c'est le sens de la vedette (l'urgence),
+     pas la première case de la grille. */
+  const filtered = useMemo(() => {
+    const q = fold(query);
+    return views.filter(
+      (v) =>
+        matchesStatus(v, statusFilter) &&
+        (conditionFilter === "tous" || v.lot.condition === (conditionFilter as LotCondition)) &&
+        (!q || fold(`${v.lot.brand} ${v.lot.name}`).includes(q))
+    );
+  }, [views, query, statusFilter, conditionFilter]);
+  const sorted = useMemo(() => [...filtered].sort(compareBy(sort)), [filtered, sort]);
+  const featuredSlug = useMemo(() => {
+    const openLots = filtered.filter((v) => v.remainingMs > 0);
+    if (!openLots.length) return null;
+    return openLots.reduce((best, v) => (v.remainingMs < best.remainingMs ? v : best)).lot.slug;
+  }, [filtered]);
 
-  /* Chiffres du héros. « Enchères du jour » est une donnée de DÉMONSTRATION
-     (enchères simulées incluses) — la mention en bas de page le dit. */
-  const openCount = views.filter((v) => v.remainingMs > 0).length;
-  const nextClose = sorted[0]?.remainingMs > 0 ? sorted[0].remainingMs : 0;
+  /* Chiffres du héros : toute la salle, pas la sélection filtrée. « Enchères
+     du jour » est une donnée de DÉMONSTRATION (enchères simulées incluses) —
+     la mention en bas de page le dit. */
+  const openViews = views.filter((v) => v.remainingMs > 0);
+  const openCount = openViews.length;
+  const nextClose = openViews.length ? Math.min(...openViews.map((v) => v.remainingMs)) : 0;
   const todayCount = bidsToday(store, now);
 
   /* Rappel 5 min avant la fin — uniquement si l'onglet est ouvert. */
@@ -142,13 +255,109 @@ export function AuctionsPage() {
         </div>
       </section>
 
-      {/* ── Grille ── */}
-      <section style={{ maxWidth: 1180, margin: "0 auto", padding: "28px 20px 8px" }}>
-        <div className="au-grid">
-          {sorted.map((v) => (
-            <AuctionCard key={v.lot.slug} view={v} featured={v.lot.slug === featuredSlug} onOpen={() => open(v.lot.slug)} />
-          ))}
+      {/* ── Recherche, filtres, tri ── */}
+      <section aria-label="Rechercher et filtrer les lots" style={{ maxWidth: 1180, margin: "0 auto", padding: "24px 20px 0" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 10 }}>
+          <label style={{ position: "relative", flex: "1 1 240px", minWidth: 0 }}>
+            <span style={{ position: "absolute", width: 1, height: 1, overflow: "hidden", clip: "rect(0 0 0 0)" }}>
+              Rechercher un parfum ou une maison
+            </span>
+            <svg aria-hidden width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" style={{ position: "absolute", top: "50%", insetInlineStart: 14, transform: "translateY(-50%)", color: "var(--ink-400)", pointerEvents: "none" }}>
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+            <input
+              type="search"
+              data-testid="au-search"
+              value={query}
+              onChange={(e) => changeQuery(e.target.value)}
+              placeholder="Rechercher un parfum, une maison…"
+              autoComplete="off"
+              style={{
+                width: "100%",
+                boxSizing: "border-box",
+                padding: "11px 14px 11px 40px",
+                borderRadius: 999,
+                border: "1px solid var(--line-300)",
+                background: "#fff",
+                fontFamily: "var(--font-sans)",
+                fontSize: 14,
+                color: "var(--ink-900)",
+              }}
+            />
+          </label>
+          <label style={{ display: "inline-flex", alignItems: "center", gap: 8, fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--ink-500)" }}>
+            Trier
+            <select
+              data-testid="au-sort"
+              value={sort}
+              onChange={(e) => setSort(e.target.value as SortKey)}
+              style={{ padding: "10px 12px", borderRadius: 999, border: "1px solid var(--line-300)", background: "#fff", fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--ink-900)" }}
+            >
+              {SORTS.map((o) => (
+                <option key={o.key} value={o.key}>
+                  {o.label}
+                </option>
+              ))}
+            </select>
+          </label>
+          <span data-testid="au-count" aria-live="polite" style={{ marginInlineStart: "auto", fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--ink-500)", fontVariantNumeric: "tabular-nums", whiteSpace: "nowrap" }}>
+            {hydrated ? (
+              <>
+                <strong style={{ color: "var(--ink-900)" }}>{sorted.length}</strong> {sorted.length > 1 ? "lots" : "lot"}
+                {sorted.length !== views.length ? ` sur ${views.length}` : ""}
+              </>
+            ) : (
+              "—"
+            )}
+          </span>
         </div>
+
+        <div className="au-filters" style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: "8px 18px", marginTop: 12 }}>
+          <div role="group" aria-label="Statut" className="au-chips" data-testid="au-status-chips">
+            {STATUS_FILTERS.map((f) => (
+              <Chip key={f.key} active={statusFilter === f.key} onClick={() => setStatusFilter(f.key)}>
+                {f.label}
+              </Chip>
+            ))}
+          </div>
+          <div role="group" aria-label="État du flacon" className="au-chips" data-testid="au-condition-chips">
+            <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, color: "var(--ink-500)", marginInlineEnd: 2 }}>État</span>
+            {CONDITION_FILTERS.map((f) => (
+              <Chip key={f.key} active={conditionFilter === f.key} onClick={() => setConditionFilter(f.key)}>
+                {f.label}
+              </Chip>
+            ))}
+          </div>
+          {filtersActive && (
+            <button type="button" onClick={clearFilters} data-testid="au-clear" className="au-chip" style={{ ...chipBase, border: "none", textDecoration: "underline", color: "var(--gold-700)", padding: "7px 4px" }}>
+              Effacer
+            </button>
+          )}
+        </div>
+      </section>
+
+      {/* ── Grille ── */}
+      <section style={{ maxWidth: 1180, margin: "0 auto", padding: "20px 20px 8px" }}>
+        {sorted.length === 0 ? (
+          <div data-testid="au-empty" style={{ padding: "48px 20px", textAlign: "center", borderRadius: 18, border: "1px dashed var(--line-300)", fontFamily: "var(--font-sans)", color: "var(--ink-500)" }}>
+            <p style={{ fontFamily: "var(--font-display)", fontSize: 22, color: "var(--ink-900)", margin: "0 0 6px" }}>Aucun lot ne correspond</p>
+            <p style={{ margin: "0 0 14px", fontSize: 14 }}>
+              {statusFilter === "mes-encheres" || statusFilter === "remportees"
+                ? "Vous n'avez pas encore enchéri sur un lot de cette sélection."
+                : "Essayez un autre mot, ou élargissez les filtres."}
+            </p>
+            <button type="button" onClick={clearFilters} style={{ ...chipBase, background: "var(--espresso-900)", color: "var(--on-dark-strong)", border: "none", padding: "10px 18px" }}>
+              Effacer les filtres
+            </button>
+          </div>
+        ) : (
+          <div className="au-grid">
+            {sorted.map((v) => (
+              <AuctionCard key={v.lot.slug} view={v} featured={v.lot.slug === featuredSlug} onOpen={() => open(v.lot.slug)} />
+            ))}
+          </div>
+        )}
       </section>
 
       {/* ── Règles + mention démonstration ── */}
@@ -205,6 +414,40 @@ export function AuctionsPage() {
   );
 }
 
+const chipBase: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  padding: "7px 13px",
+  borderRadius: 999,
+  fontFamily: "var(--font-sans)",
+  fontSize: 13,
+  fontWeight: 500,
+  lineHeight: 1.2,
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+  transition: "background 160ms ease, color 160ms ease, border-color 160ms ease",
+};
+
+/** Pastille de filtre : espresso quand active, contour sinon. `aria-pressed` porte l'état. */
+function Chip({ active, onClick, children }: { active: boolean; onClick: () => void; children: React.ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={active}
+      className="au-chip"
+      style={{
+        ...chipBase,
+        background: active ? "var(--espresso-900)" : "transparent",
+        color: active ? "var(--on-dark-strong)" : "var(--ink-700)",
+        border: active ? "1px solid var(--espresso-900)" : "1px solid var(--line-300)",
+      }}
+    >
+      {children}
+    </button>
+  );
+}
+
 function Stat({ label, value, urgent = false }: { label: string; value: string; urgent?: boolean }) {
   return (
     <div
@@ -246,6 +489,13 @@ const STYLES = `
   .au-bid-main:active { transform: scale(.985); }
   .au-bid-main:hover { filter: brightness(1.05); }
   .au-rules summary::-webkit-details-marker, .au-panel summary::-webkit-details-marker { display: none; }
+  .au-chips { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+  @media (hover: hover) { .au-chip:hover { border-color: var(--espresso-900) !important; color: var(--ink-900); } }
+  .au-chip:focus-visible { outline: none; box-shadow: var(--focus-ring); }
+  /* Panneau « État du flacon » : photo pleine largeur sur mobile, photo à
+     gauche et jauge + note à droite dès que la colonne le permet. */
+  .au-cond { display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; }
+  @media (min-width: 761px) { .au-cond { grid-template-columns: 220px minmax(0, 1fr); align-items: start; } }
 
   @keyframes au-pop { 0% { transform: scale(1); } 35% { transform: scale(1.12); color: var(--gold-400); } 100% { transform: scale(1); } }
   .au-pop { animation: au-pop 520ms var(--ease-out); transform-origin: left center; display: inline-block; }

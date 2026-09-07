@@ -8,18 +8,24 @@
  * Le lot « à la une » (celui qui ferme le premier) occupe 2 × 2 cellules sur
  * grand écran ; la classe `au-card--featured` est stylée dans le bloc <style>
  * de la page, les styles inline ne pouvant pas porter de media query.
+ *
+ * État du flacon : pastille « Neuf » ou « Occasion · 75 % » à côté du statut,
+ * et pour une occasion une jauge verticale discrète sous le chrono — le
+ * visiteur voit depuis la grille qu'il enchérit sur un flacon entamé.
  */
 
 import Image from "next/image";
 import { fmtPrice, type LotView } from "./auction-store";
 import { Countdown } from "./Countdown";
-import { DEMO_BIDDER_COUNTRY, initialsOf } from "@/data/auctions";
+import { DEMO_BIDDER_COUNTRY, conditionLabel, initialsOf } from "@/data/auctions";
+import { FillGauge } from "./FillGauge";
 import { StatusBadge } from "./StatusBadge";
 
 export function AuctionCard({ view, featured = false, onOpen }: { view: LotView; featured?: boolean; onOpen: () => void }) {
   const { lot, price, status, hasBids, state, remainingMs } = view;
   const ended = status === "won" || status === "ended";
   const last = state.bids.length ? state.bids[state.bids.length - 1] : null;
+  const occasion = lot.condition === "occasion";
 
   return (
     <article className={`au-card${featured ? " au-card--featured" : ""}`} style={{ position: "relative" }}>
@@ -68,6 +74,7 @@ export function AuctionCard({ view, featured = false, onOpen }: { view: LotView;
         <div style={{ position: "absolute", top: 14, insetInline: 14, display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 8 }}>
           <div style={{ display: "flex", gap: 6, flexWrap: "wrap" }}>
             {featured && !ended && <Pill tone="gold">À la une</Pill>}
+            <Pill tone={occasion ? "cream" : "glass"}>{conditionLabel(lot)}</Pill>
             <StatusBadge status={status} />
           </div>
           <span
@@ -88,6 +95,17 @@ export function AuctionCard({ view, featured = false, onOpen }: { view: LotView;
             <Countdown remainingMs={remainingMs} size="sm" onDark />
           </span>
         </div>
+
+        {/* Jauge de niveau (occasion) : sous le chrono, alignée à droite, hors
+            du texte du bas pour ne pas se battre avec le prix. */}
+        {occasion && lot.fillLevel !== null && (
+          <div style={{ position: "absolute", top: 56, insetInlineEnd: 18, display: "flex", flexDirection: "column", alignItems: "center", gap: 4 }}>
+            <FillGauge level={lot.fillLevel} length={featured ? 96 : 64} thickness={8} onDark />
+            <span aria-hidden style={{ fontFamily: "var(--font-sans)", fontSize: 10, fontWeight: 600, color: "var(--on-dark-strong)", textShadow: "0 1px 4px rgba(0,0,0,.6)", fontVariantNumeric: "tabular-nums" }}>
+              {lot.fillLevel} %
+            </span>
+          </div>
+        )}
 
         {/* Bas : maison, nom, prix */}
         <div style={{ position: "absolute", insetInline: 0, bottom: 0, padding: featured ? "0 24px 22px" : "0 18px 18px" }}>
@@ -147,8 +165,10 @@ export function AuctionCard({ view, featured = false, onOpen }: { view: LotView;
   );
 }
 
-/** Petite pastille de carte (or ou verre sombre). */
-export function Pill({ children, tone = "glass" }: { children: React.ReactNode; tone?: "gold" | "glass" }) {
+/** Petite pastille de carte : or (à la une), crème (occasion) ou verre sombre. */
+export function Pill({ children, tone = "glass" }: { children: React.ReactNode; tone?: "gold" | "cream" | "glass" }) {
+  const bg = tone === "gold" ? "var(--gold-500)" : tone === "cream" ? "var(--surface-cream)" : "rgba(21,16,11,.55)";
+  const fg = tone === "glass" ? "var(--on-dark-strong)" : "var(--espresso-900)";
   return (
     <span
       style={{
@@ -161,9 +181,9 @@ export function Pill({ children, tone = "glass" }: { children: React.ReactNode; 
         fontWeight: 600,
         letterSpacing: ".14em",
         textTransform: "uppercase",
-        background: tone === "gold" ? "var(--gold-500)" : "rgba(21,16,11,.55)",
-        color: tone === "gold" ? "var(--espresso-900)" : "var(--on-dark-strong)",
-        border: tone === "gold" ? "none" : "1px solid rgba(255,255,255,.14)",
+        background: bg,
+        color: fg,
+        border: tone === "glass" ? "1px solid rgba(255,255,255,.14)" : "none",
         whiteSpace: "nowrap",
       }}
     >

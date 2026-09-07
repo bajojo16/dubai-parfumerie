@@ -91,16 +91,22 @@ function pickBidder(exclude?: string): string {
  * Historique de départ (DÉMONSTRATION) : 0 à 3 enchères déjà posées, pour que
  * la salle ne paraisse pas vide à l'arrivée. Le nombre dépend du lot (les
  * clôtures proches ont plus d'activité), les horodatages sont dans le passé.
+ *
+ * Les pseudonymes sont choisis de façon DÉTERMINISTE (pas de `Math.random`) :
+ * ce semis sert aussi de premier rendu avant hydratation, côté serveur comme
+ * côté client. Un tirage aléatoire donnait « Dernière : C.O. » sur le serveur
+ * et « Dernière : R.B. » dans le navigateur — erreur d'hydratation à chaque
+ * chargement. Les vraies relances (`rivalBid`) restent aléatoires : elles
+ * n'arrivent qu'après hydratation.
  */
 function seedBids(lot: AuctionLot, now: number, index: number): Bid[] {
   const count = Math.max(0, 3 - Math.floor(index / 2)); // 3,3,2,2,1,1
   const bids: Bid[] = [];
   let price = lot.startingBid;
-  let last: string | undefined;
   for (let i = 0; i < count; i++) {
     if (i > 0) price = round2(price + stepFor(price));
-    const bidder = pickBidder(last);
-    last = bidder;
+    // Décalage par lot (× 3) pour que deux lots voisins n'aient pas la même liste.
+    const bidder = DEMO_BIDDERS[(index * 3 + i) % DEMO_BIDDERS.length];
     bids.push({ amount: price, bidder, at: now - (count - i) * (17 + index * 9) * 60 * 1000, mine: false });
   }
   return bids;
@@ -131,6 +137,12 @@ function freshStore(now: number): Store {
  * (nouvelle clôture, nouvel historique) : la maquette tourne en boucle plutôt
  * que d'afficher six « Terminée » à un visiteur qui revient la semaine
  * suivante. Un lot ajouté au catalogue depuis la dernière visite est semé.
+ *
+ * Seul l'ÉTAT DE JEU est persisté (clôture, enchères, plafond, rappel). Les
+ * données catalogue — nom, prix boutique, photos, état neuf/occasion, niveau
+ * de jus — sont relues dans `auctions.ts` à chaque chargement via `toView`.
+ * Ajouter un champ au lot ne casse donc jamais un magasin déjà stocké : un
+ * visiteur d'avant les occasions retrouve ses enchères et voit l'état à jour.
  */
 function loadStore(now: number): Store {
   let raw: string | null = null;

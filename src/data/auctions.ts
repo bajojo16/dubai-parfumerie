@@ -9,7 +9,8 @@
  *
  * Ce qui appartient en propre à l'enchère : le choix des photos (les mises en
  * scène, pas les packshots fond blanc — c'est l'image qui fait cliquer), le
- * décalage de clôture et les règles de calcul ci-dessous.
+ * décalage de clôture, l'ÉTAT du flacon (neuf ou occasion, avec le niveau de
+ * jus restant et sa photo) et les règles de calcul ci-dessous.
  *
  * ⚠️ DÉMONSTRATION ⚠️
  * Il n'y a pas de backend : les enchérisseurs concurrents sont simulés côté
@@ -69,6 +70,14 @@ export function startingBidFor(shopPrice: number): number {
 
 /* ── Lots ───────────────────────────────────────────────────────────────── */
 
+/**
+ * État du flacon. « neuf » : scellé, jamais ouvert — la promesse habituelle
+ * de la boutique. « occasion » : flacon ouvert, vendu avec son niveau de jus
+ * photographié — c'est la photo du flacon réel, pas un visuel de catalogue,
+ * qui fait la confiance sur l'occasion.
+ */
+export type LotCondition = "neuf" | "occasion";
+
 export interface AuctionLot {
   /** Slug de la fiche produit : `/produit/<slug>`. */
   slug: string;
@@ -91,7 +100,32 @@ export interface AuctionLot {
    * qui revient retrouve le même compte à rebours, pas un chrono remis à zéro.
    */
   endsInMs: number;
+  /** État du flacon — voir `LotCondition`. */
+  condition: LotCondition;
+  /** Occasion : pourcentage de jus restant (entier 0–100). `null` pour un neuf. */
+  fillLevel: number | null;
+  /**
+   * Occasion : photo du niveau (flacon réel à contre-jour, ratio 4:5), montrée
+   * en grand dans le panneau. `null` tant qu'elle n'a pas été prise — on
+   * affiche alors la jauge seule avec « photo à venir », on n'invente rien.
+   */
+  fillPhoto: string | null;
+  /**
+   * Occasion : hauteur de la ligne de jus SUR LA PHOTO, en % depuis le haut du
+   * cadre, pour poser le repère au bon endroit. Relevée à l'œil sur chaque
+   * photo (le flacon n'occupe pas tout le cadre, un calcul depuis `fillLevel`
+   * tomberait à côté). `null` si pas de photo.
+   */
+  fillMarkY: number | null;
+  /** Occasion : une phrase factuelle (« Testé deux fois, boîte d'origine »). `null` pour un neuf. */
+  conditionNote: string | null;
 }
+
+/** Ces champs ne sont JAMAIS persistés : le magasin les relit ici à chaque chargement. */
+export type LotConditionFields = Pick<AuctionLot, "condition" | "fillLevel" | "fillPhoto" | "fillMarkY" | "conditionNote">;
+
+/** Un neuf n'a ni niveau, ni photo de niveau, ni note. */
+export const NEUF: LotConditionFields = { condition: "neuf", fillLevel: null, fillPhoto: null, fillMarkY: null, conditionNote: null };
 
 const H = 60 * 60 * 1000;
 const D = 24 * H;
@@ -103,13 +137,21 @@ function firstSentence(text: string, max = 160): string {
   return s.length > max ? s.slice(0, max - 1).trimEnd() + "…" : s;
 }
 
-type LotSeed = Pick<AuctionLot, "slug" | "image" | "gallery" | "endsInMs">;
+type LotSeed = Pick<AuctionLot, "slug" | "image" | "gallery" | "endsInMs"> & LotConditionFields;
 
 const P = "/assets/products";
+/** Photos propres aux enchères (niveaux de jus des occasions). */
+const A = "/assets/auctions";
 
 /**
  * Ordre = ordre des clôtures. Khamrah ferme en premier : c'est le flacon le
  * plus commenté des réseaux, celui qui fait revenir. Il devient « à la une ».
+ *
+ * Deux lots sont des occasions (Khamrah, 9PM) : les deux flacons les plus
+ * connus, ceux dont un visiteur accepte volontiers une seconde main. Leurs
+ * photos de niveau ont été produites à partir du packshot boutique
+ * (DÉMONSTRATION : il n'existe pas de flacon d'occasion physique à
+ * photographier dans la maquette).
  */
 const SEEDS: LotSeed[] = [
   {
@@ -117,6 +159,11 @@ const SEEDS: LotSeed[] = [
     image: `${P}/khamrah/khamrah-hf-33.jpg`, // le flacon posé sur la dune
     gallery: [`${P}/khamrah/khamrah-hf-30.jpg`, `${P}/khamrah/khamrah-hf-36.jpg`],
     endsInMs: 2 * H,
+    condition: "occasion",
+    fillLevel: 75, // relevé sur la photo : le jus affleure sous l'épaule du flacon
+    fillPhoto: `${A}/lattafa-khamrah-niveau-01.webp`,
+    fillMarkY: 55,
+    conditionNote: "Porté une dizaine de fois, bouchon légèrement marqué, boîte d'origine.",
   },
   {
     slug: "oud-elite-pure-black-oud",
@@ -126,6 +173,7 @@ const SEEDS: LotSeed[] = [
       `${P}/oud-elite-pure-black-oud/dp_parfumerie-oud-elite-pure-black-oud-env-12.webp`,
     ],
     endsInMs: 6 * H,
+    ...NEUF,
   },
   {
     slug: "lattafa-yara",
@@ -135,12 +183,18 @@ const SEEDS: LotSeed[] = [
       `${P}/lattafa-yara/dp_parfumerie-lattafa-yara-env-13.webp`,
     ],
     endsInMs: 1 * D,
+    ...NEUF,
   },
   {
     slug: "afnan-9pm",
     image: `${P}/afnan-9pm/dp_parfumerie-afnan-9pm-env-03.jpg`, // halo doré
     gallery: [`${P}/afnan-9pm/dp_parfumerie-afnan-9pm-env-02.jpg`, `${P}/afnan-9pm/dp_parfumerie-afnan-9pm-env-01.jpg`],
     endsInMs: 2 * D,
+    condition: "occasion",
+    fillLevel: 55, // relevé sur la photo : la ligne passe au milieu du « 9 »
+    fillPhoto: `${A}/afnan-9pm-niveau-01.webp`,
+    fillMarkY: 54,
+    conditionNote: "Testé deux fois puis porté un hiver, sans boîte.",
   },
   {
     slug: "paris-corner-the-show-magnifique",
@@ -150,6 +204,7 @@ const SEEDS: LotSeed[] = [
       `${P}/paris-corner-the-show-magnifique/dp_parfumerie-paris-corner-the-show-magnifique-env-08.webp`,
     ],
     endsInMs: 3 * D,
+    ...NEUF,
   },
   {
     slug: "paris-corner-marshmallow-blush",
@@ -159,6 +214,7 @@ const SEEDS: LotSeed[] = [
       `${P}/paris-corner-marshmallow-blush/dp_parfumerie-paris-corner-marshmallow-blush-env-02.webp`,
     ],
     endsInMs: 5 * D,
+    ...NEUF,
   },
 ];
 
@@ -167,6 +223,10 @@ export const AUCTION_LOTS: AuctionLot[] = SEEDS.map((seed) => {
   if (!product) {
     // Un slug qui ne répond plus est une erreur de données, pas un cas à masquer.
     throw new Error(`Enchères : produit introuvable dans product-details — ${seed.slug}`);
+  }
+  if (seed.condition === "occasion" && (seed.fillLevel === null || seed.fillLevel < 0 || seed.fillLevel > 100)) {
+    // Une occasion sans niveau annoncé n'est pas vendable : erreur de données.
+    throw new Error(`Enchères : niveau de jus manquant ou hors bornes pour l'occasion — ${seed.slug}`);
   }
   return {
     ...seed,
@@ -178,6 +238,11 @@ export const AUCTION_LOTS: AuctionLot[] = SEEDS.map((seed) => {
     hook: firstSentence(product.description),
   };
 });
+
+/** Libellé d'état : « Neuf » ou « Occasion · 70 % ». */
+export function conditionLabel(lot: Pick<AuctionLot, "condition" | "fillLevel">): string {
+  return lot.condition === "neuf" ? "Neuf" : `Occasion · ${lot.fillLevel ?? 0} %`;
+}
 
 /* ── Démonstration ──────────────────────────────────────────────────────── */
 
