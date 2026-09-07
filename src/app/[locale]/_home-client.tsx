@@ -633,7 +633,7 @@ export default function HomePageClient() {
         >
           {/* Bouton (gauche) */}
           <Link
-            href="/promo-flash"
+            href="/catalogue?q=laya"
             className="dp-yara-cta"
             style={{
               flexShrink: 0, position: "relative", overflow: "hidden",

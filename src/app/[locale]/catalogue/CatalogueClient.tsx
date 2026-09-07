@@ -251,14 +251,29 @@ function CartControls({ row }: { row: CatalogueRow }) {
 
 // ─── Composant ───────────────────────────────────────────────────────────────
 
+/** Minuscules sans accents : « 50ml » trouve « 50 ML », « laya » trouve « Laya ». */
+function foldText(text: string) {
+  return text
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+}
+
 export default function CatalogueClient({
   rows,
   initialBrand,
+  initialQuery = "",
 }: {
   rows: CatalogueRow[];
   /** Maison pré-cochée quand on arrive depuis `/marques` via `?marque=`. */
   initialBrand: string | null;
+  /** Recherche pré-remplie, via `?q=` : « laya », « roll on », « 50 ml »… */
+  initialQuery?: string;
 }) {
+  // Recherche libre sur le nom et la maison. Le catalogue n'avait que des
+  // facettes : aucun moyen d'atteindre une reference par son nom, ni les
+  // formats de voyage, que seul l'intitule porte (« 50ml », « roll on »).
+  const [query, setQuery] = useState(initialQuery);
   const [brands, setBrands] = useState<Set<string>>(
     () => new Set(initialBrand ? [initialBrand] : [])
   );
@@ -354,8 +369,11 @@ export default function CatalogueClient({
     return m;
   }, [rows]);
 
+  const needle = foldText(query.trim());
   const visible = useMemo(() => {
-    const list = rows.filter((r) => keep(r, filters));
+    const list = rows
+      .filter((r) => keep(r, filters))
+      .filter((r) => !needle || foldText(`${r.name} ${r.brand}`).includes(needle));
     // Un prix manquant ne doit jamais remonter en tête d'un tri par prix : il
     // part au bout dans les deux sens, plutôt que de valoir 0 en croissant.
     const byPrice = (dir: 1 | -1) => (a: CatalogueRow, b: CatalogueRow) => {
@@ -534,7 +552,25 @@ export default function CatalogueClient({
         <div className="cat-resbar">
           <span style={{ fontFamily: "var(--font-display)", fontSize: "1.15rem", color: "var(--ink-900)" }}>
             <strong style={{ fontWeight: 600 }}>{visible.length}</strong> parfum{visible.length > 1 ? "s" : ""}
+            {needle && <span style={{ fontFamily: "var(--font-sans)", fontSize: "0.8rem", color: "var(--ink-500)" }}>{" "}pour « {query.trim()} »</span>}
           </span>
+          <label className="cat-search">
+            <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" aria-hidden>
+              <circle cx="11" cy="11" r="7" />
+              <path d="m20 20-3.6-3.6" />
+            </svg>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => {
+                setQuery(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Nom, maison, format…"
+              aria-label="Rechercher dans le catalogue"
+              autoComplete="off"
+            />
+          </label>
           <label style={{ display: "flex", alignItems: "center", gap: 8, fontSize: "0.72rem", color: "var(--ink-500)" }}>
             <span style={{ letterSpacing: "0.12em", textTransform: "uppercase", fontSize: "0.62rem", color: "var(--ink-400)" }}>Trier :</span>
             <select
@@ -868,6 +904,13 @@ export default function CatalogueClient({
         .cat-wrap{max-width:1240px;margin:0 auto}
         .cat-stats{display:flex;justify-content:center;gap:64px;flex-wrap:wrap;margin-top:36px}
 
+        .cat-search{display:flex;align-items:center;gap:8px;flex:1 1 240px;max-width:340px;height:38px;padding:0 14px;
+          border:1px solid var(--line-200,#E6DCC8);border-radius:999px;background:#fff;color:var(--ink-400)}
+        .cat-search:focus-within{border-color:var(--gold-500);box-shadow:0 0 0 3px rgba(200,144,30,.15)}
+        .cat-search input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;
+          font-family:var(--font-sans);font-size:.85rem;color:var(--ink-900)}
+        .cat-search input::placeholder{color:var(--ink-400);font-weight:300}
+        .cat-search input::-webkit-search-cancel-button{-webkit-appearance:none}
         .cat-resbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;
           padding-bottom:16px;border-bottom:1px solid var(--line-200);margin-bottom:18px}
         .cat-select{font-family:var(--font-sans);font-size:.78rem;color:var(--ink-900);background:var(--surface-white);
@@ -1068,6 +1111,7 @@ export default function CatalogueClient({
         @media (max-width:760px){
           .cat-stats{gap:26px}
           .cat-resbar{gap:10px}
+          .cat-search{flex:1 1 100%;max-width:none;order:3}
           .cat-explore{grid-template-columns:repeat(auto-fill,minmax(150px,1fr))}
           /* Sur tactile il n'y a pas de survol : le bouton d'aperçu resterait
              invisible. On le retire plutôt que de le laisser inaccessible —

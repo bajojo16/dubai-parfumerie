@@ -168,6 +168,11 @@ export default async function CataloguePage({
   const wanted = norm(Array.isArray(raw) ? raw[0] : raw);
   const rows = buildRows();
   const initialBrand = wanted ? (rows.find((r) => norm(r.brand) === wanted)?.brand ?? null) : null;
+  // `?q=` : recherche libre pré-remplie. Sert aux liens qui visent une
+  // reference par son nom (« laya ») ou un format que seul l'intitule porte
+  // (« roll on », « 50ml ») — le catalogue n'a pas de facette contenance.
+  const rawQ = params.q;
+  const initialQuery = (Array.isArray(rawQ) ? rawQ[0] : rawQ) ?? "";
 
-  return <CatalogueClient rows={rows} initialBrand={initialBrand} />;
+  return <CatalogueClient rows={rows} initialBrand={initialBrand} initialQuery={initialQuery} />;
 }

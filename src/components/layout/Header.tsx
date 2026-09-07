@@ -107,6 +107,14 @@ const MEGA: Record<string, MegaData> = {
           { label: "Eau de Parfum", href: "/parfums-femme" },
           { label: "Huile de Parfum", href: "/huile-de-parfum" },
           { label: "Coffrets découverte", href: "/promo-flash" },
+          // Formats de voyage : la contenance n'est pas une facette du
+          // catalogue, elle ne vit que dans l'intitule des references. Seuls
+          // « 15ml » (16 refs) et « 50ml » (14) y figurent vraiment — pas de
+          // « roll on » ni de « 12ml », dont les liens seraient morts. La
+          // recherche libre `?q=` du catalogue les retrouve, ce que les
+          // facettes ne savaient pas faire.
+          { label: "Format voyage · 50 ml", href: "/catalogue?q=50ml" },
+          { label: "Miniatures · 15 ml", href: "/catalogue?q=15ml" },
           { label: "Nouveautés", href: "/parfums-femme" },
         ],
       },
@@ -134,6 +142,8 @@ const MEGA: Record<string, MegaData> = {
           { label: "Eau de Parfum", href: "/parfums-homme" },
           { label: "Huile de Parfum", href: "/huile-de-parfum" },
           { label: "Coffrets prestige", href: "/promo-flash" },
+          { label: "Format voyage · 50 ml", href: "/catalogue?q=50ml" },
+          { label: "Miniatures · 15 ml", href: "/catalogue?q=15ml" },
           { label: "Nouveautés", href: "/parfums-homme" },
         ],
       },
