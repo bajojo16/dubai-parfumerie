@@ -78,6 +78,9 @@ const NAV_LINKS = [
   // Ouvre directement l'offre phare, le 3 pour 2 — pas le listing des promos,
   // où il fallait encore cliquer une pastille pour y arriver. Le listing reste
   // accessible depuis l'offre (« Retour ») et depuis le pied de page.
+  // Les enchères : maquette côté client (`/encheres`), levier de trafic plus
+  // que de marge — placée juste avant les Bons Plans, la zone « affaires ».
+  { label: "Enchères", href: "/encheres" },
   { label: "Bons Plans", href: "/offres/lot-3-pour-2", highlight: true },
 ];
 
