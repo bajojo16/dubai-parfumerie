@@ -987,14 +987,36 @@ export function OlfactiveTwin({
         view && (
           <div className="otw-card" style={{ borderRadius: compact ? 14 : 16 }}>
             {/* ── 02. LE FACE-À-FACE ────────────────────────────────────────
-                Scène crème, deux flacons sur socle. À gauche une silhouette
-                neutre qui porte le nom en TEXTE (cadre légal : aucun logo,
-                aucune forme de flacon de marque) ; au centre le sceau doré avec
-                le niveau de proximité ; à droite le vrai packshot du jumeau. */}
-            <div className="otw-stage">
-              <div className="otw-stage-side">
-                {bottleSilhouette(view.targetName)}
-                <span className="otw-shadow" aria-hidden />
+                Scène crème, deux flacons face à face, CHACUN À CÔTÉ DE SON
+                TEXTE. La première version empilait la scène puis les noms :
+                deux blocs pleine largeur, une colonne gauche vide sous le prix
+                barré, et près de 200 px de hauteur pour dire deux noms. Ici la
+                silhouette et le packshot tiennent dans la même rangée que leurs
+                libellés. À gauche une silhouette neutre qui porte le nom en
+                TEXTE (cadre légal : aucun logo, aucune forme de flacon de
+                marque) ; au centre le sceau doré avec le niveau de proximité ;
+                à droite le vrai packshot du jumeau. */}
+            <div className="otw-duo">
+              <div className="otw-duo-side">
+                <div className="otw-duo-bottle">
+                  {bottleSilhouette(view.targetName)}
+                  <span className="otw-shadow" aria-hidden />
+                </div>
+                <div className="otw-duo-text">
+                  <div className="otw-eyebrow">{t("you_like")}</div>
+                  <div className="otw-target-name">{view.targetName}</div>
+                  {/* ── 01. LE PRIX ÉCONOMISÉ ──────────────────────────────
+                      Le prix de l'original n'est affiché que lorsqu'il est
+                      CONNU (`reference-prices.ts`). Sans prix, rien : ni
+                      barré, ni pourcentage. On n'invente pas un chiffre pour
+                      tenir une maquette. */}
+                  {view.savings && (
+                    <div className="otw-retail">
+                      <span className="otw-retail-label">{t("retail_price_label")}</span>
+                      <span className="otw-retail-price">{fmtApprox(view.savings.retail)}</span>
+                    </div>
+                  )}
+                </div>
               </div>
 
               <div className="otw-seal-col">
@@ -1004,58 +1026,38 @@ export function OlfactiveTwin({
                 <span className="otw-seal-text">{strengthLabel[view.proximityStrength]}</span>
               </div>
 
-              <div className="otw-stage-side">
-                <div className="otw-packshot">
-                  {view.product.video ? (
-                    <TwinThumbVideo src={view.product.video} poster={view.product.image} name={view.product.name} />
-                  ) : (
-                    <Image
-                      src={view.product.image}
-                      alt={view.product.name}
-                      fill
-                      sizes="(max-width: 760px) 190px, 160px"
-                      style={{ objectFit: "contain" }}
-                    />
+              <div className="otw-duo-side otw-duo-side-twin">
+                <div className="otw-duo-bottle">
+                  <div className="otw-packshot">
+                    {view.product.video ? (
+                      <TwinThumbVideo src={view.product.video} poster={view.product.image} name={view.product.name} />
+                    ) : (
+                      <Image
+                        src={view.product.image}
+                        alt={view.product.name}
+                        fill
+                        sizes="(max-width: 760px) 150px, 118px"
+                        style={{ objectFit: "contain" }}
+                      />
+                    )}
+                  </div>
+                  <span className="otw-shadow otw-shadow-strong" aria-hidden />
+                </div>
+                <div className="otw-duo-text">
+                  <div className="otw-eyebrow otw-eyebrow-gold">{t("the_twin")}</div>
+                  <div className="otw-twin-name">
+                    {view.product.brand} · {view.product.name}
+                  </div>
+                  <div className="otw-price-row">
+                    <span className="otw-price-big">{fmt(view.product.price)}</span>
+                    <span className="otw-chip">{view.familyLabel}</span>
+                  </div>
+                  {view.savings && (
+                    <div className="otw-save">
+                      <b>−{view.savings.percent} %</b>
+                      {t("save_amount", { amount: fmtApprox(view.savings.saved) })}
+                    </div>
                   )}
-                </div>
-                <span className="otw-shadow otw-shadow-strong" aria-hidden />
-              </div>
-            </div>
-
-            {/* Noms, prix et économie, alignés sous la scène */}
-            <div className="otw-names">
-              <div className="otw-name-col">
-                <div className="otw-eyebrow">{t("you_like")}</div>
-                <div className="otw-target-name">{view.targetName}</div>
-                {/* ── 01. LE PRIX ÉCONOMISÉ ────────────────────────────────
-                    Le prix de l'original n'est affiché que lorsqu'il est
-                    CONNU (`reference-prices.ts`). Sans prix, rien : ni barré,
-                    ni pourcentage. On n'invente pas un chiffre pour tenir une
-                    maquette. */}
-                {view.savings && (
-                  <div className="otw-retail">
-                    <span className="otw-retail-label">{t("retail_price_label")}</span>
-                    <span className="otw-retail-price">{fmtApprox(view.savings.retail)}</span>
-                  </div>
-                )}
-              </div>
-
-              <div className="otw-name-col otw-name-col-twin">
-                <div className="otw-eyebrow otw-eyebrow-gold">{t("the_twin")}</div>
-                <div className="otw-twin-name">
-                  {view.product.brand} · {view.product.name}
-                </div>
-                <div className="otw-price-row">
-                  <span className="otw-price-big">{fmt(view.product.price)}</span>
-                </div>
-                {view.savings && (
-                  <div className="otw-save">
-                    <b>−{view.savings.percent} %</b>
-                    {t("save_amount", { amount: fmtApprox(view.savings.saved) })}
-                  </div>
-                )}
-                <div className="otw-meta">
-                  <span className="otw-chip">{view.familyLabel}</span>
                 </div>
               </div>
             </div>
@@ -1321,81 +1323,83 @@ export function OlfactiveTwin({
        Fond creme en degrade radial, deux socles, un sceau au centre. Le flacon
        de gauche est une SILHOUETTE NEUTRE : aucun logo, aucune forme de flacon
        de marque — le nom en texte, comme partout ailleurs dans le module. */
-    .otw-stage { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 10px;
-      background: radial-gradient(ellipse at 50% 120%, #F3EADB 0%, #FDFBF6 62%);
-      border-bottom: 1px solid ${C.border}; padding: ${compact ? 20 : 28}px ${compact ? 14 : 26}px 0; }
-    .otw-stage-side { min-width: 0; text-align: center; }
-    .otw-shadow { display: block; height: 12px; margin: 6px 22px 0; border-radius: 50%;
+    /* Une seule rangee : flacon + texte de chaque cote, sceau au centre. */
+    .otw-duo { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: ${compact ? 10 : 16}px;
+      background: radial-gradient(ellipse at 50% 130%, #F3EADB 0%, #FDFBF6 66%);
+      border-bottom: 1px solid ${C.border}; padding: ${compact ? 14 : 18}px ${compact ? 14 : 22}px; }
+    .otw-duo-side { min-width: 0; display: flex; align-items: center; gap: ${compact ? 10 : 14}px; }
+    .otw-duo-side-twin { justify-content: flex-end; }
+    .otw-duo-bottle { flex: 0 0 auto; }
+    .otw-duo-text { min-width: 0; flex: 1 1 auto; }
+    .otw-shadow { display: block; height: 9px; margin: 4px 10px 0; border-radius: 50%;
       background: radial-gradient(ellipse, rgba(58,44,20,.16), transparent 70%); }
     .otw-shadow-strong { background: radial-gradient(ellipse, rgba(58,44,20,.22), transparent 70%); }
 
-    .otw-silhouette { position: relative; width: ${compact ? 86 : 104}px; height: ${compact ? 118 : 142}px; margin: 0 auto; }
-    .otw-sil-body { position: absolute; left: 12px; right: 12px; top: 32px; bottom: 0; border-radius: 10px 10px 12px 12px;
+    .otw-silhouette { position: relative; width: ${compact ? 62 : 74}px; height: ${compact ? 86 : 102}px; margin: 0 auto; }
+    .otw-sil-body { position: absolute; left: 8px; right: 8px; top: 23px; bottom: 0; border-radius: 8px 8px 10px 10px;
       background: linear-gradient(160deg, #F3EADB, #E5DAC6); border: 1px solid #D8C9AE; }
-    .otw-sil-neck { position: absolute; left: 38%; right: 38%; top: 21px; height: 13px; background: #D8C9AE; border-radius: 3px; }
-    .otw-sil-cap { position: absolute; left: 33%; right: 33%; top: 0; height: 23px;
+    .otw-sil-neck { position: absolute; left: 38%; right: 38%; top: 15px; height: 10px; background: #D8C9AE; border-radius: 3px; }
+    .otw-sil-cap { position: absolute; left: 33%; right: 33%; top: 0; height: 17px;
       background: linear-gradient(#4A3826, #241A12); border-radius: 5px; }
-    .otw-sil-label { position: absolute; left: 20px; right: 20px; top: 62px; bottom: 22px; background: #fff;
+    .otw-sil-label { position: absolute; left: 13px; right: 13px; top: 44px; bottom: 16px; background: #fff;
       border: 1px solid #E5DAC6; border-radius: 3px; display: grid; place-items: center; text-align: center;
-      font-family: var(--font-display); font-size: ${compact ? 9 : 10}px; letter-spacing: .6px; text-transform: uppercase;
+      font-family: var(--font-display); font-size: ${compact ? 7 : 7.5}px; letter-spacing: .4px; text-transform: uppercase;
       color: ${C.muted}; line-height: 1.15; padding: 2px; overflow: hidden; }
 
-    .otw-seal-col { text-align: center; padding-bottom: ${compact ? 26 : 34}px; }
-    .otw-seal { display: grid; place-items: center; width: ${compact ? 52 : 66}px; height: ${compact ? 52 : 66}px;
+    .otw-seal-col { text-align: center; padding: 0 ${compact ? 2 : 6}px; }
+    .otw-seal { display: grid; place-items: center; width: ${compact ? 40 : 48}px; height: ${compact ? 40 : 48}px;
       margin: 0 auto; border-radius: 50%; background: linear-gradient(140deg, #E5C06A, #C8901E 55%, #9C6A1A);
-      color: #fff; font-family: var(--font-display); font-size: ${compact ? 26 : 32}px; font-weight: 600;
-      box-shadow: 0 10px 24px rgba(156,106,26,.35); }
-    .otw-seal-text { display: block; margin-top: 8px; font-family: var(--font-sans); font-size: 9px; letter-spacing: 1.2px;
+      color: #fff; font-family: var(--font-display); font-size: ${compact ? 20 : 24}px; font-weight: 600;
+      box-shadow: 0 8px 18px rgba(156,106,26,.32); }
+    .otw-seal-text { display: block; margin-top: 5px; font-family: var(--font-sans); font-size: 8px; letter-spacing: 1px;
       text-transform: uppercase; color: ${C.goldLabel}; line-height: 1.3; }
 
-    .otw-packshot { position: relative; width: 100%; max-width: ${compact ? 128 : 160}px; height: ${compact ? 118 : 148}px;
-      margin: 0 auto; filter: drop-shadow(0 12px 16px rgba(0,0,0,.16)); }
+    .otw-packshot { position: relative; width: ${compact ? 92 : 112}px; height: ${compact ? 86 : 102}px;
+      margin: 0 auto; filter: drop-shadow(0 9px 13px rgba(0,0,0,.16)); }
 
-    /* Noms et prix, alignes sous la scene */
-    .otw-names { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: ${compact ? 14 : 18}px ${compact ? 14 : 26}px 0; }
-    .otw-name-col { min-width: 0; }
+    /* Noms et prix, dans la rangee du face-a-face */
     .otw-eyebrow { font-family: var(--font-sans); font-size: 9.5px; letter-spacing: 1.3px; text-transform: uppercase;
-      color: ${C.muted}; margin-bottom: 5px; }
+      color: ${C.muted}; margin-bottom: 3px; }
     .otw-eyebrow-gold { color: ${C.goldLabel}; }
-    .otw-target-name, .otw-twin-name { font-family: var(--font-display); font-size: ${compact ? 18 : 20}px; font-weight: 500;
+    .otw-target-name, .otw-twin-name { font-family: var(--font-display); font-size: ${compact ? 17 : 19}px; font-weight: 500;
       color: ${C.ink}; line-height: 1.2; text-wrap: balance; overflow-wrap: break-word; }
     /* ── 01. Le prix economise ─────────────────────────────────────────────
        « Prix boutique constate », indicatif et barre. N'apparait QUE si le prix
        de l'original est connu : pas de chiffre invente. */
-    .otw-retail { margin-top: 6px; font-family: var(--font-sans); font-size: 11.5px; color: ${C.muted}; line-height: 1.5; }
+    .otw-retail { margin-top: 4px; font-family: var(--font-sans); font-size: 11.5px; color: ${C.muted}; line-height: 1.4; }
     .otw-retail-label { display: block; font-size: 9.5px; letter-spacing: .8px; text-transform: uppercase; color: ${C.legal}; }
     .otw-retail-price { text-decoration: line-through; color: ${C.strike}; font-size: 13px; }
-    .otw-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
-    .otw-price-big { font-family: var(--font-display); font-size: ${compact ? 26 : 32}px; font-weight: 600; color: ${C.ink}; line-height: 1; }
-    .otw-save { margin-top: 8px; display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 5px 13px;
+    .otw-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: 3px; flex-wrap: wrap; }
+    .otw-price-big { font-family: var(--font-display); font-size: ${compact ? 24 : 28}px; font-weight: 600; color: ${C.ink}; line-height: 1; }
+    .otw-save { margin-top: 5px; display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 11px;
       background: linear-gradient(100deg, #9C6A1A, #C8901E 60%, #E5C06A); color: #fff;
       font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: .3px; }
-    .otw-save b { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
-    .otw-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+    .otw-save b { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
+    .otw-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 6px; }
     .otw-chip { font-family: var(--font-sans); font-size: 10px; letter-spacing: .3px; line-height: 1.6;
       border-radius: 999px; padding: 3px 10px; border: 1px solid ${C.tagBorder}; background: ${C.tagBg}; color: ${C.goldDark};
       white-space: nowrap; }
     .otw-chip-solid { background: ${C.pillSelBg}; border-color: ${C.pillSelBg}; color: ${C.pillSelText}; }
 
     /* ── 04. Le badge de confiance ────────────────────────────────────────── */
-    .otw-trust { display: flex; align-items: center; gap: 10px; border-radius: 12px; padding: 9px 13px;
-      margin: ${compact ? 12 : 16}px ${compact ? 14 : 26}px 0; }
+    .otw-trust { display: flex; align-items: center; gap: 9px; border-radius: 10px; padding: 6px 11px;
+      margin: ${compact ? 9 : 11}px ${compact ? 14 : 22}px 0; }
     .otw-trust-solid { background: linear-gradient(100deg, #9C6A1A, #C8901E 60%, #E5C06A); color: #fff; }
     .otw-trust-soft { border: 1.5px solid ${C.tagBorder}; background: #fff; color: ${C.goldDark}; }
     .otw-trust-icon { flex: 0 0 auto; display: grid; place-items: center; }
     .otw-trust-text { min-width: 0; }
     .otw-trust-title { font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; }
-    .otw-trust-sub { font-family: var(--font-sans); font-size: 11.5px; line-height: 1.4; margin-top: 2px; }
+    .otw-trust-sub { font-family: var(--font-sans); font-size: 11px; line-height: 1.35; margin-top: 1px; }
     .otw-trust-solid .otw-trust-sub { opacity: .93; }
     .otw-trust-soft .otw-trust-sub { color: ${C.muted}; }
     .otw-trust-source { color: inherit; font-weight: 500; }
 
     /* ── 03. La jauge de proximite ────────────────────────────────────────── */
-    .otw-gauge { margin: ${compact ? 12 : 16}px ${compact ? 14 : 26}px 0; }
+    .otw-gauge { margin: ${compact ? 9 : 11}px ${compact ? 14 : 22}px 0; }
     .otw-gauge-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
     .otw-gauge-head .otw-eyebrow { margin-bottom: 0; }
-    .otw-gauge-pct { font-family: var(--font-display); font-size: ${compact ? 30 : 38}px; font-weight: 600; line-height: 1; color: ${C.ink}; }
-    .otw-gauge-pct i { font-size: ${compact ? 16 : 20}px; font-style: normal; }
+    .otw-gauge-pct { font-family: var(--font-display); font-size: ${compact ? 24 : 28}px; font-weight: 600; line-height: 1; color: ${C.ink}; }
+    .otw-gauge-pct i { font-size: ${compact ? 14 : 16}px; font-style: normal; }
     .otw-bar { position: relative; height: 10px; border-radius: 999px; margin: 12px 0 6px;
       background: linear-gradient(90deg, #EFE7D8 0 33%, #F6EAC8 33% 66%, #EFD79B 66%); }
     .otw-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px;
@@ -1404,11 +1408,11 @@ export function OlfactiveTwin({
       border: 3px solid #8A6A1E; transform: translate(-50%, -50%); box-shadow: 0 2px 6px rgba(0,0,0,.2); }
     .otw-ticks { display: flex; justify-content: space-between; font-family: var(--font-sans); font-size: 9px;
       letter-spacing: .9px; text-transform: uppercase; color: ${C.legal}; }
-    .otw-gauge-why { font-family: var(--font-sans); font-size: 12px; color: ${C.muted}; margin: 9px 0 0; line-height: 1.45; }
+    .otw-gauge-why { font-family: var(--font-sans); font-size: 12px; color: ${C.muted}; margin: 6px 0 0; line-height: 1.4; }
     .otw-gauge-why b { color: ${C.goldDark}; }
 
-    .otw-foot { margin: ${compact ? 12 : 16}px ${compact ? 14 : 26}px 0; padding-top: 14px; border-top: 1px solid ${C.border};
-      display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+    .otw-foot { margin: ${compact ? 9 : 11}px ${compact ? 14 : 22}px 0; padding-top: 10px; border-top: 1px solid ${C.border};
+      display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
     .otw-foot-text { flex: 1 1 220px; min-width: 0; }
     /* Trois lignes, pas cinq : le paragraphe vient de la fiche produit, ou il a
        toute la place ; ici il partage la carte avec le prix, la jauge et deux
@@ -1505,11 +1509,13 @@ export function OlfactiveTwin({
         border-radius: 0 !important; border-left: none; border-right: none; }
       /* La silhouette et le sceau passent a la trappe : a 390 px, ils volent la
          place du seul visuel qui compte — le vrai flacon. L'original reste
-         nomme, avec son prix barre, juste en dessous. */
-      .otw-stage { grid-template-columns: 1fr; padding: 16px 16px 0; }
-      .otw-stage-side:first-child, .otw-seal-col { display: none; }
-      .otw-packshot { max-width: 200px; height: 176px; }
-      .otw-names { grid-template-columns: 1fr; gap: 10px; padding: 12px 16px 0; }
+         nomme, avec son prix barre, juste au-dessus. La rangee du face-a-face
+         redevient une colonne : « vous aimez » d'abord, puis le jumeau avec
+         son packshot a cote de son prix. */
+      .otw-duo { grid-template-columns: 1fr; gap: 12px; padding: 14px 16px; }
+      .otw-duo .otw-silhouette, .otw-duo .otw-shadow, .otw-seal-col { display: none; }
+      .otw-duo-side-twin { justify-content: flex-start; }
+      .otw-packshot { width: 104px; height: 116px; }
       .otw-trust, .otw-gauge, .otw-foot { margin-left: 16px; margin-right: 16px; }
       .otw-share { margin: 12px 16px 16px; }
       .otw-target-name, .otw-twin-name { font-size: 19px; }
