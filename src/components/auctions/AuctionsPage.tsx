@@ -480,7 +480,17 @@ function Stat({ label, value, urgent = false }: { label: string; value: string; 
    2 colonnes, la une sur toute la largeur. Mobile : une colonne, toutes les
    cartes au même format. */
 const STYLES = `
-  .au-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; grid-auto-flow: dense; }
+  /* Toute la salle est reduite d'un cran (propriete zoom) : les cartes portent
+     beaucoup de texte — marque, nom, prix, enchères, enchérisseur, chrono —
+     et les serrer en six colonnes faisait chevaucher le titre et le chrono.
+     Le zoom rétrécit la carte ET son contenu dans les mêmes proportions, ce
+     qu'un simple resserrage de colonnes ne sait pas faire. Non supporté par
+     un vieux Firefox : la page s'affiche alors à sa taille d'origine, intacte.
+  */
+  .au-root { zoom: 0.78; }
+  @media (max-width: 820px) { .au-root { zoom: 0.9; } }
+  @media (max-width: 640px) { .au-root { zoom: 1; } }
+  .au-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; grid-auto-flow: dense; }
   .au-card { aspect-ratio: 4 / 5; min-width: 0; }
   .au-card--featured { grid-column: span 2; grid-row: span 1; aspect-ratio: 16 / 10; }
   .au-card-btn { transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out); }
@@ -519,6 +529,10 @@ const STYLES = `
   @media (max-width: 1100px) {
     .au-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
     .au-card--featured { grid-column: span 2; grid-row: span 1; aspect-ratio: 16 / 9; }
+  }
+  @media (max-width: 820px) {
+    .au-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .au-card--featured { grid-column: span 2; aspect-ratio: 16 / 10; }
   }
   @media (max-width: 640px) {
     .au-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
