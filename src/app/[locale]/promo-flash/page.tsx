@@ -15,8 +15,8 @@ const PROMO_PRODUCTS = [
   { id: 6, name: "Khadlaj Hareem Al Sultan", brand: "Khadlaj", price: 15.90, oldPrice: 39.90, discount: 60, category: "Femme", image: "prod-6.jpg" },
   { id: 7, name: "Gulf Orchid Rose Oud", brand: "Gulf Orchid", price: 17.90, oldPrice: 44.90, discount: 60, category: "Mixte", image: "prod-1.jpg" },
   { id: 8, name: "Surrati Black Oud", brand: "Surrati", price: 21.90, oldPrice: 54.90, discount: 60, category: "Homme", image: "prod-2.jpg" },
-  { id: 9, name: "Coffret Découverte Oud", brand: "Dubaï Parfumerie", price: 39.90, oldPrice: 79.90, discount: 50, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
-  { id: 10, name: "Lot 3 Parfums Best-Of", brand: "Dubaï Parfumerie", price: 49.90, oldPrice: 109.90, discount: 55, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
+  { id: 9, name: "Trio Signature · Khamrah, Yara, Bidun Esam", brand: "Dubaï Parfumerie", price: 58.00, oldPrice: 80.90, discount: 28, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-khamrah-yara-bidun-esam-01.webp" },
+  { id: 10, name: "Trio Best-Of · 9PM, Yara, Ameerat Al Arab", brand: "Dubaï Parfumerie", price: 55.00, oldPrice: 77.90, discount: 29, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-9pm-yara-ameerat-al-arab-01.webp" },
   { id: 11, name: "Coffret Miniatures Floral", brand: "Dubaï Parfumerie", price: 29.90, oldPrice: 64.90, discount: 54, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
   { id: 12, name: "Lot Découverte Huiles 6×3ml", brand: "Dubaï Parfumerie", price: 24.90, oldPrice: 54.90, discount: 55, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
 ];

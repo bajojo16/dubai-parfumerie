@@ -59,9 +59,15 @@ const Faq = dynamic(() => import("@/components/faq/Faq").then(m => m.Faq));
 // nécessaire côté serveur, ssr:false évite même de l'inclure dans le rendu SSR.
 const BundleBuilder = dynamic(() => import("@/components/bundle/BundleBuilder").then(m => m.BundleBuilder), { ssr: false });
 
+// Les quatre cartes servaient le meme visuel de stock. Les deux premieres
+// portent desormais les lots reellement photographies (Higgsfield, 06/09/26,
+// `public/assets/lots/`), avec les flacons qu'on y voit et LEURS prix du
+// catalogue : Khamrah 29 + Yara 22,90 + Bidun Esam 29 = 80,90, et 9PM 30 +
+// Yara 22,90 + Ameerat Al Arab 25 = 77,90. Le prix du lot applique l'offre
+// maison « achetez 2, le 3e offert » : on paie les deux plus chers.
 const COFFRETS_HOME: LuxeProduct[] = [
-  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Coffret Découverte Oud", price: 39.9, oldPrice: 79.9, limitedStock: true, href: "/promo-flash", rating: 4.5, reviewCount: 97 },
-  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Lot 3 Parfums Best-Of", price: 49.9, oldPrice: 109.9, href: "/promo-flash", rating: 5, reviewCount: 64 },
+  { image: "/assets/lots/dp_parfumerie-lot-khamrah-yara-bidun-esam-01.webp", brand: "Dubaï Parfumerie", title: "Trio Signature · Khamrah, Yara, Bidun Esam", price: 58, oldPrice: 80.9, limitedStock: true, href: "/offres/lot-3-pour-2", rating: 4.5, reviewCount: 97 },
+  { image: "/assets/lots/dp_parfumerie-lot-9pm-yara-ameerat-al-arab-01.webp", brand: "Dubaï Parfumerie", title: "Trio Best-Of · 9PM, Yara, Ameerat Al Arab", price: 55, oldPrice: 77.9, href: "/offres/lot-3-pour-2", rating: 5, reviewCount: 64 },
   { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Coffret Miniatures Floral", price: 29.9, oldPrice: 64.9, href: "/promo-flash", rating: 4, reviewCount: 38 },
   { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Lot Découverte Huiles 6×3ml", price: 24.9, oldPrice: 54.9, limitedStock: true, href: "/promo-flash", rating: 4.5, reviewCount: 51 },
 ];
