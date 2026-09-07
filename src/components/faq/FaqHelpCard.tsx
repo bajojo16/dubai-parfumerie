@@ -48,8 +48,11 @@ export function FaqHelpCard({
         background: `linear-gradient(140deg, ${T.cream3}, ${T.cream})`,
         border: `1px solid ${T.line2}`,
         borderRadius: 18,
-        padding: "26px 24px",
-        textAlign: "start",
+        padding: "28px 24px",
+        // Bloc centre : le titre, la phrase et les trois boutons partagent le
+        // meme axe. Aligne a gauche, la carte s'etirait sur toute la largeur
+        // avec un grand vide a droite des boutons.
+        textAlign: "center",
       }}
     >
       <div
@@ -82,14 +85,14 @@ export function FaqHelpCard({
           fontSize: 13.5,
           color: T.ink2,
           lineHeight: 1.6,
-          margin: "0 0 18px",
+          margin: "0 auto 18px",
           maxWidth: 420,
         }}
       >
         {L.subtitle}
       </p>
 
-      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
+      <div style={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "center", gap: 12 }}>
         {seeAllHref && <CtaLink href={seeAllHref} label={L.seeAll} variant="line" />}
         <a
           href={`https://wa.me/${whatsappNumber}`}

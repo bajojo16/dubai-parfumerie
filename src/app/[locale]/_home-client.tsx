@@ -74,6 +74,7 @@ const COFFRETS_HOME: LuxeProduct[] = [
   // dementait. La quatrieme carte, elle, servait la MEME photo sous un autre
   // nom : elle disparait tant que le lot d'huiles n'a pas son propre visuel.
   { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Trio Reef · 33, Aurom, Summer Pink", price: 165, oldPrice: 235, href: "/offres/lot-3-pour-2", rating: 4, reviewCount: 38 },
+  { image: "/assets/lots/dp_parfumerie-lot-ajwad-asad-badee-al-oud-01.webp", brand: "Dubaï Parfumerie", title: "Trio Lattafa · Ajwad Pink to Pink, Asad, Badee Al Oud", price: 53, oldPrice: 73, limitedStock: true, href: "/offres/lot-3-pour-2", rating: 5, reviewCount: 51 },
 ];
 
 // ─── Trust marquee (icônes ligne, fini les emojis) ───────────────────────────
