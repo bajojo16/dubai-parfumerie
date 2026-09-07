@@ -53,6 +53,9 @@ import { WHATSAPP_URL } from "@/lib/contact";
 const STORAGE_KEY = "dp_ondemand_v2";
 
 /** Suggestions affichées sous le champ de recherche. */
+/** Maisons servies quand la liste est repliée : environ quatre rangées de pastilles. */
+const HOUSES_COLLAPSED = 12;
+
 const MAX_SUGGESTIONS = 8;
 
 /**
@@ -413,10 +416,36 @@ export function OnDemandClient() {
           list.push(p);
           stockByName.set(p.keyName, list);
         }
+        // Index par maison, pour le repli sur nom approchant.
+        const stockByHouse = new Map<string, typeof search.SEARCH_PRODUCTS>();
+        for (const p of search.SEARCH_PRODUCTS) {
+          const list = stockByHouse.get(p.keyBrand) ?? [];
+          list.push(p);
+          stockByHouse.set(p.keyBrand, list);
+        }
+        const sameHouse = (hk: string, keyBrand: string) => keyBrand.includes(hk) || hk.includes(keyBrand);
         const stock = (name: string, houseName: string): StockMatch | undefined => {
           const hk = search.norm(houseName);
-          const hit = stockByName.get(search.norm(name))?.find((p) => p.keyBrand.includes(hk) || hk.includes(p.keyBrand));
-          return hit ? { price: hit.price, image: hit.image, href: hit.href } : undefined;
+          const nk = search.norm(name);
+          const exact = stockByName.get(nk)?.find((p) => sameHouse(hk, p.keyBrand));
+          if (exact) return { price: exact.price, image: exact.image, href: exact.href };
+          // Repli : le nom n'est identique que rarement d'une source à l'autre.
+          // « 9PM Night Out Extrait Parfum » côté base et « 9PM Night Out » en
+          // rayon ne se rencontraient jamais, et la carte tombait sur le logo
+          // de la maison au lieu du flacon. On accepte donc qu'un nom soit le
+          // préfixe de l'autre, DANS LA MÊME MAISON — jamais entre maisons, ce
+          // qui collerait la photo d'un Lattafa sur un Afnan.
+          let best: (typeof search.SEARCH_PRODUCTS)[number] | undefined;
+          for (const [keyBrand, list] of stockByHouse) {
+            if (!sameHouse(hk, keyBrand)) continue;
+            for (const p of list) {
+              if (!p.image) continue;
+              if (!(p.keyName.startsWith(nk) || nk.startsWith(p.keyName))) continue;
+              // À égalité, le nom le plus proche en longueur.
+              if (!best || Math.abs(p.keyName.length - nk.length) < Math.abs(best.keyName.length - nk.length)) best = p;
+            }
+          }
+          return best ? { price: best.price, image: best.image, href: best.href } : undefined;
         };
 
         setCatalog({ entries, byId, norm: search.norm, familyLabel: base.FAMILY_LABELS, stock });
@@ -465,7 +494,12 @@ export function OnDemandClient() {
     }
     // Une lettre choisie filtre la liste complète, comme la recherche.
     if (houseLetter) return PARTNER_HOUSES.filter((h) => h.name[0].toUpperCase() === houseLetter);
-    return allHouses ? PARTNER_HOUSES : PARTNER_HOUSES.filter((h) => !!h.logo);
+    if (allHouses) return PARTNER_HOUSES;
+    // Replié : les maisons qui ont un logo, coupées à QUATRE RANGÉES. Servir
+    // les 41 maisons logotypées faisait dix rangées de pastilles avant le
+    // moindre champ — le bouton « afficher les 70 » n'avait plus de sens
+    // puisque la liste courte remplissait déjà l'écran.
+    return PARTNER_HOUSES.filter((h) => !!h.logo).slice(0, HOUSES_COLLAPSED);
   }, [allHouses, query, houseLetter]);
 
   /** Les lettres qui ont au moins une maison : les autres sont grisées, pas cachées, pour garder l'alphabet lisible. */
@@ -942,12 +976,21 @@ export function OnDemandClient() {
                   </ul>
                 </div>
               )}
+              {/* Une maison partenaire n'est pas forcément au catalogue : sur les
+                  59 maisons sur commande, seule une minorité a des références
+                  en base. Le silence laissait croire à un bug ; on le dit. */}
+              {house && houseTop.length === 0 && (
+                <p className="dp-odc-hint" style={{ marginTop: 12 }}>
+                  {house} est une maison sur commande : nous n'en tenons aucune référence en rayon, donc pas de visuel à montrer.
+                  Saisissez le nom du parfum ci-dessus, nous le cherchons chez elle.
+                </p>
+              )}
               {visibleHouses.length === 0 && (
                 <p className="dp-odc-hint">Aucune maison ne correspond — choisissez « Toutes les maisons » et saisissez le parfum librement.</p>
               )}
               {!query.trim() && !houseLetter && (
               <button type="button" className="dp-odc-linkbtn" onClick={() => setAllHouses((v) => !v)} aria-expanded={allHouses}>
-                {allHouses ? "Réduire la liste" : "Afficher les " + PARTNER_HOUSES.length + " maisons partenaires"}
+                {allHouses ? "Réduire la liste" : "Découvrir les " + PARTNER_HOUSES.length + " maisons partenaires"}
               </button>
               )}
             </div>
