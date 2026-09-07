@@ -26,10 +26,11 @@ import {
   OLFACTIVE_TWINS,
   TWIN_SUGGESTIONS,
   TWIN_SUGGESTION_COUNT,
+  TWIN_SHOWCASE,
   type OlfactiveMatch,
 } from "@/data/olfactive-twins";
 import { REFERENCE_PERFUMES, FAMILY_LABELS, type ReferenceFamily, type ReferencePerfume } from "@/data/reference-perfumes";
-import { DUPES_BY_REFERENCE, dupesOf } from "@/data/catalogue/dp-dupes";
+import { DUPES_BY_REFERENCE, DUPE_BY_SLUG, dupesOf } from "@/data/catalogue/dp-dupes";
 
 // ─── Vocabulaire de notes ────────────────────────────────────────────────────
 // Les deux sources n'écrivent pas les notes de la même façon : la base de
@@ -219,6 +220,71 @@ export const SUGGESTED_REFERENCE_IDS: string[] = [
 /** Niveau de proximité — l'interface ne doit PAS présenter tout comme équivalent. */
 export type MatchStrength = "tres-proche" | "proche" | "apparente";
 
+/**
+ * D'OÙ VIENT LA CORRESPONDANCE — l'information qui manquait à l'écran.
+ *
+ * Trois couches alimentent le module et elles n'ont pas la même autorité :
+ *
+ *  - `curated`    : paire relue et rédigée par l'équipe (`OLFACTIVE_TWINS`) ;
+ *  - `documented` : correspondance publique et sourcée (`dp-dupes.json`,
+ *                   confiance « forte » ou « moyenne », avec son URL) ;
+ *  - `scored`     : rapprochement CALCULÉ par le moteur — personne ne l'a relu.
+ *
+ * Les deux premières se disent « jumeau documenté », la troisième
+ * « rapprochement olfactif ». Sans ce champ, l'interface servait Hamidi Alyssa
+ * pour Baccarat Rouge 540 (calcul) avec exactement la même assurance qu'une
+ * paire relue : c'est ce que la distinction corrige.
+ */
+export type TwinOrigin = "curated" | "documented" | "scored";
+
+// ─── Jauge de proximité ──────────────────────────────────────────────────────
+/**
+ * POURQUOI UN POURCENTAGE À PART DU `score`.
+ *
+ * `score` mélange famille, accords, genre et popularité, puis se fait relever à
+ * 0,9 dès qu'un résultat est certifié : tous les résultats servis se tiennent
+ * entre 0,90 et 0,99, ils sont donc illisibles en jauge. `proximity` ne retient
+ * que les deux composantes qui PROUVENT quelque chose — l'affinité de famille
+ * et la couverture d'accords — et les projette sur une bande d'affichage.
+ *
+ * Deux bandes, parce que deux natures de résultat :
+ *
+ *  - relu ou documenté → [85 %, 98 %] : la correspondance est sourcée, elle a
+ *    droit au palier haut, et la position dans la bande dit encore laquelle des
+ *    paires sourcées est la mieux étayée ;
+ *  - calculé → [55 %, 79 %] : le plafond passe SOUS le seuil « très proche ».
+ *    Un rapprochement que personne n'a relu ne peut pas se présenter comme le
+ *    meilleur niveau, quelles que soient ses composantes. C'est exactement le
+ *    cas Baccarat Rouge 540 → Alyssa : famille exacte et 4 accords sur 4, donc
+ *    un dossier numériquement parfait, pour une paire que l'équipe avait
+ *    justement retirée comme indéfendable. Le calcul ne suffit pas ; la jauge
+ *    le dit maintenant.
+ *
+ * Déterministe et monotone : à origine égale, un meilleur dossier donne un
+ * meilleur pourcentage.
+ */
+const PROXIMITY_RAW_FLOOR = 0.35;
+const PROXIMITY_BAND_SOURCED: readonly [number, number] = [0.85, 0.98];
+const PROXIMITY_BAND_SCORED: readonly [number, number] = [0.55, 0.79];
+
+/** Seuils des trois paliers de la jauge, lus sur `proximity`. */
+const TIER_VERY_CLOSE = 0.8;
+const TIER_CLOSE = 0.6;
+
+function computeProximity(origin: TwinOrigin, family: number, accords: number): number {
+  const raw = 0.55 * family + 0.45 * accords;
+  const t = Math.min(1, Math.max(0, (raw - PROXIMITY_RAW_FLOOR) / (1 - PROXIMITY_RAW_FLOOR)));
+  const [lo, hi] = origin === "scored" ? PROXIMITY_BAND_SCORED : PROXIMITY_BAND_SOURCED;
+  return Math.round((lo + (hi - lo) * t) * 100) / 100;
+}
+
+/** Palier affiché, lu sur la jauge — jamais forcé par l'interface. */
+export function proximityTier(proximity: number): MatchStrength {
+  if (proximity >= TIER_VERY_CLOSE) return "tres-proche";
+  if (proximity >= TIER_CLOSE) return "proche";
+  return "apparente";
+}
+
 export type TwinResult = {
   reference: ReferencePerfume;
   product: SearchProduct;
@@ -231,6 +297,14 @@ export type TwinResult = {
    * L'interface ne doit rien présenter comme jumeau quand ce drapeau est faux.
    */
   verified: boolean;
+  /** couche d'où sort la correspondance — décide du badge de confiance */
+  origin: TwinOrigin;
+  /** jauge affichée, 0..1 (voir `computeProximity`) */
+  proximity: number;
+  /** palier de la jauge, déduit de `proximity` — c'est LUI que l'écran montre */
+  proximityStrength: MatchStrength;
+  /** URL de la source publique, quand la correspondance est documentée */
+  documentedSource?: string;
   /** affinité de famille retenue, 0..1 — exposée pour rester auditable */
   familyAffinity: number;
   /** couverture des accords, 0..1 (rappel + précision, crédits de super-famille inclus) */
@@ -450,8 +524,9 @@ export function rankTwins(ref: ReferencePerfume, limit = 3): TwinResult[] {
   );
 
   return scored.slice(0, Math.max(1, limit)).map((s) => {
-    const r = buildResult(ref, s.profile, s);
-    return documented.has(s.profile.product.slug)
+    const isDocumented = documented.has(s.profile.product.slug);
+    const r = buildResult(ref, s.profile, s, isDocumented ? "documented" : "scored");
+    return isDocumented
       ? { ...r, strength: "tres-proche" as const, verified: true, score: Math.max(r.score, 0.9) }
       : r;
   });
@@ -459,12 +534,26 @@ export function rankTwins(ref: ReferencePerfume, limit = 3): TwinResult[] {
 
 type Scored = { score: number; shared: string[]; family: number; accords: number; exact: number; overlap: number; exactRecall: number; refGroupCount: number };
 
-function buildResult(ref: ReferencePerfume, profile: ProductProfile, s: Scored): TwinResult {
+function buildResult(
+  ref: ReferencePerfume,
+  profile: ProductProfile,
+  s: Scored,
+  origin: TwinOrigin = "scored"
+): TwinResult {
   const verified = isDupe(profile, s);
+  const proximity = computeProximity(origin, s.family, s.accords);
+  const dupe = origin === "scored" ? undefined : DUPE_BY_SLUG.get(profile.product.slug);
   return {
     reference: ref,
     product: profile.product,
     score: Math.round(s.score * 1000) / 1000,
+    origin,
+    proximity,
+    proximityStrength: proximityTier(proximity),
+    // La source n'est portée que si elle documente CETTE référence-là : le même
+    // flacon peut être le dupe reconnu d'un parfum et le simple voisin
+    // statistique d'un autre, et l'URL du premier ne prouve rien du second.
+    documentedSource: dupe && dupe.referenceId === ref.id ? dupe.source ?? undefined : undefined,
     // Un jumeau retenu est par définition au niveau le plus haut : le seuil est
     // plus exigeant que `strengthOf`. Laisser « profil proche » sur un résultat
     // servi comme jumeau serait exactement l'ambiguïté qu'on vient de corriger.
@@ -497,7 +586,7 @@ export function findTwin(ref: ReferencePerfume): TwinResult | null {
     const curated = CURATED_BY_KEY.get(curatedKey);
     const profile = curated && PRODUCT_PROFILES.find((p) => p.product.slug === curated.productHandle);
     if (curated && profile) {
-      const result = buildResult(ref, profile, scoreProduct(ref, profile));
+      const result = buildResult(ref, profile, scoreProduct(ref, profile), "curated");
       // Relue à la main par l'équipe : c'est un jumeau par construction, quel
       // que soit ce que dit le calcul. Sa description rédigée remplace le texte
       // générique et son niveau ne redescend pas sous « très proche ».
@@ -513,7 +602,7 @@ export function findTwin(ref: ReferencePerfume): TwinResult | null {
     .filter((p): p is ProductProfile => Boolean(p));
   if (documented.length) {
     const best = documented
-      .map((p) => buildResult(ref, p, scoreProduct(ref, p)))
+      .map((p) => buildResult(ref, p, scoreProduct(ref, p), "documented"))
       .sort((a, b) => b.score - a.score)[0];
     return { ...best, strength: "tres-proche", verified: true, score: Math.max(best.score, 0.9) };
   }
@@ -580,6 +669,21 @@ export function searchReferences(query: string, limit = 8): ReferencePerfume[] {
       a.ref.name.localeCompare(b.ref.name, "fr")
   );
   return hits.slice(0, limit).map((h) => h.ref);
+}
+
+/**
+ * Autocomplétion RENSEIGNÉE : chaque ligne sait déjà si nous avons un jumeau,
+ * lequel et à quel prix.
+ *
+ * Sans cela, la liste alignait cinq « Aventus » indiscernables et le visiteur
+ * découvrait l'absence APRÈS le clic. Le coût est négligeable — huit appels à
+ * `findTwin` par frappe, sur 25 profils pré-calculés — et le module est de
+ * toute façon déjà chargé quand la liste s'ouvre.
+ */
+export type ReferenceHit = { reference: ReferencePerfume; twin: TwinResult | null };
+
+export function searchReferencesWithTwins(query: string, limit = 8): ReferenceHit[] {
+  return searchReferences(query, limit).map((reference) => ({ reference, twin: findTwin(reference) }));
 }
 
 /** Les suggestions affichées en pastilles, résolues et prêtes à l'emploi. */
@@ -666,6 +770,32 @@ if (process.env.NODE_ENV !== "production") {
       "[olfactive-match] suggestions par défaut : l'amorçage de TWIN_SUGGESTIONS diverge de la base.",
       { certifiees: resolved.length, attendues: TWIN_SUGGESTION_COUNT, ecarts: drift.map((s) => s.referenceId) }
     );
+  }
+
+  // Même filet pour la VITRINE d'ouverture : elle est peinte avant le moteur,
+  // elle doit donc dire ce que le moteur dira. Un écart signifie qu'à
+  // l'ouverture le visiteur voit un résultat qui n'est pas celui de la première
+  // pastille — le défaut « Aventus 19,90 € en vitrine, 49,90 € en recherche ».
+  const showcaseTwin = findTwinById(TWIN_SHOWCASE.referenceId);
+  const showcaseDrift: string[] = [];
+  if (TWIN_SHOWCASE.referenceId !== TWIN_SUGGESTIONS[0]?.referenceId) showcaseDrift.push("referenceId ≠ pastille n°1");
+  if (!showcaseTwin) showcaseDrift.push("aucun jumeau certifié");
+  else {
+    if (showcaseTwin.product.slug !== TWIN_SHOWCASE.product.id) showcaseDrift.push("produit");
+    if (showcaseTwin.product.price !== TWIN_SHOWCASE.product.price) showcaseDrift.push("prix");
+    if (showcaseTwin.origin !== TWIN_SHOWCASE.origin) showcaseDrift.push("origine");
+    if (showcaseTwin.proximity !== TWIN_SHOWCASE.proximity) showcaseDrift.push("proximité");
+  }
+  if (showcaseDrift.length) {
+    console.warn("[olfactive-match] vitrine d'ouverture : TWIN_SHOWCASE diverge de la base.", {
+      ecarts: showcaseDrift,
+      attendu: showcaseTwin && {
+        slug: showcaseTwin.product.slug,
+        price: showcaseTwin.product.price,
+        origin: showcaseTwin.origin,
+        proximity: showcaseTwin.proximity,
+      },
+    });
   }
 }
 

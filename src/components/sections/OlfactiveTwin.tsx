@@ -10,34 +10,49 @@
  * connues DONT LE JUMEAU EXISTE. Elles ne sont plus écrites dans le composant :
  * elles viennent de `resolveSuggestions()`, qui filtre l'ordre de priorité de
  * `TWIN_SUGGESTIONS` par ce que le moteur certifie réellement (voir l'invariant
- * dans `olfactive-twins.ts`). Une pastille qui ne mène nulle part ne peut donc
- * plus apparaître — c'était le défaut d'avant : la moitié des suggestions
- * renvoyait vers un visuel de remplissage et une page de liste.
+ * dans `olfactive-twins.ts`).
  *
- * Chargement différé obligatoire : la base des références (3 952 parfums) et le
- * moteur d'appariement arrivent en `import()` dynamique au PREMIER usage du
- * champ OU au premier clic sur une pastille, jamais au chargement de la page —
- * même motif que `SearchOverlay` avec `search-catalog`. Tant que le module n'est
- * pas là, les pastilles sont peintes depuis l'amorçage `TWIN_SUGGESTIONS`, qui
- * ne pèse que huit libellés.
+ * Chargement différé : la base des références (3 990 parfums) et le moteur
+ * d'appariement arrivent en `import()` dynamique — jamais dans le bundle
+ * initial. Le déclencheur n'est plus le seul focus du champ mais l'ENTRÉE DE LA
+ * SECTION DANS LE CHAMP DE VISION (IntersectionObserver, marge de 200 px) :
+ * les pastilles portent désormais la vignette et le prix du jumeau, la vitrine
+ * doit être cohérente avec la première pastille, et attendre un clic pour
+ * savoir tout cela ferait changer l'écran sous les yeux du visiteur. Tant que
+ * le module n'est pas là, on peint l'amorçage : `TWIN_SUGGESTIONS` pour les
+ * pastilles, `TWIN_SHOWCASE` pour la carte.
  *
- * Cadre légal inchangé : usage nominatif des marques, texte seul, vocabulaire
+ * Cadre légal inchangé : usage nominatif des marques, TEXTE SEUL. Le flacon de
+ * gauche du face-à-face est une SILHOUETTE NEUTRE dessinée en CSS — aucun logo,
+ * aucune forme de flacon de marque, aucune couleur de maison. Vocabulaire
  * « inspiré de » / « jumeau olfactif » — jamais « clone », « copie », « dupe ».
  *
  * RÈGLE D'AFFICHAGE, non négociable : on ne montre un jumeau QUE lorsque le
- * moteur en certifie un (`findTwin` rend `null` sinon — voir le seuil documenté
- * dans `olfactive-match.ts`). Aucun repli sur « le moins pire des 25 produits » :
- * c'est ce repli qui proposait Al Haramain Noora pour Coco Mademoiselle. Quand
- * il n'y a pas de jumeau, on l'annonce et on propose l'alerte e-mail.
+ * moteur en certifie un (`findTwin` rend `null` sinon). Aucun repli sur « le
+ * moins pire des 25 produits ». Quand il n'y a pas de jumeau, on l'annonce et
+ * on propose l'alerte e-mail.
+ *
+ * DEUX NATURES DE RÉSULTAT, DEUX BADGES (`TwinResult.origin`) : une paire relue
+ * ou une correspondance sourcée se disent « jumeau documenté » ; un
+ * rapprochement calculé se dit « rapprochement olfactif » et sa jauge ne peut
+ * pas atteindre le palier haut. C'est ce qui distingue enfin Dior Sauvage
+ * (documenté) de Baccarat Rouge 540 → Alyssa (calculé), servis hier sous le
+ * même « Profil très proche ».
  */
 
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useId, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import { useTranslations } from "next-intl";
-import { TWIN_SUGGESTIONS, TWIN_SUGGESTION_COUNT, type OlfactiveMatch } from "@/data/olfactive-twins";
-import type { MatchStrength, TwinResult } from "@/data/olfactive-match";
+import {
+  TWIN_SUGGESTIONS,
+  TWIN_SUGGESTION_COUNT,
+  TWIN_SHOWCASE,
+  type OlfactiveMatch,
+} from "@/data/olfactive-twins";
+import type { MatchStrength, TwinOrigin, TwinResult } from "@/data/olfactive-match";
 import type { ReferencePerfume } from "@/data/reference-perfumes";
+import { savingsOf, sourceNameOf, type Savings } from "@/data/reference-prices";
 import { QtyStepper } from "@/components/ui/QtyStepper";
 import { addItem } from "@/lib/cart";
 import { useVideoAutoplay } from "@/hooks/useVideoAutoplay";
@@ -81,7 +96,7 @@ function TwinThumbVideo({
   );
 }
 
-/** Module chargé à la première interaction avec le champ — pas avant. */
+/** Module chargé à la première entrée de la section dans le champ de vision. */
 type MatchModule = typeof import("@/data/olfactive-match");
 
 const C = {
@@ -103,24 +118,12 @@ const C = {
   tagBg: "rgba(201,162,74,.16)",
   tagBorder: "#E0CFA8",
   optionHover: "#FBF7EE",
+  strike: "#9A9286",
+  whatsapp: "#25D366",
 };
 
 /** Nombre de propositions d'autocomplétion — au-delà, la liste ne se lit plus. */
 const MAX_SUGGESTIONS = 8;
-
-/**
- * Pastilles montrées d'emblée EN MOBILE (< 760 px). Les huit suggestions
- * tiennent sur quatre rangées de la grille à deux colonnes ; on n'en peint que
- * cinq plus le bouton « Voir plus », qui occupe la sixième case — trois rangées
- * au lieu de quatre, et la carte de résultat remonte d'autant.
- *
- * Le filtrage est PUREMENT VISUEL (règle CSS dans la media query) : les huit
- * pastilles restent dans le DOM, donc l'invariant du module tient toujours —
- * chaque pastille affichée, avant comme après « Voir plus », vient de
- * `resolveSuggestions` et renvoie un jumeau certifié. Il n'y a rien à trier
- * côté JavaScript, et donc aucun risque d'écart entre les deux listes.
- */
-const MOBILE_PILL_COUNT = 5;
 
 /** Validation de format côté client — même expression que la newsletter. */
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -155,6 +158,55 @@ function rememberAlert(email: string, reference: string) {
   }
 }
 
+// ─── Description ─────────────────────────────────────────────────────────────
+/**
+ * Les descriptions du catalogue ne sont pas toutes des phrases d'accroche :
+ * certaines fiches ont été importées telles quelles et commencent par leur bloc
+ * technique — « Notes de tête : … Contenance : 105 ml Sillage : puissa… ». La
+ * carte affichait ce bloc, tronqué à trois lignes, ce qui donnait au module
+ * l'allure d'un extrait de base de données (défaut relevé sur Sauvage → Urban
+ * Man Elixir).
+ *
+ * On garde donc ce qui précède le premier marqueur technique. Si ce qui reste
+ * est trop court pour dire quoi que ce soit (souvent : rien du tout, le bloc
+ * commence à la première lettre), on retombe sur la phrase de profil rédigée
+ * pour la famille — c'est exactement le rôle de `catalogFamilyText`.
+ *
+ * La donnée n'est PAS modifiée : la fiche produit, le JSON-LD et la recherche
+ * continuent de servir la description entière.
+ */
+const SHEET_MARKERS = [
+  "Notes de tête",
+  "Notes de tete",
+  "Notes de cœur",
+  "Notes de coeur",
+  "Notes de fond",
+  "Contenance",
+  "Sillage",
+  "Famille olfactive",
+  "Concentration",
+  "Lancé en",
+  "Parfait pour",
+  "Saison :",
+  "Genre :",
+  "Tenue :",
+];
+
+/** Longueur minimale d'une accroche : en dessous, ce n'est plus une phrase. */
+const MIN_TEASER = 40;
+
+function cleanDescription(raw: string | undefined, fallback: string): string {
+  const text = (raw ?? "").trim();
+  if (!text) return fallback;
+  let cut = text.length;
+  for (const marker of SHEET_MARKERS) {
+    const i = text.indexOf(marker);
+    if (i >= 0 && i < cut) cut = i;
+  }
+  const head = text.slice(0, cut).trim().replace(/[·|,;:–—-]+$/, "").trim();
+  return head.length >= MIN_TEASER ? head : fallback;
+}
+
 /**
  * Vue unifiée du résultat : une correspondance relue par l'équipe et un
  * appariement calculé n'ont pas la même forme, l'affichage n'a pas à le savoir.
@@ -169,9 +221,24 @@ type ResultView = {
   /** famille commune aux deux profils */
   familyLabel: string;
   description: string;
-  strength: MatchStrength;
+  /** d'où sort la correspondance — décide du badge de confiance */
+  origin: TwinOrigin;
+  /** jauge de proximité, 0..1 */
+  proximity: number;
+  /** palier lu sur la jauge */
+  proximityStrength: MatchStrength;
+  /** groupes d'accords exactement retrouvés / lisibles dans la référence */
+  accordsFound: number;
+  accordsTotal: number;
+  /** vrai quand le catalogue sert la référence dans SA famille (affinité = 1) */
+  sameFamily: boolean;
+  referenceFamilyLabel: string;
+  /** source publique de la correspondance documentée, s'il y en a une */
+  documentedSource?: string;
   /** notes de la référence réellement retrouvées dans le produit */
   sharedAccords: string[];
+  /** prix boutique constaté et économie — `null` quand le prix est inconnu */
+  savings: Savings | null;
   /**
    * `id` est le handle du PRODUIT, pas celui de la référence : deux originaux
    * différents peuvent mener au même flacon, et le panier doit alors compter
@@ -189,17 +256,31 @@ type ResultView = {
   };
 };
 
-function viewFromCurated(m: OlfactiveMatch): ResultView {
+/**
+ * La vitrine d'ouverture, peinte avant l'arrivée du moteur.
+ *
+ * `curated` est la paire relue correspondante lorsqu'il y en a une : sa
+ * description rédigée et sa famille priment alors sur la copie d'amorçage, de
+ * la même façon que `findTwin` les fera primer une fois le moteur chargé.
+ */
+function viewFromShowcase(curated?: OlfactiveMatch): ResultView {
+  const s = TWIN_SHOWCASE;
   return {
-    key: m.key,
-    referenceId: m.referenceId,
-    targetName: m.targetName,
-    familyLabel: m.family,
-    description: m.description,
-    // Relue et validée par l'équipe : c'est le plus haut niveau de proximité.
-    strength: "tres-proche",
-    sharedAccords: [],
-    product: { id: m.productHandle, ...m.product },
+    key: s.referenceId,
+    referenceId: s.referenceId,
+    targetName: curated?.targetName ?? s.targetName,
+    familyLabel: curated?.family ?? s.familyLabel,
+    description: curated?.description ?? s.description,
+    origin: curated ? "curated" : s.origin,
+    proximity: s.proximity,
+    proximityStrength: s.proximity >= 0.8 ? "tres-proche" : s.proximity >= 0.6 ? "proche" : "apparente",
+    accordsFound: s.sharedAccords.length,
+    accordsTotal: s.sharedAccords.length,
+    sameFamily: false,
+    referenceFamilyLabel: s.referenceFamilyLabel,
+    sharedAccords: s.sharedAccords,
+    savings: savingsOf(s.referenceId, s.product.price),
+    product: { ...s.product },
   };
 }
 
@@ -209,9 +290,19 @@ function viewFromTwin(t: TwinResult): ResultView {
     referenceId: t.reference.id,
     targetName: `${t.reference.house} · ${t.reference.name}`,
     familyLabel: t.catalogFamilyLabel,
-    description: t.curated?.description || t.product.description || t.catalogFamilyText,
-    strength: t.strength,
+    // Priorité : le texte relu par l'équipe, sinon l'accroche de la fiche
+    // débarrassée de son bloc technique, sinon la phrase de profil de famille.
+    description: t.curated?.description || cleanDescription(t.product.description, t.catalogFamilyText),
+    origin: t.origin,
+    proximity: t.proximity,
+    proximityStrength: t.proximityStrength,
+    accordsFound: t.exactAccordCount,
+    accordsTotal: t.referenceGroupCount,
+    sameFamily: t.familyAffinity >= 1,
+    referenceFamilyLabel: t.referenceFamilyLabel,
+    documentedSource: t.documentedSource,
     sharedAccords: t.sharedAccords,
+    savings: savingsOf(t.reference.id, t.product.price ?? 0),
     product: {
       id: t.product.slug,
       name: t.product.name,
@@ -219,8 +310,6 @@ function viewFromTwin(t: TwinResult): ResultView {
       price: t.product.price ?? 0,
       // Le film — et le poster qui va avec — ne vit que sur la fiche relue :
       // `t.product` vient du catalogue de recherche, qui ne porte pas ce champ.
-      // Sans cette reprise, une paire validée perdait sa vidéo dès que le
-      // moteur différé arrivait, et la vignette retombait sur l'image fixe.
       image: t.curated?.product.video
         ? t.curated.product.image
         : t.product.image || "/assets/prod-1.jpg",
@@ -230,14 +319,40 @@ function viewFromTwin(t: TwinResult): ResultView {
   };
 }
 
+/**
+ * Instantanés d'`useSyncExternalStore` pour l'origine du site — définis hors du
+ * composant pour rester stables d'un rendu à l'autre.
+ */
+const SUBSCRIBE_NEVER = () => () => {};
+const getOriginSnapshot = () => window.location.origin;
+const getOriginServerSnapshot = () => "";
+
+/**
+ * Une pastille : identifiant, libellé « Maison · Parfum », et — dès que le
+ * moteur est là — la vignette du jumeau et son prix (proposition 05).
+ */
+type Pill = { referenceId: string; label: string; image?: string; price?: number };
+
+/** Une ligne d'autocomplétion, avec l'état du jumeau (proposition 05). */
+type Hit = { reference: ReferencePerfume; familyLabel: string; twinPrice: number | null };
+
 export function OlfactiveTwin({
   matches,
   locale = "fr",
   variant = "full",
+  initialReferenceId,
 }: {
   matches: OlfactiveMatch[];
   locale?: string;
   variant?: "full" | "compact";
+  /**
+   * Ouvre le module DÉJÀ RÉSOLU sur cette référence — c'est ce qui donne une
+   * adresse à un résultat (`/jumeau/<referenceId>`, proposition 09). Quand il
+   * est fourni, la vitrine d'ouverture n'est pas peinte : le moteur est chargé
+   * tout de suite et rend le résultat demandé, ou l'écran « pas encore de
+   * jumeau » si la référence n'en a pas.
+   */
+  initialReferenceId?: string;
 }) {
   const t = useTranslations("olfactiveTwin");
   const isRTL = locale === "ar";
@@ -251,33 +366,60 @@ export function OlfactiveTwin({
   const [loading, setLoading] = useState(false);
   const [addedKey, setAddedKey] = useState("");
   const [qty, setQty] = useState(1);
-  /** « Voir plus » : révèle en mobile les pastilles au-delà de la cinquième. */
-  const [pillsExpanded, setPillsExpanded] = useState(false);
+  const [copied, setCopied] = useState(false);
+  /** Barre d'achat collante en mobile : visible tant que la carte est à l'écran. */
+  const [cardVisible, setCardVisible] = useState(false);
+  /**
+   * Origine absolue du site, connue seulement dans le navigateur.
+   *
+   * Le lien WhatsApp est rendu côté serveur : lire `window.location.origin`
+   * pendant le rendu donnait deux `href` différents entre le serveur et
+   * l'hydratation, et React le signalait en console à chaque chargement.
+   * `useSyncExternalStore` est fait pour ce cas — il sert l'instantané SERVEUR
+   * (chaîne vide) jusqu'à l'hydratation comprise, puis l'instantané client.
+   * Rien ne change ensuite : l'abonnement est vide.
+   */
+  const origin = useSyncExternalStore(SUBSCRIBE_NEVER, getOriginSnapshot, getOriginServerSnapshot);
 
   /**
    * Pastilles = suggestions par défaut. La liste vient de la base (voir
    * l'invariant dans `olfactive-twins.ts`) : tant que le module lourd n'est pas
    * là, on peint l'amorçage `TWIN_SUGGESTIONS` — déjà dans le bundle — puis on
-   * repasse sur la liste que le moteur certifie réellement. Les deux sont
-   * identiques tant que la base ne bouge pas ; le jour où elle bouge, c'est
-   * elle qui a raison, pas la copie d'amorçage.
+   * repasse sur la liste que le moteur certifie réellement, vignette et prix
+   * compris (proposition 05).
    */
-  const pills = useMemo(
+  const pills: Pill[] = useMemo(
     () =>
       mod
-        ? mod.resolveSuggestions(TWIN_SUGGESTION_COUNT).map((s) => ({ referenceId: s.referenceId, label: s.label }))
-        : TWIN_SUGGESTIONS.slice(0, TWIN_SUGGESTION_COUNT).map((s) => ({ referenceId: s.referenceId, label: s.label })),
+        ? mod.resolveSuggestions(TWIN_SUGGESTION_COUNT).map((s) => ({
+            referenceId: s.referenceId,
+            label: s.label,
+            image: s.twin.product.image,
+            price: s.twin.product.price,
+          }))
+        : TWIN_SUGGESTIONS.slice(0, TWIN_SUGGESTION_COUNT).map((s) => ({
+            referenceId: s.referenceId,
+            label: s.label,
+          })),
     [mod]
   );
 
-  // Premier résultat affiché : la paire relue qui correspond à la première
-  // pastille. `matches[0]` ne sert plus que de secours — la vitrine et les
-  // pastilles doivent désigner le même parfum, sinon aucune n'apparaît active.
-  const [view, setView] = useState<ResultView | null>(() => {
-    const first = TWIN_SUGGESTIONS[0]?.referenceId;
-    const seed = matches.find((m) => m.referenceId === first) ?? matches[0];
-    return seed ? viewFromCurated(seed) : null;
-  });
+  /**
+   * Premier résultat affiché : la VITRINE déclarée (`TWIN_SHOWCASE`), qui est
+   * par construction la paire de la première pastille — celle-ci apparaît donc
+   * active dès l'ouverture. Le repli `matches[0]` d'avant servait Creed ·
+   * Aventus, absent des pastilles : aucune n'était active et la vitrine
+   * annonçait un prix que la recherche contredisait.
+   *
+   * `matches` reste la source des paires relues (et le contrat du composant),
+   * mais il n'amorce plus la vue : une paire relue n'est pas forcément une
+   * suggestion, et l'inverse est vrai aussi.
+   */
+  const [view, setView] = useState<ResultView | null>(() =>
+    initialReferenceId
+      ? null
+      : viewFromShowcase(matches.find((m) => m.referenceId === TWIN_SHOWCASE.referenceId))
+  );
 
   // Référence choisie pour laquelle nous n'avons PAS de jumeau. Un état à part
   // de `view` : les deux ne coexistent jamais, mais confondre les deux ferait
@@ -290,14 +432,14 @@ export function OlfactiveTwin({
   const inputRef = useRef<HTMLInputElement>(null);
   const boxRef = useRef<HTMLDivElement>(null);
   const resultRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  /** Vrai dès que le visiteur a choisi lui-même : la vitrine ne doit plus reprendre la main. */
+  const chosenRef = useRef(false);
 
   /**
    * Compteur de sélections. On ne peut pas faire défiler dans le gestionnaire
    * de clic : le résultat n'est peint qu'au rendu suivant, et la carte n'a donc
-   * pas encore sa hauteur définitive. Ce compteur sert de dépendance à l'effet
-   * ci-dessous, qui s'exécute une fois le nouveau résultat à l'écran. Zéro =
-   * premier rendu, on ne défile pas (le module s'amorce sur Dior · Sauvage,
-   * personne n'a rien demandé).
+   * pas encore sa hauteur définitive. Zéro = premier rendu, on ne défile pas.
    */
   const [selectionTick, setSelectionTick] = useState(0);
 
@@ -311,9 +453,7 @@ export function OlfactiveTwin({
     el.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "nearest" });
   }, [selectionTick]);
 
-  // ── Chargement différé, au premier usage du champ ──────────────────────────
-  // Déclenché par le focus autant que par la frappe : le temps de lire le
-  // placeholder, le module est là et la première lettre répond déjà.
+  // ── Chargement différé ─────────────────────────────────────────────────────
   const ensureModule = useCallback(async (): Promise<MatchModule> => {
     if (mod) return mod;
     setLoading(true);
@@ -333,15 +473,93 @@ export function OlfactiveTwin({
     void ensureModule();
   }, [mod, loading, ensureModule]);
 
+  /** Applique un résultat (ou l'absence de résultat) pour une référence donnée. */
+  const applyReference = useCallback((m: MatchModule, ref: ReferencePerfume) => {
+    const twin = m.findTwin(ref);
+    if (twin) {
+      setView(viewFromTwin(twin));
+      setMissing("");
+    } else {
+      setView(null);
+      setMissing(`${ref.house} · ${ref.name}`);
+    }
+    setAlertSent(false);
+    setAlertError("");
+    setQty(1);
+    setCopied(false);
+  }, []);
+
+  /**
+   * Le moteur arrive quand la section entre dans le champ de vision — pas au
+   * chargement de la page (la base des références pèse 3 990 entrées et reste
+   * hors du bundle initial), et plus seulement au premier clic : les pastilles
+   * doivent porter leur vignette et leur prix avant qu'on les touche, et la
+   * vitrine doit être relue sur la base plutôt que sur sa copie d'amorçage.
+   */
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el || mod) return;
+    let done = false;
+    const start = () => {
+      if (done) return;
+      done = true;
+      void ensureModule().then((m) => {
+        // La référence demandée par l'URL prime ; sinon on relit la vitrine sur
+        // la base, sauf si le visiteur a déjà choisi entre-temps.
+        const wanted = initialReferenceId ?? TWIN_SHOWCASE.referenceId;
+        if (chosenRef.current) return;
+        const ref = m.getReference(wanted);
+        if (ref) applyReference(m, ref);
+      });
+    };
+    if (typeof IntersectionObserver === "undefined") {
+      start();
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          start();
+          io.disconnect();
+        }
+      },
+      { rootMargin: "200px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [mod, ensureModule, applyReference, initialReferenceId]);
+
+  /** Barre d'achat collante (mobile) : elle suit la visibilité de la carte. */
+  useEffect(() => {
+    const el = resultRef.current;
+    if (!el || typeof IntersectionObserver === "undefined") return;
+    const io = new IntersectionObserver((entries) => setCardVisible(entries.some((e) => e.isIntersecting)), {
+      threshold: 0,
+    });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
   // ── Propositions ───────────────────────────────────────────────────────────
-  const suggestions: ReferencePerfume[] = useMemo(() => {
+  /**
+   * L'autocomplétion dit désormais, ligne par ligne, si nous avons un jumeau et
+   * à quel prix : on ne découvre plus l'absence APRÈS le clic (proposition 05).
+   */
+  const hits: Hit[] = useMemo(() => {
     if (!mod || query.trim().length < 2) return [];
-    return mod.searchReferences(query, MAX_SUGGESTIONS);
+    return mod.searchReferencesWithTwins(query, MAX_SUGGESTIONS).map((h) => ({
+      reference: h.reference,
+      // `FAMILY_LABELS` vit dans `reference-perfumes.ts` : on le lit sur le
+      // module chargé, jamais en import statique — ce fichier pèse la base
+      // entière et doit rester hors du bundle initial.
+      familyLabel: mod.FAMILY_LABELS[h.reference.family] ?? h.reference.family,
+      twinPrice: h.twin ? h.twin.product.price ?? null : null,
+    }));
   }, [mod, query]);
 
   // Index effectivement mis en avant : la liste peut rétrécir entre deux
   // frappes, l'index stocké ne doit jamais pointer hors de la liste rendue.
-  const hi = suggestions.length ? Math.min(highlight, suggestions.length - 1) : 0;
+  const hi = hits.length ? Math.min(highlight, hits.length - 1) : 0;
 
   // Clic à l'extérieur : on referme la liste sans toucher au résultat affiché.
   useEffect(() => {
@@ -355,30 +573,16 @@ export function OlfactiveTwin({
 
   const choose = useCallback(
     (ref: ReferencePerfume) => {
-      // `findTwin` rend `null` dès que la correspondance n'est pas certaine.
-      // On l'assume : mieux vaut annoncer l'absence que servir un à-peu-près.
-      const twin = mod?.findTwin(ref) ?? null;
-      if (twin) {
-        setView(viewFromTwin(twin));
-        setMissing("");
-      } else {
-        setView(null);
-        setMissing(`${ref.house} · ${ref.name}`);
-      }
-      // Nouvelle référence demandée : le formulaire d'alerte repart à zéro,
-      // sinon la confirmation de la demande précédente resterait à l'écran.
-      // Fait ici et non dans un effet : `react-hooks/set-state-in-effect`.
-      setAlertSent(false);
-      setAlertError("");
+      chosenRef.current = true;
+      if (mod) applyReference(mod, ref);
       // On ne remet que le nom : réouvrir le champ propose de nouveau les
       // déclinaisons de la même référence (Sauvage, Sauvage Elixir…).
       setQuery(ref.name);
       setOpen(false);
-      setQty(1);
       setSelectionTick((n) => n + 1);
       inputRef.current?.blur();
     },
-    [mod]
+    [mod, applyReference]
   );
 
   /**
@@ -389,27 +593,18 @@ export function OlfactiveTwin({
    */
   const choosePill = useCallback(
     async (referenceId: string) => {
+      chosenRef.current = true;
       const m = await ensureModule();
       const ref = m.getReference(referenceId);
       // L'invariant des suggestions garantit que la référence existe ; si la
       // base bougeait, `resolveSuggestions` retirerait la pastille au prochain
       // rendu — on ne casse rien en attendant.
       if (!ref) return;
-      const twin = m.findTwin(ref);
-      if (twin) {
-        setView(viewFromTwin(twin));
-        setMissing("");
-      } else {
-        setView(null);
-        setMissing(`${ref.house} · ${ref.name}`);
-      }
-      setAlertSent(false);
-      setAlertError("");
-      setQty(1);
+      applyReference(m, ref);
       setOpen(false);
       setSelectionTick((n) => n + 1);
     },
-    [ensureModule]
+    [ensureModule, applyReference]
   );
 
   const submitAlert = (e: React.FormEvent) => {
@@ -431,21 +626,21 @@ export function OlfactiveTwin({
       setOpen(false);
       return;
     }
-    if (!open || suggestions.length === 0) {
+    if (!open || hits.length === 0) {
       // Flèche bas sur un champ fermé : on rouvre la liste si elle a du contenu.
-      if (e.key === "ArrowDown" && suggestions.length > 0) setOpen(true);
+      if (e.key === "ArrowDown" && hits.length > 0) setOpen(true);
       return;
     }
     if (e.key === "ArrowDown") {
       e.preventDefault();
-      setHighlight((h) => (h + 1) % suggestions.length);
+      setHighlight((h) => (h + 1) % hits.length);
     } else if (e.key === "ArrowUp") {
       e.preventDefault();
-      setHighlight((h) => (h - 1 + suggestions.length) % suggestions.length);
+      setHighlight((h) => (h - 1 + hits.length) % hits.length);
     } else if (e.key === "Enter") {
       e.preventDefault();
-      const ref = suggestions[hi];
-      if (ref) choose(ref);
+      const hit = hits[hi];
+      if (hit) choose(hit.reference);
     }
   };
 
@@ -453,24 +648,63 @@ export function OlfactiveTwin({
     try {
       return new Intl.NumberFormat(locale, { style: "currency", currency: "EUR", minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(n);
     } catch {
-      return `${Math.round(n)} €`;
+      return `${n.toLocaleString("fr-FR", { minimumFractionDigits: 2, maximumFractionDigits: 2 })} €`;
     }
   };
+  /** Prix indicatif de l'original : « ≈ 115 € », arrondi, jamais présenté comme officiel. */
+  const fmtApprox = (n: number) => `≈ ${Math.round(n).toLocaleString("fr-FR")} €`;
 
-  /**
-   * Les trois libellés existent encore parce que `MatchStrength` a trois valeurs,
-   * mais seul « très proche » est atteignable à l'écran : un résultat servi est
-   * toujours certifié, et le moteur force alors ce niveau. Ne PAS rebrancher
-   * « proche » / « apparenté » sur un résultat affiché — c'est le badge
-   * « Profil proche » posé sur un non-jumeau qui a motivé cette correction.
-   */
   const strengthLabel: Record<MatchStrength, string> = {
     "tres-proche": t("strength_very_close"),
     proche: t("strength_close"),
     apparente: t("strength_related"),
   };
 
-  const listOpen = open && (suggestions.length > 0 || (loading && query.trim().length >= 2));
+  const listOpen = open && (hits.length > 0 || (loading && query.trim().length >= 2));
+
+  // ── Partage (proposition 09) ───────────────────────────────────────────────
+  /**
+   * Chaque résultat a une adresse : `/jumeau/<referenceId>`. Le préfixe de
+   * locale suit la règle `as-needed` du routage (fr sans préfixe, les autres
+   * avec) — on ne peut pas passer par `Link`, il faut une URL absolue à copier
+   * et à envoyer.
+   */
+  const shareUrl = useCallback(
+    (referenceId: string) => {
+      const prefix = locale === "fr" ? "" : `/${locale}`;
+      return `${origin}${prefix}/jumeau/${referenceId}`;
+    },
+    [locale, origin]
+  );
+
+  const shareText = (v: ResultView) => t("share_text", { name: v.targetName, price: fmt(v.product.price) });
+
+  const onShare = useCallback(
+    async (v: ResultView) => {
+      const url = shareUrl(v.referenceId);
+      const text = shareText(v);
+      // Web Share quand le navigateur le propose (mobile surtout) ; sinon on
+      // copie, ce qui reste utile partout ailleurs.
+      try {
+        if (typeof navigator !== "undefined" && typeof navigator.share === "function") {
+          await navigator.share({ title: v.targetName, text, url });
+          return;
+        }
+      } catch {
+        // Partage refusé ou annulé : on retombe sur la copie, sans message d'erreur.
+      }
+      try {
+        await navigator.clipboard.writeText(url);
+        setCopied(true);
+        window.setTimeout(() => setCopied(false), 2400);
+      } catch {
+        // Presse-papiers refusé (http, permission) : rien à faire de mieux ici.
+      }
+    },
+    // `shareText` dépend de `t` et `fmt`, tous deux stables sur la durée du rendu.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [shareUrl, t, locale]
+  );
 
   // ── Blocs ──────────────────────────────────────────────────────────────────
 
@@ -543,7 +777,7 @@ export function OlfactiveTwin({
           aria-expanded={listOpen}
           aria-controls={listId}
           aria-autocomplete="list"
-          aria-activedescendant={listOpen && suggestions[hi] ? `${listId}-${hi}` : undefined}
+          aria-activedescendant={listOpen && hits[hi] ? `${listId}-${hi}` : undefined}
           aria-label={t("search_label")}
           autoComplete="off"
           value={query}
@@ -574,82 +808,102 @@ export function OlfactiveTwin({
 
       {listOpen && (
         <ul id={listId} role="listbox" aria-label={t("search_label")} className="otw-list">
-          {suggestions.length === 0 && loading && (
+          {hits.length === 0 && loading && (
             <li className="otw-empty" role="presentation">
               {t("loading")}
             </li>
           )}
-          {suggestions.map((ref, i) => (
-            <li
-              key={ref.id}
-              id={`${listId}-${i}`}
-              role="option"
-              aria-selected={i === hi}
-              className={i === hi ? "otw-option otw-option-on" : "otw-option"}
-              onMouseEnter={() => setHighlight(i)}
-              onMouseDown={(e) => {
-                // mousedown plutôt que click : le blur du champ fermerait la
-                // liste avant que le clic n'arrive.
-                e.preventDefault();
-                choose(ref);
-              }}
-            >
-              <span className="otw-option-name">{ref.name}</span>
-              <span className="otw-option-house">{ref.house}</span>
-            </li>
-          ))}
+          {hits.map((hit, i) => {
+            const ref = hit.reference;
+            // En-tête de maison : la liste est déjà triée par pertinence puis
+            // par maison, il suffit donc de rompre quand la maison change.
+            const newHouse = i === 0 || hits[i - 1].reference.house !== ref.house;
+            return (
+              <li key={ref.id} role="presentation" className="otw-group">
+                {newHouse && <div className="otw-house">{ref.house}</div>}
+                <div
+                  id={`${listId}-${i}`}
+                  role="option"
+                  aria-selected={i === hi}
+                  className={i === hi ? "otw-option otw-option-on" : "otw-option"}
+                  onMouseEnter={() => setHighlight(i)}
+                  onMouseDown={(e) => {
+                    // mousedown plutôt que click : le blur du champ fermerait la
+                    // liste avant que le clic n'arrive.
+                    e.preventDefault();
+                    choose(ref);
+                  }}
+                >
+                  {/* Monogramme NEUTRE : la lettre de la maison dans un rond
+                      crème. Aucun logo, aucune couleur de marque — cadre légal. */}
+                  <span className="otw-mono" aria-hidden>
+                    {ref.house.slice(0, 1).toUpperCase()}
+                  </span>
+                  <span className="otw-option-text">
+                    <span className="otw-option-name">{ref.name}</span>
+                    <span className="otw-option-meta">
+                      {ref.year ? `${ref.year} · ` : ""}
+                      {hit.familyLabel}
+                    </span>
+                  </span>
+                  {hit.twinPrice !== null ? (
+                    <span className="otw-hit-ok">{t("twin_available", { price: fmt(hit.twinPrice) })}</span>
+                  ) : (
+                    <span className="otw-hit-ko">{t("twin_missing")}</span>
+                  )}
+                </div>
+              </li>
+            );
+          })}
         </ul>
       )}
 
       {/* Aucune réponse : on le dit, sans vider le résultat déjà affiché. */}
-      {open && !loading && mod && query.trim().length >= 2 && suggestions.length === 0 && (
+      {open && !loading && mod && query.trim().length >= 2 && hits.length === 0 && (
         <p className="otw-noresult">{t("no_result")}</p>
       )}
     </div>
   );
 
-  // Pastilles = suggestions par défaut, dérivées de la base : chacune a un
-  // jumeau certifié, aucune ne mène à l'écran « pas encore de jumeau ».
+  /**
+   * Pastilles = suggestions par défaut, dérivées de la base : chacune a un
+   * jumeau certifié. Depuis la proposition 05 elles portent la VIGNETTE du
+   * jumeau et son prix — on voit le flacon avant de choisir. En mobile, elles
+   * défilent sur UNE ligne (proposition 06) au lieu d'occuper trois rangées.
+   */
   const pillsEl = (
-    <div
-      className={pillsExpanded ? "otw-pills otw-pills-all" : "otw-pills"}
-      role="group"
-      aria-label={t("suggestions")}
-    >
-      {pills.map((p) => {
-        const active = view?.referenceId === p.referenceId;
-        return (
-          <button
-            key={p.referenceId}
-            type="button"
-            aria-pressed={active}
-            onClick={() => void choosePill(p.referenceId)}
-            className={active ? "otw-pill otw-pill-on" : "otw-pill"}
-          >
-            {p.label}
-          </button>
-        );
-      })}
-      {/* « Voir plus » : dernière case de la grille mobile, masqué en vue large
-          par la feuille de styles (les huit pastilles y tiennent sur deux
-          rangées). Rendu seulement s'il reste vraiment quelque chose à
-          révéler — si la base ne certifiait plus que cinq suggestions, un
-          bouton qui n'ouvre rien serait un mensonge. */}
-      {/* Pas d'aria-expanded : le bouton disparaît une fois déplié, l'attribut
-          ne pourrait jamais passer à true. Ce sont les pastilles révélées, dans
-          le même groupe, qui disent que quelque chose s'est ouvert. */}
-      {!pillsExpanded && pills.length > MOBILE_PILL_COUNT && (
-        <button type="button" className="otw-more" onClick={() => setPillsExpanded(true)}>
-          {t("show_more")}
-        </button>
-      )}
+    <div className="otw-pills-wrap">
+      <div className="otw-pills" role="group" aria-label={t("suggestions")}>
+        {pills.map((p) => {
+          const active = view?.referenceId === p.referenceId;
+          return (
+            <button
+              key={p.referenceId}
+              type="button"
+              aria-pressed={active}
+              onClick={() => void choosePill(p.referenceId)}
+              className={active ? "otw-pill otw-pill-on" : "otw-pill"}
+            >
+              <span className="otw-pill-thumb" aria-hidden>
+                {p.image ? (
+                  <Image src={p.image} alt="" width={30} height={30} style={{ objectFit: "cover", width: "100%", height: "100%" }} />
+                ) : (
+                  <span className="otw-pill-mono">{p.label.slice(0, 1).toUpperCase()}</span>
+                )}
+              </span>
+              <span className="otw-pill-label">{p.label}</span>
+              {typeof p.price === "number" && <b className="otw-pill-price">{fmt(p.price)}</b>}
+            </button>
+          );
+        })}
+      </div>
     </div>
   );
 
   /**
    * Écran « pas encore de jumeau ».
    *
-   * C'est l'état MAJORITAIRE (le catalogue compte 25 produits pour 3 952
+   * C'est l'état MAJORITAIRE (le catalogue compte 25 produits pour 3 990
    * références) : il ne doit pas se lire comme une erreur mais comme une
    * promesse — d'où la même carte crème que le résultat, un titre en Cormorant
    * et un filet doré plutôt qu'un ton d'avertissement.
@@ -707,109 +961,269 @@ export function OlfactiveTwin({
     </div>
   );
 
+  /** Silhouette de flacon NEUTRE — dessin CSS, aucun logo, aucune forme de marque. */
+  const bottleSilhouette = (name: string) => (
+    <div className="otw-silhouette" aria-hidden>
+      <span className="otw-sil-cap" />
+      <span className="otw-sil-neck" />
+      <span className="otw-sil-body" />
+      <span className="otw-sil-label">{name}</span>
+    </div>
+  );
+
+  const addToCart = (v: ResultView) => {
+    addItem(
+      { id: v.product.id, name: v.product.name, brand: v.product.brand, price: v.product.price, image: v.product.image },
+      qty
+    );
+    setAddedKey(v.key);
+  };
+
   const resultEl = (
     <div ref={resultRef} aria-live="polite" className="otw-result">
       {missing ? (
         missingEl
       ) : (
         view && (
-        <div
-          className="otw-card"
-          style={{
-            background: "#fff",
-            border: `0.5px solid ${C.border}`,
-            borderRadius: compact ? 14 : 16,
-            padding: compact ? 14 : 20,
-          }}
-        >
-          {/* Deux colonnes de même nature : un surtitre, un nom. Les surtitres
-              (« Vous aimez » / « Le jumeau oriental ») disent déjà le sens de
-              lecture ; la double flèche qui les séparait faisait doublon et
-              mangeait une ligne entière en colonne sur mobile. */}
-          <div className="otw-row">
-            <div className="otw-target">
-              <div className="otw-eyebrow">{t("you_like")}</div>
-              <div className="otw-target-name">{view.targetName}</div>
+          <div className="otw-card" style={{ borderRadius: compact ? 14 : 16 }}>
+            {/* ── 02. LE FACE-À-FACE ────────────────────────────────────────
+                Scène crème, deux flacons sur socle. À gauche une silhouette
+                neutre qui porte le nom en TEXTE (cadre légal : aucun logo,
+                aucune forme de flacon de marque) ; au centre le sceau doré avec
+                le niveau de proximité ; à droite le vrai packshot du jumeau. */}
+            <div className="otw-stage">
+              <div className="otw-stage-side">
+                {bottleSilhouette(view.targetName)}
+                <span className="otw-shadow" aria-hidden />
+              </div>
+
+              <div className="otw-seal-col">
+                <span className="otw-seal" aria-hidden>
+                  ≈
+                </span>
+                <span className="otw-seal-text">{strengthLabel[view.proximityStrength]}</span>
+              </div>
+
+              <div className="otw-stage-side">
+                <div className="otw-packshot">
+                  {view.product.video ? (
+                    <TwinThumbVideo src={view.product.video} poster={view.product.image} name={view.product.name} />
+                  ) : (
+                    <Image
+                      src={view.product.image}
+                      alt={view.product.name}
+                      fill
+                      sizes="(max-width: 760px) 190px, 160px"
+                      style={{ objectFit: "contain" }}
+                    />
+                  )}
+                </div>
+                <span className="otw-shadow otw-shadow-strong" aria-hidden />
+              </div>
             </div>
 
-            <div className="otw-twin">
-              {/* Cadre crème + `contain` : les packshots n'ont ni le même
-                  cadrage ni le même format, un `cover` en coupait la moitié. */}
-              <div className="otw-thumb">
-                {view.product.video ? (
-                  <TwinThumbVideo
-                    src={view.product.video}
-                    poster={view.product.image}
-                    name={view.product.name}
-                  />
-                ) : (
-                  <Image
-                    src={view.product.image}
-                    alt={view.product.name}
-                    fill
-                    sizes="(max-width: 760px) 96px, 116px"
-                    style={{ objectFit: "contain" }}
-                  />
+            {/* Noms, prix et économie, alignés sous la scène */}
+            <div className="otw-names">
+              <div className="otw-name-col">
+                <div className="otw-eyebrow">{t("you_like")}</div>
+                <div className="otw-target-name">{view.targetName}</div>
+                {/* ── 01. LE PRIX ÉCONOMISÉ ────────────────────────────────
+                    Le prix de l'original n'est affiché que lorsqu'il est
+                    CONNU (`reference-prices.ts`). Sans prix, rien : ni barré,
+                    ni pourcentage. On n'invente pas un chiffre pour tenir une
+                    maquette. */}
+                {view.savings && (
+                  <div className="otw-retail">
+                    <span className="otw-retail-label">{t("retail_price_label")}</span>
+                    <span className="otw-retail-price">{fmtApprox(view.savings.retail)}</span>
+                  </div>
                 )}
               </div>
-              <div className="otw-twin-text">
+
+              <div className="otw-name-col otw-name-col-twin">
                 <div className="otw-eyebrow otw-eyebrow-gold">{t("the_twin")}</div>
                 <div className="otw-twin-name">
                   {view.product.brand} · {view.product.name}
                 </div>
-                <div className="otw-price">{t("from_price", { price: fmt(view.product.price) })}</div>
-                {/* Une seule et même pastille pour la famille et la proximité :
-                    deux styles différents laissaient croire à deux natures
-                    d'information. Seule la proximité est pleine. */}
+                <div className="otw-price-row">
+                  <span className="otw-price-big">{fmt(view.product.price)}</span>
+                </div>
+                {view.savings && (
+                  <div className="otw-save">
+                    <b>−{view.savings.percent} %</b>
+                    {t("save_amount", { amount: fmtApprox(view.savings.saved) })}
+                  </div>
+                )}
                 <div className="otw-meta">
                   <span className="otw-chip">{view.familyLabel}</span>
-                  <span className="otw-chip otw-chip-solid">{strengthLabel[view.strength]}</span>
                 </div>
               </div>
             </div>
-          </div>
 
-          {/* Description + accords partagés, puis l'achat */}
-          <div className="otw-foot" style={{ borderTop: `1px solid ${C.border}` }}>
-            <div className="otw-foot-text">
-              <p className="otw-desc">{view.description}</p>
-              {view.sharedAccords.length > 0 && (
-                <p className="otw-accords">
-                  {t("shared_accords")} · {view.sharedAccords.join(" · ")}
-                </p>
-              )}
+            {/* ── 04. LE BADGE DE CONFIANCE ─────────────────────────────────
+                Plein et doré quand la correspondance est relue ou sourcée ; en
+                contour quand elle est calculée. Deux natures de résultat, deux
+                promesses différentes. */}
+            <div className={view.origin === "scored" ? "otw-trust otw-trust-soft" : "otw-trust otw-trust-solid"}>
+              <span className="otw-trust-icon" aria-hidden>
+                {view.origin === "scored" ? (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke={C.goldDark} strokeWidth="1.8" strokeLinecap="round">
+                    <circle cx="11" cy="11" r="7" />
+                    <path d="M21 21l-4.3-4.3" />
+                    <path d="M8 11h6M11 8v6" />
+                  </svg>
+                ) : (
+                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M12 2l2.4 2.1 3.2-.3.9 3.1 2.8 1.6-1.3 2.9 1.3 2.9-2.8 1.6-.9 3.1-3.2-.3L12 22l-2.4-2.1-3.2.3-.9-3.1-2.8-1.6 1.3-2.9-1.3-2.9 2.8-1.6.9-3.1 3.2.3z" />
+                    <path d="M8.5 12.5l2.3 2.3 4.7-4.8" />
+                  </svg>
+                )}
+              </span>
+              <div className="otw-trust-text">
+                <div className="otw-trust-title">
+                  {view.origin === "scored" ? t("badge_scored") : t("badge_documented")}
+                </div>
+                <div className="otw-trust-sub">
+                  {view.origin === "curated"
+                    ? t("badge_curated_text")
+                    : view.origin === "documented"
+                      ? t("badge_documented_text")
+                      : t("badge_scored_text", { count: view.accordsFound })}
+                  {/* On NOMME la source plutôt que d'écrire « voir la source » :
+                      « Source : Fragrantica » se juge sans cliquer. Le nom est
+                      dérivé du domaine de l'URL déjà stockée ; sans URL
+                      exploitable, ni mention ni lien — on n'invente pas de
+                      source (voir `sourceNameOf`). */}
+                  {view.origin !== "scored" && view.documentedSource && sourceNameOf(view.documentedSource) && (
+                    <>
+                      {" · "}
+                      {t("badge_source")}
+                      {" "}
+                      <a
+                        className="otw-trust-link"
+                        href={view.documentedSource}
+                        target="_blank"
+                        rel="nofollow noopener noreferrer"
+                      >
+                        {sourceNameOf(view.documentedSource)}
+                      </a>
+                    </>
+                  )}
+                </div>
+              </div>
             </div>
-            {/* Une seule action pleine — l'ajout au panier. La fiche produit
-                passe en bouton de contour : même hauteur, même axe. */}
-            <div className="otw-buy">
-              <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
-              <button
-                type="button"
-                className="otw-btn otw-btn-primary"
-                onClick={() => {
-                  addItem(
-                    {
-                      id: view.product.id,
-                      name: view.product.name,
-                      brand: view.product.brand,
-                      price: view.product.price,
-                      image: view.product.image,
-                    },
-                    qty
-                  );
-                  setAddedKey(view.key);
-                }}
+
+            {/* ── 03. LA JAUGE DE PROXIMITÉ ─────────────────────────────────
+                Le pourcentage et les trois paliers viennent du moteur
+                (`proximity` / `proximityStrength`). Le badge unique « Profil
+                très proche » posé sur tous les résultats a disparu : un
+                rapprochement calculé ne peut plus atteindre le palier haut. */}
+            <div className="otw-gauge">
+              <div className="otw-gauge-head">
+                <span className="otw-eyebrow otw-eyebrow-gold">{t("proximity_label")}</span>
+                <span className="otw-gauge-pct">
+                  {Math.round(view.proximity * 100)}
+                  <i>%</i>
+                </span>
+                <span className={view.proximityStrength === "tres-proche" ? "otw-chip otw-chip-solid" : "otw-chip"}>
+                  {strengthLabel[view.proximityStrength]}
+                </span>
+              </div>
+              <div
+                className="otw-bar"
+                role="meter"
+                aria-valuenow={Math.round(view.proximity * 100)}
+                aria-valuemin={0}
+                aria-valuemax={100}
+                aria-label={t("proximity_label")}
               >
-                {addedKey === view.key ? t("added") : t("add_to_cart")}
+                <i style={{ width: `${Math.round(view.proximity * 100)}%` }} />
+                <b style={{ left: `${Math.round(view.proximity * 100)}%` }} />
+              </div>
+              <div className="otw-ticks" aria-hidden>
+                <span>{t("strength_related")}</span>
+                <span>{t("strength_close")}</span>
+                <span>{t("strength_very_close")}</span>
+              </div>
+              <p className="otw-gauge-why">
+                {view.sameFamily
+                  ? t("same_family", { family: view.referenceFamilyLabel })
+                  : t("near_family", { from: view.referenceFamilyLabel, to: view.familyLabel })}
+                {view.accordsTotal > 0 && (
+                  <>
+                    {" · "}
+                    <b>{t("accords_found", { count: view.accordsFound, total: view.accordsTotal })}</b>
+                  </>
+                )}
+              </p>
+            </div>
+
+            {/* Description + accords partagés, puis l'achat */}
+            <div className="otw-foot">
+              <div className="otw-foot-text">
+                <p className="otw-desc">{view.description}</p>
+                {view.sharedAccords.length > 0 && (
+                  <p className="otw-accords">
+                    {t("shared_accords")} · {view.sharedAccords.join(" · ")}
+                  </p>
+                )}
+              </div>
+              {/* Une seule action pleine — l'ajout au panier, prix rappelé
+                  dessus (proposition 01). La fiche produit passe en contour. */}
+              <div className="otw-buy">
+                <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
+                <button type="button" className="otw-btn otw-btn-primary" onClick={() => addToCart(view)}>
+                  {addedKey === view.key ? t("added") : t("add_to_cart_price", { price: fmt(view.product.price) })}
+                </button>
+                <Link href={view.product.href} className="otw-btn otw-btn-ghost">
+                  {t("see_product")}
+                </Link>
+              </div>
+            </div>
+
+            {/* ── 09. PARTAGER ──────────────────────────────────────────────
+                Le résultat a une adresse : `/jumeau/<referenceId>`. Web Share
+                quand le navigateur le propose, copie du lien sinon ; WhatsApp
+                en lien direct, avec le nom et le prix dans le message. */}
+            <div className="otw-share">
+              <span className="otw-share-label">{t("share_label")}</span>
+              <a
+                className="otw-share-wa"
+                href={`https://wa.me/?text=${encodeURIComponent(`${shareText(view)} ${shareUrl(view.referenceId)}`)}`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#fff" aria-hidden>
+                  <path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm0 18a8 8 0 0 1-4.1-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8 8 0 1 1 12 20zm4.4-6c-.2-.1-1.4-.7-1.6-.8s-.4-.1-.5.1-.6.8-.8 1-.3.2-.5.1a6.5 6.5 0 0 1-3.2-2.8c-.2-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.7-1.7c-.2-.5-.4-.4-.5-.4h-.5a1 1 0 0 0-.7.3 2.9 2.9 0 0 0-.9 2.2 5 5 0 0 0 1.1 2.7 11.4 11.4 0 0 0 4.4 3.9c1.6.7 2.2.7 3 .6a2.6 2.6 0 0 0 1.7-1.2 2 2 0 0 0 .1-1.2c0-.1-.2-.2-.4-.3z" />
+                </svg>
+                {t("share_whatsapp")}
+              </a>
+              <button type="button" className="otw-share-copy" onClick={() => void onShare(view)}>
+                {copied ? t("share_copied") : t("share_copy")}
               </button>
-              <Link href={view.product.href} className="otw-btn otw-btn-ghost">
-                {t("see_product")}
-              </Link>
             </div>
           </div>
-        </div>
         )
       )}
+    </div>
+  );
+
+  /**
+   * ── 06. BARRE D'ACHAT COLLANTE (mobile) ────────────────────────────────────
+   * Elle n'existe qu'en dessous de 760 px (règle CSS) et ne s'affiche que tant
+   * que la carte de résultat est à l'écran : ailleurs sur la page elle
+   * couvrirait le contenu sans rien vouloir dire.
+   */
+  const stickyEl = view && !missing && cardVisible && (
+    <div className="otw-sticky" role="group" aria-label={t("add_to_cart")}>
+      <div className="otw-sticky-text">
+        <span className="otw-sticky-name">{view.product.name}</span>
+        <span className="otw-sticky-price">{fmt(view.product.price)}</span>
+      </div>
+      <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
+      <button type="button" className="otw-btn otw-btn-primary otw-sticky-btn" onClick={() => addToCart(view)}>
+        {addedKey === view.key ? t("added") : t("add_to_cart")}
+      </button>
     </div>
   );
 
@@ -837,118 +1251,199 @@ export function OlfactiveTwin({
   );
 
   /**
-   * Styles scoped. Un seul bloc pour les deux variants : le mobile était cassé
-   * parce que la carte de résultat était une rangée `nowrap` figée — à 390 px
-   * elle débordait, le nom du jumeau se cassait mot à mot et les boutons
-   * sortaient du cadre. Tout est désormais en `min-width: 0` + passage en
-   * colonne au seuil mobile du repo (760 px).
+   * Styles scoped.
    *
    * ATTENTION : aucun backtick dans ce bloc, il vit dans un template literal.
    */
+  const pad = compact ? 14 : 22;
   const css = `
     @keyframes otwin-pulse { 0%,100% { box-shadow: 0 0 0 0 rgba(201,162,74,.45); } 50% { box-shadow: 0 0 0 7px rgba(201,162,74,0); } }
     .otwin-root { box-sizing: border-box; max-width: 100%; }
     .otwin-root *, .otwin-root *::before, .otwin-root *::after { box-sizing: border-box; }
     .otwin-q { animation: otwin-pulse 2.4s ease-in-out infinite; }
-    /* Les deux colonnes partagent la meme hauteur : la carte de resultat
-       s'etire pour finir sur la meme ligne que les pastilles. */
-    .otwin-grid { display: grid; grid-template-columns: minmax(0, 44fr) minmax(0, 56fr); gap: 20px; align-items: stretch; }
-    .otwin-grid > * { min-width: 0; display: flex; flex-direction: column; }
-    .otwin-grid .otw-result { flex: 1 1 auto; display: flex; }
-    .otwin-grid .otw-card, .otwin-grid .otw-none { flex: 1 1 auto; }
 
     .otw-combo { position: relative; }
     .otw-list { position: absolute; z-index: 30; top: calc(100% + 6px); left: 0; right: 0; margin: 0; padding: 6px; list-style: none;
       background: #fff; border: 1px solid ${C.searchBorder}; border-radius: 14px; box-shadow: 0 12px 30px rgba(58,44,20,.14);
-      max-height: 300px; overflow-y: auto; }
-    .otw-option { display: flex; align-items: baseline; gap: 8px; padding: 8px 10px; border-radius: 10px; cursor: pointer;
+      max-height: 340px; overflow-y: auto; }
+    .otw-group { list-style: none; }
+    /* En-tete de maison : l'autocompletion est REGROUPEE (proposition 05).
+       Cinq « Aventus » d'affilee ne se lisaient pas ; la maison en surtitre les
+       range, et l'etat du jumeau en bout de ligne dit lesquels menent quelque
+       part. */
+    .otw-house { font-family: var(--font-sans); font-size: 9.5px; letter-spacing: 1.3px; text-transform: uppercase;
+      color: ${C.muted}; padding: 8px 12px 4px; }
+    .otw-option { display: flex; align-items: center; gap: 10px; padding: 7px 10px; border-radius: 10px; cursor: pointer;
       font-family: var(--font-sans); font-size: 13.5px; color: ${C.ink}; }
     .otw-option-on { background: ${C.optionHover}; }
-    .otw-option-name { flex: 1 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .otw-option-house { flex: 0 0 auto; font-size: 11px; letter-spacing: .3px; text-transform: uppercase; color: ${C.goldLabel}; }
+    /* Monogramme NEUTRE — la lettre de la maison, jamais son logo. */
+    .otw-mono { flex: 0 0 auto; width: 28px; height: 28px; border-radius: 50%; background: ${C.stage};
+      border: 1px solid ${C.border}; display: grid; place-items: center; font-family: var(--font-display);
+      font-size: 14px; font-weight: 600; color: ${C.goldDark}; }
+    .otw-option-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+    .otw-option-name { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .otw-option-meta { font-size: 11px; color: ${C.legal}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .otw-hit-ok { flex: 0 0 auto; font-size: 11px; font-weight: 600; color: ${C.goldDark}; white-space: nowrap; }
+    .otw-hit-ok::before { content: "\\2713\\00a0"; }
+    .otw-hit-ko { flex: 0 0 auto; font-size: 11px; color: ${C.legal}; white-space: nowrap; }
     .otw-empty { padding: 10px; font-family: var(--font-sans); font-size: 13px; color: ${C.muted}; }
     .otw-noresult { margin: 8px 2px 0; font-family: var(--font-sans); font-size: 12.5px; color: ${C.muted}; }
 
-    .otw-pills { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
-    .otw-pill { font-family: var(--font-sans); font-size: 12.5px; cursor: pointer; padding: 6px 12px; border-radius: 999px;
-      border: 1px solid ${C.pillBorder}; background: #fff; color: ${C.pillText}; transition: border-color .2s, background .2s;
-      max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* ── Pastilles : vignette + prix (proposition 05) ─────────────────────
+       DISPOSITION HORIZONTALE. Les pastilles se suivent sur une meme ligne et
+       passent a la suivante quand elles debordent — elles ne s'empilent jamais
+       une par ligne. Trois regles y suffisent et elles vont ensemble :
+         - le conteneur enroule (flex-wrap: wrap) ;
+         - chaque pastille garde sa largeur naturelle (flex: none) : sans cela
+           un flex-basis la faisait s'etirer sur toute la ligne, d'ou le bord
+           droit en dents de scie et la colonne de huit lignes ;
+         - son contenu tient sur une seule ligne (white-space: nowrap), sinon le
+           libelle se casse en deux et la pastille double de hauteur.
+       Gabarit resserre (vignette 26 px, corps 11,5 px) pour qu'il en tienne
+       plusieurs par rangee, y compris dans la colonne etroite de la vue
+       compacte de l'accueil. */
+    .otw-pills-wrap { max-width: 100%; margin-bottom: 12px; }
+    .otw-pills { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 8px; max-width: 100%; }
+    .otw-pill { flex: none; display: inline-flex; align-items: center; gap: 7px; white-space: nowrap;
+      font-family: var(--font-sans); font-size: 11.5px; line-height: 1.2; cursor: pointer;
+      padding: 3px 11px 3px 3px; border-radius: 999px; border: 1px solid ${C.pillBorder}; background: #fff;
+      color: ${C.pillText}; transition: border-color .2s, background .2s; max-width: 100%; }
     .otw-pill:hover { border-color: ${C.gold}; background: ${C.optionHover}; }
-    .otw-pill-on { border-color: ${C.pillSelBg}; background: ${C.pillSelBg}; color: ${C.pillSelText}; }
-    .otw-pill-on:hover { background: ${C.pillSelBg}; border-color: ${C.pillSelBg}; }
-    /* « Voir plus » n'existe qu'en mobile : au-dessus de 760 px les huit
-       pastilles tiennent sur deux rangees, il n'y a rien a replier. display
-       none et non visibility : le bouton doit aussi sortir de l'arbre
-       d'accessibilite, sinon un lecteur d'ecran de bureau annonce une commande
-       qui ne mene nulle part. */
-    .otw-more { display: none; }
+    /* Pastille active : fond encre, liseré or. */
+    .otw-pill-on { border-color: ${C.gold}; background: ${C.pillSelBg}; color: ${C.pillSelText}; }
+    .otw-pill-on:hover { background: ${C.pillSelBg}; border-color: ${C.gold}; }
+    .otw-pill-thumb { flex: 0 0 auto; width: 26px; height: 26px; border-radius: 50%; overflow: hidden; background: ${C.stage};
+      border: 1px solid ${C.border}; display: grid; place-items: center; }
+    .otw-pill-mono { font-family: var(--font-display); font-size: 13px; font-weight: 600; color: ${C.goldDark}; }
+    .otw-pill-label { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .otw-pill-price { flex: 0 0 auto; font-weight: 600; color: ${C.goldDark}; white-space: nowrap; }
+    .otw-pill-on .otw-pill-price { color: ${C.pillSelText}; }
 
-    .otw-card { max-width: 100%; display: flex; flex-direction: column; box-shadow: 0 8px 24px rgba(58,44,20,.05); }
-    /* Rangee principale : original | fleche | jumeau. Les deux colonnes de
-       texte ont le meme gabarit, la fleche ne prend que sa largeur. */
-    .otw-row { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
-    .otw-row > * { min-width: 0; }
-    .otw-target { flex: 1 1 190px; min-width: 0; }
+    .otw-card { max-width: 100%; display: flex; flex-direction: column; background: #fff;
+      border: 0.5px solid ${C.border}; box-shadow: 0 8px 24px rgba(58,44,20,.05); overflow: hidden; }
+
+    /* ── 02. La scene du face-a-face ──────────────────────────────────────
+       Fond creme en degrade radial, deux socles, un sceau au centre. Le flacon
+       de gauche est une SILHOUETTE NEUTRE : aucun logo, aucune forme de flacon
+       de marque — le nom en texte, comme partout ailleurs dans le module. */
+    .otw-stage { display: grid; grid-template-columns: 1fr auto 1fr; align-items: end; gap: 10px;
+      background: radial-gradient(ellipse at 50% 120%, #F3EADB 0%, #FDFBF6 62%);
+      border-bottom: 1px solid ${C.border}; padding: ${compact ? 20 : 28}px ${compact ? 14 : 26}px 0; }
+    .otw-stage-side { min-width: 0; text-align: center; }
+    .otw-shadow { display: block; height: 12px; margin: 6px 22px 0; border-radius: 50%;
+      background: radial-gradient(ellipse, rgba(58,44,20,.16), transparent 70%); }
+    .otw-shadow-strong { background: radial-gradient(ellipse, rgba(58,44,20,.22), transparent 70%); }
+
+    .otw-silhouette { position: relative; width: ${compact ? 86 : 104}px; height: ${compact ? 118 : 142}px; margin: 0 auto; }
+    .otw-sil-body { position: absolute; left: 12px; right: 12px; top: 32px; bottom: 0; border-radius: 10px 10px 12px 12px;
+      background: linear-gradient(160deg, #F3EADB, #E5DAC6); border: 1px solid #D8C9AE; }
+    .otw-sil-neck { position: absolute; left: 38%; right: 38%; top: 21px; height: 13px; background: #D8C9AE; border-radius: 3px; }
+    .otw-sil-cap { position: absolute; left: 33%; right: 33%; top: 0; height: 23px;
+      background: linear-gradient(#4A3826, #241A12); border-radius: 5px; }
+    .otw-sil-label { position: absolute; left: 20px; right: 20px; top: 62px; bottom: 22px; background: #fff;
+      border: 1px solid #E5DAC6; border-radius: 3px; display: grid; place-items: center; text-align: center;
+      font-family: var(--font-display); font-size: ${compact ? 9 : 10}px; letter-spacing: .6px; text-transform: uppercase;
+      color: ${C.muted}; line-height: 1.15; padding: 2px; overflow: hidden; }
+
+    .otw-seal-col { text-align: center; padding-bottom: ${compact ? 26 : 34}px; }
+    .otw-seal { display: grid; place-items: center; width: ${compact ? 52 : 66}px; height: ${compact ? 52 : 66}px;
+      margin: 0 auto; border-radius: 50%; background: linear-gradient(140deg, #E5C06A, #C8901E 55%, #9C6A1A);
+      color: #fff; font-family: var(--font-display); font-size: ${compact ? 26 : 32}px; font-weight: 600;
+      box-shadow: 0 10px 24px rgba(156,106,26,.35); }
+    .otw-seal-text { display: block; margin-top: 8px; font-family: var(--font-sans); font-size: 9px; letter-spacing: 1.2px;
+      text-transform: uppercase; color: ${C.goldLabel}; line-height: 1.3; }
+
+    .otw-packshot { position: relative; width: 100%; max-width: ${compact ? 128 : 160}px; height: ${compact ? 118 : 148}px;
+      margin: 0 auto; filter: drop-shadow(0 12px 16px rgba(0,0,0,.16)); }
+
+    /* Noms et prix, alignes sous la scene */
+    .otw-names { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; padding: ${compact ? 14 : 18}px ${compact ? 14 : 26}px 0; }
+    .otw-name-col { min-width: 0; }
     .otw-eyebrow { font-family: var(--font-sans); font-size: 9.5px; letter-spacing: 1.3px; text-transform: uppercase;
       color: ${C.muted}; margin-bottom: 5px; }
     .otw-eyebrow-gold { color: ${C.goldLabel}; }
-    /* text-wrap balance repartit les mots sur les lignes : « Carolina Herrera
-       · Good Girl » ne se coupe plus entre Good et Girl. overflow-wrap anywhere
-       a ete retire — c'est lui qui autorisait la coupure au milieu d'un nom
-       propre ; le min-width 0 du parent suffit a contenir le debordement. */
-    .otw-target-name { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: ${C.ink};
-      line-height: 1.2; text-wrap: balance; overflow-wrap: break-word; }
-    .otw-twin { display: flex; align-items: center; gap: 14px; flex: 1 1 260px; min-width: 0; }
-    /* Cadre creme a coins arrondis : le packshot respire au lieu d'etre
-       recadre. object-fit contain + fond neutre = tous les flacons au meme gabarit,
-       quel que soit leur format d'origine. */
-    .otw-thumb { position: relative; width: 116px; height: 116px; flex: 0 0 auto; border-radius: 14px;
-      overflow: hidden; background: ${C.stage}; border: 1px solid ${C.border}; padding: 8px; }
-    .otw-twin-text { min-width: 0; flex: 1 1 auto; }
-    .otw-twin-name { font-family: var(--font-display); font-size: 20px; font-weight: 500; color: ${C.ink};
-      line-height: 1.2; text-wrap: balance; overflow-wrap: break-word; }
-    .otw-price { font-family: var(--font-sans); font-size: 13.5px; color: ${C.goldLabel}; margin-top: 4px; }
+    .otw-target-name, .otw-twin-name { font-family: var(--font-display); font-size: ${compact ? 18 : 20}px; font-weight: 500;
+      color: ${C.ink}; line-height: 1.2; text-wrap: balance; overflow-wrap: break-word; }
+    /* ── 01. Le prix economise ─────────────────────────────────────────────
+       « Prix boutique constate », indicatif et barre. N'apparait QUE si le prix
+       de l'original est connu : pas de chiffre invente. */
+    .otw-retail { margin-top: 6px; font-family: var(--font-sans); font-size: 11.5px; color: ${C.muted}; line-height: 1.5; }
+    .otw-retail-label { display: block; font-size: 9.5px; letter-spacing: .8px; text-transform: uppercase; color: ${C.legal}; }
+    .otw-retail-price { text-decoration: line-through; color: ${C.strike}; font-size: 13px; }
+    .otw-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: 4px; flex-wrap: wrap; }
+    .otw-price-big { font-family: var(--font-display); font-size: ${compact ? 26 : 32}px; font-weight: 600; color: ${C.ink}; line-height: 1; }
+    .otw-save { margin-top: 8px; display: inline-flex; align-items: center; gap: 7px; border-radius: 999px; padding: 5px 13px;
+      background: linear-gradient(100deg, #9C6A1A, #C8901E 60%, #E5C06A); color: #fff;
+      font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: .3px; }
+    .otw-save b { font-family: var(--font-display); font-size: 16px; font-weight: 600; }
     .otw-meta { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
-    /* Une seule pastille pour les deux informations. La proximite est la seule
-       remplie : c'est le verdict, la famille n'est qu'un rappel de profil. */
     .otw-chip { font-family: var(--font-sans); font-size: 10px; letter-spacing: .3px; line-height: 1.6;
-      border-radius: 999px; padding: 3px 10px; border: 1px solid ${C.tagBorder}; background: ${C.tagBg}; color: ${C.goldDark}; }
+      border-radius: 999px; padding: 3px 10px; border: 1px solid ${C.tagBorder}; background: ${C.tagBg}; color: ${C.goldDark};
+      white-space: nowrap; }
     .otw-chip-solid { background: ${C.pillSelBg}; border-color: ${C.pillSelBg}; color: ${C.pillSelText}; }
 
-    .otw-foot { margin-top: 16px; padding-top: 14px; display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
+    /* ── 04. Le badge de confiance ────────────────────────────────────────── */
+    .otw-trust { display: flex; align-items: center; gap: 10px; border-radius: 12px; padding: 9px 13px;
+      margin: ${compact ? 12 : 16}px ${compact ? 14 : 26}px 0; }
+    .otw-trust-solid { background: linear-gradient(100deg, #9C6A1A, #C8901E 60%, #E5C06A); color: #fff; }
+    .otw-trust-soft { border: 1.5px solid ${C.tagBorder}; background: #fff; color: ${C.goldDark}; }
+    .otw-trust-icon { flex: 0 0 auto; display: grid; place-items: center; }
+    .otw-trust-text { min-width: 0; }
+    .otw-trust-title { font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: .7px; text-transform: uppercase; }
+    .otw-trust-sub { font-family: var(--font-sans); font-size: 11.5px; line-height: 1.4; margin-top: 2px; }
+    .otw-trust-solid .otw-trust-sub { opacity: .93; }
+    .otw-trust-soft .otw-trust-sub { color: ${C.muted}; }
+    .otw-trust-link { color: inherit; text-decoration: underline; }
+
+    /* ── 03. La jauge de proximite ────────────────────────────────────────── */
+    .otw-gauge { margin: ${compact ? 12 : 16}px ${compact ? 14 : 26}px 0; }
+    .otw-gauge-head { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; }
+    .otw-gauge-head .otw-eyebrow { margin-bottom: 0; }
+    .otw-gauge-pct { font-family: var(--font-display); font-size: ${compact ? 30 : 38}px; font-weight: 600; line-height: 1; color: ${C.ink}; }
+    .otw-gauge-pct i { font-size: ${compact ? 16 : 20}px; font-style: normal; }
+    .otw-bar { position: relative; height: 10px; border-radius: 999px; margin: 12px 0 6px;
+      background: linear-gradient(90deg, #EFE7D8 0 33%, #F6EAC8 33% 66%, #EFD79B 66%); }
+    .otw-bar i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 999px;
+      background: linear-gradient(90deg, #9C6A1A, #C8901E, #E5C06A); }
+    .otw-bar b { position: absolute; top: 50%; width: 17px; height: 17px; border-radius: 50%; background: #fff;
+      border: 3px solid #8A6A1E; transform: translate(-50%, -50%); box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+    .otw-ticks { display: flex; justify-content: space-between; font-family: var(--font-sans); font-size: 9px;
+      letter-spacing: .9px; text-transform: uppercase; color: ${C.legal}; }
+    .otw-gauge-why { font-family: var(--font-sans); font-size: 12px; color: ${C.muted}; margin: 9px 0 0; line-height: 1.45; }
+    .otw-gauge-why b { color: ${C.goldDark}; }
+
+    .otw-foot { margin: ${compact ? 12 : 16}px ${compact ? 14 : 26}px 0; padding-top: 14px; border-top: 1px solid ${C.border};
+      display: flex; align-items: flex-end; gap: 14px; flex-wrap: wrap; }
     .otw-foot-text { flex: 1 1 220px; min-width: 0; }
-    /* Trois lignes, pas cinq. Le paragraphe vient de la fiche produit, où il
-       a toute la place ; ici il partage la carte avec le prix, les accords et
-       deux boutons, et cinq lignes de corps repoussaient l'ajout au panier
-       hors du regard. Trois lignes suffisent à donner le registre du jus —
-       qui veut la suite ouvre la fiche, c'est le rôle de « Voir ce parfum ».
-       On coupe à l'affichage et non dans la donnée : la description reste
-       entière pour la fiche, le JSON-LD et la recherche. */
+    /* Trois lignes, pas cinq : le paragraphe vient de la fiche produit, ou il a
+       toute la place ; ici il partage la carte avec le prix, la jauge et deux
+       boutons. On coupe a l'affichage, jamais dans la donnee. */
     .otw-desc { font-family: var(--font-sans); font-size: 12.5px; color: ${C.muted}; margin: 0; line-height: 1.55;
       display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
     .otw-accords { font-family: var(--font-sans); font-size: 11px; color: ${C.goldLabel}; margin: 5px 0 0; line-height: 1.4; overflow-wrap: anywhere; }
-    /* Un seul plein : l'ajout au panier. La fiche produit passe en contour, a
-       la meme hauteur, sur le meme axe — les deux boutons ne se disputent plus
-       le regard. */
-    /* flex-shrink 1 + min-width 0 : quand le pied passe a la ligne, le bloc
-       d'achat se contente de la largeur disponible et fait passer ses propres
-       boutons a la ligne. Avec un flex-shrink 0 il gardait sa largeur
-       max-content (417 px) et debordait de la carte des que celle-ci
-       descendait sous ~420 px — c'etait le cas entre 761 et ~900 px. */
     .otw-buy { flex: 0 1 auto; min-width: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
     .otw-btn { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; height: 40px;
       padding: 0 18px; border-radius: 999px; cursor: pointer; text-decoration: none; white-space: nowrap;
       font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase;
-      transition: background .2s, border-color .2s, color .2s; }
-    .otw-btn-primary { border: 1px solid ${C.goldCta}; background: ${C.goldCta}; color: #fff; }
+      transition: background .2s, border-color .2s, color .2s; border: 1px solid transparent; }
+    .otw-btn-primary { border-color: ${C.goldCta}; background: ${C.goldCta}; color: #fff; }
     .otw-btn-primary:hover { background: ${C.goldDark}; border-color: ${C.goldDark}; }
-    .otw-btn-ghost { border: 1px solid ${C.tagBorder}; background: transparent; color: ${C.goldDark}; }
+    .otw-btn-ghost { border-color: ${C.tagBorder}; background: transparent; color: ${C.goldDark}; }
     .otw-btn-ghost:hover { border-color: ${C.gold}; background: ${C.tagBg}; }
 
-    /* ── Ecran « pas encore de jumeau » ─────────────────────────────────────
-       Meme carte creme que le resultat, filet dore, titre en Cormorant : cet
-       ecran est majoritaire, il doit se lire comme une promesse et non comme
-       une erreur. Aucun rouge, aucune icone d'alerte. */
+    /* ── 09. Partager ─────────────────────────────────────────────────────── */
+    .otw-share { display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+      margin: 12px ${compact ? 14 : 26}px ${compact ? 14 : 20}px; }
+    .otw-share-label { font-family: var(--font-sans); font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: ${C.legal}; }
+    .otw-share-wa { display: inline-flex; align-items: center; gap: 6px; background: ${C.whatsapp}; color: #fff;
+      border-radius: 999px; padding: 6px 13px; font-family: var(--font-sans); font-size: 11.5px; font-weight: 600;
+      text-decoration: none; }
+    .otw-share-wa:hover { filter: brightness(.94); }
+    .otw-share-copy { display: inline-flex; align-items: center; gap: 6px; border: 1px solid ${C.tagBorder}; background: #fff;
+      color: ${C.ink}; border-radius: 999px; padding: 6px 13px; font-family: var(--font-sans); font-size: 11.5px; cursor: pointer; }
+    .otw-share-copy:hover { border-color: ${C.gold}; background: ${C.tagBg}; }
+
+    /* ── Ecran « pas encore de jumeau » ───────────────────────────────────── */
     .otw-none { background: #fff; border: 1px solid ${C.searchBorder}; border-radius: 14px; padding: 20px 18px;
       box-shadow: 0 10px 26px rgba(58,44,20,.07); text-align: center; max-width: 100%; overflow: hidden; }
     .otw-none-mark { display: inline-grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
@@ -977,100 +1472,117 @@ export function OlfactiveTwin({
     .otw-none-check { flex: 0 0 auto; display: grid; place-items: center; width: 20px; height: 20px; border-radius: 50%;
       background: ${C.goldCta}; }
 
+    /* La barre collante n'existe qu'en mobile. */
+    .otw-sticky { display: none; }
+
     @media (max-width: 760px) {
-      .otwin-grid { grid-template-columns: 1fr; }
-      /* ── LES PASTILLES S'EMPILAIENT UNE PAR LIGNE ────────────────────────
-         Les libelles font de 13 a 44 caracteres (« Maison Francis Kurkdjian ·
-         Baccarat Rouge 540 » prend toute la largeur a 390 px). En flex-wrap,
-         le bloc ne plaçait qu'une pastille par rangee, de largeurs tres
-         inegales : 277 px de haut a lui seul, et la carte de resultat — le
-         coeur du module — repoussee hors de l'ecran.
-         Grille a DEUX COLONNES EGALES : typo resserree, rembourrage reduit,
-         et le libelle passe a la ligne DANS la pastille (white-space normal)
-         plutot que d'etre tronque — on ne coupe jamais le nom d'un parfum.
-         min-height 40px garde une cible tactile confortable ; align-items
-         stretch (defaut de la grille) egalise les deux cases d'une rangee. */
-      .otw-pills { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 10px; }
-      .otw-pill, .otw-more { min-height: 40px; display: flex; align-items: center; justify-content: center;
-        text-align: center; padding: 6px 8px; line-height: 1.25; }
-      .otw-pill { font-size: 11.5px; white-space: normal; overflow: visible; text-overflow: clip;
-        overflow-wrap: break-word; }
-      /* Cinq pastilles + « Voir plus » = trois rangees pleines. Les trois
-         autres restent dans le DOM, simplement masquees : elles reviennent
-         d'un seul clic, sans que la liste certifiee ait ete touchee. */
-      .otw-pills:not(.otw-pills-all) > .otw-pill:nth-child(n+${MOBILE_PILL_COUNT + 1}) { display: none; }
-      .otw-more { font-family: var(--font-sans); font-size: 11px; font-weight: 600; letter-spacing: .5px;
-        cursor: pointer; border-radius: 999px; border: 1px dashed ${C.tagBorder}; background: transparent;
-        color: ${C.goldDark}; }
-      .otw-more:hover { border-color: ${C.gold}; background: ${C.tagBg}; }
+      /* La barre d'achat collante fait ~63 px : sans ce coussin elle masque la
+         rangee de partage et la mention legale en fin de section. !important
+         parce que le rembourrage de la section est pose en style en ligne (il
+         depend du variant) et primerait sinon. */
+      .otwin-root { padding-bottom: 104px !important; }
+
+      /* ── 06. LES PASTILLES EN CARROUSEL ─────────────────────────────────
+         A 390 px, huit pastilles a deux colonnes prenaient trois rangees et
+         repoussaient la carte — le coeur du module — hors de l'ecran. Elles
+         defilent desormais sur UNE ligne, alignees sur le bord de la carte
+         bord a bord, et l'on voit le flacon avant de choisir. Le debordement
+         est contenu par le conteneur (overflow-x auto), la page ne defile pas
+         horizontalement. */
+      /* PLEINE LARGEUR : calc(50% - 50vw) ramène le bloc au bord de la fenêtre
+         quel que soit le rembourrage des pages qui hébergent la section — celui
+         du module (22 px), celui de la page (24 px sur les previews), celui de
+         la section d'accueil. La marge s'annule d'elle-même : elle vaut
+         exactement la distance jusqu'au bord, jamais plus, donc la page ne
+         défile pas horizontalement. max-width: none est indispensable, sinon la
+         largeur reste plafonnée à celle du conteneur et le bloc se contente de
+         glisser vers la gauche. */
+      .otw-pills-wrap { margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); max-width: none; }
+      .otw-pills { flex-wrap: nowrap; overflow-x: auto; scroll-snap-type: x proximity; max-width: none;
+        padding: 2px 16px 6px; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+      .otw-pills::-webkit-scrollbar { display: none; }
+      .otw-pill { scroll-snap-align: start; max-width: 74vw; }
+
+      /* ── 06. LA CARTE BORD A BORD ───────────────────────────────────────
+         On annule le rembourrage de la section pour que la scene touche les
+         deux bords ; le flacon peut alors etre montre en grand. */
+      .otw-card { margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw); max-width: none;
+        border-radius: 0 !important; border-left: none; border-right: none; }
+      /* La silhouette et le sceau passent a la trappe : a 390 px, ils volent la
+         place du seul visuel qui compte — le vrai flacon. L'original reste
+         nomme, avec son prix barre, juste en dessous. */
+      .otw-stage { grid-template-columns: 1fr; padding: 16px 16px 0; }
+      .otw-stage-side:first-child, .otw-seal-col { display: none; }
+      .otw-packshot { max-width: 200px; height: 176px; }
+      .otw-names { grid-template-columns: 1fr; gap: 10px; padding: 12px 16px 0; }
+      .otw-trust, .otw-gauge, .otw-foot { margin-left: 16px; margin-right: 16px; }
+      .otw-share { margin: 12px 16px 16px; }
+      .otw-target-name, .otw-twin-name { font-size: 19px; }
+
       .otw-none { padding: 16px 14px; }
       .otw-none-title { font-size: 19px; }
       .otw-none-form { max-width: none; }
       .otw-none-input, .otw-none-submit { flex: 1 1 100%; width: 100%; }
-      .otwin-grid > *, .otwin-grid .otw-result { display: block; }
-      .otw-row { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; }
-      .otw-thumb { width: 96px; height: 96px; }
+
       .otw-foot { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; }
-      /* ── LE VIDE DE LA CARTE EN VUE ETROITE VENAIT D'ICI ──────────────────
-         .otw-row et .otw-foot passent en colonne : l'axe principal devient la
-         VERTICALE, et les flex-basis calibres pour la rangee desktop se lisent
-         alors comme des HAUTEURS minimales. .otw-target (flex: 1 1 190px)
-         reservait 190 px pour 63 px de texte, .otw-foot-text (flex: 1 1 220px)
-         220 px pour 58 px de description : 289 px de vide sur une carte de
-         770 px, soit les deux trous observes — l'un sous le nom du parfum
-         aime, l'autre entre la description et les boutons.
-         En colonne, aucun de ces blocs n'a de raison de grandir ni de reserver
-         quoi que ce soit : chacun prend la hauteur de son contenu, et le gap
-         de 12 px fait seul l'espacement. */
-      .otw-target, .otw-twin, .otw-foot-text, .otw-buy { flex: 0 0 auto; }
-      /* 375 px : le stepper garde sa largeur, l'ajout prend le reste, la fiche
-         passe dessous sur toute la largeur. */
+      .otw-foot-text, .otw-buy { flex: 0 0 auto; }
       .otw-buy { width: 100%; }
       .otw-btn-primary { flex: 1 1 auto; }
       .otw-btn-ghost { flex: 1 1 100%; }
-      .otw-target-name, .otw-twin-name { font-size: 18px; }
+
+      /* ── 06. LE BOUTON D'ACHAT QUI SUIT ─────────────────────────────────
+         Prix, quantite et « Ajouter » restent a portee de pouce tant que la
+         carte est a l'ecran. Il disparait des qu'on l'a depassee : ailleurs
+         sur la page il masquerait le contenu sans rien vouloir dire. */
+      .otw-sticky { display: flex; position: fixed; left: 0; right: 0; bottom: 0; z-index: 60;
+        align-items: center; gap: 10px; padding: 10px 14px calc(10px + env(safe-area-inset-bottom, 0px));
+        background: rgba(255,255,255,.96); backdrop-filter: blur(8px); border-top: 1px solid ${C.border};
+        box-shadow: 0 -8px 24px rgba(58,44,20,.10); }
+      .otw-sticky-text { flex: 1 1 auto; min-width: 0; display: flex; flex-direction: column; }
+      .otw-sticky-name { font-family: var(--font-sans); font-size: 10.5px; color: ${C.muted};
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+      .otw-sticky-price { font-family: var(--font-display); font-size: 19px; font-weight: 600; line-height: 1.1; color: ${C.ink}; }
+      .otw-sticky-btn { flex: 0 0 auto; height: 42px; padding: 0 18px; }
     }
     @media (prefers-reduced-motion: reduce) { .otwin-q { animation: none; } }
   `;
 
   return (
     <div
+      ref={rootRef}
       className="otwin-root"
       dir={isRTL ? "rtl" : "ltr"}
       style={{
         background: C.stage,
         border: `0.5px solid ${C.border}`,
         borderRadius: compact ? 14 : 16,
-        padding: compact ? 14 : 22,
+        padding: pad,
+        // RÉSERVE EN BAS pour le mobilier flottant de la page. Le bouton
+        // « Choisir mon parfum » et la bulle WhatsApp sont en `position: fixed`
+        // à 85–88 px du bas de la fenêtre : quand la section s'arrête pile là,
+        // ils recouvrent sa dernière ligne — sur la capture, la fin de la jauge
+        // et le palier « Profil très proche ». Ce coussin garantit qu'en fin de
+        // défilement le contenu passe au-dessus d'eux. En mobile il tient aussi
+        // compte de notre propre barre d'achat collante (voir la media query).
+        paddingBottom: pad + 60,
         textAlign: isRTL ? "right" : "left",
       }}
     >
       <style>{css}</style>
-      {compact ? (
-        <>
-          {hookEl}
-          <div className="otwin-grid">
-            {/* Colonne gauche : le champ d'abord, les suggestions ensuite */}
-            <div>
-              {searchEl}
-              {pillsEl}
-            </div>
-            {/* Colonne droite : carte résultat + mention légale */}
-            <div>
-              {resultEl}
-              {legalEl}
-            </div>
-          </div>
-        </>
-      ) : (
-        <>
-          {introEl}
-          {searchEl}
-          {pillsEl}
-          {resultEl}
-          {legalEl}
-        </>
-      )}
+      {/* ORDRE DE LECTURE, identique dans les deux variants et sur les quatre
+          pages où la section est montée : la QUESTION d'abord (le champ, puis
+          les pastilles), la RÉPONSE ensuite. La vue compacte posait la carte
+          dans une colonne de droite, à la même hauteur que le champ : on voyait
+          la réponse avant d'avoir vu la question, et la colonne de gauche ne
+          servait qu'à porter huit pastilles. Sur `/jumeau/<id>` le résultat est
+          déjà résolu à l'ouverture, mais le champ reste en tête — il sert à
+          relancer une autre comparaison. */}
+      {compact ? hookEl : introEl}
+      {searchEl}
+      {pillsEl}
+      {resultEl}
+      {legalEl}
+      {stickyEl}
     </div>
   );
 }

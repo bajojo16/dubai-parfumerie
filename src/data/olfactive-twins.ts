@@ -59,7 +59,15 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     productHandle: "armaf-club-de-nuit",
     family: "Fruité · Boisé · Fumé",
     description: "Ananas, bouleau, mousse de chêne. Un sillage masculin charismatique et tenace.",
-    product: { name: "Club de Nuit Intense Man", brand: "Armaf", price: 19.9, image: "/assets/prod-4.jpg", href: "/produit/armaf-club-de-nuit-intense-man" },
+    // ALIGNÉ SUR LA FICHE, le 07/09/26. Ce bloc annonçait « Club de Nuit
+    // Intense Man » à 19,90 € et pointait `/produit/armaf-club-de-nuit-intense-man`,
+    // alors que `productHandle` résout `armaf-club-de-nuit` — « Club de Nuit »,
+    // 49,90 €. Le module montrait donc 19,90 € en vitrine (peinte depuis CE
+    // bloc) et 49,90 € après une recherche (résolue depuis le catalogue), pour
+    // la même paire. Décision utilisateur : Aventus → `armaf-club-de-nuit`. Ces
+    // champs ne servent qu'à peindre avant le chargement du moteur ; ils doivent
+    // donc dire exactement ce que la fiche dira ensuite.
+    product: { name: "Club de Nuit", brand: "Armaf", price: 49.9, image: "/assets/prod-4.jpg", href: "/produit/armaf-club-de-nuit" },
   },
   // ─── Baccarat Rouge 540 : paire RETIRÉE, faute de jumeau défendable ──────────
   // Elle affirmait Lattafa Yara « profil très proche ». Deux choses clochaient.
@@ -257,3 +265,61 @@ export const TWIN_SUGGESTIONS: readonly TwinSuggestion[] = [
   { referenceId: "montale-mukhallat", label: "Montale · Mukhallat" },
   { referenceId: "carolina-herrera-212-sexy", label: "Carolina Herrera · 212 Sexy" },
 ];
+
+// ─── Vitrine d'ouverture ─────────────────────────────────────────────────────
+/**
+ * LE RÉSULTAT PEINT À L'OUVERTURE, avant que le moteur n'arrive.
+ *
+ * Il n'était nulle part, et c'est ce qui produisait l'incohérence relevée en
+ * audit : le composant amorçait sa vue sur `matches.find(referenceId ===
+ * TWIN_SUGGESTIONS[0])`, c'est-à-dire sur `dior-sauvage` — qui n'est PAS une
+ * paire relue (son jumeau vient de `dp-dupes.json`). La recherche échouait, le
+ * repli `?? matches[0]` servait Creed · Aventus, et le visiteur voyait donc un
+ * résultat Aventus sans qu'aucune pastille ne soit active, puisque Aventus
+ * n'est pas dans les pastilles.
+ *
+ * La vitrine est désormais DÉCLARÉE, et c'est la même paire que la première
+ * pastille. Ces valeurs ne sont qu'une copie d'amorçage — même rôle que
+ * `TwinSuggestion.label` : le moteur les remplace par ce que la base dit
+ * réellement dès qu'il est chargé. `olfactive-match.ts` vérifie en
+ * développement qu'elles n'ont pas divergé.
+ */
+export type TwinShowcase = {
+  /** doit être `TWIN_SUGGESTIONS[0].referenceId` — sinon aucune pastille n'est active */
+  referenceId: string;
+  targetName: string;
+  familyLabel: string;
+  /** famille de l'original, telle que `reference-perfumes.ts` la nomme */
+  referenceFamilyLabel: string;
+  /** phrase de profil — jamais un bloc de fiche produit (« Contenance… ») */
+  description: string;
+  origin: "curated" | "documented" | "scored";
+  /** jauge, 0..1 */
+  proximity: number;
+  sharedAccords: string[];
+  product: { id: string; name: string; brand: string; price: number; image: string; href: string };
+};
+
+export const TWIN_SHOWCASE: TwinShowcase = {
+  referenceId: "dior-sauvage",
+  targetName: "Dior · Sauvage",
+  familyLabel: "Boisé",
+  /** famille de l'ORIGINAL — la jauge compare les deux (« Aromatique → Boisé ») */
+  referenceFamilyLabel: "Aromatique",
+  // La fiche d'Urban Man Elixir porte un bloc technique (« Notes de tête : …
+  // Contenance : 105 ml Sillage : … ») qui débordait dans la carte. On sert la
+  // phrase de profil de la famille, exactement ce que `catalogFamilyText`
+  // rendra une fois le moteur chargé.
+  description: "Le bois en colonne vertébrale : profond, tenace, très présent en fin de journée.",
+  origin: "documented",
+  proximity: 0.9,
+  sharedAccords: ["bergamote", "poivre rose", "ambroxan", "lavande", "patchouli"],
+  product: {
+    id: "armaf-club-de-nuit-urban-man-elixir",
+    name: "Club de Nuit Urban Man Elixir",
+    brand: "Armaf",
+    price: 35,
+    image: "/assets/products/dp/armaf-club-de-nuit-urban-man-elixir/dp_parfumerie-armaf-club-de-nuit-urban-man-elixir-01.webp",
+    href: "/produit/armaf-club-de-nuit-urban-man-elixir",
+  },
+};
