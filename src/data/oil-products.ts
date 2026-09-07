@@ -70,13 +70,14 @@ export const DEMO: OilProduct[] = [
     brand: "Al Haramain",
     href: "/produit/noora",
     variantId: "noora",
-    // Rendu Higgsfield du 01/07/26. Le packshot d'origine faisait 268 x 600,
-    // soit un rapport de 0,45 : dans une carte quasi carrée en
-    // `object-fit: cover`, il ne restait que la bande du milieu — le bouchon
-    // serti et le socle sortaient du cadre, et la carte montrait un tube doré
-    // anonyme. Ce cadrage-ci est fait pour le format : le flacon entier tient
-    // au centre, posé sur la pierre, avec de la marge des deux côtés.
-    bottleImage: "/assets/oils/dp_parfumerie-al-haramain-noora-huile-01.webp",
+    // Flacon détouré sur fond transparent (demande du 07/09/26 : ce rail-ci
+    // uniquement). Le packshot d'origine `noora.png` fait 268 x 600, soit un
+    // rapport de 0,45 : dans une carte quasi carrée en `object-fit: cover`, il
+    // ne restait que la bande du milieu. Il est donc posé au centre d'un carré
+    // transparent de 1400, flacon à 1204 de haut — exactement le cadrage de
+    // Tanasuk, pour que les deux cartes du rail s'alignent. La scène ambrée
+    // (`…-huile-01.webp`) reste en place pour d'autres usages.
+    bottleImage: "/assets/oils/dp_parfumerie-al-haramain-noora-huile-02.webp",
     volume: "12 ml",
     gender: "Femme",
     price: 27.9,
