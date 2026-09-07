@@ -67,7 +67,9 @@ const BundleBuilder = dynamic(() => import("@/components/bundle/BundleBuilder").
 // maison « achetez 2, le 3e offert » : on paie les deux plus chers.
 const COFFRETS_HOME: LuxeProduct[] = [
   { image: "/assets/lots/dp_parfumerie-lot-khamrah-yara-bidun-esam-01.webp", brand: "Dubaï Parfumerie", title: "Trio Signature · Khamrah, Yara, Bidun Esam", price: 58, oldPrice: 80.9, limitedStock: true, href: "/offres/lot-3-pour-2", rating: 4.5, reviewCount: 97 },
-  { image: "/assets/lots/dp_parfumerie-lot-9pm-yara-ameerat-al-arab-01.webp", brand: "Dubaï Parfumerie", title: "Trio Best-Of · 9PM, Yara, Ameerat Al Arab", price: 55, oldPrice: 77.9, href: "/offres/lot-3-pour-2", rating: 5, reviewCount: 64 },
+  // Yara figurait dans DEUX lots à la fois : elle reste au Trio Signature, et
+  // le Best-Of prend Qaed Al Fursan à sa place. 30 + 25 + 29 = 84 €.
+  { image: "/assets/lots/dp_parfumerie-lot-9pm-ameerat-qaed-al-fursan-01.webp", brand: "Dubaï Parfumerie", title: "Trio Best-Of · 9PM, Ameerat Al Arab, Qaed Al Fursan", price: 59, oldPrice: 84, href: "/offres/lot-3-pour-2", rating: 5, reviewCount: 64 },
   // `coffret-reef.jpg` montre trois Reef identifiables : le 33 noir, l'Aurom
   // dore et le Summer Pink. La carte porte donc leurs noms et leurs prix
   // (70 + 75 + 90 = 235), pas un « Coffret Miniatures Floral » que la photo
