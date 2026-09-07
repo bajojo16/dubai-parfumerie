@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { ReviewWithMedia } from "@/data/review-media";
+import { Link } from "@/i18n/navigation";
 import { ReviewMediaViewer, type ReviewViewerLabels } from "./ReviewMediaViewer";
 
 /**
@@ -32,6 +33,8 @@ export function ReviewMediaBubbles({
   heading = "Les avis en images",
   subheading = "Photos et vidéos envoyées par les clients",
   labels,
+  wallHref,
+  wallLabel,
 }: {
   reviews: ReviewWithMedia[];
   productSlug: string;
@@ -40,6 +43,9 @@ export function ReviewMediaBubbles({
   heading?: string;
   subheading?: string;
   labels?: Partial<ReviewViewerLabels>;
+  /** Lien vers le mur des éloges filtré sur ce parfum ; absent → pas de lien. */
+  wallHref?: string;
+  wallLabel?: string;
 }) {
   const [open, setOpen] = useState<number | null>(null);
 
@@ -50,6 +56,11 @@ export function ReviewMediaBubbles({
       <div className="rmb-head">
         <span className="rmb-title">{heading}</span>
         <span className="rmb-sub">{subheading}</span>
+        {wallHref && (
+          <Link href={wallHref} className="rmb-wall">
+            {wallLabel ?? `Voir le mur des éloges de ${productName}`} →
+          </Link>
+        )}
       </div>
 
       <div className="rmb-row">
@@ -74,6 +85,8 @@ export function ReviewMediaBubbles({
         .rmb-head{display:flex;flex-direction:column;gap:2px;margin-bottom:16px}
         .rmb-title{font-family:var(--font-display);font-size:1.15rem;font-weight:600;color:var(--ink-900)}
         .rmb-sub{font-family:var(--font-sans);font-size:var(--t-xs);color:var(--ink-400)}
+        .rmb-wall{margin-top:6px;align-self:flex-start;font-family:var(--font-sans);font-size:var(--t-xs);color:var(--gold-700);text-decoration:underline;text-underline-offset:3px}
+        .rmb-wall:hover{color:var(--ink-900)}
         /* Défilement horizontal plutôt qu'un retour à la ligne : au-delà de six
            avis, une seconde rangée entamée par une bulle isolée se lit comme un
            bug de mise en page. */

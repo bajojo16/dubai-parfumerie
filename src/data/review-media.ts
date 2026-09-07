@@ -161,6 +161,22 @@ export const REVIEW_MEDIA: ReviewWithMedia[] = [
       { type: "image", src: "/assets/products/blueberry/blueberry-myrtilles.jpg", alt: "Flacon Blueberry Musk entouré de myrtilles" },
     ],
   },
+  {
+    // Avis reçu par WhatsApp le 04/09/2026, texte repris tel quel (orthographe
+    // légèrement normalisée), photo du client : flacon et étui sur le canapé.
+    id: "rm-vanilla-voyage-01",
+    productSlug: "vanilla-voyage",
+    rating: 5,
+    author: "Client vérifié",
+    city: "WhatsApp",
+    date: "4 septembre 2026",
+    title: "Je conseille fortement",
+    text: "Merci mon frère, il sent vraiment très bon, je conseille fortement. Rabbi mahkom ❤️",
+    verified: true,
+    media: [
+      { type: "image", src: "/assets/reviews/dp_parfumerie-maison-asrar-vanilla-voyage-avis-01.webp", alt: "Flacon ambré de Vanilla Voyage dans son écrin, à côté de l'étui crème Maison Asrar" },
+    ],
+  },
 ];
 
 /** Les avis d'UNE fiche. Retourne un tableau vide plutôt que `null` : l'appelant

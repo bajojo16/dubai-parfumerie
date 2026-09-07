@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { REVIEW_MEDIA } from "@/data/review-media";
 import { SEARCH_PRODUCTS } from "@/data/search-catalog";
 import { PRODUCTS } from "@/data/product-details";
-import { PraiseWall, type PraiseTile } from "@/components/sections/PraiseWall";
+import { Suspense } from "react";
+import type { PraiseTile } from "@/components/sections/PraiseWall";
+import { PraiseWallExplorer, type WallProduct } from "@/components/sections/PraiseWallExplorer";
 
 export const metadata: Metadata = {
   title: "Le mur des éloges",
@@ -21,10 +23,10 @@ export const metadata: Metadata = {
  */
 function resolveProduct(slug: string): PraiseTile["product"] {
   const found = SEARCH_PRODUCTS.find((p) => p.slug === slug);
-  if (found) return { name: found.name, brand: found.brand, href: found.href, image: found.image };
+  if (found) return { slug, name: found.name, brand: found.brand, href: found.href, image: found.image };
   const detail = PRODUCTS[slug];
-  if (detail) return { name: detail.name, brand: detail.brand, href: `/produit/${slug}`, image: detail.image };
-  return { name: slug, brand: "", href: `/produit/${slug}` };
+  if (detail) return { slug, name: detail.name, brand: detail.brand, href: `/produit/${slug}`, image: detail.image };
+  return { slug, name: slug, brand: "", href: `/produit/${slug}` };
 }
 
 /**
@@ -65,6 +67,15 @@ export default function MurDesElogesPage() {
     }),
   );
 
+  // Une puce par parfum, dans l'ordre d'apparition, avec son nombre de médias.
+  const products: WallProduct[] = [];
+  for (const t of tiles) {
+    const slug = t.product.slug ?? t.product.href;
+    const existing = products.find((p) => p.slug === slug);
+    if (existing) existing.count += 1;
+    else products.push({ slug, name: t.product.name, brand: t.product.brand, image: t.product.image, count: 1 });
+  }
+
   return (
     <div style={{ background: "var(--surface-page)", paddingTop: 40 }}>
       <header style={{ maxWidth: 720, margin: "0 auto", padding: "16px 24px 36px", textAlign: "center" }}>
@@ -75,11 +86,14 @@ export default function MurDesElogesPage() {
           Le mur des éloges
         </h1>
         <p style={{ fontFamily: "var(--font-sans)", fontWeight: 300, fontSize: "1.0625rem", lineHeight: 1.7, color: "var(--ink-500)", margin: "16px auto 0", maxWidth: "48ch" }}>
-          Leurs photos et leurs vidéos, flacon en main — cliquez sur une image pour retrouver le parfum.
+          Leurs photos et leurs vidéos, flacon en main — cliquez sur une image pour retrouver le parfum, ou choisissez un parfum pour ne voir que ses éloges.
         </p>
       </header>
 
-      <PraiseWall tiles={tiles} />
+      {/* Suspense : l'explorateur lit `useSearchParams` (filtre dans l'URL). */}
+      <Suspense fallback={<div style={{ minHeight: "60vh" }} />}>
+        <PraiseWallExplorer tiles={tiles} products={products} />
+      </Suspense>
     </div>
   );
 }

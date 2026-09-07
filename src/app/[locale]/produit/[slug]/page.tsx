@@ -878,6 +878,7 @@ export default async function ProductPage({ params }: PageProps) {
             productSlug={slug}
             productName={product.name}
             locale={locale}
+            wallHref={`/mur-des-eloges?produit=${slug}`}
           />
         </section>
       </div>

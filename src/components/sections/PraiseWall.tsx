@@ -32,6 +32,8 @@ export type PraiseTile = {
   author: string;
   verified: boolean;
   product: {
+    /** Slug de la fiche : sert au filtre « les éloges de ce parfum ». */
+    slug?: string;
     name: string;
     brand: string;
     /** Toujours `/produit/<slug>` — passé tel quel au `Link` localisé. */
