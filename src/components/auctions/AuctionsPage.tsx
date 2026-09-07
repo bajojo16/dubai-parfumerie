@@ -472,13 +472,17 @@ function Stat({ label, value, urgent = false }: { label: string; value: string; 
   );
 }
 
-/* Grille : 3 colonnes, le lot à la une en 2 × 2 → six lots remplissent
-   exactement trois rangées. Tablette : 2 colonnes, la une sur toute la
-   largeur. Mobile : une colonne, toutes les cartes au même format. */
+/* Grille : QUATRE colonnes, le lot à la une sur deux colonnes et UNE rangée.
+   Il occupait deux colonnes sur deux rangées d'une grille en trois colonnes :
+   sur un écran large, cette seule carte faisait plus de mille pixels de haut
+   et la salle se réduisait à un flacon géant. Sur deux colonnes d'une grille
+   en quatre, elle reste la plus grande sans écraser le reste. Tablette :
+   2 colonnes, la une sur toute la largeur. Mobile : une colonne, toutes les
+   cartes au même format. */
 const STYLES = `
-  .au-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; grid-auto-flow: dense; }
+  .au-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; grid-auto-flow: dense; }
   .au-card { aspect-ratio: 4 / 5; min-width: 0; }
-  .au-card--featured { grid-column: span 2; grid-row: span 2; aspect-ratio: auto; }
+  .au-card--featured { grid-column: span 2; grid-row: span 1; aspect-ratio: 16 / 10; }
   .au-card-btn { transition: transform 260ms var(--ease-out), box-shadow 260ms var(--ease-out); }
   .au-card-img { transition: transform 700ms var(--ease-out); }
   @media (hover: hover) {
@@ -508,9 +512,13 @@ const STYLES = `
   .au-toast span { animation: au-fade-in 220ms var(--ease-out); }
   .au-panel { animation: au-fade-in 260ms var(--ease-out); }
 
+  @media (max-width: 1280px) {
+    .au-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+    .au-card--featured { grid-column: span 2; grid-row: span 1; aspect-ratio: 16 / 10; }
+  }
   @media (max-width: 1100px) {
     .au-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-    .au-card--featured { grid-column: span 2; grid-row: span 1; aspect-ratio: 16 / 11; }
+    .au-card--featured { grid-column: span 2; grid-row: span 1; aspect-ratio: 16 / 9; }
   }
   @media (max-width: 640px) {
     .au-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
