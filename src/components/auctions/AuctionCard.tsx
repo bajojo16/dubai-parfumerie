@@ -13,11 +13,13 @@
 import Image from "next/image";
 import { fmtPrice, type LotView } from "./auction-store";
 import { Countdown } from "./Countdown";
+import { DEMO_BIDDER_COUNTRY, initialsOf } from "@/data/auctions";
 import { StatusBadge } from "./StatusBadge";
 
 export function AuctionCard({ view, featured = false, onOpen }: { view: LotView; featured?: boolean; onOpen: () => void }) {
   const { lot, price, status, hasBids, state, remainingMs } = view;
   const ended = status === "won" || status === "ended";
+  const last = state.bids.length ? state.bids[state.bids.length - 1] : null;
 
   return (
     <article className={`au-card${featured ? " au-card--featured" : ""}`} style={{ position: "relative" }}>
@@ -69,12 +71,15 @@ export function AuctionCard({ view, featured = false, onOpen }: { view: LotView;
             <StatusBadge status={status} />
           </div>
           <span
-            style={{
+            // Pastille rouge tant que l'enchère court : le chrono est l'information
+          // n° 1 de la carte, il doit se voir depuis la grille — le gris
+          // translucide d'avant se fondait dans la photo. Gris quand c'est fini.
+          style={{
               display: "inline-flex",
               alignItems: "center",
               padding: "6px 10px",
               borderRadius: 999,
-              background: "rgba(21,16,11,.55)",
+              background: ended ? "rgba(21,16,11,.72)" : "#C0392B",
               backdropFilter: "blur(6px)",
               WebkitBackdropFilter: "blur(6px)",
               border: "1px solid rgba(255,255,255,.14)",
@@ -127,6 +132,13 @@ export function AuctionCard({ view, featured = false, onOpen }: { view: LotView;
                 Boutique <s style={{ color: "var(--on-dark-muted)" }}>{fmtPrice(lot.shopPrice)}</s>
               </div>
               <div>{state.bids.length === 0 ? "Aucune enchère" : state.bids.length === 1 ? "1 enchère" : `${state.bids.length} enchères`}</div>
+              {/* Qui tient l'enchère : initiales + pays du dernier enchérisseur,
+                  pour lire la course depuis la grille. Le visiteur reste « Vous ». */}
+              {last && (
+                <div style={{ marginTop: 2, color: "var(--on-dark-strong)", fontWeight: 600 }}>
+                  {last.mine ? "Vous menez" : `Dernière : ${initialsOf(last.bidder)} ${DEMO_BIDDER_COUNTRY[last.bidder] ?? ""}`}
+                </div>
+              )}
             </div>
           </div>
         </div>

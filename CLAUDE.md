@@ -31,6 +31,10 @@ git diff --quiet HEAD || ( \
 - Repo : `https://github.com/bajojo16/dubai-parfumerie`
 - Branch principale : `main`
 
+## Après chaque compact
+- **Relire d'abord** le handoff le plus récent : `app/MD/HANDOFF-*.md` (un hook `SessionStart` matcher `compact` dans `.claude/settings.json` l'injecte automatiquement). Il porte : agents encore en fond, décisions prises par l'utilisateur à ne pas rouvrir, architecture des données, file d'attente, pièges.
+- **Le mettre à jour** avant tout compact suivant : nouvelles décisions, tâches livrées, tâches en attente. Un handoff périmé est pire qu'aucun.
+
 ## Stack
 - Next.js 16 App Router + TypeScript
 - Tailwind CSS v4 + CSS variables design tokens

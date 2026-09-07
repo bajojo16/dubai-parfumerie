@@ -199,5 +199,32 @@ export const DEMO_BIDDERS: string[] = [
   "R. Benali",
 ];
 
+/**
+ * Pays des enchérisseurs simulés — démonstration, comme les pseudonymes. Sur
+ * la carte, les initiales et le drapeau du dernier enchérisseur rendent la
+ * course lisible d'un coup d'œil ; le visiteur, lui, s'affiche « Vous ».
+ */
+export const DEMO_BIDDER_COUNTRY: Record<string, string> = {
+  "Sarah B.": "🇫🇷",
+  "A. K.": "🇧🇪",
+  "Nadia R.": "🇫🇷",
+  "Yanis M.": "🇨🇭",
+  "L. Fontaine": "🇫🇷",
+  "Karim D.": "🇲🇦",
+  "Inès T.": "🇫🇷",
+  "M. Haddad": "🇨🇦",
+  "Camille O.": "🇫🇷",
+  "R. Benali": "🇱🇺",
+};
+
+/** « Sarah B. » → « S.B. » ; « L. Fontaine » → « L.F. ». */
+export function initialsOf(name: string): string {
+  const letters = name
+    .split(/\s+/)
+    .map((p) => p.replace(/[^\p{L}]/gu, "").charAt(0).toUpperCase())
+    .filter(Boolean);
+  return letters.length ? letters.join(".") + "." : name;
+}
+
 /** Pseudonyme du visiteur dans l'historique quand il n'en a pas choisi. */
 export const DEFAULT_VISITOR_NAME = "Vous";
