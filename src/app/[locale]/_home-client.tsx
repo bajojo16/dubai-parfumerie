@@ -106,10 +106,15 @@ const products = [
 // Sélection « Les parfums de la rentrée » — liste dédiée : `products` alimente
 // aussi bestSellers et oilItems, la modifier changerait ces deux sections.
 const summerProducts: (LuxeProduct & { id: number })[] = [
-  { id: 101, image: "/assets/products/blueberry/blueberry-packshot.jpg", brand: "Arabiyat Prestige", title: "Blueberry Musk", price: 20, oldPrice: 25, href: "/produit/arabiyat-prestige-blueberry-musk" },
-  { id: 102, image: "/assets/products/reef-33.webp", brand: "Reef Perfumes", title: "Reef 33", price: 70, href: "/produit/reef-33" },
-  { id: 103, image: "/assets/products/marshmallow-blush.webp", brand: "Paris Corner", title: "Marshmallow Blush", price: 39.5, href: "/produit/paris-corner-marshmallow-blush" },
-  { id: 104, image: "/assets/products/khamrah/khamrah-hf-05.jpg", brand: "Lattafa", title: "Khamrah", price: 29, href: "/produit/lattafa-khamrah", rating: 5, reviewCount: 1 },
+  // Cinq Rayhaan. Prix, vignettes et fiches viennent de `product-details.ts` :
+  // la maison y est déjà décrite, inutile de la redéclarer ici. Mes premiers
+  // visuels étaient des photos relevées sur le web, dont une portait le
+  // filigrane d'un revendeur — les vignettes du projet sont propres.
+  { id: 101, image: "/assets/products/dp_parfumerie-rayhaan-aquatica-vignette.webp", brand: "Rayhaan", title: "Aquatica", price: 44.9, href: "/produit/rayhaan-aquatica" },
+  { id: 102, image: "/assets/products/dp_parfumerie-rayhaan-italia-vignette.webp", brand: "Rayhaan", title: "Italia", price: 41.9, href: "/produit/rayhaan-italia" },
+  { id: 103, image: "/assets/products/dp_parfumerie-rayhaan-kiss-vignette.webp", brand: "Rayhaan", title: "Kiss", price: 44.9, href: "/produit/rayhaan-kiss" },
+  { id: 104, image: "/assets/products/dp_parfumerie-rayhaan-nocturno-elixir-vignette.webp", brand: "Rayhaan", title: "Nocturno Elixir", price: 49.9, href: "/produit/rayhaan-nocturno-elixir" },
+  { id: 105, image: "/assets/products/dp_parfumerie-rayhaan-terra-vignette.webp", brand: "Rayhaan", title: "Terra", price: 44.9, href: "/produit/rayhaan-terra" },
 ];
 
 const bestSellers = products.slice(2, 6);
@@ -529,7 +534,9 @@ export default function HomePageClient() {
             title={<>Les parfums <em>de la rentrée</em></>}
             subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
           />
-          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 280px))", justifyContent: "center", gap: 20 }}>
+          {/* Cinq colonnes depuis que la sélection compte cinq flacons : à
+              quatre, le cinquième partait seul sur une deuxième rangée. */}
+          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 240px))", justifyContent: "center", gap: 18 }}>
             {summerProducts.map(p => (
               <ProductCardLuxe
                 key={p.id}
