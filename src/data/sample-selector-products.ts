@@ -158,8 +158,27 @@ const clamp = (n: number) => Math.max(5, Math.min(100, Math.round(n)));
 
 type Draft = Omit<SampleProduct, "id" | "tags" | "available"> & { tags: SampleCollectionId[] };
 
-/** Maisons dont les fioles sont en stock aujourd'hui. À élargir maison par maison. */
-export const SAMPLE_BRANDS_AVAILABLE: ReadonlySet<string> = new Set(["Reef"]);
+/**
+ * Maisons dont les fioles sont en stock aujourd'hui. À élargir maison par
+ * maison. Comparaison sur un libellé NORMALISÉ : le catalogue écrit la même
+ * maison « Reef » dans les listes de l'accueil et « Reef Perfumes » dans la
+ * boutique, et une égalité stricte laissait tomber la moitié des flacons.
+ */
+export const SAMPLE_BRANDS_AVAILABLE: ReadonlySet<string> = new Set(["reef"]);
+
+/** Clé de maison : minuscules, sans accents, et « Perfumes » retiré. */
+export function brandKey(brand: string): string {
+  return brand
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/\b(perfumes?|parfums?)\b/g, "")
+    .trim();
+}
+
+export function isBrandAvailable(brand: string): boolean {
+  return SAMPLE_BRANDS_AVAILABLE.has(brandKey(brand));
+}
 
 function build(): SampleProduct[] {
   const drafts: Draft[] = [];
@@ -266,7 +285,7 @@ function build(): SampleProduct[] {
   return Array.from(map.values()).map((d) => ({
     id: `smp-${slugify(d.brand)}-${slugify(d.name)}`,
     ...d,
-    available: SAMPLE_BRANDS_AVAILABLE.has(d.brand),
+    available: isBrandAvailable(d.brand),
   }));
 }
 
