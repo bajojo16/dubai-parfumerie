@@ -44,8 +44,9 @@ export const TOP_PRODUCTS: RailProduct[] = [
     name: "Reef 33",
     notes: "Frais · Aquatique · Boisé",
     family: "Frais",
-    // Packshot sur blanc, comme le rail Reef : les deux rangées voisinent.
-    image: "/assets/products/reef-33-fond-blanc.webp",
+    // Scène du mur ocre, exactement celle de la sélection saisonnière dont
+    // cette rangée est reprise. Le packshot sur blanc reste au rail Reef.
+    image: "/assets/products/reef-33.webp",
     price: { amount: 70, currency: CURRENCY },
   },
   {
