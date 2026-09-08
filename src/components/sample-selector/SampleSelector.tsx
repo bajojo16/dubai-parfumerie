@@ -819,6 +819,23 @@ export default function SampleSelector({
                   )}
                   {state === "man" && (
                     <div className="ss-ctrl">
+                      {/* Corbeille : retirer le flacon d'un coup. Le « − »
+                          descend d'une unité et faisait disparaitre la carte de
+                          la selection en arrivant a zero, sans jamais le dire —
+                          on distingue donc les deux gestes. */}
+                      <button
+                        className="ss-trash"
+                        aria-label={`Retirer ${label} de la sélection`}
+                        title="Retirer de la sélection"
+                        onClick={(e) => { e.stopPropagation(); addMan(p.id, -mq); }}
+                      >
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" aria-hidden>
+                          <path d="M4 7h16" />
+                          <path d="M10 4h4" />
+                          <path d="M6 7l1 12a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1l1-12" />
+                          <path d="M10 11v6M14 11v6" />
+                        </svg>
+                      </button>
                       <button aria-label="Retirer un" onClick={(e) => { e.stopPropagation(); addMan(p.id, -1); }}>−</button>
                       <span className="ss-q">{mq}</span>
                       <button
@@ -1034,6 +1051,8 @@ function StyleBlock() {
     .ss-ctrl button:hover{background:rgba(246,241,231,.16);color:#fff}
     .ss-ctrl .ss-q{font-family:'Cormorant Garamond',var(--font-display);font-weight:600;font-size:15px;color:#c2a15b;min-width:14px;text-align:center}
     .ss-ctrl .ss-keep{color:#c2a15b;font-size:12px;font-weight:500;padding:0 6px;width:auto;letter-spacing:.04em}
+    .ss-ctrl .ss-trash{color:#e2705f;width:20px;height:20px}
+    .ss-ctrl .ss-trash:hover{background:rgba(200,60,45,.22);color:#ff8a76}
     .ss-meta{padding:6px 8px 8px;text-align:center}
     .ss-fname{font-family:'Cormorant Garamond',var(--font-display);font-size:14px;font-weight:600;line-height:1.05;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ss-brand{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.45;margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
