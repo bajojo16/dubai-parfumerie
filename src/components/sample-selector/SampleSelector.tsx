@@ -21,7 +21,6 @@ import { addItem } from "@/lib/cart";
 import { norm } from "@/data/search-catalog";
 import {
   SAMPLE_PRODUCTS,
-  SAMPLE_BRANDS,
   SAMPLE_COLLECTIONS,
   COLLECTION_META,
   SAMPLE_FAMILIES,
@@ -131,13 +130,20 @@ export default function SampleSelector({
   coffretPrice = 24.9,
   coffretImage = "/assets/coffrets.jpg",
 }: SampleSelectorProps) {
-  const PRODUCTS = products;
+  /**
+   * Seuls les échantillons DISPONIBLES sont servis. Les autres portaient une
+   * étiquette « Bientôt disponible » et occupaient la grille sans pouvoir être
+   * choisis : le visiteur parcourait des dizaines de flacons pour découvrir, un
+   * par un, qu'il ne pouvait en prendre aucun. Ils restent dans les données,
+   * prêts à revenir dès que la maison est en stock.
+   */
+  const PRODUCTS = useMemo(() => products.filter((p) => p.available), [products]);
   const BRANDS = useMemo(
     () =>
-      products === SAMPLE_PRODUCTS
-        ? SAMPLE_BRANDS
-        : ["Toutes", ...Array.from(new Set(products.map((p) => p.brand)))],
-    [products],
+      // Les maisons se déduisent des produits RETENUS : proposer un filtre
+      // « Lattafa » qui ne rend aucune carte serait une impasse.
+      ["Toutes", ...Array.from(new Set(PRODUCTS.map((p) => p.brand))).sort((a, b) => a.localeCompare(b, "fr"))],
+    [PRODUCTS],
   );
 
   /**
