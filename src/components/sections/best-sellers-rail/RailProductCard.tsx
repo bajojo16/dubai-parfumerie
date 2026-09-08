@@ -199,6 +199,12 @@ export function RailProductCard({
           sizes="300px"
           style={{
             objectFit: "cover",
+            // Le cadrage centre posait les flacons trop haut : le bouchon
+            // frolait le bord superieur et la moitie basse restait vide. En
+            // remontant le point d'ancrage, on montre davantage du haut de
+            // l'image, ce qui fait redescendre le flacon dans le cadre.
+            // 44 % et pas moins : a 38 % la base du flacon se faisait couper.
+            objectPosition: "50% 44%",
             transform: lift ? "scale(1.05)" : "scale(1)",
             transition: reduceMotion ? "none" : "transform 500ms ease",
           }}
