@@ -14,9 +14,13 @@ export const TOP_EDITORIAL: EditorialCard = {
     "Les sillages les plus aimés de la maison, plébiscités par notre communauté semaine après semaine.",
   ctaLabel: "Voir tout le classement",
   href: "/best-sellers",
+  // Khamrah plutôt qu'Aurum : la rangée ne porte plus aucun Reef en vedette
+  // depuis qu'elle reprend la sélection saisonnière, et Khamrah y figure.
+  // Affiche extraite de la vidéo elle-même, pour qu'elle ne montre pas un
+  // autre flacon pendant le chargement.
   video: {
-    src: "/assets/videos/aurum.mp4",
-    poster: "/assets/reef/aurum.jpg",
+    src: "/assets/videos/dp_parfumerie-lattafa-khamrah-best-sellers-01.mp4",
+    poster: "/assets/videos/dp_parfumerie-lattafa-khamrah-best-sellers-01-poster.webp",
   },
 };
 

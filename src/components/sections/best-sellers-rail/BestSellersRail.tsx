@@ -390,6 +390,14 @@ export function BestSellersRail({
           flex: 1 1 auto;
           min-width: 0;
         }
+        /* Quand les cartes ne remplissent pas la piste — quatre produits au
+           lieu de cinq, par exemple — la place inutilisée s'ouvrait entre la
+           dernière carte et la vidéo, qui reste ancrée au bord droit. On la
+           redistribue aux cartes plutôt que de la laisser en trou : elles
+           s'elargissent jusqu'a toucher la video. Des qu'il y a debordement,
+           flex-grow ne s'applique plus et le defilement reprend la main. */
+        .bsr-scroll > * { flex: 1 0 auto; }
+        .bsr-scroll > * > * { width: 100% !important; }
         .bsr-split-editorial {
           /* 380px écrasait le rail : la carte vidéo pesait presque deux cartes
              produit. On la resserre pour qu'elle reste un accent, pas le sujet. */
