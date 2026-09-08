@@ -49,11 +49,17 @@ export const TOP_PRODUCTS: RailProduct[] = [
   {
     id: "top-vanilla-voyage",
     slug: "vanilla-voyage",
-    brand: "Maison Yara",
+    // La marque est « Maison Asrar » : c'est ce que porte le flacon et ce que
+    // dit le catalogue. « Maison Yara » venait d'un rapprochement avec Yara,
+    // qui est un parfum de Lattafa, pas une maison.
+    brand: "Maison Asrar",
     name: "Vanilla Voyage",
     notes: "Vanille · Tonka · Ambre",
     family: "Gourmand",
-    image: "/assets/products/dp_parfumerie-maison-asrar-vanilla-voyage-env-04.webp",
+    // Packshot sur fond blanc, comme les autres cartes de cette rangée. La
+    // mise en scène sur rayon de miel reste sur la fiche produit, où elle est
+    // seule et ne casse aucun alignement.
+    image: "/assets/products/vanilla-voyage-fond-blanc.webp",
     price: { amount: 49, currency: CURRENCY },
     compareAtPrice: { amount: 69.9, currency: CURRENCY },
     onSale: true,
