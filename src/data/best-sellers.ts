@@ -38,7 +38,11 @@ export const REEF_PRODUCTS: RailProduct[] = [
     name: "Reef 33",
     notes: "Frais · Aquatique · Boisé",
     family: "Frais",
-    image: "/assets/products/reef-33.webp",
+    // Fond blanc VOLONTAIREMENT : dans le rail « Découvrez la marque Reef »,
+    // les quatre flacons sont des packshots détourés sur blanc. Le rendu en
+    // scène (mur ocre, eau) casse la rangée — il reste sur la fiche produit et
+    // au catalogue, où il est seul. Une photo par section, pas une pour tout.
+    image: "/assets/products/reef-33-fond-blanc.webp",
     price: { amount: 70, currency: CURRENCY },
     compareAtPrice: { amount: 89.9, currency: CURRENCY },
     onSale: true,
