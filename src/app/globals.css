@@ -287,7 +287,12 @@ body {
    ════════════════════════════════════════════════════════════ */
 
 /* Empêche tout débordement horizontal */
-html, body { max-width: 100%; overflow-x: hidden; }
+/* `clip` et non `hidden` : `overflow-x: hidden` rend l'axe vertical `auto`,
+   ce qui fait du body un CONTENEUR DE DÉFILEMENT et casse toute barre collante
+   du site — la barre de filtres du sélecteur d'échantillons se décollait, et
+   le bloc d'assistance, lui posé plus bas, laissait un grand vide au-dessus.
+   `clip` coupe le débordement horizontal sans créer ce conteneur. */
+html, body { max-width: 100%; overflow-x: clip; }
 img, svg, video { max-width: 100%; }
 
 /* ── ProductCard : bouton « Ajouter au panier » ──────────────

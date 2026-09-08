@@ -204,14 +204,23 @@ export default function SampleSelector({
   // ─── Critères de complétion générés dynamiquement ──────────────────────────
   // 3 algos spéciaux + 1 critère par collection existante + « Par note ».
   const CRITERIA = useMemo(
-    () => [
-      ...SPECIAL_CRITERIA,
-      ...SAMPLE_COLLECTIONS.filter((c) => c.id !== "all").map((c) => ({
-        id: `col:${c.id}` as CritId,
-        label: c.label,
-      })),
-      { id: "family" as CritId, label: "Par note" },
-    ],
+    () => {
+      // « Best-sellers » figurait DEUX FOIS : une fois comme algorithme
+      // spécial, une fois comme collection du même nom. Deux boutons voisins,
+      // même libellé, résultats différents. On écarte les collections dont le
+      // libellé est déjà porté par un algorithme.
+      const taken = new Set(SPECIAL_CRITERIA.map((c) => c.label.toLowerCase()));
+      return [
+        ...SPECIAL_CRITERIA,
+        ...SAMPLE_COLLECTIONS.filter(
+          (c) => c.id !== "all" && !taken.has(c.label.toLowerCase()),
+        ).map((c) => ({
+          id: `col:${c.id}` as CritId,
+          label: c.label,
+        })),
+        { id: "family" as CritId, label: "Par note" },
+      ];
+    },
     [],
   );
 
