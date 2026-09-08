@@ -24,6 +24,16 @@ import {
   type SampleFamilyId,
 } from "@/data/sample-selector-products";
 
+/**
+ * Vignettes de remplacement pour le sélecteur. Une fiole se choisit sur une
+ * carte de 120 px : un flacon détouré sur fond clair s'y lit, une mise en
+ * scène non. Reef 33 arrivait avec son rendu sur mur ocre, qui reste sa photo
+ * ailleurs sur le site. Clé : maison normalisée + nom slugifié.
+ */
+const THUMB_OVERRIDES: Readonly<Record<string, string>> = {
+  "reef|reef-33": "/assets/products/reef-33-fond-blanc.webp",
+};
+
 /** Familles du sélecteur, déduites du texte disponible sur la référence. */
 function familyOf(text: string): SampleFamilyId {
   const s = text.toLowerCase();
@@ -78,10 +88,17 @@ export function sampleProductsFromCatalog(): SampleProduct[] {
     return [...m.entries()].sort((a, b) => b[1] - a[1] || b[0].length - a[0].length)[0][0];
   };
 
+  const thumb = (brand: string, name: string, fallback: string): string =>
+    THUMB_OVERRIDES[`${brandKey(brand)}|${slugify(name)}`] ?? fallback;
+
   // Les entrées éditorialisées d'abord : elles gagnent en cas de doublon.
   for (const p of SAMPLE_PRODUCTS) {
     if (!p.available) continue;
-    out.set(`${brandKey(p.brand)}|${slugify(p.name)}`, { ...p, brand: canonical(p.brand) });
+    out.set(`${brandKey(p.brand)}|${slugify(p.name)}`, {
+      ...p,
+      brand: canonical(p.brand),
+      image: thumb(p.brand, p.name, p.image),
+    });
   }
 
   for (const p of SEARCH_PRODUCTS) {
@@ -103,7 +120,7 @@ export function sampleProductsFromCatalog(): SampleProduct[] {
       id: `smp-cat-${slugify(p.brand)}-${slugify(p.name)}`,
       name: p.name,
       brand: canonical(p.brand),
-      image: p.image,
+      image: thumb(p.brand, p.name, p.image),
       price: p.price,
       family: familyOf([p.name, p.family, ...(p.notes ?? [])].filter(Boolean).join(" ")),
       popularity: Math.max(5, Math.min(100, Math.round(p.popularity))),

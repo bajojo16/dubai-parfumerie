@@ -608,19 +608,30 @@ export default function SampleSelector({
                 aria-label="Rechercher un parfum"
               />
             </div>
+            {/* Sélections éditoriales : elles supposent un classement que la
+                maison n'a pas encore établi sur ce catalogue-ci. Tant qu'il
+                n'existe pas, les pastilles restent VISIBLES mais inertes et
+                annoncées « bientôt » — les masquer aurait caché la promesse,
+                les laisser cliquables aurait rendu des grilles vides. Seule
+                « Toutes » agit. */}
             <div className="ss-filterrow ss-scroll" role="group" aria-label="Filtre Sélections">
               <span className="ss-flabel">Sélections</span>
               {SAMPLE_COLLECTIONS.map((c) => {
                 const active = c.id === filterCol;
+                const soon = c.id !== "all";
                 return (
                   <button
                     key={c.id}
-                    className={"ss-chip ss-col" + (active ? " ss-active" : "")}
+                    className={"ss-chip ss-col" + (active ? " ss-active" : "") + (soon ? " ss-chip-soon" : "")}
                     aria-pressed={active}
-                    onClick={() => setFilterCol(c.id)}
+                    aria-disabled={soon || undefined}
+                    disabled={soon}
+                    title={soon ? `${c.label} — bientôt disponible` : undefined}
+                    onClick={() => { if (!soon) setFilterCol(c.id); }}
                   >
                     {c.icon && <span style={{ fontSize: 10 }}>{c.icon}</span>}
                     {c.label}
+                    {soon && <em className="ss-chip-soonlab">bientôt</em>}
                   </button>
                 );
               })}
@@ -1053,6 +1064,10 @@ function StyleBlock() {
     .ss-ctrl .ss-keep{color:#c2a15b;font-size:12px;font-weight:500;padding:0 6px;width:auto;letter-spacing:.04em}
     .ss-ctrl .ss-trash{color:#e2705f;width:20px;height:20px}
     .ss-ctrl .ss-trash:hover{background:rgba(200,60,45,.22);color:#ff8a76}
+    .ss-chip-soon{opacity:.5;cursor:not-allowed;position:relative}
+    .ss-chip-soon:hover{border-color:inherit;background:inherit}
+    .ss-chip-soonlab{font-style:normal;font-size:8px;letter-spacing:.09em;text-transform:uppercase;
+      border:1px solid currentColor;border-radius:100px;padding:1px 5px;margin-inline-start:6px;opacity:.85}
     .ss-meta{padding:6px 8px 8px;text-align:center}
     .ss-fname{font-family:'Cormorant Garamond',var(--font-display);font-size:14px;font-weight:600;line-height:1.05;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .ss-brand{font-size:8.5px;letter-spacing:.1em;text-transform:uppercase;opacity:.45;margin:2px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
