@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>La barre d'action du sélecteur d'échantillons</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Jost:wght@200;300;400;500&display=swap" rel="stylesheet">
+<style>
+@page{size:A4;margin:0}
+:root{--gold:#C8901E;--ink:#15100B;--paper:#FDFBF6;--muted:#6d6256;--line:rgba(21,16,11,.14)}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:#fff}
+body{font-family:'Jost',system-ui,sans-serif;font-weight:300;color:var(--ink);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+.page{width:210mm;height:297mm;background:var(--paper);padding:20mm 18mm 15mm;position:relative;overflow:hidden;page-break-after:always;break-after:page}
+.page:last-child{page-break-after:auto}
+.foot{position:absolute;left:18mm;right:18mm;bottom:9mm;display:flex;justify-content:space-between;align-items:baseline;font-size:7.6pt;letter-spacing:.1em;text-transform:uppercase;color:#a1968a;border-top:1px solid var(--line);padding-top:2.5mm}
+.foot b{font-family:'Cormorant Garamond',serif;font-size:11pt;font-weight:600;color:var(--gold);letter-spacing:0}
+
+/* couverture */
+.cover{background:var(--ink);color:var(--paper);display:flex;flex-direction:column;justify-content:space-between;padding:26mm 20mm 18mm}
+.cover .mark{font-size:8.4pt;letter-spacing:.34em;text-transform:uppercase;color:var(--gold)}
+.cover h1{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:41pt;line-height:1.06;margin:0 0 6mm;letter-spacing:-.01em}
+.cover h1 em{font-style:italic;color:var(--gold);font-weight:500}
+.cover .lead{font-size:11.4pt;font-weight:200;line-height:1.62;max-width:132mm;color:rgba(253,251,246,.82)}
+.cover .rule{width:34mm;height:2px;background:var(--gold);margin:0 0 7mm}
+.cover .meta{font-size:8.6pt;letter-spacing:.15em;text-transform:uppercase;color:rgba(253,251,246,.5);line-height:2}
+.cover .meta b{color:var(--gold);font-weight:400}
+.cover .strip{display:flex;gap:0;margin:9mm 0 0;border-top:1px solid rgba(253,251,246,.16);padding-top:6mm}
+.cover .strip div{flex:1;padding-inline-end:6mm}
+.cover .strip u{display:block;text-decoration:none;font-family:'Cormorant Garamond',serif;font-size:23pt;font-weight:600;color:var(--gold);line-height:1}
+.cover .strip span{display:block;font-size:8pt;letter-spacing:.1em;text-transform:uppercase;color:rgba(253,251,246,.55);margin-top:2mm;line-height:1.5}
+
+/* titres */
+h2{font-family:'Cormorant Garamond',serif;font-weight:600;font-size:26pt;line-height:1.1;margin:0 0 3mm;letter-spacing:-.005em}
+h2 .num{color:var(--gold);font-size:15pt;display:block;letter-spacing:.14em;font-family:'Jost';font-weight:400;text-transform:uppercase;margin-bottom:2.5mm}
+h3{font-family:'Jost';font-weight:500;font-size:8.4pt;letter-spacing:.19em;text-transform:uppercase;color:var(--gold);margin:6mm 0 2mm}
+p{font-size:10.2pt;line-height:1.66;margin:0 0 3mm;color:#3a3129}
+p.lead{font-size:11.6pt;font-weight:200;line-height:1.62;color:#4a4038}
+.badges{display:flex;gap:5mm;align-items:center;margin:0 0 5mm;padding-bottom:3.5mm;border-bottom:1px solid var(--line)}
+.badge{font-size:8pt;letter-spacing:.13em;text-transform:uppercase;color:var(--muted)}
+.badge b{color:var(--ink);font-weight:400}
+.stars{color:var(--gold);letter-spacing:.08em}
+figure{margin:4mm 0 4mm}
+figure.bleed{margin-inline:-12mm;width:calc(100% + 24mm)}
+figure img{width:100%;display:block;border:1px solid var(--line)}
+figcaption{font-size:7.8pt;letter-spacing:.06em;color:#a1968a;margin-top:1.8mm;text-transform:uppercase}
+table{width:100%;border-collapse:collapse;font-size:9.2pt;margin:2mm 0 4mm}
+th{text-align:start;font-weight:500;font-size:7.6pt;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);padding:2mm 2mm 2mm 0;border-bottom:1px solid var(--gold)}
+td{padding:2mm 2mm 2mm 0;border-bottom:1px solid var(--line);color:#3a3129;vertical-align:top}
+td b{font-weight:500;color:var(--ink)}
+td.n{font-family:'Cormorant Garamond',serif;font-size:12pt;font-weight:600;color:var(--gold);white-space:nowrap}
+tr.hi td{background:rgba(200,144,30,.09)}
+ul{margin:0 0 3mm;padding-inline-start:4.5mm;font-size:10.2pt;line-height:1.64;color:#3a3129}
+li{margin-bottom:1.6mm}
+li::marker{color:var(--gold)}
+.k{font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--gold);font-size:11.5pt}
+code{font-family:ui-monospace,Menlo,monospace;font-size:8.6pt;background:rgba(21,16,11,.055);padding:.4mm 1.2mm;border-radius:2px}
+.pull{border-inline-start:2px solid var(--gold);padding:1mm 0 1mm 5mm;margin:4mm 0;font-family:'Cormorant Garamond',serif;font-size:14pt;line-height:1.38;color:var(--ink);font-weight:500}
+.toc{list-style:none;padding:0;margin:0}
+.toc li{display:flex;align-items:baseline;gap:3mm;padding:2.4mm 0;border-bottom:1px solid var(--line);font-size:10.2pt;margin:0}
+.toc li em{font-style:normal;font-family:'Cormorant Garamond',serif;font-size:13pt;font-weight:600;color:var(--gold);width:9mm;flex:0 0 9mm}
+.toc li span{flex:1}
+.toc li i{font-style:normal;font-size:8pt;letter-spacing:.11em;text-transform:uppercase;color:var(--muted);white-space:nowrap}
+.two{display:flex;gap:8mm}
+.two>*{flex:1}
+.note{font-size:9pt;color:var(--muted);line-height:1.6}
+.warn{background:rgba(176,67,47,.07);border-inline-start:2px solid #b0432f;padding:3mm 4mm;font-size:9.4pt;line-height:1.6;color:#3a3129;margin:3mm 0}
+.warn b{color:#8f3323;font-weight:500}
+</style></head><body>
+
+<!-- 1 · COUVERTURE -->
+<div class="page cover">
+  <div>
+    <p class="mark">Dubaï Parfumerie · Document de travail</p>
+  </div>
+  <div>
+    <div class="rule"></div>
+    <h1>La barre d'action<br>du sélecteur<br><em>d'échantillons</em></h1>
+    <p class="lead">Huit propositions pour la rendre plus simple à utiliser — chacune mesurée sur la page réelle, chacune illustrée d'une maquette. Aucune ligne du site n'a été modifiée.</p>
+    <div class="strip">
+      <div><u>76 px</u><span>de haut, sur<br>tous les écrans</span></div>
+      <div><u>49 %</u><span>de la barre pour<br>des cases vides</span></div>
+      <div><u>1 / 12</u><span>cases visibles<br>sur téléphone</span></div>
+      <div><u>2,95 : 1</u><span>de contraste sur<br>le bouton d'achat</span></div>
+    </div>
+  </div>
+  <div>
+    <p class="meta">8 septembre 2026<br><b>Page « Composez votre sélection d'échantillons »</b><br>31 flacons Reef Perfumes · coffrets de 1 · 3 · 6 · 12 · 20</p>
+  </div>
+</div>
+
+<!-- 2 · SOMMAIRE -->
+<div class="page">
+  <h2><span class="num">Sommaire</span>Ce que contient ce document</h2>
+  <p class="lead">La barre sombre fixée en bas de la page est le dernier élément que le visiteur voit avant d'acheter. Elle porte quatre choses à la fois : douze cases vides, un compteur, un réglage de taille de coffret et un bouton d'achat. Voici ce que ces quatre zones font réellement à l'écran, et huit changements possibles.</p>
+  <h3>Les huit propositions, par impact décroissant</h3>
+  <ul class="toc">
+    <li><em>01</em><span>Un bouton qui mène toujours quelque part</span><i class="stars">★★★★★</i><i>· effort M</i></li>
+    <li><em>02</em><span>Le prix, dans la barre</span><i class="stars">★★★★★</i><i>· effort S</i></li>
+    <li><em>03</em><span>Une pile de miniatures à la place des douze cases</span><i class="stars">★★★★☆</i><i>· effort M</i></li>
+    <li><em>04</em><span>Une barre qui change selon le moment du parcours</span><i class="stars">★★★★☆</i><i>· effort M</i></li>
+    <li><em>05</em><span>Retirer un flacon au doigt et au clavier</span><i class="stars">★★★★☆</i><i>· effort S</i></li>
+    <li><em>06</em><span>La taille du coffret : un réglage, pas une action</span><i class="stars">★★★☆☆</i><i>· effort M</i></li>
+    <li><em>07</em><span>Ne plus dire deux fois la même chose</span><i class="stars">★★★☆☆</i><i>· effort S</i></li>
+    <li><em>08</em><span>Contrastes et cibles au doigt</span><i class="stars">★★★☆☆</i><i>· effort S</i></li>
+  </ul>
+  <h3>Comment lire</h3>
+  <ul>
+    <li><b>Impact</b> — de une à cinq étoiles : effet attendu sur la mise au panier et sur le confort d'usage. Estimation, à confirmer en situation réelle.</li>
+    <li><b>Effort</b> — S : une journée à deux · M : trois à cinq jours · L : plus d'une semaine. Aucune proposition n'est en L.</li>
+    <li>Les couleurs des maquettes sont celles de la maison : encre, ivoire, or.</li>
+  </ul>
+  <div class="pull">Chaque constat vient d'une mesure prise sur la page, pas d'une impression. Chaque proposition se voit avant de se lire.</div>
+  <div class="foot"><span>Dubaï Parfumerie · Barre d'action du sélecteur d'échantillons</span><b>2</b></div>
+</div>
+
+<!-- 3 · ÉTAT DES LIEUX 1 -->
+<div class="page">
+  <h2><span class="num">État des lieux · 1</span>Quatre zones, une seule utile</h2>
+  <figure class="bleed"><img src="barre/annot-a1.png"><figcaption>Ordinateur 1440 px · aucun échantillon choisi · la barre mesure 76 px de haut</figcaption></figure>
+  <p>La barre garde <b>76 px de haut à toutes les largeurs d'écran</b>, du téléphone à l'ordinateur. Sur un écran de 1440 px, son contenu tient dans 1180 px et se répartit ainsi :</p>
+  <table>
+    <tr><th></th><th>Zone</th><th>Largeur</th><th>Part</th><th>Ce qu'elle apporte</th></tr>
+    <tr class="hi"><td class="n">1</td><td>Rangée d'emplacements</td><td class="n">575 → 592 px</td><td class="n">49 %</td><td>ne dit rien tant qu'aucun flacon n'est choisi, et ne les montre jamais tous ensuite. Bord à 1,49 : 1 de contraste</td></tr>
+    <tr><td class="n">2</td><td>Compteur « 0/12 sélectionnés »</td><td class="n">100 px</td><td class="n">8 %</td><td>répète ce que dit le bouton juste à côté, et ce que dit déjà le bandeau du haut</td></tr>
+    <tr><td class="n">3</td><td>Réglage « Total 1 3 6 12 20 »</td><td class="n">201 px</td><td class="n">17 %</td><td>un réglage, traité comme une action — et masqué sous 620 px de large</td></tr>
+    <tr><td class="n">4</td><td>Bouton d'action</td><td class="n">194 → 212 px</td><td class="n">17 %</td><td>désactivé pendant tout le parcours, texte à 2,95 : 1 de contraste</td></tr>
+  </table>
+  <h3>La rangée d'emplacements ne tient sur aucun écran</h3>
+  <p>Douze cases de 44 px espacées de 7 px réclament <b>605 px</b> ; la zone en offre 575 à 592. Vingt cases en réclament <b>1013 px</b>.</p>
+  <table>
+    <tr><th>Largeur d'écran</th><th>Place offerte</th><th>Cases visibles sur 12</th></tr>
+    <tr><td>1440 px — grand écran</td><td class="n">592 px</td><td>11 — la douzième est coupée</td></tr>
+    <tr><td>1024 px — petit portable</td><td class="n">427 px</td><td>7 (71 % de la rangée)</td></tr>
+    <tr class="hi"><td>768 px — tablette</td><td class="n">171 px</td><td><b>3</b> (28 %) — le réglage garde ses 201 px</td></tr>
+    <tr><td>620 px</td><td class="n">303 px</td><td>6 (50 %)</td></tr>
+    <tr class="hi"><td>390 px — téléphone</td><td class="n">66 → 82 px</td><td><b>1</b> sur 12</td></tr>
+  </table>
+  <div class="foot"><span>Dubaï Parfumerie · Barre d'action du sélecteur d'échantillons</span><b>3</b></div>
+</div>
+
+<!-- 4 · ÉTAT DES LIEUX 2 -->
+<div class="page">
+  <h2><span class="num">État des lieux · 2</span>Ce qui se perd hors du cadre</h2>
+  <figure class="bleed"><img src="barre/annot-a2.png"><figcaption>Coffret de 20 · les vingt flacons sont choisis, onze seulement sont visibles</figcaption></figure>
+  <p>La rangée réclame 1013 px, la zone en offre 592. <b>Neuf choix sur vingt disparaissent hors champ</b>, coupés net au milieu d'une case. Aucune flèche, aucune ombre, aucun compteur ne signale qu'il y a une suite. Le « 20 / 20 » est la seule information juste de toute la moitié gauche.</p>
+  <figure><img src="barre/annot-a3.png"><figcaption>Téléphone 390 px · six échantillons choisis sur douze</figcaption></figure>
+  <p><span class="k">1</span> &nbsp;72 px pour douze cases : une case et demie. La zone garde sa priorité de largeur alors qu'elle ne peut rien montrer. &nbsp;&nbsp;<span class="k">2</span> &nbsp;45 % de la barre pour le seul élément sur lequel on ne peut pas appuyer. Entre les deux, le réglage de taille a purement disparu.</p>
+  <h3>Les autres relevés</h3>
+  <ul>
+    <li><b>Contraste du bouton désactivé : 2,95 : 1.</b> Le minimum pour un texte est de 4,5 : 1. C'est l'élément le plus large de la barre, et il est illisible pendant tout le parcours.</li>
+    <li><b>Contraste du bord des cases vides : 1,49 : 1.</b> Le minimum pour un élément non textuel est de 3 : 1.</li>
+    <li><b>Le × de retrait n'existe qu'au survol de la souris.</b> Sur téléphone il n'y a pas de survol : aucun flacon ne peut être retiré depuis la barre. Au clavier non plus — la tabulation saute la rangée entière et repart dans la grille de produits.</li>
+    <li><b>Cibles tactiles</b> : les chiffres 1 / 3 / 6 / 12 / 20 font 28 × 25 px (44 × 44 recommandés au doigt) ; le × fait 17 × 17 px.</li>
+    <li><b>Le réglage de taille disparaît sous 620 px de large</b>, c'est-à-dire sur tous les téléphones.</li>
+    <li><b>Le prix n'apparaît nulle part.</b> On met au panier un coffret de 20 sans avoir jamais vu ce qu'il coûte, ni ce que coûtait celui de 6.</li>
+    <li><b>Le bandeau du haut dit déjà la même chose</b> : il porte un compteur « 6/12 » avec sa jauge dorée et un sélecteur « 1 3 6 12 20 ». Le même écran affiche deux compteurs et deux sélecteurs de taille.</li>
+  </ul>
+  <div class="foot"><span>Dubaï Parfumerie · Barre d'action du sélecteur d'échantillons</span><b>4</b></div>
+</div>
+
+<!-- 5 · P01 -->
+<div class="page">
+  <h2><span class="num">Proposition 01</span>Un bouton qui mène<br>toujours quelque part</h2>
+  <div class="badges"><span class="badge">Impact <b class="stars">★★★★★</b></span><span class="badge">Effort <b>M · trois à cinq jours</b></span><span class="badge">Vague <b>1</b></span></div>
+  <h3>Constat</h3>
+  <p>Le bouton ne s'active que lorsque le coffret est plein. Pour un coffret de douze, il reste donc éteint pendant <b>douze clics sur douze</b> ; pour un coffret de vingt, pendant vingt. Le plus gros élément de la barre, celui vers lequel l'œil va d'abord, est inerte du début à la fin — sauf à la dernière seconde. Et son libellé, « Encore 12 à choisir », est un reproche, pas une action.</p>
+  <p>Pendant ce temps, le bloc « Laissez la maison compléter », qui fait exactement ce qu'il faut, est perdu au milieu de la page et sort de l'écran dès qu'on descend dans la grille.</p>
+  <h3>Proposition</h3>
+  <p>Le bouton reste toujours actif. Son libellé dit ce qui va se passer : <b>« La maison complète · Ajouter »</b> tant que le coffret n'est pas plein, <b>« Ajouter au panier »</b> quand il l'est. Le compteur précise le partage : « 6 choisis · 6 libres ». Un second bouton, bordé et discret, offre l'autre voie : « Je choisis les 6 derniers ».</p>
+  <figure><img src="barre/mock-m1.png"><figcaption>En haut la barre actuelle · en bas la proposition</figcaption></figure>
+  <h3>Bénéfice pour le visiteur</h3>
+  <p>Il peut acheter à tout moment. Celui qui a trouvé trois coups de cœur et ne connaît pas les vingt-huit autres flacons n'est plus bloqué : il fait confiance à la maison pour le reste. C'est la proposition qui pèse le plus directement sur la mise au panier — aujourd'hui, un visiteur qui s'arrête à 8 sur 12 repart les mains vides alors qu'il était prêt à payer.</p>
+  <div class="foot"><span>01 · Un bouton qui mène toujours quelque part</span><b>5</b></div>
+</div>
+
+<!-- 6 · P02 -->
+<div class="page">
+  <h2><span class="num">Proposition 02</span>Le prix, dans la barre</h2>
+  <div class="badges"><span class="badge">Impact <b class="stars">★★★★★</b></span><span class="badge">Effort <b>S · une journée à deux</b></span><span class="badge">Vague <b>1</b></span></div>
+  <h3>Constat</h3>
+  <p>La barre décide d'un achat sans jamais montrer de montant. Le visiteur choisit entre un coffret de 1, 3, 6, 12 ou 20 sans savoir ce que chacun coûte, appuie sur « Ajouter au panier », et découvre le prix à l'étape suivante. C'est le seul endroit du site où l'on engage une dépense à l'aveugle.</p>
+  <h3>Proposition</h3>
+  <p>Le prix s'affiche dans la barre, juste avant le bouton, et suit le réglage de taille. Une seconde ligne, très discrète, donne le prix à l'unité : c'est l'argument des grands coffrets.</p>
+  <figure><img src="barre/mock-m2.png"><figcaption>Le prix suit la taille du coffret et se lit avant le clic</figcaption></figure>
+  <h3>Bénéfice pour le visiteur</h3>
+  <p>Il sait ce qu'il paie avant de cliquer, et il voit l'intérêt de monter en taille : 2,08 € l'échantillon à douze, contre 2,48 € à six. C'est le levier le plus simple pour augmenter le panier moyen, et il ne demande qu'une ligne de plus dans la barre.</p>
+  <div class="warn"><b>Préalable.</b> Le composant ne connaît aujourd'hui qu'un seul prix de coffret — 24,90 € — quelle que soit la taille choisie. Une grille de prix par taille reste à décider avant de pouvoir afficher quoi que ce soit. Les montants des maquettes sont des exemples.</div>
+  <div class="foot"><span>02 · Le prix, dans la barre</span><b>6</b></div>
+</div>
+
+<!-- 7 · P03 -->
+<div class="page">
+  <h2><span class="num">Proposition 03</span>Une pile de miniatures à la<br>place des douze cases</h2>
+  <div class="badges"><span class="badge">Impact <b class="stars">★★★★☆</b></span><span class="badge">Effort <b>M · trois à cinq jours</b></span><span class="badge">Vague <b>1</b></span></div>
+  <h3>Constat</h3>
+  <p>La rangée de cases occupe la moitié de la barre pour ne jamais montrer la sélection en entier. Elle ne tient pas à 1440 px, elle en montre 28 % à 768 px, et une case et demie sur un téléphone. À vingt emplacements, neuf choix sont hors champ. Et quand rien n'est choisi, ces douze rectangles gris ne disent rien du tout : ils occupent 575 px pour signifier « vide ».</p>
+  <h3>Proposition</h3>
+  <p>Cinq miniatures superposées en éventail, un compteur « +15 », et c'est tout : <b>140 px au lieu de 592</b>, largeur constante que le coffret fasse un ou vingt échantillons. La pile est un bouton : elle ouvre la liste complète (proposition 05). La place libérée accueille le prix et le réglage.</p>
+  <figure><img src="barre/mock-m3.png"><figcaption>En haut la barre actuelle avec un coffret de 20 · en bas la proposition</figcaption></figure>
+  <h3>Bénéfice pour le visiteur</h3>
+  <p>Il voit enfin quelque chose de juste. La rangée coupée laisse croire qu'on a choisi onze flacons quand on en a vingt ; la pile, elle, ne ment pas sur le nombre. Et sur téléphone, la barre redevient lisible.</p>
+  <div class="foot"><span>03 · Une pile de miniatures</span><b>7</b></div>
+</div>
+
+<!-- 8 · P04 -->
+<div class="page">
+  <h2><span class="num">Proposition 04</span>Une barre qui change<br>selon le moment</h2>
+  <div class="badges"><span class="badge">Impact <b class="stars">★★★★☆</b></span><span class="badge">Effort <b>M · trois à cinq jours</b></span><span class="badge">Vague <b>2</b></span></div>
+  <h3>Constat</h3>
+  <p>La barre affiche exactement la même chose à zéro sélection, à mi-parcours et à coffret plein : les mêmes quatre zones, aux mêmes largeurs, dans le même ordre. Les mesures le confirment — entre 0/12 et 12/12, la seule chose qui change est la couleur du bouton. Un visiteur qui arrive voit d'abord douze rectangles vides ; un visiteur qui a fini voit toujours son réglage de taille juste à côté du bouton d'achat.</p>
+  <h3>Proposition</h3>
+  <p>Trois états, un par moment du parcours. <b>Rien de choisi</b> : la barre présente le coffret et son prix, et propose de commencer. <b>En cours</b> : la pile, le compte des emplacements libres, le prix, le bouton qui complète. <b>Complet</b> : le liseré passe à l'or clair, tout s'efface sauf le prix et « Ajouter au panier », en plus grand.</p>
+  <figure><img src="barre/mock-m4.png"><figcaption>Les trois états, du premier regard à la mise au panier</figcaption></figure>
+  <h3>Bénéfice pour le visiteur</h3>
+  <p>À chaque instant, la barre ne montre que ce qui sert à l'instant suivant. Le début invite au lieu d'exhiber un vide ; la fin ne présente plus qu'une seule chose à faire.</p>
+  <div class="foot"><span>04 · Une barre qui change selon le moment</span><b>8</b></div>
+</div>
+
+<!-- 9 · P05 -->
+<div class="page">
+  <h2><span class="num">Proposition 05</span>Retirer un flacon au doigt<br>et au clavier</h2>
+  <div class="badges"><span class="badge">Impact <b class="stars">★★★★☆</b></span><span class="badge">Effort <b>S · une journée à deux</b></span><span class="badge">Vague <b>1</b></span></div>
+  <h3>Constat</h3>
+  <p>C'est le défaut le plus sévère, et le moins visible. Le petit × qui retire un flacon n'apparaît qu'au survol de la souris. Sur téléphone, il n'y a pas de survol : <b>on ne peut retirer aucun flacon depuis la barre.</b> Au clavier non plus — la vérification le confirme : depuis le bouton d'achat, la tabulation arrière saute la rangée entière et repart directement dans la grille de produits.</p>
+  <p>S'y ajoute un problème d'identification : les cases affichent un flacon dessiné, teinté par famille olfactive. Douze flacons de la même famille donnent douze cases identiques. Le visiteur ne sait pas ce qu'il a choisi.</p>
+  <figure><img src="barre/mock-m5.png"><figcaption>Un × permanent de 44 px, et une liste qui nomme enfin les flacons</figcaption></figure>
+  <h3>Bénéfice pour le visiteur</h3>
+  <p>Il peut revenir sur un choix. Aujourd'hui, sur téléphone, une erreur de sélection oblige à retrouver la carte dans une grille de trente et un produits — ou à tout recommencer.</p>
+  <div class="foot"><span>05 · Retirer un flacon au doigt et au clavier</span><b>9</b></div>
+</div>
+
+<!-- 10 · P06 -->
+<div class="page">
+  <h2><span class="num">Proposition 06</span>La taille du coffret :<br>un réglage, pas une action</h2>
+  <div class="badges"><span class="badge">Impact <b class="stars">★★★☆☆</b></span><span class="badge">Effort <b>M · trois à cinq jours</b></span><span class="badge">Vague <b>2</b></span></div>
+  <h3>Constat</h3>
+  <p>Le sélecteur « Total 1 3 6 12 20 » occupe 201 px — 17 % de la barre, presque autant que le bouton d'achat — et lui ressemble : même pilule, même pastille dorée pleine sur l'option retenue. Deux choses de nature très différente ont la même carrure. Puis, sous 620 px de large, il disparaît complètement : sur téléphone, changer la taille du coffret demande de remonter toute la page. Ses cibles font 28 × 25 px, sous les 44 × 44 recommandés au doigt.</p>
+  <h3>Proposition</h3>
+  <p>Un libellé discret, souligné en pointillé — <b>« Coffret de 12 · 24,90 € »</b> — qui ouvre une feuille où chaque taille montre son prix, au moment précis où l'on hésite entre six et vingt. Cette feuille existe à toutes les largeurs, téléphone compris, et ses lignes font 52 px de haut.</p>
+  <figure><img src="barre/mock-m6.png"><figcaption>Le réglage quitte le rang des actions et gagne sa feuille de choix</figcaption></figure>
+  <h3>Bénéfice pour le visiteur</h3>
+  <p>Un seul élément a l'allure d'un bouton dans la barre : celui qui achète. Et le choix de la taille se fait avec les prix sous les yeux, sur tous les écrans.</p>
+  <div class="foot"><span>06 · La taille du coffret : un réglage, pas une action</span><b>10</b></div>
+</div>
+
+<!-- 11 · P07 -->
+<div class="page">
+  <h2><span class="num">Proposition 07</span>Ne plus dire deux fois<br>la même chose</h2>
+  <div class="badges"><span class="badge">Impact <b class="stars">★★★☆☆</b></span><span class="badge">Effort <b>S · une journée à deux</b></span><span class="badge">Vague <b>2</b></span></div>
+  <h3>Constat</h3>
+  <p>Le bandeau du haut porte une pastille « 6/12 » avec une jauge dorée de douze traits, et un sélecteur « 12 échantillons · 1 3 6 12 20 ». La barre du bas porte un compteur « 6/12 sélectionnés » et un sélecteur « Total · 1 3 6 12 20 ». Le même écran affiche <b>deux compteurs et deux sélecteurs de taille</b>. En prime, le bouton dit une troisième fois la même chose : « Encore 6 à choisir ».</p>
+  <h3>Proposition</h3>
+  <p>Un seul endroit par information. Le bandeau du haut ne garde que ce qui lui revient — la recherche et les filtres, qui pilotent la grille juste en dessous. La barre du bas porte l'avancement, le prix, le réglage et l'achat, parce que c'est là que se prend la décision et que c'est toujours visible.</p>
+  <figure><img src="barre/mock-m7.png"><figcaption>En haut le doublon actuel, barré · en bas le partage proposé</figcaption></figure>
+  <h3>Bénéfice pour le visiteur</h3>
+  <p>Moins d'éléments à lire, et plus de doute sur lequel des deux sélecteurs fait foi. Le haut de page gagne au passage de la hauteur pour la grille de produits.</p>
+  <div class="foot"><span>07 · Ne plus dire deux fois la même chose</span><b>11</b></div>
+</div>
+
+<!-- 12 · P08 -->
+<div class="page">
+  <h2><span class="num">Proposition 08</span>Contrastes et cibles<br>au doigt</h2>
+  <div class="badges"><span class="badge">Impact <b class="stars">★★★☆☆</b></span><span class="badge">Effort <b>S · une journée à deux</b></span><span class="badge">Vague <b>1</b></span></div>
+  <h3>Constat — trois mesures, trois seuils manqués</h3>
+  <table>
+    <tr><th>Élément</th><th>Mesuré</th><th>Exigé</th><th></th></tr>
+    <tr class="hi"><td>Texte du bouton désactivé</td><td class="n">2,95 : 1</td><td>4,5 : 1</td><td>échec</td></tr>
+    <tr class="hi"><td>Bord des cases vides</td><td class="n">1,49 : 1</td><td>3 : 1</td><td>échec</td></tr>
+    <tr class="hi"><td>Cibles du sélecteur de taille</td><td class="n">28 × 25 px</td><td>44 × 44 px</td><td>échec</td></tr>
+  </table>
+  <p class="note">Le reste tient : le compteur doré est à 7,06 : 1, la mention « sélectionnés » à 6,28 : 1 et le libellé « Total » à 5,46 : 1.</p>
+  <h3>Proposition</h3>
+  <p>Le bouton en attente devient un contour doré sur fond sombre — <b>8,1 : 1</b>, lisible, et visiblement cliquable puisqu'il le sera (proposition 01). Les cases vides, si l'on en garde, passent au pointillé doré à <b>3,4 : 1</b> : le pointillé dit « à remplir », l'aplat gris ne disait rien. Les cibles du réglage montent à 44 × 44 px, les tailles rares passant dans la feuille de la proposition 06.</p>
+  <figure><img src="barre/mock-m8.png"><figcaption>À gauche l'état actuel, à droite la correction · ratios de contraste mesurés</figcaption></figure>
+  <h3>Bénéfice pour le visiteur</h3>
+  <p>La barre reste lisible dans une vitrine en plein jour, sur un écran de téléphone incliné, et pour un client de cinquante ans. C'est aussi ce que demandent les règles d'accessibilité auxquelles un site marchand est tenu.</p>
+  <div class="foot"><span>08 · Contrastes et cibles au doigt</span><b>12</b></div>
+</div>
+
+<!-- 13 · MOBILE -->
+<div class="page">
+  <h2><span class="num">Le cas du téléphone</span>Là où les huit propositions<br>se cumulent</h2>
+  <p class="lead">Le téléphone est le cas le plus dur : la rangée d'emplacements n'y montre qu'une case sur douze, le réglage de taille est masqué, et le bouton éteint occupe 45 % de la barre. C'est aussi celui où les propositions se renforcent le mieux.</p>
+  <figure><img src="barre/mock-m0.png"><figcaption>Téléphone 390 px · à gauche aujourd'hui, à droite la proposition</figcaption></figure>
+  <p>La rangée inutile disparaît au profit d'une pile de trois miniatures et d'un « +3 ». Le réglage de taille revient, sous la forme d'un libellé discret. Le prix apparaît. Et le bouton, sur toute la largeur, devient actionnable dès le premier flacon choisi.</p>
+  <p>La barre passe de une à deux lignes, ce qui la fait grandir d'une vingtaine de pixels. C'est le seul endroit du document où l'on propose de prendre <em>plus</em> de place, et c'est justifié : la ligne gagnée sert à un bouton sur lequel on peut appuyer, alors que les 76 px actuels servaient à une rangée qu'on ne pouvait pas lire.</p>
+  <div class="warn"><b>Point technique.</b> La hauteur de la barre est publiée dans une variable partagée (<code>--dp-bottombar-h</code>) que lit la barre d'aperçu mobile / tablette / ordinateur pour se placer juste au-dessus. Toute proposition qui change la hauteur doit conserver cette mesure dynamique — elle l'est déjà.</div>
+  <div class="foot"><span>Le cas du téléphone</span><b>13</b></div>
+</div>
+
+<!-- 14 · RÉCAP -->
+<div class="page">
+  <h2><span class="num">Récapitulatif</span>Impact, effort,<br>ordre de mise en œuvre</h2>
+  <table>
+    <tr><th>#</th><th>Proposition</th><th>Impact</th><th>Effort</th><th>Vague</th></tr>
+    <tr><td class="n">01</td><td>Un bouton qui mène toujours quelque part</td><td class="stars">★★★★★</td><td>M</td><td>1</td></tr>
+    <tr><td class="n">02</td><td>Le prix, dans la barre</td><td class="stars">★★★★★</td><td>S</td><td>1</td></tr>
+    <tr><td class="n">03</td><td>Une pile de miniatures à la place des douze cases</td><td class="stars">★★★★☆</td><td>M</td><td>1</td></tr>
+    <tr><td class="n">04</td><td>Une barre qui change selon le moment</td><td class="stars">★★★★☆</td><td>M</td><td>2</td></tr>
+    <tr><td class="n">05</td><td>Retirer un flacon au doigt et au clavier</td><td class="stars">★★★★☆</td><td>S</td><td>1</td></tr>
+    <tr><td class="n">06</td><td>La taille du coffret : un réglage, pas une action</td><td class="stars">★★★☆☆</td><td>M</td><td>2</td></tr>
+    <tr><td class="n">07</td><td>Ne plus dire deux fois la même chose</td><td class="stars">★★★☆☆</td><td>S</td><td>2</td></tr>
+    <tr><td class="n">08</td><td>Contrastes et cibles au doigt</td><td class="stars">★★★☆☆</td><td>S</td><td>1</td></tr>
+  </table>
+  <h3>Vague 1 — deux à trois jours, effet immédiat sur la vente</h3>
+  <p><span class="k">02</span> le prix &nbsp;→&nbsp; <span class="k">08</span> les contrastes &nbsp;→&nbsp; <span class="k">01</span> le bouton toujours actif &nbsp;→&nbsp; <span class="k">05</span> le retrait au doigt &nbsp;→&nbsp; <span class="k">03</span> la pile de miniatures.</p>
+  <p>L'ordre compte. Le prix et les contrastes ne dépendent de rien et se posent en quelques heures. Le bouton toujours actif s'appuie sur la logique de complétion automatique qui existe déjà dans le bloc « Laissez la maison compléter » : il s'agit de la rapatrier dans la barre, pas de l'écrire. La pile de miniatures vient en dernier, parce qu'elle libère la place dont le prix a besoin.</p>
+  <h3>Vague 2 — trois à cinq jours, mise au propre</h3>
+  <p><span class="k">06</span> la feuille de réglage &nbsp;→&nbsp; <span class="k">07</span> la fin du doublon avec le bandeau du haut &nbsp;→&nbsp; <span class="k">04</span> les trois états de la barre.</p>
+  <p>Ces trois-là se tiennent : la feuille de réglage rend possible le retrait du sélecteur hors de la barre, ce qui rend possible le nettoyage du bandeau du haut, ce qui rend possibles les trois états.</p>
+  <h3>Points de vigilance</h3>
+  <ul>
+    <li>La grille de prix par taille de coffret <b>reste à décider</b> : c'est le préalable à la proposition 02, et l'argument de la 06.</li>
+    <li>Seule la maison Reef Perfumes est en stock, soit 31 flacons pour un coffret qui peut en compter 20. La marge de choix est mince — la complétion automatique de la proposition 01 en devient d'autant plus utile.</li>
+    <li>Tout tient dans un seul fichier : la barre, ses styles et sa logique vivent dans le composant du sélecteur. Aucune des huit propositions ne touche au reste du site.</li>
+    <li>Aucune ligne n'a été modifiée pour produire ce document. Les captures montrent la page telle qu'elle est aujourd'hui.</li>
+  </ul>
+  <div class="foot"><span>Récapitulatif · impact, effort, ordre de mise en œuvre</span><b>14</b></div>
+</div>
+
+</body></html>
