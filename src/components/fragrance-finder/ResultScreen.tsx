@@ -24,7 +24,7 @@ import { addItem } from "@/lib/cart";
 import { QUESTIONS, STEP } from "./data/questions";
 import { QuestionScreen } from "./QuestionScreen";
 import type { ScoredProduct } from "./lib/recommend";
-import { combinations, freeItemsDiscount, familyName, familyText } from "./lib/recommend";
+import { combinations, freeItemsDiscount, bundleRate, familyName, familyText } from "./lib/recommend";
 import type { FamilyKey, QuizAnswers } from "./types";
 
 /**
@@ -170,7 +170,7 @@ export function ResultScreen({
     });
     setAdded((a) => a.map((v, i) => v || picked[i]));
     onToast(
-      `${units} flacon${units > 1 ? "s" : ""} au panier${discount > 0 ? " — le 3ᵉ offert" : ""}`,
+      `${units} flacon${units > 1 ? "s" : ""} au panier${discount > 0 ? ` — −${Math.round(bundleRate(units) * 100)} %` : ""}`,
     );
   }
 
@@ -327,30 +327,31 @@ export function ResultScreen({
               <i style={{ width: `${(Math.min(units, 3) / 3) * 100}%` }} />
             </div>
             <div className="dp-ff-jauge-lib">
-              <span>2 parfums</span>
-              <span>3 parfums · le 3ᵉ offert</span>
+              <span>2 parfums · −10 %</span>
+              <span>3 parfums · −20 %</span>
             </div>
             <p className="dp-ff-jauge-msg">
               {units === 0 && "Choisissez au moins un parfum pour voir votre offre."}
               {units === 1 && (
                 <>
-                  Encore <b>deux parfums</b> et le troisième vous est offert.
+                  Encore <b>un parfum</b> et vous passez à <b>−10 %</b>, deux et
+                  vous passez à <b>−20 %</b>.
                 </>
               )}
               {units === 2 && (
                 <>
-                  Encore <b>un parfum</b> et le moins cher des trois vous est
-                  offert
-                  {/* ce que le troisième ferait gagner, en euros : c'est le prix
-                      du flacon le moins cher de la sélection, pas un pourcentage */}
-                  {unitPrices.length > 0
-                    ? ` — soit ${money.format(Math.min(...unitPrices))} de moins.`
+                  Encore <b>un parfum</b> et vous passez de −10 % à <b>−20 %</b>
+                  {/* ce que le troisième ferait gagner en plus, en euros :
+                      l'écart entre les deux paliers sur le total courant */}
+                  {gross > 0
+                    ? ` — soit ${money.format(gross * (0.2 - 0.1))} de plus.`
                     : "."}
                 </>
               )}
               {units >= 3 && (
                 <>
-                  Offre appliquée : <b>{money.format(discount)}</b> offerts.
+                  Offre appliquée : <b>−20 %</b>, soit {money.format(discount)}{" "}
+                  de moins.
                 </>
               )}
             </p>
@@ -383,7 +384,7 @@ export function ResultScreen({
                   <span className="dp-ff-combi-prix">
                     {off > 0 && <s>{money.format(brut)}</s>}
                     <b>{money.format(brut - off)}</b>
-                    {off > 0 && <em>3ᵉ offert</em>}
+                    {off > 0 && <em>−{Math.round(bundleRate(count) * 100)} %</em>}
                   </span>
                 </button>
               );

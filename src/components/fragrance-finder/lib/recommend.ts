@@ -218,21 +218,30 @@ export function recommend(criteria: QuizCriteria, products = SEARCH_PRODUCTS): S
 /**
  * Offre unique de la boutique : DEUX ACHETÉS, LE TROISIÈME OFFERT.
  *
- * Elle remplace les deux paliers en pourcentage (−10 % à deux flacons, −20 % à
- * trois) qui coexistaient ici. Deux barèmes concurrents pour la même sélection
- * obligeaient le client à calculer pour savoir lequel s'appliquait, et le
- * −20 % ne correspondait à aucune offre annoncée ailleurs sur le site — la
- * pastille de la page des promotions dit « Achetez 2 = 3 offert », c'est elle
- * qui fait foi.
- *
- * On rend un MONTANT en euros et non un taux : le cadeau est le flacon le
- * moins cher de la sélection, sa valeur dépend donc des prix retenus, pas
- * seulement de leur nombre. Par tranche de trois — six flacons, deux offerts.
+ * Le montant en euros de la remise du lot, calculé sur le barème en
+ * pourcentage de `bundleRate` : −10 % à deux flacons, −20 % à trois et plus.
+ * Le nom reste `freeItemsDiscount` pour ne pas toucher ses appels.
  */
 export function freeItemsDiscount(prices: number[]): number {
-  const sorted = [...prices].sort((a, b) => a - b);
-  const free = Math.floor(sorted.length / 3);
-  return sorted.slice(0, free).reduce((sum, price) => sum + price, 0);
+  return Math.round(prices.reduce((sum, price) => sum + price, 0) * bundleRate(prices.length) * 100) / 100;
+}
+
+/**
+ * Taux de remise selon le NOMBRE de flacons retenus : −10 % à deux, −20 % à
+ * trois et au-delà (demande du 08/09/2026). Un taux et non un montant : le
+ * client lit une promesse constante, indépendante des prix de sa sélection.
+ *
+ * Ce barème remplace « le 3e offert », qui rendait la remise dépendante du
+ * flacon le moins cher — deux sélections de trois parfums au même total
+ * n'offraient pas la même chose. Il diverge en revanche de la pastille
+ * « Achetez 2 = 3 offert » de la page des promotions et des trios de
+ * l'accueil, tarifés sur cette autre règle : les deux barèmes cohabitent
+ * pour l'instant sur le site.
+ */
+export function bundleRate(count: number): number {
+  if (count >= 3) return 0.2;
+  if (count === 2) return 0.1;
+  return 0;
 }
 
 /**
