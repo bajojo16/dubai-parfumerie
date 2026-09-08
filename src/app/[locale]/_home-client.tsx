@@ -103,8 +103,8 @@ const products = [
   { id: 6, slug: "ahmed-al-maghribi-lor", image: "/assets/prod-6.jpg", brand: "Ahmed Al Maghribi", name: "L'Or Intense", price: 36.90, oldPrice: 64.90, rating: 4.8, reviews: 134, badge: "-43%", notes: "Épices · Ambre · Encens" },
 ];
 
-// Sélection « Les parfums de l'été » — liste dédiée : `products` alimente aussi
-// bestSellers et oilItems, la modifier changerait ces deux sections.
+// Sélection « Les parfums de la rentrée » — liste dédiée : `products` alimente
+// aussi bestSellers et oilItems, la modifier changerait ces deux sections.
 const summerProducts: (LuxeProduct & { id: number })[] = [
   { id: 101, image: "/assets/products/blueberry/blueberry-packshot.jpg", brand: "Arabiyat Prestige", title: "Blueberry Musk", price: 20, oldPrice: 25, href: "/produit/arabiyat-prestige-blueberry-musk" },
   { id: 102, image: "/assets/products/reef-33.webp", brand: "Reef Perfumes", title: "Reef 33", price: 70, href: "/produit/reef-33" },
@@ -526,7 +526,7 @@ export default function HomePageClient() {
         <div style={{ maxWidth: 1240, margin: "0 auto" }}>
           <SectionHeader
             eyebrow="Dernières arrivées"
-            title={<>Les parfums <em>de l&apos;été</em></>}
+            title={<>Les parfums <em>de la rentrée</em></>}
             subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
           />
           <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 280px))", justifyContent: "center", gap: 20 }}>
