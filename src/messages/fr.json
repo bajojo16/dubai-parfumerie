@@ -98,6 +98,16 @@
     "twin_missing": "Pas encore · prévenez-moi",
     "page_title": "Le jumeau de {name}",
     "page_description_priced": "{twin} à {price} au lieu de {retail} — soit {percent} % de moins. Le jumeau olfactif de {name} chez Dubaï Parfumerie.",
-    "page_description": "{twin} à {price} — le jumeau olfactif de {name} chez Dubaï Parfumerie."
+    "page_description": "{twin} à {price} — le jumeau olfactif de {name} chez Dubaï Parfumerie.",
+    "you_have": "Vous avez",
+    "the_original": "L'original",
+    "original_available": "L'original : {name}",
+    "no_original_eyebrow": "Original inconnu",
+    "no_original_title": "Nous ne connaissons pas encore l'original de {name}",
+    "no_original_text": "Nous ne nommons un original que lorsque la correspondance est documentée et sourcée — jamais une supposition. Celle-ci ne l'est pas encore. Laissez votre e-mail : vous serez prévenu·e dès qu'elle le sera.",
+    "share_text_original": "{name} à {price} s'inspire de {original}",
+    "page_title_original": "L'original de {name}",
+    "page_description_original": "{name} à {price} s'inspire de {original}. Le jumeau olfactif, chez Dubaï Parfumerie.",
+    "page_description_original_priced": "{name} à {price} s'inspire de {original}, vendu {retail} — soit {percent} % de moins. Chez Dubaï Parfumerie."
   }
 }

@@ -29,7 +29,13 @@ import {
   TWIN_SHOWCASE,
   type OlfactiveMatch,
 } from "@/data/olfactive-twins";
-import { REFERENCE_PERFUMES, FAMILY_LABELS, type ReferenceFamily, type ReferencePerfume } from "@/data/reference-perfumes";
+import {
+  REFERENCE_PERFUMES,
+  FAMILY_LABELS,
+  isOrientalReference,
+  type ReferenceFamily,
+  type ReferencePerfume,
+} from "@/data/reference-perfumes";
 import { DUPES_BY_REFERENCE, DUPE_BY_SLUG, dupesOf } from "@/data/catalogue/dp-dupes";
 
 // ─── Vocabulaire de notes ────────────────────────────────────────────────────
@@ -215,6 +221,85 @@ export const SUGGESTED_REFERENCE_IDS: string[] = [
   ...new Set([...Object.keys(CURATED_BY_REFERENCE), ...DUPES_BY_REFERENCE.keys()]),
 ];
 
+// ─── Garde-fou : jamais le même parfum des deux côtés ────────────────────────
+/**
+ * LA RÈGLE LA PLUS DURE DU MODULE, et celle qui manquait.
+ *
+ * `reference-perfumes.ts` contient aussi les parfums orientaux que la boutique
+ * vend — ils y sont pour que la recherche les trouve. Le moteur cherchait donc
+ * le jumeau de « Lattafa · Khamrah » parmi 447 produits dont Khamrah, et
+ * Khamrah gagnait : profil identique, jauge à 75 %, « rapprochement olfactif ».
+ * La carte annonçait « VOUS AIMEZ Lattafa · Khamrah » à gauche et « LE JUMEAU
+ * ORIENTAL Lattafa · Khamrah, 29,00 € » à droite.
+ *
+ * Deux identités, parce que les deux bases ne se recoupent pas parfaitement :
+ * le SLUG (l'identifiant de la référence est le même que celui du produit) et
+ * l'ÉTIQUETTE (même maison + même nom, aux accents et à la casse près). L'une
+ * ou l'autre suffit à disqualifier le candidat.
+ *
+ * Aucun repli : si le seul candidat est le parfum lui-même, on ne sert RIEN.
+ * C'est la règle du module — mieux vaut l'écran « pas encore de jumeau » qu'une
+ * absurdité.
+ */
+function isSamePerfume(ref: ReferencePerfume, product: SearchProduct): boolean {
+  if (norm(ref.id) === norm(product.slug)) return true;
+  return norm(ref.house) === norm(product.brand) && norm(ref.name) === norm(product.name);
+}
+
+/** Les candidats légitimes pour une référence : tout le catalogue, sauf elle-même. */
+function candidatesFor(ref: ReferencePerfume): ProductProfile[] {
+  return PRODUCT_PROFILES.filter((p) => !isSamePerfume(ref, p.product));
+}
+
+// ─── Sens inverse : du parfum de la boutique vers son original ───────────────
+/**
+ * « Quand je tape le nom d'un parfum, on doit me donner le nom du parfum
+ * original. » Le module ne savait répondre que dans un sens : original → jumeau
+ * oriental. Il répond maintenant dans les deux.
+ *
+ * La donnée existait déjà, simplement lue à l'envers :
+ *  - `OLFACTIVE_TWINS` porte `productHandle` → `referenceId` (paire relue) ;
+ *  - `DUPE_BY_SLUG` porte slug produit → `referenceId` (correspondance sourcée,
+ *    confiance « forte » ou « moyenne » seulement — c'est le filtre de
+ *    `dp-dupes.ts`, et il vaut ici aussi : Lattafa Yara, en confiance faible,
+ *    n'est donc pas servie).
+ *
+ * On indexe donc PAR PRODUIT. La paire relue prime sur la correspondance
+ * sourcée, comme dans le sens direct.
+ */
+type OriginalLink = { referenceId: string; origin: TwinOrigin; curatedKey?: string };
+
+const ORIGINAL_BY_PRODUCT: ReadonlyMap<string, OriginalLink> = (() => {
+  const m = new Map<string, OriginalLink>();
+  for (const [slug, dupe] of DUPE_BY_SLUG) {
+    if (dupe.referenceId) m.set(slug, { referenceId: dupe.referenceId, origin: "documented" });
+  }
+  for (const pair of OLFACTIVE_TWINS) {
+    m.set(pair.productHandle, { referenceId: pair.referenceId, origin: "curated", curatedKey: pair.key });
+  }
+  return m;
+})();
+
+/** slug produit → profil, et « maison + nom » normalisés → profil. */
+const PROFILE_BY_SLUG = new Map(PRODUCT_PROFILES.map((p) => [norm(p.product.slug), p]));
+const PROFILE_BY_LABEL = new Map(
+  PRODUCT_PROFILES.map((p) => [`${norm(p.product.brand)}|${norm(p.product.name)}`, p])
+);
+
+/**
+ * Le produit du catalogue que DÉSIGNE cette référence, quand elle en désigne un.
+ *
+ * Les identifiants coïncident dans l'écrasante majorité des cas (la référence
+ * `lattafa-khamrah` et le produit `lattafa-khamrah` sont le même flacon), mais
+ * pas toujours : le catalogue nomme parfois la déclinaison (« Asad (Yara
+ * Noir) »). On tente donc le slug d'abord, l'étiquette ensuite.
+ */
+function catalogueProductOf(ref: ReferencePerfume): ProductProfile | undefined {
+  return (
+    PROFILE_BY_SLUG.get(norm(ref.id)) ?? PROFILE_BY_LABEL.get(`${norm(ref.house)}|${norm(ref.name)}`)
+  );
+}
+
 // ─── Résultat ────────────────────────────────────────────────────────────────
 
 /** Niveau de proximité — l'interface ne doit PAS présenter tout comme équivalent. */
@@ -285,9 +370,38 @@ export function proximityTier(proximity: number): MatchStrength {
   return "apparente";
 }
 
+// ─── Sens de la réponse ──────────────────────────────────────────────────────
+/**
+ * DANS QUEL SENS la carte se lit.
+ *
+ *  - `vers-jumeau`   : le visiteur a tapé un ORIGINAL (Dior Sauvage, Aventus…)
+ *                      et on lui montre l'équivalent oriental du catalogue.
+ *                      À gauche l'original, à droite le jumeau.
+ *  - `vers-original` : le visiteur a tapé un parfum ORIENTAL de la boutique
+ *                      (Khamrah, 9PM, Ameerat Al Arab…) et on lui montre
+ *                      l'original dont il s'inspire. À gauche le flacon de la
+ *                      boutique, à droite l'original.
+ *
+ * Les deux portent EXACTEMENT la même paire : `reference` est toujours
+ * l'original, `product` toujours le produit du catalogue. Seule la lecture
+ * change — les libellés, l'ordre des deux blocs, et l'adresse partageable. Les
+ * boutons d'achat pointent le produit dans les deux cas : on ne vend pas
+ * l'original.
+ */
+export type TwinDirection = "vers-jumeau" | "vers-original";
+
 export type TwinResult = {
   reference: ReferencePerfume;
   product: SearchProduct;
+  /** sens de lecture de la carte (voir `TwinDirection`) */
+  direction: TwinDirection;
+  /**
+   * L'identifiant RÉELLEMENT CHERCHÉ — celui de l'original en sens direct,
+   * celui du parfum oriental en sens inverse. C'est lui qui donne son adresse
+   * au résultat (`/jumeau/<id>`) et qui dit quelle pastille est active :
+   * partager un résultat inverse doit rouvrir le résultat inverse.
+   */
+  queriedReferenceId: string;
   /** 0..1, déterministe */
   score: number;
   strength: MatchStrength;
@@ -513,7 +627,10 @@ function scoreProduct(ref: ReferencePerfume, profile: ProductProfile) {
  */
 export function rankTwins(ref: ReferencePerfume, limit = 3): TwinResult[] {
   const documented = new Set(dupesOf(ref.id));
-  const scored = PRODUCT_PROFILES.map((profile) => ({ profile, ...scoreProduct(ref, profile) }));
+  // `candidatesFor` retire la référence elle-même : un parfum n'est jamais son
+  // propre jumeau, pas même en bas d'un classement de debug.
+  const scored = candidatesFor(ref).map((profile) => ({ profile, ...scoreProduct(ref, profile) }));
+  if (!scored.length) return [];
 
   // Les dupes documentés passent devant, entre eux par score ; le reste suit.
   scored.sort(
@@ -538,7 +655,9 @@ function buildResult(
   ref: ReferencePerfume,
   profile: ProductProfile,
   s: Scored,
-  origin: TwinOrigin = "scored"
+  origin: TwinOrigin = "scored",
+  direction: TwinDirection = "vers-jumeau",
+  queriedReferenceId: string = ref.id
 ): TwinResult {
   const verified = isDupe(profile, s);
   const proximity = computeProximity(origin, s.family, s.accords);
@@ -546,6 +665,8 @@ function buildResult(
   return {
     reference: ref,
     product: profile.product,
+    direction,
+    queriedReferenceId,
     score: Math.round(s.score * 1000) / 1000,
     origin,
     proximity,
@@ -581,10 +702,20 @@ function buildResult(
  * l'écran « pas encore de jumeau », jamais un pis-aller.
  */
 export function findTwin(ref: ReferencePerfume): TwinResult | null {
+  // ── SENS INVERSE, en premier ────────────────────────────────────────────────
+  // Une référence orientale est d'abord un produit de la boutique : on lui doit
+  // son ORIGINAL, pas un voisin statistique. Et si nous ne connaissons pas son
+  // original, la réponse est « rien » — jamais un autre flacon oriental
+  // présenté comme son jumeau, ce qui n'aurait aucun sens (deux fois le même
+  // rayon, zéro euro d'économie).
+  if (isOrientalReference(ref)) return findOriginal(ref);
+
   const curatedKey = CURATED_BY_REFERENCE[ref.id];
   if (curatedKey) {
     const curated = CURATED_BY_KEY.get(curatedKey);
-    const profile = curated && PRODUCT_PROFILES.find((p) => p.product.slug === curated.productHandle);
+    const profile =
+      curated &&
+      PRODUCT_PROFILES.find((p) => p.product.slug === curated.productHandle && !isSamePerfume(ref, p.product));
     if (curated && profile) {
       const result = buildResult(ref, profile, scoreProduct(ref, profile), "curated");
       // Relue à la main par l'équipe : c'est un jumeau par construction, quel
@@ -598,7 +729,7 @@ export function findTwin(ref: ReferencePerfume): TwinResult | null {
   // catalogue tient encore le produit gagne ; s'il en a plusieurs, le score
   // départage entre eux seulement.
   const documented = dupesOf(ref.id)
-    .map((slug) => PRODUCT_PROFILES.find((p) => p.product.slug === slug))
+    .map((slug) => PRODUCT_PROFILES.find((p) => p.product.slug === slug && !isSamePerfume(ref, p.product)))
     .filter((p): p is ProductProfile => Boolean(p));
   if (documented.length) {
     const best = documented
@@ -618,6 +749,56 @@ export function findTwin(ref: ReferencePerfume): TwinResult | null {
   // millièmes avec quatre accords exacts et un dossier certifié. Ne regarder que
   // le premier revenait à répondre « pas de jumeau » alors qu'on en tenait un.
   return rankTwins(ref, PRODUCT_PROFILES.length).find((r) => r.verified) ?? null;
+}
+
+/**
+ * L'ORIGINAL dont s'inspire un parfum oriental de la boutique — ou `null`.
+ *
+ * Trois conditions, toutes nécessaires, et aucun repli sur le calcul :
+ *
+ *  1. la référence doit désigner un produit du catalogue (c'est un flacon que
+ *     nous vendons, avec son packshot et son prix — le côté gauche de la carte) ;
+ *  2. ce produit doit avoir un original CONNU : paire relue ou correspondance
+ *     sourcée en confiance « forte » ou « moyenne » ;
+ *  3. cet original doit exister dans la base des références, sans quoi nous
+ *     n'aurions ni sa famille, ni ses accords, ni son prix indicatif — donc ni
+ *     jauge ni économie chiffrée.
+ *
+ * Le résultat porte exactement la même paire qu'en sens direct (`reference` =
+ * l'original, `product` = le flacon de la boutique) : tout le reste de la
+ * chaîne — jauge, badge, source, économie, panier — continue de fonctionner
+ * sans savoir dans quel sens on l'a lue.
+ */
+function findOriginal(ref: ReferencePerfume): TwinResult | null {
+  const profile = catalogueProductOf(ref);
+  if (!profile) return null;
+
+  const link = ORIGINAL_BY_PRODUCT.get(profile.product.slug);
+  if (!link) return null;
+
+  const original = REFERENCE_BY_ID.get(link.referenceId);
+  if (!original) return null;
+
+  // Le garde-fou vaut dans ce sens aussi : un original qui désignerait le
+  // flacon lui-même (donnée fautive) ne doit rien servir du tout.
+  if (isSamePerfume(original, profile.product)) return null;
+
+  const result = buildResult(
+    original,
+    profile,
+    scoreProduct(original, profile),
+    link.origin,
+    "vers-original",
+    ref.id
+  );
+  const curated = link.curatedKey ? CURATED_BY_KEY.get(link.curatedKey) : undefined;
+  return {
+    ...result,
+    strength: "tres-proche",
+    verified: true,
+    score: Math.max(result.score, 0.9),
+    ...(curated ? { curated } : {}),
+  };
 }
 
 /** Raccourci par identifiant — l'interface ne manipule que des ids. `null` = pas de jumeau. */
@@ -799,5 +980,10 @@ if (process.env.NODE_ENV !== "production") {
   }
 }
 
-export { REFERENCE_PERFUMES, FAMILY_LABELS };
+// `isOrientalReference` est réexporté parce que l'interface en a besoin pour
+// dire CE QUI MANQUE quand il n'y a pas de résultat (« pas encore de jumeau »
+// pour un original, « original inconnu » pour un flacon de la boutique) — et
+// qu'elle ne doit pas importer `reference-perfumes.ts` directement : ce fichier
+// pèse la base entière et reste hors du bundle initial.
+export { REFERENCE_PERFUMES, FAMILY_LABELS, isOrientalReference };
 export type { ReferencePerfume, SearchProduct, OlfactiveMatch };

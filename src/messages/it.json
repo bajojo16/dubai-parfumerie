@@ -98,6 +98,16 @@
     "twin_missing": "Non ancora · avvisami",
     "page_title": "Il gemello di {name}",
     "page_description_priced": "{twin} a {price} invece di {retail} — il {percent} % in meno. Il gemello olfattivo di {name} da Dubaï Parfumerie.",
-    "page_description": "{twin} a {price} — il gemello olfattivo di {name} da Dubaï Parfumerie."
+    "page_description": "{twin} a {price} — il gemello olfattivo di {name} da Dubaï Parfumerie.",
+    "you_have": "Hai",
+    "the_original": "L'originale",
+    "original_available": "L'originale: {name}",
+    "no_original_eyebrow": "Originale sconosciuto",
+    "no_original_title": "Non conosciamo ancora l'originale di {name}",
+    "no_original_text": "Nominiamo un originale solo quando la corrispondenza è documentata e con fonte, mai per supposizione. Questa non lo è ancora. Lascia la tua email: ti avvisiamo appena lo sarà.",
+    "share_text_original": "{name} a {price} si ispira a {original}",
+    "page_title_original": "L'originale di {name}",
+    "page_description_original": "{name} a {price} si ispira a {original}. Il gemello olfattivo, da Dubaï Parfumerie.",
+    "page_description_original_priced": "{name} a {price} si ispira a {original}, venduto a {retail} — il {percent} % in meno. Da Dubaï Parfumerie."
   }
 }

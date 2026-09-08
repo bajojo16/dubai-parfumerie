@@ -98,6 +98,16 @@
     "twin_missing": "Пока нет · сообщите мне",
     "page_title": "Близнец {name}",
     "page_description_priced": "{twin} за {price} вместо {retail} — на {percent} % дешевле. Ольфакторный близнец {name} в Dubaï Parfumerie.",
-    "page_description": "{twin} за {price} — ольфакторный близнец {name} в Dubaï Parfumerie."
+    "page_description": "{twin} за {price} — ольфакторный близнец {name} в Dubaï Parfumerie.",
+    "you_have": "У вас есть",
+    "the_original": "Оригинал",
+    "original_available": "Оригинал: {name}",
+    "no_original_eyebrow": "Оригинал неизвестен",
+    "no_original_title": "Мы пока не знаем оригинал аромата {name}",
+    "no_original_text": "Мы называем оригинал только тогда, когда соответствие задокументировано и подтверждено источником, — и никогда по догадке. Здесь этого пока нет. Оставьте почту, и мы напишем, как только появится.",
+    "share_text_original": "{name} за {price} вдохновлён ароматом {original}",
+    "page_title_original": "Оригинал аромата {name}",
+    "page_description_original": "{name} за {price} вдохновлён ароматом {original}. Ольфакторный близнец в Dubaï Parfumerie.",
+    "page_description_original_priced": "{name} за {price} вдохновлён ароматом {original}, который стоит {retail}, — на {percent} % дешевле. В Dubaï Parfumerie."
   }
 }

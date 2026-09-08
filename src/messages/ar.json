@@ -98,6 +98,16 @@
     "twin_missing": "ليس بعد · أخبرني",
     "page_title": "توأم {name}",
     "page_description_priced": "{twin} بسعر {price} بدلاً من {retail} — أي أقل بنسبة {percent} %. التوأم العطري لـ {name} لدى Dubaï Parfumerie.",
-    "page_description": "{twin} بسعر {price} — التوأم العطري لـ {name} لدى Dubaï Parfumerie."
+    "page_description": "{twin} بسعر {price} — التوأم العطري لـ {name} لدى Dubaï Parfumerie.",
+    "you_have": "أنت تملك",
+    "the_original": "العطر الأصلي",
+    "original_available": "الأصلي: {name}",
+    "no_original_eyebrow": "الأصل غير معروف",
+    "no_original_title": "لا نعرف بعد العطر الأصلي الذي استُلهم منه {name}",
+    "no_original_text": "لا نذكر عطرًا أصليًا إلا عندما يكون التطابق موثّقًا ومسندًا إلى مصدر، ولا نعتمد على التخمين أبدًا. هذا التطابق ليس كذلك بعد. اترك بريدك الإلكتروني وسنخبرك فور توثيقه.",
+    "share_text_original": "{name} بسعر {price} مستوحى من {original}",
+    "page_title_original": "العطر الأصلي لـ {name}",
+    "page_description_original": "{name} بسعر {price} مستوحى من {original}. التوأم العطري لدى Dubaï Parfumerie.",
+    "page_description_original_priced": "{name} بسعر {price} مستوحى من {original} الذي يُباع بـ {retail} — أي أقل بنسبة {percent} %. لدى Dubaï Parfumerie."
   }
 }

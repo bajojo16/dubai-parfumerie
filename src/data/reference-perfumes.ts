@@ -76,7 +76,115 @@ export type ReferencePerfume = {
   family: ReferenceFamily;
   /** 3 à 6 notes dominantes réelles de la composition */
   accords: string[];
+  /**
+   * Parfum de PARFUMERIE ORIENTALE — le registre que la boutique vend, et non
+   * un original de grande maison. Voir `ORIENTAL_HOUSES` : le drapeau est
+   * DÉRIVÉ de la maison, ce champ n'existe que pour trancher un cas
+   * particulier à la main sans toucher à la liste des maisons.
+   *
+   * Il ne se met JAMAIS à `false` pour désigner un original : l'absence de
+   * champ suffit. Poser `oriental: true` sur une entrée d'une maison qui n'est
+   * pas dans `ORIENTAL_HOUSES` la bascule quand même en sens inverse.
+   */
+  oriental?: true;
 };
+
+// ─── Les maisons orientales de la boutique ───────────────────────────────────
+/**
+ * POURQUOI CETTE LISTE EXISTE.
+ *
+ * Cette base sert de LISTE CHERCHABLE au module « jumeau olfactif », et elle
+ * contient deux populations qui n'ont rien à voir :
+ *
+ *  1. les grands parfums du marché — Dior Sauvage, Creed Aventus, Kilian
+ *     Angels' Share… : ce sont les ORIGINAUX, ceux dont on cherche l'équivalent
+ *     oriental au catalogue ;
+ *  2. les parfums de parfumerie orientale — Lattafa Khamrah, Afnan 9PM,
+ *     Asdaaf Ameerat Al Arab… : ce sont, pour la plupart, les produits QUE LA
+ *     BOUTIQUE VEND, ou leurs voisins immédiats.
+ *
+ * Les seconds sont ici volontairement : le visiteur tape aussi bien « Khamrah »
+ * que « Sauvage », et la recherche doit le trouver. Mais le moteur, lui, ne
+ * peut pas leur répondre de la même façon. Tant qu'il l'ignorait, chercher
+ * « Khamrah » servait « Lattafa · Khamrah » des DEUX côtés de la carte : le
+ * jumeau de Khamrah, c'était Khamrah.
+ *
+ * Ce drapeau dit donc DANS QUEL SENS répondre :
+ *  - référence classique  → on cherche son jumeau au catalogue (« vers-jumeau ») ;
+ *  - référence orientale  → on cherche l'ORIGINAL dont elle s'inspire
+ *                           (« vers-original »), et rien si on ne le connaît pas.
+ *
+ * POURQUOI UNE LISTE DE MAISONS plutôt qu'un champ sur chacune des ~900
+ * entrées concernées : la propriété est une propriété de la MAISON, pas du
+ * flacon. Une nouvelle entrée Lattafa est orientale sans que personne ait à y
+ * penser, et la règle se relit d'un seul coup d'œil au lieu de se vérifier
+ * ligne à ligne sur 4 000 entrées. Le champ `oriental` du type reste là pour
+ * l'exception.
+ *
+ * CE QUI N'EST PAS DANS LA LISTE, ET POURQUOI. Les maisons du Golfe qui jouent
+ * le rôle d'ORIGINAL — Amouage, Gissah, Kajal, Arabian Oud, The Spirit of
+ * Dubai, Hind Al Oud, Blend Oud, The House of Oud, Attar Collection,
+ * Fragrance du Bois — n'y figurent pas : `dp-dupes.json` les cite comme
+ * originaux de plusieurs produits du catalogue (Gissah One & Only, Amouage
+ * Honour Man, Amouage Outlands…). Les basculer en sens inverse reviendrait à
+ * chercher l'original d'un original.
+ */
+export const ORIENTAL_HOUSES: ReadonlySet<string> = new Set(
+  [
+    "Afnan",
+    "Ahmed Al Maghribi",
+    "Ajmal",
+    "Al Haramain",
+    "Al Majed Oud",
+    "Al Rehab",
+    "Arabiyat",
+    "Arabiyat Prestige",
+    "Ard Al Zaafaran",
+    "Armaf",
+    "Asdaaf",
+    "Atelier Oud",
+    "Banafa for Oud",
+    "Dubaï Parfumerie",
+    "Emir",
+    "Fragrance World",
+    "French Avenue",
+    "Gulf Orchid",
+    "Hamidi",
+    "Khadlaj",
+    "Khadlaj Perfumes",
+    "Khaleej Scent",
+    "Lattafa",
+    "Maison Alhambra",
+    "Maison Asrar",
+    "My Perfumes",
+    "Nabeel",
+    "Ne'emah",
+    "Osma Perfumes",
+    "Oud Elite",
+    "Paris Corner",
+    "Rasasi",
+    "Rayhaan",
+    "Reef",
+    "Reef Perfumes",
+    "Risala",
+    "Surrati",
+    "Swiss Arabian",
+    "Zimaya",
+  ].map((h) => h.toLowerCase())
+);
+
+/** La maison vend-elle le registre oriental de la boutique ? (casse indifférente) */
+export function isOrientalHouse(house: string | undefined | null): boolean {
+  return ORIENTAL_HOUSES.has((house ?? "").trim().toLowerCase());
+}
+
+/**
+ * La référence est-elle un parfum oriental de boutique ? Le champ `oriental`
+ * prime, la maison décide sinon.
+ */
+export function isOrientalReference(ref: Pick<ReferencePerfume, "house" | "oriental">): boolean {
+  return ref.oriental === true || isOrientalHouse(ref.house);
+}
 
 export const REFERENCE_PERFUMES: ReferencePerfume[] = [
   // ─── Acqua di Parma ────────────────────────────────────────────────────────

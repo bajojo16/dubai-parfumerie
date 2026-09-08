@@ -48,8 +48,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   const t = await getTranslations({ locale, namespace: "olfactiveTwin" });
   const name = `${reference.house} · ${reference.name}`;
-  const title = t("page_title", { name });
   const twin = findTwinById(id);
+  // L'ADRESSE MARCHE DANS LES DEUX SENS : `id` est soit l'identifiant d'un
+  // original (« le jumeau de Dior · Sauvage »), soit le slug d'un parfum de la
+  // boutique (« l'original de Lattafa · Khamrah »). Le titre doit dire lequel,
+  // sans quoi le lien partagé annonce l'inverse de ce que la page montre.
+  const reversed = twin?.direction === "vers-original";
+  const title = reversed ? t("page_title_original", { name }) : t("page_title", { name });
 
   if (!twin) {
     return {
@@ -62,19 +67,33 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   }
 
   const twinName = `${twin.product.brand} · ${twin.product.name}`;
+  const originalName = `${twin.reference.house} · ${twin.reference.name}`;
   const price = twin.product.price ?? 0;
-  const savings = savingsOf(id, price);
+  // `twin.reference.id` et non `id` : en sens inverse, `id` désigne le flacon
+  // de la boutique, et le prix boutique constaté est celui de l'ORIGINAL.
+  const savings = savingsOf(twin.reference.id, price);
+  const retail = savings ? `≈ ${Math.round(savings.retail).toLocaleString("fr-FR")} €` : "";
   // Le prix de l'original n'entre dans la description QUE s'il est connu : la
   // règle de `reference-prices.ts` vaut aussi pour les métadonnées.
-  const description = savings
-    ? t("page_description_priced", {
-        twin: twinName,
-        price: euros(locale, price),
-        retail: `≈ ${Math.round(savings.retail).toLocaleString("fr-FR")} €`,
-        percent: savings.percent,
-        name,
-      })
-    : t("page_description", { twin: twinName, price: euros(locale, price), name });
+  const description = reversed
+    ? savings
+      ? t("page_description_original_priced", {
+          name,
+          price: euros(locale, price),
+          original: originalName,
+          retail,
+          percent: savings.percent,
+        })
+      : t("page_description_original", { name, price: euros(locale, price), original: originalName })
+    : savings
+      ? t("page_description_priced", {
+          twin: twinName,
+          price: euros(locale, price),
+          retail,
+          percent: savings.percent,
+          name,
+        })
+      : t("page_description", { twin: twinName, price: euros(locale, price), name });
 
   return {
     title,
@@ -96,6 +115,13 @@ export default async function JumeauPage({ params }: Params) {
 
   const t = await getTranslations({ locale, namespace: "olfactiveTwin" });
   const reference = getReference(id)!;
+  // Même bascule que dans les métadonnées : le titre visible doit annoncer ce
+  // que la carte montrera — le jumeau d'un original, ou l'original d'un flacon
+  // de la boutique.
+  const reversed = findTwinById(id)?.direction === "vers-original";
+  const heading = reversed
+    ? t("page_title_original", { name: `${reference.house} · ${reference.name}` })
+    : t("page_title", { name: `${reference.house} · ${reference.name}` });
 
   return (
     <main style={{ background: "var(--surface-page, #FDFBF6)", minHeight: "100vh", padding: "56px 24px 72px" }}>
@@ -114,7 +140,7 @@ export default async function JumeauPage({ params }: Params) {
             {t("eyebrow")}
           </div>
           <h1 style={{ fontFamily: "var(--font-display)", fontSize: 36, color: "#2C2620", margin: "0 0 8px" }}>
-            {t("page_title", { name: `${reference.house} · ${reference.name}` })}
+            {heading}
           </h1>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: 15, color: "#6A655D", margin: 0 }}>{t("subtitle")}</p>
         </div>

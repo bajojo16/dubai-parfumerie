@@ -98,6 +98,16 @@
     "twin_missing": "Noch nicht · benachrichtigt mich",
     "page_title": "Der Zwilling von {name}",
     "page_description_priced": "{twin} für {price} statt {retail} — {percent} % weniger. Der olfaktorische Zwilling von {name} bei Dubaï Parfumerie.",
-    "page_description": "{twin} für {price} — der olfaktorische Zwilling von {name} bei Dubaï Parfumerie."
+    "page_description": "{twin} für {price} — der olfaktorische Zwilling von {name} bei Dubaï Parfumerie.",
+    "you_have": "Sie besitzen",
+    "the_original": "Das Original",
+    "original_available": "Das Original: {name}",
+    "no_original_eyebrow": "Original unbekannt",
+    "no_original_title": "Das Original von {name} kennen wir noch nicht",
+    "no_original_text": "Wir nennen ein Original nur, wenn die Entsprechung dokumentiert und belegt ist — niemals eine Vermutung. Diese ist es noch nicht. Hinterlassen Sie Ihre E-Mail, wir melden uns, sobald sie es ist.",
+    "share_text_original": "{name} für {price} ist von {original} inspiriert",
+    "page_title_original": "Das Original von {name}",
+    "page_description_original": "{name} für {price} ist von {original} inspiriert. Der olfaktorische Zwilling bei Dubaï Parfumerie.",
+    "page_description_original_priced": "{name} für {price} ist von {original} inspiriert, das {retail} kostet — {percent} % weniger. Bei Dubaï Parfumerie."
   }
 }

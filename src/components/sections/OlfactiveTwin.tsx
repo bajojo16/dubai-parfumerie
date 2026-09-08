@@ -50,7 +50,7 @@ import {
   TWIN_SHOWCASE,
   type OlfactiveMatch,
 } from "@/data/olfactive-twins";
-import type { MatchStrength, TwinOrigin, TwinResult } from "@/data/olfactive-match";
+import type { MatchStrength, TwinDirection, TwinOrigin, TwinResult } from "@/data/olfactive-match";
 import type { ReferencePerfume } from "@/data/reference-perfumes";
 import { savingsOf, sourceNameOf, type Savings } from "@/data/reference-prices";
 import { QtyStepper } from "@/components/ui/QtyStepper";
@@ -214,8 +214,20 @@ function cleanDescription(raw: string | undefined, fallback: string): string {
 type ResultView = {
   /** clé stable — clé React et identifiant de la pastille active */
   key: string;
-  /** id de la référence dans la base — dit quelle pastille est active */
+  /**
+   * Identifiant RÉELLEMENT CHERCHÉ : celui de l'original en sens direct, celui
+   * du parfum de la boutique en sens inverse. Il dit quelle pastille est active
+   * et donne son adresse au résultat (`/jumeau/<id>`).
+   */
   referenceId: string;
+  /**
+   * SENS DE LECTURE. En `vers-jumeau` la carte va de l'original (à gauche) vers
+   * le jumeau oriental (à droite) ; en `vers-original` elle part du flacon de
+   * la boutique (à gauche, avec son packshot et son prix) et remonte vers
+   * l'original (à droite, silhouette neutre et prix indicatif). Les deux côtés
+   * ne changent pas de contenu : ils changent de place et d'intitulé.
+   */
+  direction: TwinDirection;
   /** parfum de référence, en toutes lettres (usage nominatif) */
   targetName: string;
   /** famille commune aux deux profils */
@@ -268,6 +280,9 @@ function viewFromShowcase(curated?: OlfactiveMatch): ResultView {
   return {
     key: s.referenceId,
     referenceId: s.referenceId,
+    // La vitrine est un original (Dior Sauvage) : elle se lit toujours dans le
+    // sens direct.
+    direction: "vers-jumeau",
     targetName: curated?.targetName ?? s.targetName,
     familyLabel: curated?.family ?? s.familyLabel,
     description: curated?.description ?? s.description,
@@ -286,8 +301,12 @@ function viewFromShowcase(curated?: OlfactiveMatch): ResultView {
 
 function viewFromTwin(t: TwinResult): ResultView {
   return {
-    key: t.reference.id,
-    referenceId: t.reference.id,
+    // `queriedReferenceId`, PAS `reference.id` : en sens inverse la référence
+    // est l'original (Kilian · Angels' Share) alors que le visiteur a cherché
+    // Khamrah. C'est sa recherche qui doit rester l'adresse du résultat.
+    key: t.queriedReferenceId,
+    referenceId: t.queriedReferenceId,
+    direction: t.direction,
     targetName: `${t.reference.house} · ${t.reference.name}`,
     familyLabel: t.catalogFamilyLabel,
     // Priorité : le texte relu par l'équipe, sinon l'accroche de la fiche
@@ -333,8 +352,23 @@ const getOriginServerSnapshot = () => "";
  */
 type Pill = { referenceId: string; label: string; image?: string; price?: number };
 
-/** Une ligne d'autocomplétion, avec l'état du jumeau (proposition 05). */
-type Hit = { reference: ReferencePerfume; familyLabel: string; twinPrice: number | null };
+/**
+ * Une ligne d'autocomplétion. Elle ANNONCE CE QU'ELLE DONNERA — et depuis que
+ * le module répond dans les deux sens, cela veut dire deux choses : « son
+ * jumeau dès 29,00 € » pour un original, « l'original : Kilian · Angels'
+ * Share » pour un parfum de la boutique. Une ligne qui ne mène nulle part le
+ * dit aussi : on ne découvre plus l'absence APRÈS le clic.
+ */
+type Hit = {
+  reference: ReferencePerfume;
+  familyLabel: string;
+  /** sens de la réponse — `null` quand cette ligne ne mène à rien */
+  direction: TwinDirection | null;
+  /** prix du jumeau oriental, en sens direct */
+  twinPrice: number | null;
+  /** « Maison · Nom » de l'original, en sens inverse */
+  originalName: string | null;
+};
 
 export function OlfactiveTwin({
   matches,
@@ -425,6 +459,12 @@ export function OlfactiveTwin({
   // de `view` : les deux ne coexistent jamais, mais confondre les deux ferait
   // réapparaître un vieux résultat derrière l'écran « pas encore de jumeau ».
   const [missing, setMissing] = useState("");
+  /**
+   * DE QUOI l'absence parle. Dire « nous n'avons pas encore le jumeau de
+   * Lattafa · Asad » d'un flacon que la boutique VEND serait faux : ce qui
+   * manque là, c'est l'original dont il s'inspire, pas le parfum.
+   */
+  const [missingKind, setMissingKind] = useState<TwinDirection>("vers-jumeau");
   const [alertEmail, setAlertEmail] = useState("");
   const [alertError, setAlertError] = useState("");
   const [alertSent, setAlertSent] = useState(false);
@@ -482,6 +522,7 @@ export function OlfactiveTwin({
     } else {
       setView(null);
       setMissing(`${ref.house} · ${ref.name}`);
+      setMissingKind(m.isOrientalReference(ref) ? "vers-original" : "vers-jumeau");
     }
     setAlertSent(false);
     setAlertError("");
@@ -553,7 +594,12 @@ export function OlfactiveTwin({
       // module chargé, jamais en import statique — ce fichier pèse la base
       // entière et doit rester hors du bundle initial.
       familyLabel: mod.FAMILY_LABELS[h.reference.family] ?? h.reference.family,
-      twinPrice: h.twin ? h.twin.product.price ?? null : null,
+      direction: h.twin ? h.twin.direction : null,
+      twinPrice: h.twin && h.twin.direction === "vers-jumeau" ? h.twin.product.price ?? null : null,
+      originalName:
+        h.twin && h.twin.direction === "vers-original"
+          ? `${h.twin.reference.house} · ${h.twin.reference.name}`
+          : null,
     }));
   }, [mod, query]);
 
@@ -677,7 +723,20 @@ export function OlfactiveTwin({
     [locale, origin]
   );
 
-  const shareText = (v: ResultView) => t("share_text", { name: v.targetName, price: fmt(v.product.price) });
+  /**
+   * Le message de partage dit la même chose que la carte — donc pas la même
+   * chose dans les deux sens : « j'ai trouvé le jumeau de X à 29 € » d'un côté,
+   * « X s'inspire de Y » de l'autre. Envoyer le premier texte sur un résultat
+   * inverse nommerait l'original comme s'il était le jumeau.
+   */
+  const shareText = (v: ResultView) =>
+    v.direction === "vers-original"
+      ? t("share_text_original", {
+          name: `${v.product.brand} · ${v.product.name}`,
+          original: v.targetName,
+          price: fmt(v.product.price),
+        })
+      : t("share_text", { name: v.targetName, price: fmt(v.product.price) });
 
   const onShare = useCallback(
     async (v: ResultView) => {
@@ -846,7 +905,13 @@ export function OlfactiveTwin({
                       {hit.familyLabel}
                     </span>
                   </span>
-                  {hit.twinPrice !== null ? (
+                  {/* Ce que la ligne donnera, dit avant le clic — et dans quel
+                      SENS elle répondra : le jumeau et son prix pour un
+                      original, le nom de l'original pour un flacon de la
+                      boutique. */}
+                  {hit.direction === "vers-original" && hit.originalName ? (
+                    <span className="otw-hit-rev">{t("original_available", { name: hit.originalName })}</span>
+                  ) : hit.twinPrice !== null ? (
                     <span className="otw-hit-ok">{t("twin_available", { price: fmt(hit.twinPrice) })}</span>
                   ) : (
                     <span className="otw-hit-ko">{t("twin_missing")}</span>
@@ -915,9 +980,17 @@ export function OlfactiveTwin({
           <path d="M12 3l2.1 5.4L20 9.3l-4 4 1 5.7-5-2.8-5 2.8 1-5.7-4-4 5.9-.9z" />
         </svg>
       </span>
-      <div className="otw-none-eyebrow">{t("no_twin_eyebrow")}</div>
-      <h3 className="otw-none-title">{t("no_twin_title", { name: missing })}</h3>
-      <p className="otw-none-text">{t("no_twin_text")}</p>
+      <div className="otw-none-eyebrow">
+        {missingKind === "vers-original" ? t("no_original_eyebrow") : t("no_twin_eyebrow")}
+      </div>
+      <h3 className="otw-none-title">
+        {missingKind === "vers-original"
+          ? t("no_original_title", { name: missing })
+          : t("no_twin_title", { name: missing })}
+      </h3>
+      <p className="otw-none-text">
+        {missingKind === "vers-original" ? t("no_original_text") : t("no_twin_text")}
+      </p>
 
       {alertSent ? (
         <p className="otw-none-done" role="status">
@@ -971,6 +1044,88 @@ export function OlfactiveTwin({
     </div>
   );
 
+  // ── Les deux côtés du face-à-face, INTERCHANGEABLES ────────────────────────
+  /**
+   * Le module répond dans les deux sens, et la carte doit se lire dans les deux
+   * sens : la QUESTION à gauche, la RÉPONSE à droite. En sens direct la
+   * question est l'original et la réponse le jumeau ; en sens inverse c'est
+   * l'exact contraire. Plutôt que deux cartes, deux blocs qui échangent leur
+   * place.
+   *
+   * Le contenu de chaque bloc ne bouge pas d'un pixel : l'original garde sa
+   * silhouette neutre (cadre légal — aucun logo, aucune forme de flacon de
+   * marque) et son prix boutique barré, le produit garde son packshot réel, son
+   * prix de vente et le bandeau d'économie. Seuls changent leur ORDRE et leur
+   * intitulé. C'est ce qui garantit que « prix économisé » veut toujours dire la
+   * même chose : ce que le visiteur gagne en prenant l'oriental.
+   *
+   * `side` décide de l'alignement (la colonne de droite pousse son flacon vers
+   * le bord) et de l'accent doré, qui souligne toujours la RÉPONSE.
+   */
+  const originalBlock = (v: ResultView, side: "left" | "right") => (
+    <div className={side === "right" ? "otw-duo-side otw-duo-side-twin" : "otw-duo-side"}>
+      <div className="otw-duo-bottle">
+        {bottleSilhouette(v.targetName)}
+        <span className="otw-shadow" aria-hidden />
+      </div>
+      <div className="otw-duo-text">
+        <div className={side === "right" ? "otw-eyebrow otw-eyebrow-gold" : "otw-eyebrow"}>
+          {side === "right" ? t("the_original") : t("you_like")}
+        </div>
+        <div className="otw-target-name">{v.targetName}</div>
+        {/* ── 01. LE PRIX ÉCONOMISÉ ──────────────────────────────────────
+            Le prix de l'original n'est affiché que lorsqu'il est CONNU
+            (`reference-prices.ts`). Sans prix, rien : ni barré, ni
+            pourcentage. On n'invente pas un chiffre pour tenir une maquette. */}
+        {v.savings && (
+          <div className="otw-retail">
+            <span className="otw-retail-label">{t("retail_price_label")}</span>
+            <span className="otw-retail-price">{fmtApprox(v.savings.retail)}</span>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
+  const catalogueBlock = (v: ResultView, side: "left" | "right") => (
+    <div className={side === "right" ? "otw-duo-side otw-duo-side-twin" : "otw-duo-side"}>
+      <div className="otw-duo-bottle">
+        <div className="otw-packshot">
+          {v.product.video ? (
+            <TwinThumbVideo src={v.product.video} poster={v.product.image} name={v.product.name} />
+          ) : (
+            <Image
+              src={v.product.image}
+              alt={v.product.name}
+              fill
+              sizes="(max-width: 760px) 150px, 118px"
+              style={{ objectFit: "contain" }}
+            />
+          )}
+        </div>
+        <span className="otw-shadow otw-shadow-strong" aria-hidden />
+      </div>
+      <div className="otw-duo-text">
+        <div className={side === "right" ? "otw-eyebrow otw-eyebrow-gold" : "otw-eyebrow"}>
+          {side === "right" ? t("the_twin") : t("you_have")}
+        </div>
+        <div className="otw-twin-name">
+          {v.product.brand} · {v.product.name}
+        </div>
+        <div className="otw-price-row">
+          <span className="otw-price-big">{fmt(v.product.price)}</span>
+          <span className="otw-chip">{v.familyLabel}</span>
+        </div>
+        {v.savings && (
+          <div className="otw-save">
+            <b>−{v.savings.percent} %</b>
+            {t("save_amount", { amount: fmtApprox(v.savings.saved) })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+
   const addToCart = (v: ResultView) => {
     addItem(
       { id: v.product.id, name: v.product.name, brand: v.product.brand, price: v.product.price, image: v.product.image },
@@ -997,27 +1152,7 @@ export function OlfactiveTwin({
                 marque) ; au centre le sceau doré avec le niveau de proximité ;
                 à droite le vrai packshot du jumeau. */}
             <div className="otw-duo">
-              <div className="otw-duo-side">
-                <div className="otw-duo-bottle">
-                  {bottleSilhouette(view.targetName)}
-                  <span className="otw-shadow" aria-hidden />
-                </div>
-                <div className="otw-duo-text">
-                  <div className="otw-eyebrow">{t("you_like")}</div>
-                  <div className="otw-target-name">{view.targetName}</div>
-                  {/* ── 01. LE PRIX ÉCONOMISÉ ──────────────────────────────
-                      Le prix de l'original n'est affiché que lorsqu'il est
-                      CONNU (`reference-prices.ts`). Sans prix, rien : ni
-                      barré, ni pourcentage. On n'invente pas un chiffre pour
-                      tenir une maquette. */}
-                  {view.savings && (
-                    <div className="otw-retail">
-                      <span className="otw-retail-label">{t("retail_price_label")}</span>
-                      <span className="otw-retail-price">{fmtApprox(view.savings.retail)}</span>
-                    </div>
-                  )}
-                </div>
-              </div>
+              {view.direction === "vers-original" ? catalogueBlock(view, "left") : originalBlock(view, "left")}
 
               <div className="otw-seal-col">
                 <span className="otw-seal" aria-hidden>
@@ -1026,40 +1161,7 @@ export function OlfactiveTwin({
                 <span className="otw-seal-text">{strengthLabel[view.proximityStrength]}</span>
               </div>
 
-              <div className="otw-duo-side otw-duo-side-twin">
-                <div className="otw-duo-bottle">
-                  <div className="otw-packshot">
-                    {view.product.video ? (
-                      <TwinThumbVideo src={view.product.video} poster={view.product.image} name={view.product.name} />
-                    ) : (
-                      <Image
-                        src={view.product.image}
-                        alt={view.product.name}
-                        fill
-                        sizes="(max-width: 760px) 150px, 118px"
-                        style={{ objectFit: "contain" }}
-                      />
-                    )}
-                  </div>
-                  <span className="otw-shadow otw-shadow-strong" aria-hidden />
-                </div>
-                <div className="otw-duo-text">
-                  <div className="otw-eyebrow otw-eyebrow-gold">{t("the_twin")}</div>
-                  <div className="otw-twin-name">
-                    {view.product.brand} · {view.product.name}
-                  </div>
-                  <div className="otw-price-row">
-                    <span className="otw-price-big">{fmt(view.product.price)}</span>
-                    <span className="otw-chip">{view.familyLabel}</span>
-                  </div>
-                  {view.savings && (
-                    <div className="otw-save">
-                      <b>−{view.savings.percent} %</b>
-                      {t("save_amount", { amount: fmtApprox(view.savings.saved) })}
-                    </div>
-                  )}
-                </div>
-              </div>
+              {view.direction === "vers-original" ? originalBlock(view, "right") : catalogueBlock(view, "right")}
             </div>
 
             {/* ── 04. LE BADGE DE CONFIANCE ─────────────────────────────────
@@ -1282,6 +1384,13 @@ export function OlfactiveTwin({
     .otw-option-meta { font-size: 11px; color: ${C.legal}; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .otw-hit-ok { flex: 0 0 auto; font-size: 11px; font-weight: 600; color: ${C.goldDark}; white-space: nowrap; }
     .otw-hit-ok::before { content: "\\2713\\00a0"; }
+    /* Ligne du SENS INVERSE : la fleche dit que la reponse remonte vers
+       l'original, la coche disant, elle, qu'un jumeau attend au catalogue. Le
+       nom de l'original peut etre long : il se tronque au lieu de pousser la
+       ligne hors de la liste. */
+    .otw-hit-rev { flex: 0 1 auto; min-width: 0; font-size: 11px; font-weight: 600; color: ${C.goldDark};
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .otw-hit-rev::before { content: "\\2192\\00a0"; }
     .otw-hit-ko { flex: 0 0 auto; font-size: 11px; color: ${C.legal}; white-space: nowrap; }
     .otw-empty { padding: 10px; font-family: var(--font-sans); font-size: 13px; color: ${C.muted}; }
     .otw-noresult { margin: 8px 2px 0; font-family: var(--font-sans); font-size: 12.5px; color: ${C.muted}; }

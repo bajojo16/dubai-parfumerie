@@ -98,6 +98,16 @@
     "twin_missing": "Not yet · notify me",
     "page_title": "The twin of {name}",
     "page_description_priced": "{twin} at {price} instead of {retail} — {percent} % less. The olfactive twin of {name} at Dubaï Parfumerie.",
-    "page_description": "{twin} at {price} — the olfactive twin of {name} at Dubaï Parfumerie."
+    "page_description": "{twin} at {price} — the olfactive twin of {name} at Dubaï Parfumerie.",
+    "you_have": "You own",
+    "the_original": "The original",
+    "original_available": "The original: {name}",
+    "no_original_eyebrow": "Original unknown",
+    "no_original_title": "We don't yet know the original behind {name}",
+    "no_original_text": "We only name an original when the match is documented and sourced — never a guess. This one is not yet. Leave your email and we'll let you know as soon as it is.",
+    "share_text_original": "{name} at {price} is inspired by {original}",
+    "page_title_original": "The original behind {name}",
+    "page_description_original": "{name} at {price} is inspired by {original}. The olfactive twin, at Dubaï Parfumerie.",
+    "page_description_original_priced": "{name} at {price} is inspired by {original}, sold at {retail} — {percent} % less. At Dubaï Parfumerie."
   }
 }
