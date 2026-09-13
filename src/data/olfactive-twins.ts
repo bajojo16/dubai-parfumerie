@@ -136,7 +136,11 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     productHandle: "maison-alhambra-the-tux",
     family: "Épicé · Cuir · Ambré",
     description: "Cuir, cannelle et ambre — une signature chaude et opulente.",
-    product: { name: "The Tux", brand: "Maison Alhambra", price: 16.9, image: "/assets/prod-4.jpg", href: "/produit/maison-alhambra-the-tux" },
+    // prod-4.jpg est le placeholder partagé du dépôt — Shaghaf Oud, Amber Elixir,
+    // Rose pour Elle et la pastille « Floral · Musc » pointent le même fichier.
+    // The Tux a désormais son propre packshot (lot Higgsfield du 05/09/26),
+    // posé à côté plutôt qu'à la place du placeholder, qui reste utilisé ailleurs.
+    product: { name: "The Tux", brand: "Maison Alhambra", price: 16.9, image: "/assets/products/dp_parfumerie-maison-alhambra-the-tux-vignette.webp", href: "/produit/maison-alhambra-the-tux" },
   },
 ];
 
