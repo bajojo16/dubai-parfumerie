@@ -7,7 +7,7 @@ export const metadata: Metadata = {
 };
 
 const cards = [
-  { t: "Livraison 48h", d: "En France métropolitaine, expédition sous 24h et réception en 48h.", icon: "M3 7h11v8H3zM14 10h4l3 3v2h-7z" },
+  { t: "Livraison 48h", d: "En France métropolitaine, préparation entre 24h et 3 jours puis réception en 48h.", icon: "M3 7h11v8H3zM14 10h4l3 3v2h-7z" },
   { t: "Offerte dès 60 €", d: "Les frais de port sont offerts pour toute commande de 60 € et plus.", icon: "M12 3 4 6v6c0 5 3.4 8 8 9 4.6-1 8-4 8-9V6z" },
   { t: "Colis suivi", d: "Un numéro de suivi pour chaque commande, du départ à votre porte.", icon: "M21 12a9 9 0 1 1-9-9M21 4v5h-5" },
 ];

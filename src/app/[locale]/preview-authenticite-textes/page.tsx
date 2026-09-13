@@ -139,7 +139,7 @@ const VARIANTS: Variant[] = [
       {
         n: "03",
         title: "Satisfait ou remboursé, 30 jours",
-        desc: "Si l'accord ne se fait pas avec votre peau, vous avez 30 jours pour nous le retourner et être remboursé. Expédition en 48 h, livraison offerte dès 60 €.",
+        desc: "Si l'accord ne se fait pas avec votre peau, vous avez 30 jours pour nous le retourner et être remboursé. Préparation entre 24h et 3 jours, livraison offerte dès 60 €.",
       },
     ],
   },

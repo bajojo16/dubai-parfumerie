@@ -104,7 +104,7 @@ export const FAQ_QUESTIONS: FaqQuestion[] = [
     categoryId: "cmd",
     question: "Comment passer ma commande ?",
     answer:
-      "Parcourez notre catalogue, ajoutez vos fragrances au panier puis validez en quelques étapes. Le paiement est sécurisé et le règlement en 4× sans frais est disponible dès 60€ d'achat. Vous recevez une confirmation par email immédiatement, et votre commande est expédiée sous 48h.",
+      "Parcourez notre catalogue, ajoutez vos fragrances au panier puis validez en quelques étapes. Le paiement est sécurisé et le règlement en 4× sans frais est disponible dès 60€ d'achat. Vous recevez une confirmation par email immédiatement, et la préparation de votre commande prend entre 24h et 3 jours.",
     action: { type: "cta", label: "Découvrir nos parfums", href: "/parfums" },
   },
   {
@@ -128,7 +128,7 @@ export const FAQ_QUESTIONS: FaqQuestion[] = [
     categoryId: "liv",
     question: "Quels sont les délais de livraison ?",
     answer:
-      "Toute commande est expédiée sous 48h. En France métropolitaine, comptez 2 à 4 jours ouvrés, et la livraison est offerte dès 60€ d'achat. Vous recevez un numéro de suivi dès le départ du colis.",
+      "La préparation de toute commande prend entre 24h et 3 jours. En France métropolitaine, comptez 2 à 4 jours ouvrés, et la livraison est offerte dès 60€ d'achat. Vous recevez un numéro de suivi dès le départ du colis.",
   },
   {
     id: "suivre-commande",

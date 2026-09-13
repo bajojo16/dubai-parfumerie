@@ -32,7 +32,7 @@ git diff --quiet HEAD || ( \
 - Branch principale : `main`
 
 ## Après chaque compact
-- **Relire d'abord** le handoff le plus récent : `app/MD/HANDOFF-*.md` (un hook `SessionStart` matcher `compact` dans `.claude/settings.json` l'injecte automatiquement). Il porte : agents encore en fond, décisions prises par l'utilisateur à ne pas rouvrir, architecture des données, file d'attente, pièges.
+- **Relire d'abord** le handoff le plus récent : `DP NextCloud/MD DP/Handoff/HANDOFF-*.md` (un hook `SessionStart` matcher `compact` dans `.claude/settings.json` l'injecte automatiquement). Les fichiers Claude ne vivent plus dans le dépôt : `app/MD/` a été vidé le 13/09/2026. Il porte : agents encore en fond, décisions prises par l'utilisateur à ne pas rouvrir, architecture des données, file d'attente, pièges.
 - **Le mettre à jour** avant tout compact suivant : nouvelles décisions, tâches livrées, tâches en attente. Un handoff périmé est pire qu'aucun.
 
 ## Stack

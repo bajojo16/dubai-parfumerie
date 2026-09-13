@@ -13,6 +13,8 @@ export type PackCardLabels = {
   soldOut: string; // « Épuisé »
   /** « {n} échantillons » — {n} remplacé par le nombre de fioles. */
   samples: string;
+  /** Préfixe du prix d'appel d'un pack à composer : « dès 9 € ». */
+  priceFrom: string;
   badges: Record<Exclude<PackBadge, null>, string>;
 };
 
@@ -22,6 +24,7 @@ const DEFAULT_LABELS: PackCardLabels = {
   added: "Ajouté ✓",
   soldOut: "Épuisé",
   samples: "{n} échantillons",
+  priceFrom: "dès",
   badges: {
     bestseller: "★ Best-seller",
     most_gifted: "✦ Le plus offert",
@@ -467,7 +470,7 @@ export function PackCard({
               color: "#2C2620",
             }}
           >
-            {fmtPrice(pack.price)}
+            {pack.priceFrom ? `${L.priceFrom} ${fmtPrice(pack.price)}` : fmtPrice(pack.price)}
           </span>
           {pack.compareAtPrice && pack.compareAtPrice > pack.price && (
             <span

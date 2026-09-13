@@ -198,7 +198,6 @@ export default function SampleSelector({
     PRODUCTS[0]?.family ?? "oud",
   );
   const critTouched = useRef(false);
-  const [stuck, setStuck] = useState(false);
   const [toolbarStuck, setToolbarStuck] = useState(false);
 
   // ─── Critères de complétion générés dynamiquement ──────────────────────────
@@ -225,9 +224,7 @@ export default function SampleSelector({
   );
 
   const toolbarRef = useRef<HTMLDivElement>(null);
-  const sentinelRef = useRef<HTMLDivElement>(null);
   const topSentinelRef = useRef<HTMLDivElement>(null);
-  const [tbH, setTbH] = useState(150);
 
   const P = useCallback(
     (id: string) => PRODUCTS.find((x) => x.id === id),
@@ -237,37 +234,17 @@ export default function SampleSelector({
   const totalAuto = sum(auto);
   const total = totalMan + totalAuto;
 
-  // ─── Sticky : offset de la barre d'outils + état « épinglé » du bandeau ────
+  // ─── Bascule compacte de la barre d'outils quand elle s'épingle en haut ───
+  // Le bandeau « maison », lui, défile avec la page : il n'est plus épinglé.
   useEffect(() => {
-    const tb = toolbarRef.current;
-    const sent = sentinelRef.current;
-    if (!tb || !sent) return;
-    const setH = () => setTbH(tb.offsetHeight);
-    setH();
-    const ro = new ResizeObserver(setH);
-    ro.observe(tb);
-    window.addEventListener("resize", setH);
-    const io = new IntersectionObserver(
-      ([e]) => setStuck(!e.isIntersecting),
-      { rootMargin: `-${tb.offsetHeight + 1}px 0px 0px 0px`, threshold: 0 },
-    );
-    io.observe(sent);
-    // Passe la barre d'outils en mode compact quand elle est épinglée en haut.
-    let ioTop: IntersectionObserver | undefined;
     const topSent = topSentinelRef.current;
-    if (topSent) {
-      ioTop = new IntersectionObserver(
-        ([e]) => setToolbarStuck(!e.isIntersecting),
-        { threshold: 0 },
-      );
-      ioTop.observe(topSent);
-    }
-    return () => {
-      ro.disconnect();
-      io.disconnect();
-      ioTop?.disconnect();
-      window.removeEventListener("resize", setH);
-    };
+    if (!topSent) return;
+    const ioTop = new IntersectionObserver(
+      ([e]) => setToolbarStuck(!e.isIntersecting),
+      { threshold: 0 },
+    );
+    ioTop.observe(topSent);
+    return () => ioTop.disconnect();
   }, []);
 
   // ─── Actions ──────────────────────────────────────────────────────────────
@@ -697,13 +674,10 @@ export default function SampleSelector({
       </div>
 
       <div className="ss-wrap">
-        <div ref={sentinelRef} style={{ height: 0, margin: 0, padding: 0 }} />
-
         {/* ── Bandeau « maison » sticky ── */}
         {!assistHidden && (
           <div
-            className={"ss-assist" + (stuck ? " ss-stuck" : "")}
-            style={{ top: tbH }}
+            className="ss-assist"
           >
             <div className="ss-assist-txt">
               <p className="ss-h">
@@ -1020,10 +994,7 @@ function StyleBlock() {
     .ss-toolbar.ss-tb-stuck .ss-ncount{font-size:20px}
     .ss-toolbar.ss-tb-stuck .ss-search input{padding-block:6px}
 
-    .ss-assist{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,#fffdf8,#f3ecdb);border:1px solid rgba(194,161,91,.4);border-radius:14px;padding:15px 20px;margin-bottom:22px;position:sticky;z-index:15;transition:padding .2s,box-shadow .2s}
-    .ss-assist.ss-stuck{padding:9px 18px;box-shadow:0 14px 30px -20px rgba(28,26,23,.55)}
-    .ss-assist.ss-stuck .ss-assist-txt p:not(.ss-h){display:none}
-    .ss-assist.ss-stuck .ss-assist-txt .ss-h{font-size:17px}
+    .ss-assist{display:flex;align-items:center;gap:16px;flex-wrap:wrap;justify-content:space-between;background:linear-gradient(120deg,#fffdf8,#f3ecdb);border:1px solid rgba(194,161,91,.4);border-radius:14px;padding:15px 20px;margin-bottom:22px}
     .ss-assist-txt{flex:1;min-width:210px}
     .ss-assist-txt .ss-h{font-family:'Cormorant Garamond',var(--font-display);font-size:22px;font-weight:600;line-height:1.1;margin:0 0 3px;display:flex;align-items:center;gap:8px}
     .ss-assist-txt p{margin:0;font-size:13px;opacity:.7;line-height:1.5}

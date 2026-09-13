@@ -35,33 +35,39 @@ export type Pack = {
    * d'eaux de parfum 30 ml.
    */
   sampleCount?: number;
+  /**
+   * Affiche « dès X € » au lieu du prix sec : le pack se compose, et `price`
+   * n'en est que le point d'entrée. Sans ce drapeau, le prix reste ferme.
+   */
+  priceFrom?: boolean;
 };
 
 export const DEMO: Pack[] = [
   {
-    slug: "trio-signature-oud",
-    name: "Trio Signature Oud",
-    subtitle: "3 eaux de parfum · 30 ml",
+    slug: "pack-echantillons-signature",
+    name: "Pack Échantillons Signature",
+    subtitle: "5 fioles · 2 ml · à composer",
     image: "/assets/coffret-reef.jpg",
-    price: 149,
-    compareAtPrice: 189,
+    price: 9,
+    priceFrom: true,
     badge: "bestseller",
     available: true,
-    variantId: "pack-trio-signature-oud",
-    href: "/produit/trio-signature-oud",
+    variantId: "pack-echantillons-signature",
+    href: "/preview/selecteur-echantillons",
+    sampleCount: 5,
   },
   {
-    slug: "coffret-decouverte-prestige",
-    name: "Coffret Découverte Prestige",
-    subtitle: "5 miniatures iconiques",
+    slug: "pack-echantillons-decouverte",
+    name: "Pack Échantillons Découverte",
+    subtitle: "3 fioles · 2 ml · à composer",
     image: "/assets/coffrets.jpg",
-    price: 89,
-    compareAtPrice: 110,
+    price: 9,
+    priceFrom: true,
     badge: "most_gifted",
     available: true,
-    variantId: "pack-coffret-decouverte-prestige",
-    href: "/produit/coffret-decouverte-prestige",
-    sampleCount: 5,
+    variantId: "pack-echantillons-decouverte",
+    href: "/preview/selecteur-echantillons",
+    sampleCount: 3,
   },
   {
     slug: "duo-oud-royal",

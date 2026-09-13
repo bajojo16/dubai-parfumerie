@@ -54,7 +54,7 @@ type Estimate = {
  * Modèle retenu, volontairement simple et vérifiable :
  * la commande est préparée le premier jour ouvré disponible (le jour même si
  * elle tombe avant 16 h un jour ouvré, sinon le jour ouvré suivant), remise au
- * transporteur dans la foulée — c'est la promesse « expédié sous 24 h ouvrées »
+ * transporteur dans la foulée — c'est la promesse « Préparation entre 24h et 3 jours »
  * affichée ailleurs sur le site — puis acheminée en `businessDays` jours ouvrés.
  * On annonce une fenêtre de deux jours plutôt qu'une date sèche : personne ne
  * tient un jour exact, et une fourchette se tient.

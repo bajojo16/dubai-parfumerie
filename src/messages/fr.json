@@ -7,13 +7,6 @@
     "promo": "Bons Plans",
     "blog": "Blog"
   },
-  "topbar": {
-    "msg1": "Livraison offerte dès 60 €",
-    "msg2": "Paiement 4× sans frais",
-    "msg3": "10 ans d'expérience · plus de 7000 produits vendus",
-    "msg4": "Cadeau surprise dans chaque commande",
-    "msg5": "Retours sous 14 jours"
-  },
   "hero": {
     "eyebrow": "Parfumerie Orientale Authentique · Depuis 2016",
     "title": "Le parfum de Dubaï, tel qu'on le porte là-bas",
@@ -62,7 +55,6 @@
     "strength_very_close": "Profil très proche",
     "strength_close": "Profil proche",
     "strength_related": "Profil apparenté",
-    "shared_accords": "Accords partagés",
     "search_label": "Rechercher un parfum de référence",
     "suggestions": "Suggestions",
     "add_to_cart": "Ajouter au panier",
@@ -88,7 +80,6 @@
     "badge_scored": "Rapprochement olfactif",
     "badge_scored_text": "Même famille, {count} accords en commun — calculé, non relu",
     "badge_source": "Source :",
-    "add_to_cart_price": "Ajouter au panier · {price}",
     "share_label": "Partager ce jumeau",
     "share_whatsapp": "WhatsApp",
     "share_copy": "Copier le lien",

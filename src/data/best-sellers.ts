@@ -27,9 +27,7 @@ export const REEF_PRODUCTS: RailProduct[] = [
     notes: "Boisé · Ambré · Doré",
     family: "Boisé",
     image: "/assets/products/aurum.webp",
-    price: { amount: 75, currency: CURRENCY },
-    compareAtPrice: { amount: 99.9, currency: CURRENCY },
-    onSale: true,
+    price: { amount: 69, currency: CURRENCY },
   },
   {
     id: "reef-33",
@@ -44,8 +42,6 @@ export const REEF_PRODUCTS: RailProduct[] = [
     // au catalogue, où il est seul. Une photo par section, pas une pour tout.
     image: "/assets/products/reef-33-fond-blanc.webp",
     price: { amount: 70, currency: CURRENCY },
-    compareAtPrice: { amount: 89.9, currency: CURRENCY },
-    onSale: true,
   },
   {
     id: "reef-summer",
@@ -58,9 +54,7 @@ export const REEF_PRODUCTS: RailProduct[] = [
     // porte le parfum.
     family: "Floral",
     image: "/assets/products/summer.webp",
-    price: { amount: 44.9, currency: CURRENCY },
-    compareAtPrice: { amount: 56.9, currency: CURRENCY },
-    onSale: true,
+    price: { amount: 90, currency: CURRENCY },
   },
   {
     id: "reef-volcano",
@@ -70,8 +64,6 @@ export const REEF_PRODUCTS: RailProduct[] = [
     notes: "Boisé · Minéral · Épicé",
     family: "Boisé",
     image: "/assets/products/volcano.webp",
-    price: { amount: 47.9, currency: CURRENCY },
-    compareAtPrice: { amount: 59.9, currency: CURRENCY },
-    onSale: true,
+    price: { amount: 75, currency: CURRENCY },
   },
 ];

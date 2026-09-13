@@ -155,31 +155,34 @@ export const DEMO_TRENDS: TrendProduct[] = [
     },
   },
   {
-    slug: "amber-nuit",
-    name: "Amber Nuit",
-    brand: "Dubaï Parfumerie",
-    href: "/produit/amber-nuit",
-    variantId: "amber-nuit-50",
+    // Amber Nuit occupait ce rang sans film : aucun rush ne montrait son
+    // flacon, et la carte restait fixe au milieu de quatre vidéos. Khamrah la
+    // remplace — c'est le seul autre produit du dépôt à disposer d'un film
+    // dédié avec son image d'attente.
+    slug: "lattafa-khamrah",
+    name: "Khamrah",
+    brand: "Lattafa",
+    href: "/produit/lattafa-khamrah",
+    variantId: "lattafa-khamrah-100",
     family: "Ambré",
-    // Pas de photo de ce flacon en banque : visuel générique conservé (à remplacer).
-    image: "/assets/prod-5.jpg",
-    // Pas de film propre à Amber Nuit : aurum-v4.mp4 montre le flacon d'Aurum.
-    // On préfère la carte sans vidéo à la vidéo d'un autre parfum.
+    image: "/assets/products/khamrah/khamrah-hf-05.jpg",
+    cardVideo: "/assets/videos/dp_parfumerie-lattafa-khamrah-best-sellers-01.mp4",
+    video: "/assets/videos/dp_parfumerie-lattafa-khamrah-best-sellers-01.mp4",
     rank: 5,
-    price: 69,
-    rating: 4.5,
-    reviewCount: 76,
+    price: 29,
+    rating: 4.8,
+    reviewCount: 312,
     available: true,
     review: {
-      author: "Léa P.",
-      location: "Marseille",
+      author: "Sofia B.",
+      location: "Lyon",
       countryFlag: "🇫🇷",
-      date: "21/09/24",
+      date: "04/10/24",
       rating: 5,
-      title: "Cocon ambré",
-      body: "Chaleureux et enveloppant, idéal pour l'automne. L'ambre est gourmand sans être écœurant. Mon mari l'adore aussi, c'est devenu notre parfum à partager le soir.",
-      helpfulUp: 11,
-      helpfulDown: 0,
+      title: "La cannelle et la datte",
+      body: "Je comprends pourquoi tout le monde en parle. La datte et la cannelle du départ sont chaudes sans être écœurantes, et ça tient jusqu'au lendemain sur un pull. Le flacon en jette aussi.",
+      helpfulUp: 29,
+      helpfulDown: 1,
     },
   },
 ];

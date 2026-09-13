@@ -54,10 +54,9 @@ const ICON = (paths: React.ReactNode) => (
 );
 
 const TOP_TRUST: { label: string; icon: React.ReactNode }[] = [
-  { label: "Expédition sous 48h", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
+  { label: "Préparation entre 24h et 3 jours", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
   { label: "Livraison dans le monde, DOM-TOM compris", icon: ICON(<><circle cx="12" cy="12" r="9" /><path d="M3 12h18" /><path d="M12 3c2.5 2.5 3.8 5.6 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.6-3.8-9S9.5 5.5 12 3z" /></>) },
   { label: "Paiement en 4× sans frais", icon: ICON(<><rect x="2" y="5" width="20" height="14" rx="2" /><path d="M2 10h20" /></>) },
-  { label: "Échantillon offert dès 80 € d'achat", icon: ICON(<><rect x="3" y="8" width="18" height="13" rx="1" /><path d="M3 12h18M12 8v13M12 8S10 3 7.5 4 9 8 12 8zM12 8s2-5 4.5-4S15 8 12 8z" /></>) },
   { label: "Livraison offerte dès 60 €", icon: ICON(<><path d="M1 3h12v11H1z" /><path d="M13 7h4l4 4v3h-8" /><circle cx="6" cy="18" r="1.6" /><circle cx="17" cy="18" r="1.6" /></>) },
   { label: "Paiement 100% sécurisé", icon: ICON(<><rect x="4" y="11" width="16" height="10" rx="2" /><path d="M8 11V7a4 4 0 0 1 8 0v4" /></>) },
   { label: "Authenticité certifiée", icon: ICON(<><path d="M12 3l7 3v5c0 4.5-3 8-7 10-4-2-7-5.5-7-10V6z" /><path d="M9 12l2 2 4-4" /></>) },

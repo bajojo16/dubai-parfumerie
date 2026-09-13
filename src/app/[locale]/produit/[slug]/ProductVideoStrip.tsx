@@ -13,8 +13,10 @@ import { clipsFor as fileClipsFor } from "@/data/product-clips";
  * Le catalogue n'a pas quatre films par parfum — Khamrah en a cinq, la plupart
  * zéro ou un. Le composant ne fabrique donc rien : il place les vidéos réellement
  * disponibles pour CE produit dans les quatre cases, et laisse les autres en
- * « à venir ». Les quatre cases restent visibles même vides, parce qu'elles
- * annoncent ce que la fiche contiendra — une case qui disparaît ne dit rien.
+ * « à venir ». Les cases vides restent visibles TANT QU'IL Y A au moins une
+ * vidéo : elles annoncent alors ce que la fiche accueillera. Sans aucune
+ * vidéo, la section entière disparaît — quatre « à venir » côte à côte ne
+ * disent rien et répètent seulement le packshot.
  *
  * Client Component pour la lecture au clic (état d'ouverture de la lightbox),
  * comme `ProductGallery` et `AddToCart` le sont déjà à côté. Aucune donnée
@@ -250,10 +252,12 @@ export default function ProductVideoStrip({
     };
   }, [open, close]);
 
-  // Le bloc n'a d'intérêt que s'il a quelque chose à montrer : sans la moindre
-  // vidéo ET sans visuel produit pour les cases « à venir », on ne rend rien.
-  const hasSomethingToShow = slots.some((s) => s !== null) || Boolean(productImage);
-  if (!hasSomethingToShow) return null;
+  // Sans une seule vidéo, la section ne montre que quatre fois le même flacon
+  // sous une pastille « à venir » : elle n'annonce rien et fait du bruit. On
+  // ne rend rien. Une seule vidéo suffit en revanche à la justifier, les cases
+  // restantes disant alors ce que la fiche accueillera.
+  const hasVideo = slots.some((s) => s !== null);
+  if (!hasVideo) return null;
 
   return (
     <section

@@ -87,7 +87,7 @@ const TRUST_ITEMS: { icon: React.ReactNode; label: string }[] = [
   { icon: <svg {...ic}><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>, label: "Paiement 100% sécurisé" },
   { icon: <svg {...ic}><path d="M12 3l7 3v5c0 4.5-3 7.5-7 9-4-1.5-7-4.5-7-9V6z"/><path d="M9 12l2 2 4-4"/></svg>, label: "Authenticité certifiée" },
   { icon: <svg {...ic}><path d="M21 12a9 9 0 1 1-3-6.7"/><path d="M21 4v5h-5"/></svg>, label: "Retours 14 jours offerts" },
-  { icon: <svg {...ic}><path d="M21 16V8l-9-5-9 5v8l9 5z"/><path d="M3.3 7L12 12l8.7-5"/><path d="M12 22V12"/></svg>, label: "Expédition sous 24h" },
+  { icon: <svg {...ic}><path d="M21 16V8l-9-5-9 5v8l9 5z"/><path d="M3.3 7L12 12l8.7-5"/><path d="M12 22V12"/></svg>, label: "Préparation entre 24h et 3 jours" },
   { icon: <svg {...ic}><path d="M6 3h12l3 6-9 12L3 9z"/><path d="M3 9h18"/><path d="M9 3l3 6 3-6"/></svg>, label: "Parfums rares introuvables en France" },
   { icon: <svg {...ic}><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>, label: "Paiement en 4× sans frais" },
 ];
@@ -106,15 +106,15 @@ const products = [
 // Sélection « Les parfums de la rentrée » — liste dédiée : `products` alimente
 // aussi bestSellers et oilItems, la modifier changerait ces deux sections.
 const summerProducts: (LuxeProduct & { id: number })[] = [
-  // Cinq Rayhaan. Prix, vignettes et fiches viennent de `product-details.ts` :
-  // la maison y est déjà décrite, inutile de la redéclarer ici. Mes premiers
-  // visuels étaient des photos relevées sur le web, dont une portait le
-  // filigrane d'un revendeur — les vignettes du projet sont propres.
+  // Deux Rayhaan, un Khadlaj, un Paris Corner — quatre cartes. Prix, vignettes et fiches
+  // viennent de `product-details.ts` : les maisons y sont déjà décrites,
+  // inutile de les redéclarer ici. Mes premiers visuels étaient des photos
+  // relevées sur le web, dont une portait le filigrane d'un revendeur — les
+  // vignettes du projet sont propres.
   { id: 101, image: "/assets/products/dp_parfumerie-rayhaan-aquatica-vignette.webp", brand: "Rayhaan", title: "Aquatica", price: 44.9, href: "/produit/rayhaan-aquatica" },
   { id: 102, image: "/assets/products/dp_parfumerie-rayhaan-italia-vignette.webp", brand: "Rayhaan", title: "Italia", price: 41.9, href: "/produit/rayhaan-italia" },
-  { id: 103, image: "/assets/products/dp_parfumerie-rayhaan-kiss-vignette.webp", brand: "Rayhaan", title: "Kiss", price: 44.9, href: "/produit/rayhaan-kiss" },
-  { id: 104, image: "/assets/products/dp_parfumerie-rayhaan-nocturno-elixir-vignette.webp", brand: "Rayhaan", title: "Nocturno Elixir", price: 49.9, href: "/produit/rayhaan-nocturno-elixir" },
-  { id: 105, image: "/assets/products/dp_parfumerie-rayhaan-terra-vignette.webp", brand: "Rayhaan", title: "Terra", price: 44.9, href: "/produit/rayhaan-terra" },
+  { id: 104, image: "/assets/products/dp_parfumerie-khadlaj-sawaar-vanille-blanc-vignette.webp", brand: "Khadlaj", title: "Sawaar Vanille Blanc", price: 34.9, href: "/produit/khadlaj-sawaar-vanille-blanc" },
+  { id: 105, image: "/assets/products/dp_parfumerie-paris-corner-the-show-magnifique-vignette.webp", brand: "Paris Corner", title: "The Show Magnifique", price: 44.9, href: "/produit/paris-corner-the-show-magnifique" },
 ];
 
 const bestSellers = products.slice(2, 6);
@@ -534,9 +534,12 @@ export default function HomePageClient() {
             title={<>Les parfums <em>de la rentrée</em></>}
             subtitle="Fraîchement sourcées à Dubaï, exclusives en France."
           />
-          {/* Cinq colonnes depuis que la sélection compte cinq flacons : à
-              quatre, le cinquième partait seul sur une deuxième rangée. */}
-          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: "repeat(5, minmax(0, 240px))", justifyContent: "center", gap: 18 }}>
+          {/* Autant de colonnes que de flacons : une piste vide subsiste sinon
+              à droite du groupe, qui paraît alors décalé vers la gauche. En
+              déduisant le compte de la liste, retirer un produit ne peut plus
+              recréer ce déséquilibre. Les surcharges mobile de `globals.css`
+              repassent à deux colonnes. */}
+          <div className="dp-home-prod-grid" style={{ display: "grid", gridTemplateColumns: `repeat(${summerProducts.length}, minmax(0, 240px))`, justifyContent: "center", gap: 18 }}>
             {summerProducts.map(p => (
               <ProductCardLuxe
                 key={p.id}
@@ -727,24 +730,24 @@ export default function HomePageClient() {
       </section>
       )}
 
-      {/* ── COFFRETS (L'art du cadeau oriental, au-dessus de jumeau) ── */}
+      {/* ── PACKS D'ÉCHANTILLONS (au-dessus de jumeau) ──────────────── */}
       <section id="coffrets" style={{ background: "linear-gradient(135deg, var(--espresso-900) 0%, var(--espresso-600) 100%)", padding: "80px 20px", position: "relative", overflow: "hidden" }}>
         <div style={{ position: "absolute", inset: 0, opacity: 0.22 }}>
-          <Image src="/assets/coffrets.jpg" alt="Coffrets découverte" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
+          <Image src="/assets/coffrets.jpg" alt="Fioles d'échantillons" fill sizes="(max-width: 768px) 100vw, 50vw" style={{ objectFit: "cover" }} />
         </div>
         <div style={{ position: "absolute", inset: 0, background: "linear-gradient(to right, rgba(21,16,11,0.92) 50%, rgba(21,16,11,0.5) 100%)" }} />
         <div style={{ maxWidth: 1240, margin: "0 auto", position: "relative", zIndex: 2, display: "flex", flexWrap: "wrap", gap: 40, alignItems: "center", justifyContent: "space-between" }}>
           <div style={{ flex: "1 1 420px", maxWidth: 540 }}>
-            <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 12 }}>L'art du cadeau oriental</div>
+            <div style={{ fontFamily: "var(--font-sans)", fontSize: "0.62rem", letterSpacing: "0.22em", textTransform: "uppercase", color: "var(--gold-400)", marginBottom: 12 }}>L'Orient en fioles</div>
             <h2 style={{ fontFamily: "var(--font-display)", fontSize: "clamp(2rem, 4vw, 3rem)", color: "var(--on-dark-strong)", margin: "0 0 18px", lineHeight: 1.1 }}>
-              Coffrets Découverte<br /><em style={{ color: "var(--gold-400)" }}>dès 49 €</em>
+              Packs Échantillons<br /><em style={{ color: "var(--gold-400)" }}>dès 9 €</em>
             </h2>
             <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.93rem", color: "var(--on-dark)", lineHeight: 1.78, marginBottom: 28 }}>
-              Offrez l'Orient en un écrin. Nos coffrets comprennent 3 à 12 miniatures sélectionnées par nos experts, avec guide olfactif et certificat d'authenticité. Idéal pour s'initier ou faire découvrir la parfumerie orientale.
+              Essayez avant de choisir. Composez votre pack de 3 à 12 fioles de 2 ml parmi tout le catalogue, avec guide olfactif et certificat d'authenticité. La façon la plus sûre de trouver son parfum oriental — ou de le faire découvrir.
             </p>
             <div style={{ display: "flex", gap: 14 }}>
-              <Link href="/promo-flash" style={{ background: "var(--gold-500)", color: "#fff", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 700 }}>Voir les coffrets</Link>
-              <Link href="/promo-flash" style={{ border: "1.5px solid rgba(255,255,255,0.4)", color: "var(--on-dark-strong)", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem" }}>Personnaliser</Link>
+              <Link href="/preview/selecteur-echantillons" style={{ background: "var(--gold-500)", color: "#fff", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem", fontWeight: 700 }}>Composer mon pack</Link>
+              <Link href="/lots" style={{ border: "1.5px solid rgba(255,255,255,0.4)", color: "var(--on-dark-strong)", textDecoration: "none", padding: "13px 28px", borderRadius: "var(--r-pill)", fontFamily: "var(--font-sans)", fontSize: "0.86rem" }}>Voir les coffrets</Link>
             </div>
           </div>
           <div style={{ flex: "1 1 420px", display: "flex", gap: 18, justifyContent: "center" }}>
@@ -1398,7 +1401,7 @@ export default function HomePageClient() {
             Notre catalogue de plus de 1 200 références couvre toutes les familles olfactives orientales : <strong>oud boisé et fumé</strong>, <strong>musc blanc et noir</strong>, <strong>ambre et vanille</strong>, <strong>rose de Taïf</strong>, <strong>encens et bakhour</strong>. Que vous recherchiez un parfum pour femme, pour homme ou une fragrance mixte, notre équipe d'experts vous guide vers votre signature olfactive idéale.
           </p>
           <p style={{ fontFamily: "var(--font-sans)", fontSize: "0.86rem", color: "var(--ink-500)", lineHeight: 1.82 }}>
-            Livraison offerte dès 60 € d'achat, expédition sous 24h depuis notre entrepôt en France, paiement sécurisé en 4× sans frais. Retours acceptés 14 jours après réception pour tout article non ouvert. Dubai Parfumerie, votre ambassadeur de la parfumerie du Golfe depuis 2016.
+            Livraison offerte dès 60 € d'achat, préparation entre 24h et 3 jours depuis notre entrepôt en France, paiement sécurisé en 4× sans frais. Retours acceptés 14 jours après réception pour tout article non ouvert. Dubai Parfumerie, votre ambassadeur de la parfumerie du Golfe depuis 2016.
           </p>
         </div>
       </section>

@@ -45,7 +45,7 @@ const DEFAULT_LABELS: ShippingLabels = {
   placeholder: "Choisissez votre pays…",
   check: "Vérifier",
   servedPrefix: "Oui, nous livrons en ",
-  prepNote: "Préparation 24h à 4 jours · ",
+  prepNote: "Préparation entre 24h et 3 jours · ",
   customsNone: "Aucun frais de douane",
   customsPossible: "Frais de douane éventuels à la charge du destinataire",
   ordersNote: "Déjà {n} commandes réalisées dans ce pays",
@@ -56,7 +56,7 @@ const DEFAULT_LABELS: ShippingLabels = {
   emailCta: "Prévenez-moi",
   emailThanks: "Merci ! Nous vous écrirons dès l'ouverture de cette destination.",
   ordersOtherCountries: "Nous avons déjà livré dans {n} autres pays",
-  statPrep: "Préparation 24h–4 j",
+  statPrep: "Préparation entre 24h et 3 jours",
   statTracking: "Numéro de suivi international et national",
   noResults: "Aucun pays trouvé",
 };

@@ -38,8 +38,6 @@ export const TOP_PRODUCTS: RailProduct[] = [
     family: "Gourmand",
     image: "/assets/products/blueberry/blueberry-packshot.jpg",
     price: { amount: 20, currency: CURRENCY },
-    compareAtPrice: { amount: 25, currency: CURRENCY },
-    onSale: true,
   },
   {
     id: "top-reef33",

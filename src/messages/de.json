@@ -7,13 +7,6 @@
     "promo": "Flash-Angebote",
     "blog": "Blog"
   },
-  "topbar": {
-    "msg1": "Kostenloser Versand ab 60 €",
-    "msg2": "Zahlung in 4 Raten, zinslos",
-    "msg3": "10 Jahre Erfahrung · 12.000+ Bestellungen",
-    "msg4": "Überraschungsgeschenk in jeder Bestellung",
-    "msg5": "Rückgabe innerhalb von 14 Tagen"
-  },
   "hero": {
     "eyebrow": "Authentische Orientalische Parfümerie · Seit 2016",
     "title": "Dubais beste Düfte, so wie sie dort getragen werden",
@@ -62,7 +55,6 @@
     "strength_very_close": "Sehr ähnliches Profil",
     "strength_close": "Ähnliches Profil",
     "strength_related": "Verwandtes Profil",
-    "shared_accords": "Gemeinsame Akkorde",
     "search_label": "Referenzduft suchen",
     "suggestions": "Vorschläge",
     "add_to_cart": "In den Warenkorb",
@@ -88,7 +80,6 @@
     "badge_scored": "Olfaktorische Verwandtschaft",
     "badge_scored_text": "Gleiche Familie, {count} gemeinsame Akkorde — berechnet, nicht geprüft",
     "badge_source": "Quelle:",
-    "add_to_cart_price": "In den Warenkorb · {price}",
     "share_label": "Diesen Zwilling teilen",
     "share_whatsapp": "WhatsApp",
     "share_copy": "Link kopieren",

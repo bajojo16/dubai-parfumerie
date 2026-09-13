@@ -7,13 +7,6 @@
     "promo": "Ofertas Flash",
     "blog": "Blog"
   },
-  "topbar": {
-    "msg1": "Envío gratuito desde 60 €",
-    "msg2": "Pago en 4 cuotas sin intereses",
-    "msg3": "10 años de experiencia · 12.000+ pedidos",
-    "msg4": "Regalo sorpresa en cada pedido",
-    "msg5": "Devoluciones en 14 días"
-  },
   "hero": {
     "eyebrow": "Perfumería Oriental Auténtica · Desde 2016",
     "title": "Las mejores fragancias de Dubái, tal como se llevan allí",
@@ -62,7 +55,6 @@
     "strength_very_close": "Perfil muy cercano",
     "strength_close": "Perfil cercano",
     "strength_related": "Perfil afín",
-    "shared_accords": "Acordes compartidos",
     "search_label": "Buscar un perfume de referencia",
     "suggestions": "Sugerencias",
     "add_to_cart": "Añadir al carrito",
@@ -88,7 +80,6 @@
     "badge_scored": "Afinidad olfativa",
     "badge_scored_text": "Misma familia, {count} acordes en común — calculado, no revisado",
     "badge_source": "Fuente:",
-    "add_to_cart_price": "Añadir al carrito · {price}",
     "share_label": "Compartir este gemelo",
     "share_whatsapp": "WhatsApp",
     "share_copy": "Copiar el enlace",

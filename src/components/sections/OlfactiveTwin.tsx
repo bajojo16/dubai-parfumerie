@@ -1112,16 +1112,31 @@ export function OlfactiveTwin({
         <div className="otw-twin-name">
           {v.product.brand} · {v.product.name}
         </div>
+        {/* Tout ce qui décrit l'offre tient sur une ligne : le prix, la
+            famille, et l'économie posée juste à côté du prix qu'elle qualifie.
+            L'action suit sur la ligne d'en dessous. */}
         <div className="otw-price-row">
           <span className="otw-price-big">{fmt(v.product.price)}</span>
           <span className="otw-chip">{v.familyLabel}</span>
+          {v.savings && (
+            <span className="otw-save">
+              <b>−{v.savings.percent} %</b>
+              {t("save_amount", { amount: fmtApprox(v.savings.saved) })}
+            </span>
+          )}
         </div>
-        {v.savings && (
-          <div className="otw-save">
-            <b>−{v.savings.percent} %</b>
-            {t("save_amount", { amount: fmtApprox(v.savings.saved) })}
-          </div>
-        )}
+        {/* Le bouton ne répète plus le prix : il vient d'être annoncé deux
+            lignes plus haut, et le libellé court laisse « Voir ce parfum »
+            tenir sur la même ligne. */}
+        <div className="otw-buy">
+          <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
+          <button type="button" className="otw-btn otw-btn-primary" onClick={() => addToCart(v)}>
+            {addedKey === v.key ? t("added") : t("add_to_cart")}
+          </button>
+          <Link href={v.product.href} className="otw-btn otw-btn-ghost">
+            {t("see_product")}
+          </Link>
+        </div>
       </div>
     </div>
   );
@@ -1227,6 +1242,17 @@ export function OlfactiveTwin({
                 <span className={view.proximityStrength === "tres-proche" ? "otw-chip otw-chip-solid" : "otw-chip"}>
                   {strengthLabel[view.proximityStrength]}
                 </span>
+                <span className="otw-gauge-why">
+                  {view.sameFamily
+                    ? t("same_family", { family: view.referenceFamilyLabel })
+                    : t("near_family", { from: view.referenceFamilyLabel, to: view.familyLabel })}
+                  {view.accordsTotal > 0 && (
+                    <>
+                      {" · "}
+                      <b>{t("accords_found", { count: view.accordsFound, total: view.accordsTotal })}</b>
+                    </>
+                  )}
+                </span>
               </div>
               <div
                 className="otw-bar"
@@ -1243,40 +1269,6 @@ export function OlfactiveTwin({
                 <span>{t("strength_related")}</span>
                 <span>{t("strength_close")}</span>
                 <span>{t("strength_very_close")}</span>
-              </div>
-              <p className="otw-gauge-why">
-                {view.sameFamily
-                  ? t("same_family", { family: view.referenceFamilyLabel })
-                  : t("near_family", { from: view.referenceFamilyLabel, to: view.familyLabel })}
-                {view.accordsTotal > 0 && (
-                  <>
-                    {" · "}
-                    <b>{t("accords_found", { count: view.accordsFound, total: view.accordsTotal })}</b>
-                  </>
-                )}
-              </p>
-            </div>
-
-            {/* Description + accords partagés, puis l'achat */}
-            <div className="otw-foot">
-              <div className="otw-foot-text">
-                <p className="otw-desc">{view.description}</p>
-                {view.sharedAccords.length > 0 && (
-                  <p className="otw-accords">
-                    {t("shared_accords")} · {view.sharedAccords.join(" · ")}
-                  </p>
-                )}
-              </div>
-              {/* Une seule action pleine — l'ajout au panier, prix rappelé
-                  dessus (proposition 01). La fiche produit passe en contour. */}
-              <div className="otw-buy">
-                <QtyStepper value={qty} onChange={setQty} size="sm" locale={locale} />
-                <button type="button" className="otw-btn otw-btn-primary" onClick={() => addToCart(view)}>
-                  {addedKey === view.key ? t("added") : t("add_to_cart_price", { price: fmt(view.product.price) })}
-                </button>
-                <Link href={view.product.href} className="otw-btn otw-btn-ghost">
-                  {t("see_product")}
-                </Link>
               </div>
             </div>
 
@@ -1478,9 +1470,9 @@ export function OlfactiveTwin({
     .otw-retail { margin-top: 4px; font-family: var(--font-sans); font-size: 11.5px; color: ${C.muted}; line-height: 1.4; }
     .otw-retail-label { display: block; font-size: 9.5px; letter-spacing: .8px; text-transform: uppercase; color: ${C.legal}; }
     .otw-retail-price { text-decoration: line-through; color: ${C.strike}; font-size: 13px; }
-    .otw-price-row { display: flex; align-items: baseline; gap: 8px; margin-top: 3px; flex-wrap: wrap; }
+    .otw-price-row { display: flex; align-items: center; gap: 9px; margin-top: 5px; flex-wrap: wrap; }
     .otw-price-big { font-family: var(--font-display); font-size: ${compact ? 24 : 28}px; font-weight: 600; color: ${C.ink}; line-height: 1; }
-    .otw-save { margin-top: 5px; display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 11px;
+    .otw-save { display: inline-flex; align-items: center; gap: 6px; border-radius: 999px; padding: 4px 11px;
       background: linear-gradient(100deg, #9C6A1A, #C8901E 60%, #E5C06A); color: #fff;
       font-family: var(--font-sans); font-size: 11px; font-weight: 500; letter-spacing: .3px; }
     .otw-save b { font-family: var(--font-display); font-size: 15px; font-weight: 600; }
@@ -1517,19 +1509,11 @@ export function OlfactiveTwin({
       border: 3px solid #8A6A1E; transform: translate(-50%, -50%); box-shadow: 0 2px 6px rgba(0,0,0,.2); }
     .otw-ticks { display: flex; justify-content: space-between; font-family: var(--font-sans); font-size: 9px;
       letter-spacing: .9px; text-transform: uppercase; color: ${C.legal}; }
-    .otw-gauge-why { font-family: var(--font-sans); font-size: 12px; color: ${C.muted}; margin: 6px 0 0; line-height: 1.4; }
+    .otw-gauge-why { font-family: var(--font-sans); font-size: 12px; color: ${C.muted}; margin: 0 0 0 auto;
+      line-height: 1.4; text-align: end; }
     .otw-gauge-why b { color: ${C.goldDark}; }
 
-    .otw-foot { margin: ${compact ? 9 : 11}px ${compact ? 14 : 22}px 0; padding-top: 10px; border-top: 1px solid ${C.border};
-      display: flex; align-items: flex-end; gap: 12px; flex-wrap: wrap; }
-    .otw-foot-text { flex: 1 1 220px; min-width: 0; }
-    /* Trois lignes, pas cinq : le paragraphe vient de la fiche produit, ou il a
-       toute la place ; ici il partage la carte avec le prix, la jauge et deux
-       boutons. On coupe a l'affichage, jamais dans la donnee. */
-    .otw-desc { font-family: var(--font-sans); font-size: 12.5px; color: ${C.muted}; margin: 0; line-height: 1.55;
-      display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
-    .otw-accords { font-family: var(--font-sans); font-size: 11px; color: ${C.goldLabel}; margin: 5px 0 0; line-height: 1.4; overflow-wrap: anywhere; }
-    .otw-buy { flex: 0 1 auto; min-width: 0; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .otw-buy { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-top: 11px; }
     .otw-btn { flex: 0 0 auto; display: inline-flex; align-items: center; justify-content: center; height: 40px;
       padding: 0 18px; border-radius: 999px; cursor: pointer; text-decoration: none; white-space: nowrap;
       font-family: var(--font-sans); font-size: 10.5px; font-weight: 600; letter-spacing: .9px; text-transform: uppercase;
@@ -1625,7 +1609,7 @@ export function OlfactiveTwin({
       .otw-duo .otw-silhouette, .otw-duo .otw-shadow, .otw-seal-col { display: none; }
       .otw-duo-side-twin { justify-content: flex-start; }
       .otw-packshot { width: 104px; height: 116px; }
-      .otw-trust, .otw-gauge, .otw-foot { margin-left: 16px; margin-right: 16px; }
+      .otw-trust, .otw-gauge { margin-left: 16px; margin-right: 16px; }
       .otw-share { margin: 12px 16px 16px; }
       .otw-target-name, .otw-twin-name { font-size: 19px; }
 
@@ -1634,8 +1618,6 @@ export function OlfactiveTwin({
       .otw-none-form { max-width: none; }
       .otw-none-input, .otw-none-submit { flex: 1 1 100%; width: 100%; }
 
-      .otw-foot { flex-direction: column; flex-wrap: nowrap; align-items: stretch; gap: 12px; }
-      .otw-foot-text, .otw-buy { flex: 0 0 auto; }
       .otw-buy { width: 100%; }
       .otw-btn-primary { flex: 1 1 auto; }
       .otw-btn-ghost { flex: 1 1 100%; }

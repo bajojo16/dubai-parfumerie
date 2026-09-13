@@ -7,13 +7,6 @@
     "promo": "Flash Deals",
     "blog": "Blog"
   },
-  "topbar": {
-    "msg1": "Free shipping from €60",
-    "msg2": "Pay in 4 instalments, interest-free",
-    "msg3": "10 years of experience · 12,000+ orders",
-    "msg4": "Surprise gift with every order",
-    "msg5": "Returns within 14 days"
-  },
   "hero": {
     "eyebrow": "Authentic Oriental Perfumery · Since 2016",
     "title": "Dubai's finest fragrances, as worn there",
@@ -62,7 +55,6 @@
     "strength_very_close": "Very close profile",
     "strength_close": "Close profile",
     "strength_related": "Related profile",
-    "shared_accords": "Shared accords",
     "search_label": "Search a reference fragrance",
     "suggestions": "Suggestions",
     "add_to_cart": "Add to cart",
@@ -88,7 +80,6 @@
     "badge_scored": "Olfactive kinship",
     "badge_scored_text": "Same family, {count} accords in common — computed, not reviewed",
     "badge_source": "Source:",
-    "add_to_cart_price": "Add to cart · {price}",
     "share_label": "Share this twin",
     "share_whatsapp": "WhatsApp",
     "share_copy": "Copy the link",
