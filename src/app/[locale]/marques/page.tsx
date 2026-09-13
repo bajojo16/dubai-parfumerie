@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { BRANDS } from "@/data/brands";
+import { BRAND_PROFILES } from "@/data/brand-profiles";
 
 const brands = BRANDS;
 
@@ -26,9 +27,18 @@ const features = [
  * Maisons dotées d'une page à elles. Table plutôt que test sur le nom : la
  * liste grandira, et l'entrée manquante retombe seule sur le catalogue filtré.
  */
-const BRAND_PAGES: Record<string, string> = {
-  Reef: "/marques/reef",
-};
+/**
+ * Où mène la carte d'une maison. Les maisons profilées dans
+ * `brand-profiles.ts` ont leur page de personnalité ; les autres retombent sur
+ * le catalogue filtré, en attendant d'avoir la leur.
+ *
+ * Reef y figure par son slug de profil, mais c'est la page statique voisine
+ * `/marques/reef` qui répond : dans l'App Router, un segment statique l'emporte
+ * sur `[slug]`.
+ */
+const BRAND_PAGES: Record<string, string> = Object.fromEntries(
+  BRAND_PROFILES.map((p) => [p.nom.replace(/ Perfumes$/, ""), `/marques/${p.slug}`]),
+);
 
 export default function MarquesPage() {
   return (
@@ -269,9 +279,7 @@ export default function MarquesPage() {
                   {brand.description}
                 </p>
 
-                {/* CTA link — les maisons qui ont leur page dédiée y mènent ;
-                    les autres retombent sur le catalogue filtré, en attendant
-                    d'avoir la leur. Reef est la première. */}
+                {/* CTA link — voir `BRAND_PAGES` ci-dessus. */}
                 <Link
                   href={
                     BRAND_PAGES[brand.name] ??
