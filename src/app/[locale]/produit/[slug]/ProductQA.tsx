@@ -84,11 +84,8 @@ export default function ProductQA({
           display: "grid",
           gridTemplateColumns: "1fr 1fr",
           columnGap: "2.5rem",
+          rowGap: "1.75rem",
           alignItems: "start",
-          display: "flex",
-          flexDirection: "column",
-          gap: "1.75rem",
-          maxWidth: "68ch",
         }}
       >
         {items.map((item) => {
