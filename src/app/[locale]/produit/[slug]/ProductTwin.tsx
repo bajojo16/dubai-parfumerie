@@ -28,20 +28,9 @@ import type { Product } from "@/data/product-details";
 import type { ProductContent, Sillage } from "@/data/product-content";
 import { OLFACTIVE_TWINS, type OlfactiveMatch } from "@/data/olfactive-twins";
 import { retailPriceOf } from "@/data/reference-prices";
-import { resolveProduct } from "@/data/product-resolve";
 import { parseVolumeMl } from "@/lib/product-variants";
-import {
-  euros,
-  eurosPerMl,
-  genderLabel,
-  NBSP,
-  occasionsList,
-  seasonsList,
-  volumeLabel,
-} from "./product-content-format";
+import { euros, eurosPerMl, NBSP, volumeLabel } from "./product-content-format";
 
-/** Nombre de vignettes du rail « autres jumeaux ». */
-const RAIL_MAX = 4;
 /** Base de la jauge « tenue » : 24 h = barre pleine. */
 const LONGEVITY_MAX_HOURS = 24;
 /** Jauge « sillage » : un palier par libellé, le plus fort remplit la barre. */
@@ -91,54 +80,6 @@ const pillStyle = {
   textTransform: "uppercase",
 } as const;
 
-const cardTitle = {
-  margin: 0,
-  fontFamily: "var(--font-sans)",
-  fontSize: "var(--t-xs)",
-  fontWeight: "var(--fw-semibold)",
-  letterSpacing: "var(--ls-wide)",
-  textTransform: "uppercase",
-  color: "var(--gold-700)",
-} as const;
-
-const bodyText = {
-  margin: 0,
-  fontFamily: "var(--font-sans)",
-  fontSize: "var(--t-sm)",
-  lineHeight: "var(--lh-comfort)",
-  color: "var(--ink-700)",
-} as const;
-
-function Gauge({ label, percent }: { label: string; percent: number }) {
-  const value = Math.max(0, Math.min(100, Math.round(percent)));
-  return (
-    <div>
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.35rem" }}>
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: "var(--t-xs)", fontWeight: 500, color: "var(--ink-700)" }}>
-          {label}
-        </span>
-        <span style={{ fontFamily: "var(--font-sans)", fontSize: "var(--t-xs)", color: "var(--ink-400)" }}>{value}{NBSP}%</span>
-      </div>
-      <div
-        role="meter"
-        aria-label={label}
-        aria-valuemin={0}
-        aria-valuemax={100}
-        aria-valuenow={value}
-        style={{ height: 6, borderRadius: 3, background: "var(--line-100)", overflow: "hidden" }}
-      >
-        <div
-          style={{
-            width: `${value}%`,
-            height: "100%",
-            borderRadius: 3,
-            background: "linear-gradient(90deg, var(--gold-300), var(--gold-500))",
-          }}
-        />
-      </div>
-    </div>
-  );
-}
 
 export default function ProductTwin({
   slug,
@@ -165,15 +106,6 @@ export default function ProductTwin({
       : null;
   const hasCenter = savingPct !== null && savingPct > 0;
 
-  // ── Cartes « partagé / diffère / pour qui » ───────────────────────────────
-  // Aucun champ « différences » dans `olfactive-twins.ts` : la carte n'existe
-  // pas plutôt que d'être remplie au jugé.
-  const forWhom = [
-    content.gender ? genderLabel(content.gender) : null,
-    content.seasons?.length ? seasonsList(content.seasons) : null,
-    content.occasions?.length ? occasionsList(content.occasions) : null,
-  ].filter((s): s is string => s !== null);
-
   // ── Jauges ────────────────────────────────────────────────────────────────
   // Pas de score de ressemblance dans l'entrée relue : la jauge est absente.
   const gauges: { label: string; percent: number }[] = [];
@@ -182,32 +114,16 @@ export default function ProductTwin({
   }
   if (content.sillage) gauges.push({ label: "Sillage", percent: SILLAGE_PERCENT[content.sillage] });
 
-  // ── Rail « autres jumeaux » ───────────────────────────────────────────────
-  // La fiche résolue prime sur la copie d'amorçage de la paire : le rail doit
-  // dire exactement ce que la fiche dira au clic.
-  const others = OLFACTIVE_TWINS.filter((t) => t.productHandle !== slug);
-  const sameHouse = others.filter((t) => t.product.brand === product.brand);
-  const railSource = sameHouse.length ? sameHouse : others;
-  const rail = railSource.slice(0, RAIL_MAX).map((t) => {
-    const p = resolveProduct(t.productHandle);
-    return {
-      handle: t.productHandle,
-      name: p?.name ?? t.product.name,
-      brand: p?.brand ?? t.product.brand,
-      price: p?.price ?? t.product.price,
-      image: p?.image ?? t.product.image,
-      original: t.targetName,
-    };
-  });
-  const railTitle = sameHouse.length ? `Autres jumeaux de la maison ${product.brand}` : "Autres jumeaux olfactifs";
-
   const sampleLabel =
     SAMPLE_PRICE_EUR !== null
       ? `Essayer ${product.name} en échantillon · ${euros(SAMPLE_PRICE_EUR)}`
       : `Essayer ${product.name} en échantillon`;
 
   return (
-    <section aria-labelledby="twin-heading" style={{ display: "flex", flexDirection: "column", gap: "1.75rem" }}>
+    {/* Bornée à 760 px : deux cartes de 560 px pour un flacon de 110 px,
+        c'était du vide. Tout le bloc (cartes, bandeau, mention) suit la même
+        largeur pour rester aligné. */}
+    <section aria-labelledby="twin-heading" style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: 760 }}>
       <h2 id="twin-heading" style={h2Style}>
         {`${product.name} face à l'original qui l'inspire`}
       </h2>
@@ -218,7 +134,7 @@ export default function ProductTwin({
         style={{
           display: "grid",
           gridTemplateColumns: hasCenter ? "1fr auto 1fr" : "1fr 1fr",
-          gap: "1.25rem",
+          gap: "1rem",
           alignItems: "stretch",
         }}
       >
@@ -229,7 +145,7 @@ export default function ProductTwin({
             flexDirection: "column",
             alignItems: "center",
             gap: "0.75rem",
-            padding: "1.5rem 1.25rem",
+            padding: "1rem 1rem 1.1rem",
             background: "var(--surface-white)",
             border: "1px solid var(--line-200)",
             borderRadius: "var(--r-lg)",
@@ -237,9 +153,11 @@ export default function ProductTwin({
             textAlign: "center",
           }}
         >
-          <div style={{ position: "relative", width: 160, height: 160, borderRadius: "var(--r-md)", overflow: "hidden", background: "var(--surface-image)" }}>
-            {product.image && (
-              <Image src={product.image} alt={`${product.name} — ${product.brand}`} fill sizes="160px" style={{ objectFit: "cover" }} />
+          <div style={{ position: "relative", width: 110, height: 110, borderRadius: "var(--r-md)", overflow: "hidden", background: "var(--surface-image)" }}>
+            {(product.packshot ?? product.image) && (
+              // Packshot fond clair dans un cadre neutre — même règle que le
+              // médaillon de la pyramide.
+              <Image src={product.packshot ?? product.image ?? ""} alt={`${product.name} — ${product.brand}`} fill sizes="110px" style={{ objectFit: "contain", background: "#fff" }} />
             )}
           </div>
           <span style={{ ...pillStyle, background: "var(--gold-100)", color: "var(--gold-700)" }}>Inspiré de</span>
@@ -263,7 +181,7 @@ export default function ProductTwin({
             className="dp-twin-center"
             style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", gap: "0.25rem", padding: "0 0.5rem", minWidth: 96 }}
           >
-            <span style={{ fontFamily: "var(--font-display)", fontSize: "2rem", fontWeight: 600, lineHeight: 1, color: "var(--gold-700)" }}>
+            <span style={{ fontFamily: "var(--font-display)", fontSize: "1.6rem", fontWeight: 600, lineHeight: 1, color: "var(--gold-700)" }}>
               −{savingPct}{NBSP}%
             </span>
             <span style={{ fontFamily: "var(--font-sans)", fontSize: "var(--t-xs)", letterSpacing: "var(--ls-wide)", textTransform: "uppercase", color: "var(--ink-400)" }}>
@@ -279,7 +197,7 @@ export default function ProductTwin({
             flexDirection: "column",
             alignItems: "center",
             gap: "0.75rem",
-            padding: "1.5rem 1.25rem",
+            padding: "1rem 1rem 1.1rem",
             background: "var(--surface-cream)",
             border: "1px solid var(--line-200)",
             borderRadius: "var(--r-lg)",
@@ -292,8 +210,8 @@ export default function ProductTwin({
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              width: 160,
-              height: 160,
+              width: 110,
+              height: 110,
               borderRadius: "var(--r-md)",
               background: "var(--surface-cream-2)",
               border: "1px solid var(--line-200)",

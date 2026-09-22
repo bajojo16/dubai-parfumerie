@@ -27,6 +27,7 @@ import CollectionBuilder from "./CollectionBuilder";
 import GiftBanner from "./GiftBanner";
 import DiscoveryPack from "./DiscoveryPack";
 import ProductSectionNav from "./ProductSectionNav";
+import BackToTop from "./BackToTop";
 import { notFound } from "next/navigation";
 
 /** Bloc « Composez votre pack découverte » sur la fiche — masqué le 22/09/2026. */
@@ -895,6 +896,9 @@ export default async function ProductPage({ params }: PageProps) {
         .dp-desc-more > summary::-webkit-details-marker { display: none; }
         .dp-desc-more[open] > summary { display: none; }
       `}</style>
+
+      {/* Flèche « remonter » après un écran de défilement. */}
+      <BackToTop />
 
       {/* Barre d'achat fixe, mobile uniquement — voir MobileBuyBar. */}
       <MobileBuyBar
