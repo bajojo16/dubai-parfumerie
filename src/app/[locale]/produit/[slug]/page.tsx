@@ -539,7 +539,6 @@ export default async function ProductPage({ params }: PageProps) {
       <ProductSectionNav
         items={[
           { id: "collection", label: "Collection" },
-          { id: "resume", label: "Résumé" },
           { id: "notes", label: "Notes" },
           { id: "pour-qui", label: "Pour qui" },
           { id: "comparer", label: "Comparer" },
