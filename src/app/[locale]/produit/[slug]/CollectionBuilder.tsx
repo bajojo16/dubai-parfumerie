@@ -50,8 +50,6 @@ const TOAST_MS = 2000;
 /** Vignette carrée de chaque ligne. */
 const THUMB = 56;
 
-/** Familles jugées « assorties » à un gourmand oriental quand aucune huile de la même maison n'existe. */
-const FALLBACK_OIL_FAMILIES = ["Ambré", "Boisé"];
 
 type ItemKey = "bottle" | "oil" | "giftbox" | "sample";
 
@@ -90,17 +88,15 @@ interface Props {
 }
 
 /**
- * Huile « assortie » : même maison d'abord, sinon une ambrée / boisée, sinon
- * la première disponible. `null` = aucune huile en données → la ligne n'existe pas.
+ * Huile « assortie » : UNIQUEMENT celle de la même maison.
+ *
+ * Les replis (famille proche, puis première huile disponible) ont été retirés
+ * le 22/09/2026 : sur la fiche Khamrah, ils proposaient une huile Al Haramain
+ * sous le libellé « assortie », ce qui est faux — aucune huile Lattafa n'existe
+ * au catalogue. `null` = pas d'huile de la maison, la ligne n'apparaît pas.
  */
 function pickOil(brand: string): OilProduct | null {
-  const available = OILS.filter((o) => o.available);
-  return (
-    available.find((o) => o.brand === brand) ??
-    available.find((o) => o.families.some((f) => FALLBACK_OIL_FAMILIES.includes(f.label))) ??
-    available[0] ??
-    null
-  );
+  return OILS.find((o) => o.available && o.brand === brand) ?? null;
 }
 
 /** Arrondi monétaire : les remises en pourcentage produisent des tiers de centime. */
@@ -140,7 +136,7 @@ export default function CollectionBuilder({ slug, productName, brand, price, ima
         key: "oil",
         cartId: `${slug}-oil`,
         title: "Huile de parfum assortie",
-        subtitle: `${oil.name} (${oil.brand}) · fixe le sillage sur les poignets`,
+        subtitle: `${oil.name} · fixe le sillage sur les poignets`,
         short: "Huile de parfum assortie",
         price: oil.price,
         priceLabel: `${formatPrice(oil.price)} €`,

@@ -44,6 +44,7 @@ export default function ProductQA({
 
   return (
     <section aria-labelledby="qa-heading" style={embedded ? { marginTop: "1.5rem" } : undefined}>
+      <style>{`@media (max-width: 760px) { .dp-qa__list { grid-template-columns: 1fr !important; column-gap: 0 !important; } }`}</style>
       {embedded ? (
         <h3
           id="qa-heading"
@@ -72,11 +73,18 @@ export default function ProductQA({
         </h2>
       )}
 
+      {/* Deux colonnes comme la FAQ juste au-dessus : les questions sont
+          courtes, une pile les étirait sur toute la hauteur. */}
       <ol
+        className="dp-qa__list"
         style={{
           listStyle: "none",
           margin: 0,
           padding: 0,
+          display: "grid",
+          gridTemplateColumns: "1fr 1fr",
+          columnGap: "2.5rem",
+          alignItems: "start",
           display: "flex",
           flexDirection: "column",
           gap: "1.75rem",

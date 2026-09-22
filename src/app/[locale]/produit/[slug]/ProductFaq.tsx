@@ -153,7 +153,16 @@ export function ProductFaq({ product, content }: ProductFaqProps) {
   return (
     <section aria-labelledby="faq-heading" className="dp-pfaq">
       <style>{`
+        .dp-pfaq__list {
+          display: grid; grid-template-columns: 1fr 1fr;
+          column-gap: 2.5rem; border-top: 1px solid var(--line-100);
+          align-content: start;
+        }
+        @media (max-width: 760px) { .dp-pfaq__list { grid-template-columns: 1fr; column-gap: 0; } }
         .dp-pfaq__item { border-bottom: 1px solid var(--line-100); }
+        /* Une réponse ouverte ne doit pas décaler sa voisine : chaque item
+           tient sa place, le détail pousse le contenu de SA colonne. */
+        .dp-pfaq__item[open] { break-inside: avoid; }
         .dp-pfaq__summary {
           display: flex; align-items: flex-start; justify-content: space-between; gap: 1rem;
           padding: 0.875rem 0; cursor: pointer; list-style: none;
@@ -197,7 +206,10 @@ export function ProductFaq({ product, content }: ProductFaqProps) {
           Réponses relues le {updated} par l&apos;équipe Dubaï{NBSP}Parfumerie
         </p>
       )}
-      <div style={{ borderTop: "1px solid var(--line-100)" }}>
+      {/* Deux colonnes : huit questions en pile faisaient une bande de 500 px
+          de haut pour une ligne de texte chacune. Chaque colonne garde son
+          filet ; une seule colonne sous 760 px. */}
+      <div className="dp-pfaq__list">
         {items.map((item, index) => (
           <details key={item.q} className="dp-pfaq__item" open={index < 2}>
             <summary className="dp-pfaq__summary">{item.q}</summary>
