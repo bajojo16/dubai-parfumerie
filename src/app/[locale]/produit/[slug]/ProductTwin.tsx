@@ -120,9 +120,9 @@ export default function ProductTwin({
       : `Essayer ${product.name} en échantillon`;
 
   return (
-    {/* Bornée à 760 px : deux cartes de 560 px pour un flacon de 110 px,
-        c'était du vide. Tout le bloc (cartes, bandeau, mention) suit la même
-        largeur pour rester aligné. */}
+    // Bornée à 760 px : deux cartes de 560 px pour un flacon de 110 px,
+    // c'était du vide. Tout le bloc (cartes, bandeau, mention) suit la même
+    // largeur pour rester aligné.
     <section aria-labelledby="twin-heading" style={{ display: "flex", flexDirection: "column", gap: "1.5rem", maxWidth: 760 }}>
       <h2 id="twin-heading" style={h2Style}>
         {`${product.name} face à l'original qui l'inspire`}
