@@ -15,10 +15,10 @@ const PROMO_PRODUCTS = [
   { id: 6, name: "Khadlaj Hareem Al Sultan", brand: "Khadlaj", price: 15.90, oldPrice: 39.90, discount: 60, category: "Femme", image: "prod-6.jpg" },
   { id: 7, name: "Gulf Orchid Rose Oud", brand: "Gulf Orchid", price: 17.90, oldPrice: 44.90, discount: 60, category: "Mixte", image: "prod-1.jpg" },
   { id: 8, name: "Surrati Black Oud", brand: "Surrati", price: 21.90, oldPrice: 54.90, discount: 60, category: "Homme", image: "prod-2.jpg" },
-  { id: 9, name: "Trio Signature · Khamrah, Yara, Bidun Esam", brand: "Dubaï Parfumerie", price: 58.00, oldPrice: 80.90, discount: 28, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-khamrah-yara-bidun-esam-01.webp" },
-  { id: 10, name: "Trio Best-Of · 9PM, Ameerat Al Arab, Qaed Al Fursan", brand: "Dubaï Parfumerie", price: 59.00, oldPrice: 84.00, discount: 30, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-9pm-ameerat-qaed-al-fursan-01.webp" },
-  { id: 11, name: "Trio Reef · 33, Aurom, Summer Pink", brand: "Dubaï Parfumerie", price: 165.00, oldPrice: 235.00, discount: 30, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
-  { id: 12, name: "Trio Lattafa · Ajwad Pink to Pink, Asad, Badee Al Oud", brand: "Dubaï Parfumerie", price: 53.00, oldPrice: 73.00, discount: 27, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-ajwad-asad-badee-al-oud-01.webp" },
+  { id: 9, name: "Trio Signature · Khamrah, Yara, Bidun Esam", brand: "Dubaï Parfumerie", price: 59.90, oldPrice: 80.90, discount: 26, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-khamrah-yara-bidun-esam-01.webp" },
+  { id: 10, name: "Trio Best-Of · 9PM, Ameerat Al Arab, Qaed Al Fursan", brand: "Dubaï Parfumerie", price: 63.00, oldPrice: 84.00, discount: 25, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-9pm-ameerat-qaed-al-fursan-01.webp" },
+  { id: 11, name: "Trio Reef · 33, Aurom, Summer Pink", brand: "Dubaï Parfumerie", price: 214.00, oldPrice: 235.00, discount: 9, category: "Coffrets & Lots", image: "coffret-reef.jpg" },
+  { id: 12, name: "Trio Lattafa · Ajwad Pink to Pink, Asad, Badee Al Oud", brand: "Dubaï Parfumerie", price: 52.00, oldPrice: 73.00, discount: 29, category: "Coffrets & Lots", image: "lots/dp_parfumerie-lot-ajwad-asad-badee-al-oud-01.webp" },
 ];
 
 const OFFER_2_3 = "Achetez 2 = 3 offert";

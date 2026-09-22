@@ -1,18 +1,40 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import VolumeSelector from "./VolumeSelector";
 import AddToCart from "./AddToCart";
+import MobileBuyBar from "./MobileBuyBar";
 import ProductGallery from "./ProductGallery";
 import DeliveryEstimate from "./DeliveryEstimate";
 import ProductVideoStrip from "./ProductVideoStrip";
+import ProductActions from "./ProductActions";
 import { StoryBubbles } from "@/components/sections/StoryBubbles";
 import { DEMO_STORIES } from "@/data/product-stories";
-import { ReviewMediaBubbles } from "@/components/sections/ReviewMediaBubbles";
+import ProductReviews from "./ProductReviews";
 import { reviewMediaForProduct } from "@/data/review-media";
-import { allProductSlugs, resolveProduct } from "@/data/product-resolve";
+import { allProductSlugs, familyLabelOf, relatedProducts, resolveProduct } from "@/data/product-resolve";
 import { ScentConstellation } from "./ScentConstellation";
+import { contentFor } from "@/data/product-content";
+import { ProductSummary } from "./ProductSummary";
+import { ProductSpecs } from "./ProductSpecs";
+import { ProductFaq } from "./ProductFaq";
+import StockSignal from "./StockSignal";
+import TrioUpsell from "./TrioUpsell";
+import ProductTwin from "./ProductTwin";
+import ProductQA from "./ProductQA";
+import { BrandCompare } from "./BrandCompare";
+import { ForWhom } from "./ForWhom";
+import CollectionBuilder from "./CollectionBuilder";
+import GiftBanner from "./GiftBanner";
+import DiscoveryPack from "./DiscoveryPack";
+import ProductSectionNav from "./ProductSectionNav";
 import { notFound } from "next/navigation";
+
+/** Bloc « Composez votre pack découverte » sur la fiche — masqué le 22/09/2026. */
+const SHOW_DISCOVERY_PACK = false;
+/** Bandeau « Offrir … » (emballage cadeau) — masqué le 22/09/2026. */
+const SHOW_GIFT_BANNER = false;
+/** Tableau « {name} ou … ? » (comparatif intra-marque) — masqué le 22/09/2026. */
+const SHOW_BRAND_COMPARE = false;
 
 // ─── Static params ────────────────────────────────────────────────────────────
 
@@ -43,35 +65,6 @@ export async function generateMetadata({ params }: { params: Promise<{locale: st
     },
   };
 }
-
-// ─── Hardcoded reviews ────────────────────────────────────────────────────────
-
-const REVIEWS = [
-  {
-    id: 1,
-    name: "Yasmine B.",
-    city: "Paris",
-    date: "12 juin 2025",
-    rating: 5,
-    text: "Un parfum absolument envoûtant. Je reçois des compliments dès que j'entre dans une pièce. La tenue est incroyable, encore présent le lendemain matin. Parfaitement authentique, rien à voir avec les contrefaçons qu'on trouve ailleurs.",
-  },
-  {
-    id: 2,
-    name: "Mohammed K.",
-    city: "Lyon",
-    date: "3 mai 2025",
-    rating: 5,
-    text: "J'ai grandi avec ce parfum au Maroc et je le retrouve enfin en France à un prix raisonnable. La qualité est exactement celle que je connaissais. Livraison rapide et emballage soigné. Je recommande vivement cette boutique.",
-  },
-  {
-    id: 3,
-    name: "Isabelle D.",
-    city: "Bordeaux",
-    date: "18 avril 2025",
-    rating: 5,
-    text: "Offert à mon mari pour notre anniversaire. Il était aux anges ! Le sillage est puissant sans être agressif, vraiment une qualité orientale comme on n'en trouve pas en grande surface. Nous avons déjà repassé commande.",
-  },
-];
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -111,21 +104,44 @@ export default async function ProductPage({ params }: PageProps) {
   const discountPct = Math.round(((product.oldPrice - product.price) / product.oldPrice) * 100);
   const installment = (product.price / 4).toFixed(2).replace(".", ",");
 
-  // Related products (cycle through images 3–6)
-  // Une story par produit, six au maximum — voir le commentaire au rendu.
-  const storyBubbles = DEMO_STORIES.filter(
-    (story, i, all) =>
-      all.findIndex((other) => (other.shopProductHandle ?? other.id) === (story.shopProductHandle ?? story.id)) === i,
-  ).slice(0, 6);
+  // Stories : celles de CE parfum uniquement. La rangée montrait avant une
+  // story par produit du catalogue, avec leurs prix (49 €, 70 €, 74,50 €…)
+  // dans la colonne d'achat de Khamrah — elle détournait du produit ouvert.
+  // Une seule bulle sur la fiche, toutes les stories dans le lecteur ; sans
+  // story, le composant ne rend rien.
+  const storyBubbles = DEMO_STORIES.filter((story) => story.shopProductHandle === slug);
 
   // Les avis illustres de CETTE fiche uniquement : un avis porte une photo du
   // parfum dont il parle, la rangee n'a donc aucun sens ailleurs. Tableau vide
   // sur les fiches sans photo client, et le composant ne rend alors rien.
   const mediaReviews = reviewMediaForProduct(slug);
 
-  const relatedSlugs = allProductSlugs()
-    .filter((s) => s !== slug)
-    .slice(0, 4);
+  // Liés par la famille et les notes du produit ouvert — voir `relatedProducts`.
+  const related = relatedProducts(slug, 4);
+
+  // Famille pour le fil d'Ariane (« Parfums gourmands › Lattafa › Khamrah »).
+  // Le pluriel français ne se devine pas avec un « s » : floral → floraux,
+  // frais → frais. Table explicite, repli sur l'adjectif tel quel.
+  const crumbFamily = familyLabelOf(slug, product).split(" ")[0];
+  const CRUMB_PLURAL: Record<string, string> = {
+    gourmand: "gourmands", floral: "floraux", boisé: "boisés", ambré: "ambrés",
+    frais: "frais", oriental: "orientaux", aromatique: "aromatiques", fruité: "fruités",
+    épicé: "épicés", musqué: "musqués", chypré: "chyprés", cuir: "cuir", aquatique: "aquatiques",
+  };
+  const crumbFamilyLabel = crumbFamily
+    ? `Parfums ${CRUMB_PLURAL[crumbFamily.toLowerCase()] ?? crumbFamily.toLowerCase()}`
+    : "Parfums";
+
+  // Amorce de la description (jusqu'à la fin de la première phrase après
+  // ~220 signes) ; le reste s'ouvre à la demande. Une description courte
+  // reste entière.
+  const cut = product.description.length > 320 ? product.description.indexOf(". ", 220) : -1;
+  const descLead = cut > 0 ? product.description.slice(0, cut + 1) : product.description;
+  const descRest = cut > 0 ? product.description.slice(cut + 2) : "";
+
+  // Couche éditoriale de la fiche (tenue, saisons, FAQ, date de relecture) —
+  // objet vide si le slug n'en a pas : chaque bloc décide seul de se dessiner.
+  const content = contentFor(slug);
 
 
   // La galerie montrait quatre visuels génériques /assets/prod-*.jpg identiques
@@ -180,6 +196,20 @@ export default async function ProductPage({ params }: PageProps) {
         }
       }) }} />
 
+      {/* BreadcrumbList — même source que le fil d'Ariane visible */}
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "BreadcrumbList",
+        "itemListElement": [
+          { "@type": "ListItem", "position": 1, "name": "Accueil", "item": "https://www.dubaiparfumerie.com/" },
+          ...(crumbFamily
+            ? [{ "@type": "ListItem", "position": 2, "name": crumbFamilyLabel, "item": `https://www.dubaiparfumerie.com/catalogue?famille=${encodeURIComponent(crumbFamily)}` }]
+            : []),
+          { "@type": "ListItem", "position": crumbFamily ? 3 : 2, "name": product.brand, "item": `https://www.dubaiparfumerie.com/marques#${encodeURIComponent(product.brand)}` },
+          { "@type": "ListItem", "position": crumbFamily ? 4 : 3, "name": product.name },
+        ],
+      }) }} />
+
       {/* ── Main product section ── */}
       <section
         style={{
@@ -200,10 +230,14 @@ export default async function ProductPage({ params }: PageProps) {
           <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
             <ProductGallery images={galleryImages} productName={product.name} brand={product.brand} />
 
-            {/* 360 button */}
+            {/* Vue 360° — uniquement quand la fiche déclare une séquence de
+                rotation (`view360`). Avant, le bouton était rendu grisé et
+                désactivé sur TOUTES les fiches, « bientôt disponible » compris :
+                une promesse vide sous chaque galerie. */}
+            {product.view360 && product.view360.length > 0 && (
             <button
-              disabled
-              aria-label="Vue 360° (bientôt disponible)"
+              type="button"
+              aria-label="Vue 360°"
               style={{
                 display: "flex",
                 alignItems: "center",
@@ -213,11 +247,10 @@ export default async function ProductPage({ params }: PageProps) {
                 background: "transparent",
                 border: "1px solid var(--line-200)",
                 borderRadius: "var(--r-sm)",
-                color: "var(--ink-400)",
+                color: "var(--ink-700)",
                 fontFamily: "var(--font-sans)",
                 fontSize: "var(--t-sm)",
-                cursor: "not-allowed",
-                opacity: 0.6,
+                cursor: "pointer",
               }}
             >
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
@@ -228,6 +261,28 @@ export default async function ProductPage({ params }: PageProps) {
               </svg>
               Vue 360°
             </button>
+            )}
+
+            {/* L'offre maison « achetez 2, le 3ᵉ offert » sous la galerie : la
+                colonne des visuels est plus courte, l'espace était vide, et
+                l'encart ne concurrence plus le bouton d'achat à droite. */}
+            <div style={{ marginTop: "0.5rem" }}>
+              <TrioUpsell
+                slug={slug}
+                productName={product.name}
+                brand={product.brand}
+                price={product.price}
+                image={product.image}
+                locale={locale}
+              />
+            </div>
+
+            {/* « En 30 secondes » comble le bas de la colonne des visuels, plus
+                courte que celle de l'achat : les faits citables arrivent ainsi
+                au-dessus de la ligne de flottaison, en face du bouton. */}
+            <div id="resume" style={{ scrollMarginTop: 130, marginTop: "0.5rem" }}>
+              <ProductSummary product={product} slug={slug} content={content} />
+            </div>
           </div>
 
           {/* ── Right: product info ── */}
@@ -238,27 +293,40 @@ export default async function ProductPage({ params }: PageProps) {
                 Accueil
               </Link>
               <span aria-hidden="true">›</span>
-              <Link href="/catalogue" style={{ color: "var(--ink-400)", textDecoration: "none" }}>
-                Parfums Femme
+              {/* Famille réelle du produit — « Parfums Femme » était figé sur
+                  toutes les fiches, Khamrah (mixte) compris. Le schéma
+                  BreadcrumbList ci-dessous suit la même source. */}
+              <Link href={crumbFamily ? `/catalogue?famille=${encodeURIComponent(crumbFamily)}` : "/catalogue"} style={{ color: "var(--ink-400)", textDecoration: "none" }}>
+                {crumbFamilyLabel}
+              </Link>
+              <span aria-hidden="true">›</span>
+              <Link href={`/marques#${encodeURIComponent(product.brand)}`} style={{ color: "var(--ink-400)", textDecoration: "none" }}>
+                {product.brand}
               </Link>
               <span aria-hidden="true">›</span>
               <span style={{ color: "var(--ink-700)" }}>{product.name}</span>
             </nav>
 
-            {/* Brand eyebrow */}
-            <p
-              style={{
-                margin: 0,
-                fontFamily: "var(--font-sans)",
-                fontSize: "var(--t-xs)",
-                fontWeight: "var(--fw-semibold)",
-                letterSpacing: "var(--ls-widest)",
-                textTransform: "uppercase",
-                color: "var(--gold-500)",
-              }}
-            >
-              {product.brand}
-            </p>
+            {/* Marque + Favoris / Partager sur la même ligne : les deux actions
+                étaient en bas de colonne, sous six blocs, sans handler. Elles
+                vivent maintenant là où l'œil arrive en premier — voir
+                `ProductActions`. */}
+            <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "1rem" }}>
+              <p
+                style={{
+                  margin: 0,
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--t-xs)",
+                  fontWeight: "var(--fw-semibold)",
+                  letterSpacing: "var(--ls-widest)",
+                  textTransform: "uppercase",
+                  color: "var(--gold-500)",
+                }}
+              >
+                {product.brand}
+              </p>
+              <ProductActions slug={slug} productName={product.name} brand={product.brand} />
+            </div>
 
             {/* Product name */}
             <h1
@@ -316,6 +384,13 @@ export default async function ProductPage({ params }: PageProps) {
                   {badge}
                 </span>
               ))}
+            </div>
+
+            {/* Vidéos et stories juste sous les badges, avant le prix : le
+                produit en mouvement pendant qu'on se décide, pas après. */}
+            <div style={{ display: "flex", flexDirection: "column", gap: "0.875rem" }}>
+              <ProductVideoStrip productSlug={slug} productName={product.name} productImage={product.image} compact />
+              <StoryBubbles stories={storyBubbles} locale={locale} single />
             </div>
 
             {/* Signature du nez — rendue seulement quand l'attribution est
@@ -401,6 +476,9 @@ export default async function ProductPage({ params }: PageProps) {
               </span>
             </div>
 
+            {/* Stock déclaré — affiché seulement sous un seuil, jamais de faux compte à rebours */}
+            <StockSignal stock={content.stock} />
+
             {/* Installments */}
             <p
               style={{
@@ -429,105 +507,65 @@ export default async function ProductPage({ params }: PageProps) {
               /mois
             </p>
 
-            {/* Volume selector */}
-            <VolumeSelector defaultVolume="100ml" />
-
-            {/* Add to cart (client) */}
-            <AddToCart productName={product.name} price={product.price} />
-
-            {/* Estimateur de livraison — client, car la date dépend de l'heure
+            {/* Estimateur de livraison — AVANT la contenance : « quand ? » se règle
+                avant « combien ? », et le bloc crème sépare le prix du choix de format.
+                Ancien commentaire : — client, car la date dépend de l'heure
                 courante (voir le composant : rien n'est calculé au rendu serveur). */}
             <DeliveryEstimate locale={locale} />
 
-            {/* Miniatures vidéo du produit (cases vides = « à venir ») */}
-            <ProductVideoStrip
-              productSlug={slug}
+            {/* Contenance + quantité + ajout + paiement express (client).
+                Le sélecteur de contenance vit désormais DANS AddToCart. */}
+            <AddToCart
+              slug={slug}
               productName={product.name}
-              productImage={product.image}
+              brand={product.brand}
+              price={product.price}
+              oldPrice={product.oldPrice}
+              volume={product.volume}
+              image={product.image}
+              variants={product.variants}
+              sample={product.sample}
             />
 
-            {/* Stories produit (bulles → lecteur plein écran) */}
-            {/* Six bulles au plus : au-delà la rangée passe à la ligne et la
-                septième se retrouve seule sous les autres. Les stories d'un
-                même parfum se suivent dans la source, on n'en garde qu'une par
-                produit pour ne pas remplir la rangée avec trois fois le même
-                flacon au même prix. */}
-            <StoryBubbles stories={storyBubbles} locale={locale} />
 
-
-            {/* L'ancienne ligne « Livraison offerte dès 60 € · Expédié sous 24 h
-                ouvrées » a été retirée : le bloc `DeliveryEstimate` ci-dessus dit
-                la même chose, en mieux, et lit le seuil depuis `src/data/carriers.ts`
-                au lieu de le répéter en dur. */}
-
-            {/* Wishlist + Share */}
-            <div style={{ display: "flex", gap: "0.75rem" }}>
-              <button
-                aria-label="Ajouter aux favoris"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.4rem",
-                  padding: "0.5rem 1rem",
-                  background: "transparent",
-                  border: "1px solid var(--line-200)",
-                  borderRadius: "var(--r-sm)",
-                  color: "var(--ink-500)",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--t-sm)",
-                  cursor: "pointer",
-                  transition: "border-color var(--dur-fast), color var(--dur-fast)",
-                }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
-                </svg>
-                Favoris
-              </button>
-              <button
-                aria-label="Partager ce produit"
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "0.4rem",
-                  padding: "0.5rem 1rem",
-                  background: "transparent",
-                  border: "1px solid var(--line-200)",
-                  borderRadius: "var(--r-sm)",
-                  color: "var(--ink-500)",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--t-sm)",
-                  cursor: "pointer",
-                  transition: "border-color var(--dur-fast), color var(--dur-fast)",
-                }}
-              >
-                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5">
-                  <circle cx="18" cy="5" r="3"/>
-                  <circle cx="6" cy="12" r="3"/>
-                  <circle cx="18" cy="19" r="3"/>
-                  <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
-                  <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
-                </svg>
-                Partager
-              </button>
-            </div>
           </div>
         </div>
       </section>
 
-      {/* ── Below the fold ── */}
-      <div
-        style={{
-          maxWidth: "var(--container)",
-          margin: "0 auto",
-          padding: "0 var(--gutter) 6rem",
-          display: "flex",
-          flexDirection: "column",
-          gap: "4rem",
-        }}
-      >
-        {/* Olfactory pyramid */}
-        <section aria-labelledby="pyramid-heading">
+      {/* ── Sous le hero : quatre zones nommées, fonds alternés, une barre
+          d'ancres collante pour s'y retrouver. Chaque zone a son conteneur ;
+          les zones « Comparer » et « Compléter » sont en bande crème pleine
+          largeur pour rythmer une page longue. ── */}
+      <ProductSectionNav
+        items={[
+          { id: "collection", label: "Collection" },
+          { id: "resume", label: "Résumé" },
+          { id: "notes", label: "Notes" },
+          { id: "pour-qui", label: "Pour qui" },
+          { id: "comparer", label: "Comparer" },
+          { id: "avis", label: "Avis" },
+          { id: "questions", label: "Questions" },
+          { id: "completer", label: "Compléter" },
+        ]}
+      />
+
+      {/* ── Zone 1 · Comprendre ── */}
+      <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "3.5rem var(--gutter) 4rem", display: "flex", flexDirection: "column", gap: "4rem" }}>
+        {/* La collection en tête, juste sous le hero : l'intention d'achat est
+            là, à chaud — c'est le moment de proposer l'huile et le coffret. */}
+        <div id="collection" style={{ scrollMarginTop: 130 }}>
+          <CollectionBuilder
+            slug={slug}
+            productName={product.name}
+            brand={product.brand}
+            price={product.price}
+            oldPrice={product.oldPrice}
+            image={product.image ?? "/assets/prod-1.jpg"}
+            volume={product.volume}
+          />
+        </div>
+
+        <section id="notes" aria-labelledby="pyramid-heading" style={{ scrollMarginTop: 130 }}>
           <h2
             id="pyramid-heading"
             style={{
@@ -546,10 +584,13 @@ export default async function ProductPage({ params }: PageProps) {
             baseNotes={product.baseNotes}
             productName={product.name}
             brand={product.brand}
-            image={product.image}
+            image={product.packshot ?? product.image}
           />
         </section>
 
+        {/* Description (repliée) et fiche technique côte à côte : même rôle —
+            répondre — même hauteur, une seule rangée. */}
+        <div className="dp-desc-specs" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: "3rem", alignItems: "start" }}>
         {/* Description */}
         <section aria-labelledby="desc-heading">
           <h2
@@ -568,6 +609,9 @@ export default async function ProductPage({ params }: PageProps) {
               les titres et aplatissait la hiérarchie. `--t-body` (15px) reste
               confortable, l'interligne descend de 1.7 à 1.6 et la colonne est
               bornée en `ch` — au-delà de ~70 signes, l'œil perd sa ligne. */}
+          {/* Repliée : « En 30 secondes », la pyramide et la fiche technique
+              disent déjà l'essentiel. On montre l'amorce, le reste s'ouvre à la
+              demande — sans JavaScript, via <details>. */}
           <p
             className="dp-product-desc"
             style={{
@@ -579,8 +623,36 @@ export default async function ProductPage({ params }: PageProps) {
               margin: 0,
             }}
           >
-            {product.description}
+            {descLead}
           </p>
+          {descRest && (
+            <details className="dp-desc-more" style={{ maxWidth: "68ch", marginTop: "0.5rem" }}>
+              <summary
+                style={{
+                  cursor: "pointer",
+                  listStyle: "none",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--t-sm)",
+                  fontWeight: "var(--fw-medium)",
+                  color: "var(--gold-700)",
+                }}
+              >
+                Lire la description complète
+              </summary>
+              <p
+                className="dp-product-desc"
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontSize: "var(--t-body)",
+                  lineHeight: "var(--lh-comfort)",
+                  color: "var(--ink-700)",
+                  margin: "0.75rem 0 0",
+                }}
+              >
+                {descRest}
+              </p>
+            </details>
+          )}
           {/* Note « viralité + ressemblance ». Séparée de la description pour
               qu'elle ne parte pas dans le JSON-LD ni dans la meta, et pour
               porter sa mention légale : la fiche nomme parfois une maison
@@ -623,6 +695,62 @@ export default async function ProductPage({ params }: PageProps) {
           )}
         </section>
 
+          <ProductSpecs product={product} slug={slug} content={content} />
+        </div>
+
+        {/* « Est-ce pour moi ? » ferme la zone Comprendre : c'est l'aide à la
+            décision, juste avant qu'on compare. */}
+        <div id="pour-qui" style={{ scrollMarginTop: 130 }}>
+          <ForWhom slug={slug} product={product} content={content} />
+        </div>
+      </div>
+
+      {/* ── Zone 2 · Comparer — bande crème ── */}
+      <div id="comparer" style={{ background: "var(--surface-cream)", borderTop: "1px solid var(--line-100)", borderBottom: "1px solid var(--line-100)", scrollMarginTop: 110 }}>
+        <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "3.5rem var(--gutter) 4rem", display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+          <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: "var(--t-xs)", fontWeight: "var(--fw-semibold)", letterSpacing: "var(--ls-widest)", textTransform: "uppercase", color: "var(--gold-700)" }}>
+            Comparer avant de choisir
+          </p>
+          <ProductTwin slug={slug} product={product} content={content} />
+          {SHOW_BRAND_COMPARE && <BrandCompare slug={slug} product={product} />}
+        </div>
+      </div>
+
+      {/* ── Zone 3 · Avis & questions ── */}
+      <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "3.5rem var(--gutter) 4rem", display: "flex", flexDirection: "column", gap: "4rem" }}>
+        <div id="avis" style={{ scrollMarginTop: 130 }}>
+          <ProductReviews slug={slug} product={product} locale={locale} mediaReviews={mediaReviews} />
+        </div>
+
+        {/* Questions : la FAQ (schéma FAQPage) puis, sous le même titre, les
+            questions de clients avec la réponse de la boutique. */}
+        <div id="questions" style={{ scrollMarginTop: 130 }}>
+          <ProductFaq product={product} slug={slug} content={content} />
+          <ProductQA product={product} content={content} embedded />
+        </div>
+      </div>
+
+      {/* ── Zone 4 · Compléter — bande crème ── */}
+      <div id="completer" style={{ background: "var(--surface-cream)", borderTop: "1px solid var(--line-100)", scrollMarginTop: 110 }}>
+        <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "3.5rem var(--gutter) 5rem", display: "flex", flexDirection: "column", gap: "3.5rem" }}>
+          <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: "var(--t-xs)", fontWeight: "var(--fw-semibold)", letterSpacing: "var(--ls-widest)", textTransform: "uppercase", color: "var(--gold-700)" }}>
+            Compléter votre commande
+          </p>
+          {/* Pack découverte masqué pour le moment (décision du 22/09/2026) :
+              troisième proposition d'échantillons sur la même fiche après la
+              case « ajouter aussi l'échantillon » et la ligne de la collection.
+              Le composant reste prêt — repasser `SHOW_DISCOVERY_PACK` à true. */}
+          {SHOW_DISCOVERY_PACK && (
+            <DiscoveryPack
+              slug={slug}
+              productName={product.name}
+              image={product.image}
+              price={product.price}
+              refundable={product.sample?.refundable}
+              samplePrice={product.sample?.price}
+            />
+          )}
+
         {/* Related products */}
         <section aria-labelledby="related-heading">
           <h2
@@ -635,7 +763,7 @@ export default async function ProductPage({ params }: PageProps) {
               marginBottom: "1.75rem",
             }}
           >
-            Tu pourrais aussi aimer
+            Vous pourriez aussi aimer
           </h2>
           <div
             style={{
@@ -644,8 +772,7 @@ export default async function ProductPage({ params }: PageProps) {
               gap: "1.25rem",
             }}
           >
-            {relatedSlugs.map((relSlug) => {
-              const relProduct = resolveProduct(relSlug)!;
+            {related.map(({ slug: relSlug, product: relProduct }) => {
               const relDiscount = Math.round(
                 ((relProduct.oldPrice - relProduct.price) / relProduct.oldPrice) * 100
               );
@@ -755,133 +882,33 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
         </section>
 
-        {/* Customer reviews */}
-        <section aria-labelledby="reviews-heading">
-          <div
-            style={{
-              display: "flex",
-              alignItems: "baseline",
-              justifyContent: "space-between",
-              marginBottom: "1.75rem",
-            }}
-          >
-            <h2
-              id="reviews-heading"
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "var(--t-title)",
-                fontWeight: 600,
-                color: "var(--ink-900)",
-                margin: 0,
-              }}
-            >
-              Avis clients
-            </h2>
-            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-              {renderStars(product.rating, 14)}
-              <span
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--t-sm)",
-                  color: "var(--ink-500)",
-                }}
-              >
-                {product.rating.toFixed(1)} / 5 · {product.reviews} avis
-              </span>
-            </div>
-          </div>
+          {SHOW_GIFT_BANNER && (
+            <GiftBanner productName={product.name} image={product.image ?? "/assets/prod-1.jpg"} gallery={product.gallery} />
+          )}
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(3, 1fr)",
-              gap: "1.25rem",
-            }}
-          >
-            {REVIEWS.map((review) => (
-              <article
-                key={review.id}
-                style={{
-                  background: "var(--surface-white)",
-                  borderRadius: "var(--r-lg)",
-                  padding: "1.5rem",
-                  boxShadow: "var(--shadow-sm)",
-                  border: "1px solid var(--line-100)",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "0.75rem",
-                }}
-              >
-                <header style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-                  <div>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontFamily: "var(--font-sans)",
-                        fontWeight: "var(--fw-semibold)",
-                        fontSize: "var(--t-body)",
-                        color: "var(--ink-900)",
-                      }}
-                    >
-                      {review.name}
-                    </p>
-                    <p
-                      style={{
-                        margin: 0,
-                        fontSize: "var(--t-xs)",
-                        color: "var(--ink-400)",
-                      }}
-                    >
-                      {review.city} · {review.date}
-                    </p>
-                  </div>
-                  {renderStars(review.rating, 13)}
-                </header>
-                <p
-                  style={{
-                    margin: 0,
-                    fontFamily: "var(--font-sans)",
-                    fontSize: "var(--t-sm)",
-                    lineHeight: "var(--lh-relaxed)",
-                    color: "var(--ink-700)",
-                  }}
-                >
-                  {review.text}
-                </p>
-                <p
-                  style={{
-                    margin: 0,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "0.375rem",
-                    fontSize: "var(--t-xs)",
-                    color: "var(--success)",
-                    fontWeight: "var(--fw-medium)",
-                  }}
-                >
-                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
-                    <path d="M20 6L9 17l-5-5" strokeLinecap="round" strokeLinejoin="round"/>
-                  </svg>
-                  Achat vérifié
-                </p>
-              </article>
-            ))}
-          </div>
-
-          {/* Les avis en images, au PIED de la section : les trois cartes de
-              texte ci-dessus sont la meme copie generique sur toutes les
-              fiches, alors que ces bulles-ci sont propres au produit ouvert.
-              Les poser avant aurait fait passer le contenu specifique pour un
-              accessoire du contenu generique. */}
-          <ReviewMediaBubbles
-            reviews={mediaReviews}
-            productSlug={slug}
-            productName={product.name}
-            locale={locale}
-            wallHref={`/mur-des-eloges?produit=${slug}`}
-          />
-        </section>
+        </div>
       </div>
+
+      <style>{`
+        @media (max-width: 900px) {
+          .dp-desc-specs { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+        }
+        .dp-desc-more > summary::-webkit-details-marker { display: none; }
+        .dp-desc-more[open] > summary { display: none; }
+      `}</style>
+
+      {/* Barre d'achat fixe, mobile uniquement — voir MobileBuyBar. */}
+      <MobileBuyBar
+        slug={slug}
+        productName={product.name}
+        brand={product.brand}
+        price={product.price}
+        oldPrice={product.oldPrice}
+        volume={product.volume}
+        image={product.image}
+        variants={product.variants}
+        sample={product.sample}
+      />
     </div>
   );
 }

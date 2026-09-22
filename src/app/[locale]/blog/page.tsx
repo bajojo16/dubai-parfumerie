@@ -1,9 +1,25 @@
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { DEMO } from "@/data/journal-articles";
 
 // ─── Data ────────────────────────────────────────────────────────────────────
 
 const ARTICLES = [
+  // Portrait Khamrah : le billet vit dans `journal-articles.ts` (DEMO), mais la
+  // grille lit ce tableau local — on l'y reflète pour qu'il apparaisse aussi
+  // parmi les cartes, pas seulement dans le bloc « À la une ».
+  {
+    id: 0,
+    title: "Khamrah, l'ivresse de la datte",
+    category: "Portrait",
+    excerpt:
+      "Datte confite, praline, encens : trois chapitres pour comprendre le gourmand oriental le plus vendu de Lattafa — et savoir comment le porter.",
+    readTime: "4 min",
+    date: "22 septembre 2026",
+    image: "products/khamrah/khamrah-lit-dattes.webp",
+    slug: "khamrah-ivresse-de-la-datte",
+    featured: false,
+  },
   {
     id: 1,
     title: "L'Oud : l'or liquide de l'Orient",
@@ -120,6 +136,9 @@ function getCategoryStyle(category: string): React.CSSProperties {
 export default function BlogPage() {
   const featuredArticle = ARTICLES.find((a) => a.featured)!;
   const gridArticles = ARTICLES.filter((a) => !a.featured);
+  // « À la une » : le premier portrait de flacon du Journal (mise en page
+  // magazine). Absent = le bloc ne s'affiche pas, la page reste telle quelle.
+  const spotlight = DEMO.find((a) => a.kind === "produit");
 
   return (
     <>
@@ -147,6 +166,17 @@ export default function BlogPage() {
           .featured-card {
             grid-template-columns: 1fr;
           }
+        }
+        .spotlight-card {
+          display: grid;
+          grid-template-columns: 55% minmax(0, 1fr);
+        }
+        .spotlight-body { padding: 36px 40px; }
+        @media (max-width: 760px) {
+          .spotlight-card {
+            grid-template-columns: minmax(0, 1fr);
+          }
+          .spotlight-body { padding: 24px 22px 28px; }
         }
         .article-card-link:hover .article-card-title {
           color: var(--gold-700);
@@ -308,6 +338,111 @@ export default function BlogPage() {
             Guides, conseils et culture du parfum arabe
           </p>
         </section>
+
+        {/* ── À la une : portrait de flacon ─────────────────────────────── */}
+        {spotlight && (
+          <section style={{ maxWidth: 1200, margin: "0 auto", padding: "56px 24px 0" }}>
+            <p
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontSize: 11,
+                fontWeight: 700,
+                letterSpacing: "0.22em",
+                textTransform: "uppercase",
+                color: "var(--gold-700)",
+                margin: "0 0 16px",
+              }}
+            >
+              À la une
+            </p>
+            <Link href={spotlight.href} style={{ textDecoration: "none", display: "block" }}>
+              <div
+                className="spotlight-card article-card-inner"
+                style={{
+                  background: "var(--surface-white)",
+                  border: "1px solid var(--line-100)",
+                  borderRadius: "var(--r-lg)",
+                  boxShadow: "0 4px 24px rgba(0,0,0,0.07)",
+                  overflow: "hidden",
+                }}
+              >
+                {/* Image 16/9 */}
+                <div style={{ position: "relative", aspectRatio: "16 / 9", minWidth: 0 }}>
+                  <Image
+                    src={spotlight.coverImage}
+                    alt={spotlight.title}
+                    fill
+                    sizes="(max-width: 760px) 100vw, 660px"
+                    style={{ objectFit: "cover" }}
+                    priority
+                  />
+                </div>
+
+                {/* Texte */}
+                <div
+                  className="spotlight-body"
+                  style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    gap: 16,
+                    minWidth: 0,
+                  }}
+                >
+                  <span style={{ ...getCategoryStyle("Portrait"), alignSelf: "flex-start" }}>
+                    {spotlight.category}
+                  </span>
+                  <h2
+                    className="article-card-title"
+                    style={{
+                      fontFamily: "var(--font-display)",
+                      fontSize: "clamp(1.6rem, 2.4vw, 2.2rem)",
+                      fontWeight: 600,
+                      color: "var(--ink-900)",
+                      margin: 0,
+                      lineHeight: 1.15,
+                      transition: "color 0.18s ease",
+                    }}
+                  >
+                    {spotlight.title}
+                  </h2>
+                  {spotlight.subtitle && (
+                    <p
+                      style={{
+                        fontFamily: "var(--font-sans)",
+                        fontSize: 15,
+                        color: "var(--ink-500)",
+                        lineHeight: 1.7,
+                        margin: 0,
+                      }}
+                    >
+                      {spotlight.subtitle}
+                    </p>
+                  )}
+                  <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--ink-400)" }}>
+                    {spotlight.readingMinutes} min
+                  </span>
+                  <span
+                    style={{
+                      alignSelf: "flex-start",
+                      padding: "11px 20px",
+                      borderRadius: "var(--r-md)",
+                      border: "1px solid var(--gold-500)",
+                      color: "var(--gold-700)",
+                      fontFamily: "var(--font-sans)",
+                      fontSize: 13,
+                      fontWeight: 600,
+                      letterSpacing: "0.08em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Lire le portrait
+                  </span>
+                </div>
+              </div>
+            </Link>
+          </section>
+        )}
 
         {/* ── Featured Article ──────────────────────────────────────────── */}
         <section

@@ -8,6 +8,12 @@ export type ProductStory = {
   videoUrl: string;
   posterUrl: string;
   title?: string;
+  /**
+   * Ce que montre CE plan, en une ligne — affiché dans la liste du lecteur à
+   * la place du prix quand toutes les stories sont du même produit (le prix
+   * y était répété six fois pour le même flacon).
+   */
+  caption?: string;
   shopProductHandle?: string;
   // Résolu côté serveur en prod ; embarqué ici pour la démo.
   // `brand`, `image`, `description` et `notes` alimentent le panneau produit
@@ -130,6 +136,7 @@ export const DEMO_STORIES: ProductStory[] = [
     videoUrl: "/assets/videos/khamrah-hf-14.mp4",
     posterUrl: "/assets/videos/khamrah-hf-14-poster.jpg",
     title: "Khamrah · Porté",
+    caption: "Une main ornée de henné se referme sur le flacon",
     shopProductHandle: "lattafa-khamrah",
     shop: {
       price: 29,
@@ -150,7 +157,8 @@ export const DEMO_STORIES: ProductStory[] = [
     id: "khamrah-geste",
     videoUrl: "/assets/videos/khamrah-hf-05.mp4",
     posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
-    title: "Khamrah",
+    title: "Khamrah · Le geste",
+    caption: "Le capuchon se soulève, le vaporisateur apparaît",
     shopProductHandle: "lattafa-khamrah",
     shop: {
       price: 29,
@@ -172,6 +180,7 @@ export const DEMO_STORIES: ProductStory[] = [
     videoUrl: "/assets/videos/khamrah-hf-11.mp4",
     posterUrl: "/assets/videos/khamrah-hf-11-poster.jpg",
     title: "Khamrah · L'atelier",
+    caption: "La cristallerie : du bloc de verre au flacon rempli",
     shopProductHandle: "lattafa-khamrah",
     shop: {
       price: 29,
@@ -191,7 +200,8 @@ export const DEMO_STORIES: ProductStory[] = [
     id: "khamrah-nectar",
     videoUrl: "/assets/videos/khamrah-hf-03.mp4",
     posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
-    title: "Khamrah",
+    title: "Khamrah · La coulée",
+    caption: "L'ambre coule sur le flacon — le côté gourmand",
     shopProductHandle: "lattafa-khamrah",
     shop: {
       price: 29,
@@ -211,6 +221,7 @@ export const DEMO_STORIES: ProductStory[] = [
     videoUrl: "/assets/videos/khamrah-hf-04.mp4",
     posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     title: "Khamrah · Fiole fixe",
+    caption: "Le flacon net, cannelle et épices en mouvement autour",
     shopProductHandle: "lattafa-khamrah",
     shop: {
       price: 29,
@@ -230,6 +241,7 @@ export const DEMO_STORIES: ProductStory[] = [
     videoUrl: "/assets/videos/khamrah-hf-01.mp4",
     posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
     title: "Khamrah · Datte",
+    caption: "La datte ouverte et son sirop : la note de tête",
     shopProductHandle: "lattafa-khamrah",
     shop: {
       price: 29,

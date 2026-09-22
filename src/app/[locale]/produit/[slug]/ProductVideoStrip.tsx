@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useVideoAutoplay } from "@/hooks/useVideoAutoplay";
 import { DEMO_STORIES } from "@/data/product-stories";
@@ -12,11 +11,10 @@ import { clipsFor as fileClipsFor } from "@/data/product-clips";
  *
  * Le catalogue n'a pas quatre films par parfum — Khamrah en a cinq, la plupart
  * zéro ou un. Le composant ne fabrique donc rien : il place les vidéos réellement
- * disponibles pour CE produit dans les quatre cases, et laisse les autres en
- * « à venir ». Les cases vides restent visibles TANT QU'IL Y A au moins une
- * vidéo : elles annoncent alors ce que la fiche accueillera. Sans aucune
- * vidéo, la section entière disparaît — quatre « à venir » côte à côte ne
- * disent rien et répètent seulement le packshot.
+ * disponibles pour CE produit dans leurs cases, et NE DESSINE PAS les autres.
+ * Une case « à venir » n'est pas une information pour le client : c'est une
+ * promesse vide qui occupe la colonne d'achat. Un film → une case ; quatre
+ * films → quatre cases ; aucun → la section entière disparaît.
  *
  * Client Component pour la lecture au clic (état d'ouverture de la lightbox),
  * comme `ProductGallery` et `AddToCart` le sont déjà à côté. Aucune donnée
@@ -118,6 +116,11 @@ function clipsForProduct(slug: string): Clip[] {
   for (const clip of fileClipsFor(slug)) {
     if (!byUrl.has(clip.videoUrl)) byUrl.set(clip.videoUrl, { ...clip });
   }
+  // Une liste curatée dans `product-clips.ts` est la source UNIQUE de la
+  // bande : elle a été choisie film par film. Stories et carrousel ne
+  // complètent que les fiches qui n'en ont pas — sinon ils rajoutaient une
+  // quatrième tuile à une sélection voulue à trois.
+  if (byUrl.size > 0) return [...byUrl.values()];
   for (const story of DEMO_STORIES) {
     if (story.shopProductHandle !== slug) continue;
     if (!byUrl.has(story.videoUrl)) {
@@ -196,10 +199,18 @@ export default function ProductVideoStrip({
   productSlug,
   productName,
   productImage,
+  compact = false,
 }: {
   productSlug: string;
   productName: string;
   productImage?: string;
+  /**
+   * Sous la galerie, dans la colonne des visuels : tuiles de 92 px alignées
+   * à gauche, titre « En vidéo », pas de filet. C'est là que le client
+   * compare les images — une vidéo à cet endroit se voit ; en bande pleine
+   * largeur sous le hero, elle coûtait 700 px et arrivait après la décision.
+   */
+  compact?: boolean;
 }) {
   const [openIndex, setOpenIndex] = useState(-1);
   const playerRef = useRef<HTMLVideoElement>(null);
@@ -252,22 +263,24 @@ export default function ProductVideoStrip({
     };
   }, [open, close]);
 
-  // Sans une seule vidéo, la section ne montre que quatre fois le même flacon
-  // sous une pastille « à venir » : elle n'annonce rien et fait du bruit. On
-  // ne rend rien. Une seule vidéo suffit en revanche à la justifier, les cases
-  // restantes disant alors ce que la fiche accueillera.
-  const hasVideo = slots.some((s) => s !== null);
-  if (!hasVideo) return null;
+  // Seules les cases qui ont un film sont rendues — l'index d'origine est
+  // conservé pour que la lightbox retrouve sa vidéo. La grille garde ses
+  // quatre colonnes : une case unique ne doit pas s'étirer sur toute la
+  // largeur, elle reste à la taille d'une vignette.
+  const filled = CATEGORIES.map((category, i) => ({ category, clip: slots[i], i })).filter(
+    (x): x is { category: (typeof CATEGORIES)[number]; clip: Clip; i: number } => x.clip !== null,
+  );
+  if (filled.length === 0) return null;
 
   return (
     <section
       aria-labelledby="dp-vs-title"
       style={{
-        borderTop: "1px solid var(--line-100)",
-        paddingTop: "1.25rem",
+        borderTop: compact ? "none" : "1px solid var(--line-100)",
+        paddingTop: compact ? 0 : "1.25rem",
         display: "flex",
         flexDirection: "column",
-        gap: "0.875rem",
+        gap: compact ? "0.625rem" : "0.875rem",
       }}
     >
       <h2
@@ -282,37 +295,30 @@ export default function ProductVideoStrip({
           color: "var(--gold-700)",
         }}
       >
-        En images
+        {compact ? "En vidéo" : "En images"}
       </h2>
 
       <ul
-        className="dp-vs-grid"
+        className={compact ? "dp-vs-grid dp-vs-grid--compact" : "dp-vs-grid"}
         style={{
           listStyle: "none",
           margin: 0,
           padding: 0,
           display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
+          gridTemplateColumns: compact ? "repeat(auto-fill, 92px)" : "repeat(4, 1fr)",
           gap: "0.625rem",
         }}
       >
-        {CATEGORIES.map((category, i) => {
-          const clip = slots[i];
-          const poster = clip?.posterUrl ?? productImage;
+        {filled.map(({ category, clip, i }) => {
+          const poster = clip.posterUrl || productImage;
 
           return (
             <li key={category.id} style={{ display: "flex", flexDirection: "column", gap: "0.4rem" }}>
               <button
                 type="button"
-                className={clip ? "dp-vs-tile" : "dp-vs-tile dp-vs-tile--soon"}
-                disabled={!clip}
-                aria-disabled={clip ? undefined : "true"}
-                aria-label={
-                  clip
-                    ? `Lire la vidéo ${category.label} — ${productName}`
-                    : `${category.label} — vidéo à venir pour ${productName}`
-                }
-                onClick={clip ? () => setOpenIndex(i) : undefined}
+                className="dp-vs-tile"
+                aria-label={`Lire la vidéo ${category.label} — ${productName}`}
+                onClick={() => setOpenIndex(i)}
                 style={{
                   position: "relative",
                   padding: 0,
@@ -321,31 +327,13 @@ export default function ProductVideoStrip({
                   overflow: "hidden",
                   border: "1px solid var(--line-200)",
                   background: "var(--surface-image)",
-                  cursor: clip ? "pointer" : "not-allowed",
+                  cursor: "pointer",
                   transition: "border-color var(--dur-fast) var(--ease-out), transform var(--dur) var(--ease-out)",
                 }}
               >
-                {clip ? (
-                  <StripTile videoUrl={clip.videoUrl} posterUrl={poster ?? ""} />
-                ) : (
-                  poster && (
-                    <Image
-                      src={poster}
-                      alt=""
-                      fill
-                      sizes="(max-width: 760px) 45vw, 130px"
-                      style={{
-                        objectFit: "cover",
-                        // Une case vide est assombrie : elle se lit tout de suite
-                        // comme un emplacement réservé, pas comme un visuel du produit.
-                        filter: "brightness(0.45) saturate(0.7)",
-                      }}
-                    />
-                  )
-                )}
+                <StripTile videoUrl={clip.videoUrl} posterUrl={poster ?? ""} />
 
-                {clip ? (
-                  <span
+                <span
                     aria-hidden="true"
                     style={{
                       position: "absolute",
@@ -372,27 +360,7 @@ export default function ProductVideoStrip({
                       <path d="M14 4h6v6M20 4l-7 7M10 20H4v-6M4 20l7-7" />
                     </svg>
                   </span>
-                ) : (
-                  <span
-                    style={{
-                      position: "absolute",
-                      top: "50%",
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      padding: "0.2rem 0.5rem",
-                      borderRadius: "var(--r-pill)",
-                      background: "var(--badge-dark-bg)",
-                      color: "var(--badge-dark-fg)",
-                      fontFamily: "var(--font-sans)",
-                      fontSize: "9px",
-                      fontWeight: "var(--fw-semibold)",
-                      letterSpacing: "var(--ls-wide)",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    À VENIR
-                  </span>
-                )}
+
               </button>
 
               {/* Libellé et légende retirés de l'affichage : les vignettes se
@@ -488,7 +456,18 @@ const CSS = `
 /* Sous 760 px, quatre colonnes réduiraient chaque vignette à une bande illisible :
    on passe à deux par ligne, où le poster et sa légende restent lisibles. */
 @media (max-width: 760px) {
-  .dp-vs-grid { grid-template-columns: repeat(2, 1fr) !important; gap: 0.875rem !important; }
+  /* Bande défilante de tuiles fixes plutôt que deux colonnes pleines : deux
+     films 9:16 en pleine largeur mangeaient 1 300 px d'écran pour quatre
+     vidéos. Ici quatre tuiles de 120 px tiennent sur une ligne. */
+  .dp-vs-grid {
+    display: flex !important; overflow-x: auto; gap: 0.625rem !important;
+    scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.25rem; scrollbar-width: none;
+  }
+  .dp-vs-grid::-webkit-scrollbar { display: none; }
+  .dp-vs-grid > li { flex: 0 0 120px; scroll-snap-align: start; }
+  .dp-vs-grid--compact { display: grid !important; grid-template-columns: repeat(auto-fill, 84px) !important; overflow: visible; }
+  .dp-vs-grid--compact > li { flex: none; }
 }
 @media (prefers-reduced-motion: reduce) {
   .dp-vs-tile { transition: none !important; }

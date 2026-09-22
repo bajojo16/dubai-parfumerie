@@ -363,7 +363,20 @@ export function ScentConstellation({
                 alt={productName}
                 fill
                 sizes="230px"
-                style={{ objectFit: "contain", padding: "14%" }}
+                // `mixBlendMode: multiply` : un fond « presque blanc » (gris
+                // 240) se fond dans le blanc du médaillon au lieu de dessiner
+                // un carré pâle ; le flacon, sombre, reste intact.
+                // + un masque radial : les bords du carré s'effacent dans le
+                // blanc du rond, et la légère montée de luminosité ramène un
+                // fond gris 235 à ~250 sans éclaircir le flacon de façon visible.
+                style={{
+                  objectFit: "contain",
+                  padding: "12%",
+                  mixBlendMode: "multiply",
+                  filter: "brightness(1.07)",
+                  WebkitMaskImage: "radial-gradient(circle at 50% 50%, #000 58%, transparent 74%)",
+                  maskImage: "radial-gradient(circle at 50% 50%, #000 58%, transparent 74%)",
+                }}
               />
             ) : (
               <span className="dp-sc-core-text">

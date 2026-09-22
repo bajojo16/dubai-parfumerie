@@ -68,6 +68,7 @@ export default function ProductGallery({
       {hasThumbs && (
         <div
           role="group"
+          className="dp-gallery-thumbs"
           aria-label={`Visuels de ${productName}`}
           style={{
             display: "grid",
@@ -118,6 +119,16 @@ export default function ProductGallery({
       {/* Hover / focus : impossibles en style inline, d'où ce <style> local. */}
       <style>{`
         .dp-gallery-thumb:hover { opacity: 1 !important; border-color: var(--gold-300) !important; }
+        /* Mobile : une seule rangée qui défile — neuf vignettes en grille
+           faisaient trois rangées et repoussaient le prix hors écran. */
+        @media (max-width: 640px) {
+          .dp-gallery-thumbs {
+            display: flex !important; overflow-x: auto; gap: 0.5rem !important;
+            scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
+          }
+          .dp-gallery-thumbs::-webkit-scrollbar { display: none; }
+          .dp-gallery-thumbs > * { flex: 0 0 64px; scroll-snap-align: start; }
+        }
         .dp-gallery-thumb:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 2px; }
         @media (prefers-reduced-motion: reduce) {
           .dp-gallery-thumb { transition: none !important; }

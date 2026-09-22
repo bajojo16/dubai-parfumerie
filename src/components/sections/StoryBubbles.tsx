@@ -21,10 +21,17 @@ export function StoryBubbles({
   stories,
   locale = "fr",
   labels,
+  single = false,
 }: {
   stories: ProductStory[];
   locale?: string;
   labels?: Partial<StoryLabels>;
+  /**
+   * Une seule bulle (la première story) avec le compte des autres en pastille ;
+   * le lecteur, lui, ouvre TOUTES les stories du produit. Sur une fiche, six
+   * bulles du même flacon au même prix ne disaient rien de plus qu'une.
+   */
+  single?: boolean;
 }) {
   const [open, setOpen] = useState<number | null>(null);
 
@@ -41,9 +48,41 @@ export function StoryBubbles({
   return (
     <>
       <div dir={locale === "ar" ? "rtl" : "ltr"} style={{ display: "flex", gap: 16, flexWrap: "wrap" }}>
-        {stories.map((s, i) => (
-          <Bubble key={s.id} story={s} price={s.shop ? fmt(s.shop.price) : null} onOpen={() => setOpen(i)} />
-        ))}
+        {single ? (
+          <span style={{ position: "relative", display: "inline-block" }}>
+            <Bubble story={stories[0]} price={stories[0].shop ? fmt(stories[0].shop.price) : null} onOpen={() => setOpen(0)} />
+            {stories.length > 1 && (
+              <span
+                aria-label={`${stories.length} stories`}
+                style={{
+                  position: "absolute",
+                  top: -4,
+                  right: -4,
+                  minWidth: 22,
+                  height: 22,
+                  padding: "0 6px",
+                  borderRadius: 11,
+                  background: "var(--espresso-900)",
+                  color: "var(--gold-100)",
+                  fontFamily: "var(--font-sans)",
+                  fontSize: 11,
+                  fontWeight: 700,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  border: "2px solid var(--surface-page)",
+                  pointerEvents: "none",
+                }}
+              >
+                {stories.length}
+              </span>
+            )}
+          </span>
+        ) : (
+          stories.map((s, i) => (
+            <Bubble key={s.id} story={s} price={s.shop ? fmt(s.shop.price) : null} onOpen={() => setOpen(i)} />
+          ))
+        )}
       </div>
 
       {open !== null && (

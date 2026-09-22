@@ -16,6 +16,26 @@ export interface Product {
   reviews: number;
   concentration: string;
   volume: string;
+  /**
+   * Autres formats vendus pour CE flacon, avec leur prix.
+   *
+   * La contenance déclarée par `volume` / `price` reste LA référence (prix
+   * affiché, JSON-LD, meta) ; `variants` liste les formats supplémentaires
+   * que le sélecteur de contenance propose à côté. ABSENT = un seul format :
+   * le sélecteur n'affiche alors que la contenance de référence et n'invente
+   * PAS 30/50/100 ml — c'est exactement ce que faisait l'ancien sélecteur,
+   * qui vendait trois formats à un prix unique sur toutes les fiches.
+   */
+  variants?: { label: string; volumeMl: number; price: number }[];
+  /**
+   * Échantillon vendu seul (fiole 1 ml typiquement). C'est une VARIANTE
+   * D'ENTRÉE, listée en tête du sélecteur de contenance — pas une case à
+   * cocher ajoutée au flacon : « essayer avant d'acheter » est un choix de
+   * format à part entière. `refundable` : le prix de la fiole est déduit du
+   * flacon acheté ensuite (la fiche l'affiche comme argument). ABSENT = pas
+   * d'échantillon proposé pour cette référence.
+   */
+  sample?: { volumeMl: number; price: number; refundable?: boolean };
   origin: string;
   description: string;
   topNotes: string[];
@@ -45,6 +65,13 @@ export interface Product {
   badges: string[];
   image?: string;
   /**
+   * Packshot sur fond blanc (ou très clair), flacon seul. Sert PARTOUT où le
+   * visuel est posé dans un cadre neutre — médaillon de la pyramide, vignettes
+   * de comparaison, panier : une photo d'ambiance (dattes, cannelle) dans un
+   * rond blanc faisait tache. Absent = repli sur `image`.
+   */
+  packshot?: string;
+  /**
    * Visuels supplémentaires, quand la banque photo en fournit plusieurs pour CE
    * flacon (packshot, coffret, mises en scène, gros plans matière). Optionnel :
    * la fiche affiche une galerie à vignettes seulement si le tableau contient
@@ -59,6 +86,14 @@ export interface Product {
    * attribué À CE parfum par une source publique — voir `PERFUMERS`.
    */
   perfumer?: string;
+  /**
+   * Séquence d'images d'une rotation complète du flacon (36 vues typiquement),
+   * dans l'ordre de lecture. Optionnel, et absent de tout le catalogue à ce
+   * jour : la fiche n'affiche le bouton « Vue 360° » QUE si ce tableau est
+   * rempli — un bouton grisé « bientôt disponible » sur 445 fiches promettait
+   * une chose qui n'existait nulle part.
+   */
+  view360?: string[];
   /**
    * Une phrase — et une seule — rappelant la viralité du flacon sur les
    * réseaux sociaux et la ressemblance recherchée par les visiteurs.
@@ -260,6 +295,12 @@ export const PRODUCTS: Record<string, Product> = {
     reviews: 891,
     concentration: "EDP 30%",
     volume: "100ml",
+    // Un seul format : Lattafa ne vend Khamrah qu'en 100 ml. Pas de `variants`
+    // → la fiche n'affiche pas de sélecteur de contenance, seulement le
+    // format unique et l'échantillon en ligne discrète.
+    // Fiole 1 ml à 1,90 € : prix déjà annoncé sur le site pour l'échantillon.
+    // Remboursée sur l'achat du 100 ml — maquette.
+    sample: { volumeMl: 1, price: 1.9, refundable: true },
     origin: "Fabriqué à Dubaï",
     description:
       "Khamrah — « l'ivresse » en arabe — est le gourmand oriental qui a fait basculer Lattafa dans une autre dimension depuis sa sortie en 2022. Tout commence sur une datte confite, réchauffée de cannelle et de muscade, que la bergamote empêche de tourner au sirop. Le cœur s'épaissit alors : praline, fève tonka et vanille se fondent en un accord de pâtisserie orientale, adouci d'une fleur d'oranger discrète. Puis vient le fond, et Khamrah cesse d'être un dessert : benjoin résineux, bois de santal, ambre gris et une volute de myrrhe et d'encens installent une profondeur presque cérémonielle, qui tient sur la peau — et surtout sur les vêtements — bien après la fin de la soirée.",
@@ -276,6 +317,8 @@ export const PRODUCTS: Record<string, Product> = {
     // n'occupait que la moitié de la hauteur — illisible partout où ce champ est
     // réduit (vignette panier 68 px, jumeau olfactif 116 px en `contain`).
     image: "/assets/products/khamrah/khamrah-hf-05.jpg",
+    // Trois quarts sur fond clair uni : le seul de la série sans décor.
+    packshot: "/assets/products/khamrah/khamrah-hf-02.jpg",
     // Neuf vues volontairement distinctes, du produit vers son univers :
     // six prises de vue studio du flacon (trois quarts, face, contre-plongée,
     // plongée, puis deux macros matière — l'étiquette gravée et le cristal où

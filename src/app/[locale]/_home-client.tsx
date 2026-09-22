@@ -63,20 +63,24 @@ const BundleBuilder = dynamic(() => import("@/components/bundle/BundleBuilder").
 // portent desormais les lots reellement photographies (Higgsfield, 06/09/26,
 // `public/assets/lots/`), avec les flacons qu'on y voit et LEURS prix du
 // catalogue : Khamrah 29 + Yara 22,90 + Bidun Esam 29 = 80,90, et 9PM 30 +
-// Yara 22,90 + Ameerat Al Arab 25 = 77,90. Le prix du lot applique l'offre
-// maison « achetez 2, le 3e offert » : on paie les deux plus chers.
+// Yara 22,90 + Ameerat Al Arab 25 = 77,90.
+//
+// REMISE DES TRIOS : 7 € par parfum, donc 21 € par lot de trois. `price` vaut
+// toujours `oldPrice - 21`, quel que soit le lot — le pourcentage affiche par
+// la carte n'est qu'une consequence de cet ecart fixe, jamais une cible.
+// Ce bareme remplace l'ancien « achetez 2, le 3e offert » sur ces cartes.
 const COFFRETS_HOME: LuxeProduct[] = [
-  { image: "/assets/lots/dp_parfumerie-lot-khamrah-yara-bidun-esam-01.webp", brand: "Dubaï Parfumerie", title: "Trio Signature · Khamrah, Yara, Bidun Esam", price: 58, oldPrice: 80.9, limitedStock: true, href: "/offres/lot-3-pour-2", rating: 4.5, reviewCount: 97 },
+  { image: "/assets/lots/dp_parfumerie-lot-khamrah-yara-bidun-esam-01.webp", brand: "Dubaï Parfumerie", title: "Trio Signature · Khamrah, Yara, Bidun Esam", price: 59.9, oldPrice: 80.9, limitedStock: true, href: "/offres/lot-3-pour-2", rating: 4.5, reviewCount: 97 },
   // Yara figurait dans DEUX lots à la fois : elle reste au Trio Signature, et
   // le Best-Of prend Qaed Al Fursan à sa place. 30 + 25 + 29 = 84 €.
-  { image: "/assets/lots/dp_parfumerie-lot-9pm-ameerat-qaed-al-fursan-01.webp", brand: "Dubaï Parfumerie", title: "Trio Best-Of · 9PM, Ameerat Al Arab, Qaed Al Fursan", price: 59, oldPrice: 84, href: "/offres/lot-3-pour-2", rating: 5, reviewCount: 64 },
+  { image: "/assets/lots/dp_parfumerie-lot-9pm-ameerat-qaed-al-fursan-01.webp", brand: "Dubaï Parfumerie", title: "Trio Best-Of · 9PM, Ameerat Al Arab, Qaed Al Fursan", price: 63, oldPrice: 84, href: "/offres/lot-3-pour-2", rating: 5, reviewCount: 64 },
   // `coffret-reef.jpg` montre trois Reef identifiables : le 33 noir, l'Aurom
   // dore et le Summer Pink. La carte porte donc leurs noms et leurs prix
   // (70 + 75 + 90 = 235), pas un « Coffret Miniatures Floral » que la photo
   // dementait. La quatrieme carte, elle, servait la MEME photo sous un autre
   // nom : elle disparait tant que le lot d'huiles n'a pas son propre visuel.
-  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Trio Reef · 33, Aurom, Summer Pink", price: 165, oldPrice: 235, href: "/offres/lot-3-pour-2", rating: 4, reviewCount: 38 },
-  { image: "/assets/lots/dp_parfumerie-lot-ajwad-asad-badee-al-oud-01.webp", brand: "Dubaï Parfumerie", title: "Trio Lattafa · Ajwad Pink to Pink, Asad, Badee Al Oud", price: 53, oldPrice: 73, limitedStock: true, href: "/offres/lot-3-pour-2", rating: 5, reviewCount: 51 },
+  { image: "/assets/coffret-reef.jpg", brand: "Dubaï Parfumerie", title: "Trio Reef · 33, Aurom, Summer Pink", price: 214, oldPrice: 235, href: "/offres/lot-3-pour-2", rating: 4, reviewCount: 38 },
+  { image: "/assets/lots/dp_parfumerie-lot-ajwad-asad-badee-al-oud-01.webp", brand: "Dubaï Parfumerie", title: "Trio Lattafa · Ajwad Pink to Pink, Asad, Badee Al Oud", price: 52, oldPrice: 73, limitedStock: true, href: "/offres/lot-3-pour-2", rating: 5, reviewCount: 51 },
 ];
 
 // ─── Trust marquee (icônes ligne, fini les emojis) ───────────────────────────

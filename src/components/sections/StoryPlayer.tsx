@@ -55,6 +55,9 @@ export function StoryPlayer({
   const [added, setAdded] = useState(false);
 
   const active = stories[index];
+  // Toutes les stories portent le même produit (cas d'une fiche) : la liste
+  // décrit alors chaque plan au lieu de répéter marque et prix.
+  const sameProduct = stories.length > 1 && stories.every((st) => (st.shopProductHandle ?? st.id) === (stories[0].shopProductHandle ?? stories[0].id));
 
   const fmtPrice = useCallback(
     (n: number) => {
@@ -438,24 +441,37 @@ export function StoryPlayer({
                       {s.title}
                     </span>
                   )}
-                  {s.shop?.brand && (
-                    <span
-                      style={{
-                        fontFamily: "var(--font-sans)",
-                        fontSize: 10.5,
-                        fontWeight: 600,
-                        letterSpacing: ".09em",
-                        textTransform: "uppercase",
-                        color: "rgba(255,255,255,.52)",
-                      }}
-                    >
-                      {s.shop.brand}
-                    </span>
-                  )}
-                  {s.shop && (
-                    <span style={{ fontFamily: "var(--font-sans)", fontSize: 12.5, fontWeight: 700, color: "var(--gold-300)" }}>
-                      {fmtPrice(s.shop.price)}
-                    </span>
+                  {/* Même produit d'un bout à l'autre : la marque et le prix
+                      répétés six fois ne disent rien ; ce que montre CE plan,
+                      si. Marque + prix ne reviennent que pour une liste mixte. */}
+                  {sameProduct ? (
+                    s.caption && (
+                      <span style={{ fontFamily: "var(--font-sans)", fontSize: 12, lineHeight: 1.35, color: "rgba(255,255,255,.62)" }}>
+                        {s.caption}
+                      </span>
+                    )
+                  ) : (
+                    <>
+                      {s.shop?.brand && (
+                        <span
+                          style={{
+                            fontFamily: "var(--font-sans)",
+                            fontSize: 10.5,
+                            fontWeight: 600,
+                            letterSpacing: ".09em",
+                            textTransform: "uppercase",
+                            color: "rgba(255,255,255,.52)",
+                          }}
+                        >
+                          {s.shop.brand}
+                        </span>
+                      )}
+                      {s.shop && (
+                        <span style={{ fontFamily: "var(--font-sans)", fontSize: 12.5, fontWeight: 700, color: "var(--gold-300)" }}>
+                          {fmtPrice(s.shop.price)}
+                        </span>
+                      )}
+                    </>
                   )}
                 </span>
               )}
@@ -548,17 +564,20 @@ export function StoryPlayer({
               <span
                 style={{
                   display: "block",
-                  background: "#fff",
+                  // Cadre 4:5 en `cover` : les packshots de la boutique sont
+                  // en portrait (1128×1400) — dans un carré en `contain`, ils
+                  // laissaient deux bandes blanches de chaque côté.
+                  background: "var(--surface-image, #F1F0EE)",
                   borderRadius: 12,
                   overflow: "hidden",
-                  aspectRatio: "1 / 1",
+                  aspectRatio: "4 / 5",
                 }}
               >
                 {/* eslint-disable-next-line @next/next/no-img-element */}
                 <img
                   src={active.shop.image}
                   alt={active.shop.name}
-                  style={{ width: "100%", height: "100%", objectFit: "contain" }}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
                 />
               </span>
             )}

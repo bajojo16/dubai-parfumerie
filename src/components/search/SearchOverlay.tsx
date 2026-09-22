@@ -273,6 +273,7 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
     }
     if (!results) return [];
     return [
+      ...results.suggestions.map((value): Entry => ({ kind: "text", value })),
       ...results.products.map((product): Entry => ({ kind: "product", product })),
       ...results.brands.map((b): Entry => ({ kind: "brand", name: b.name })),
       ...results.notes.map((n): Entry => ({ kind: "note", label: n.label })),
@@ -516,6 +517,25 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
       </button>
     );
   };
+
+  /**
+   * Pastille de suggestion : une requête, pas une destination. Le clic réécrit
+   * le champ au lieu de naviguer — le client voit ce qu'il cherche s'écrire, et
+   * garde la main pour l'affiner.
+   */
+  const suggestionChip = (value: string, idx: number) => (
+    <button
+      type="button"
+      role="option"
+      aria-selected={active === idx}
+      data-idx={idx}
+      className={`dp-rch-chip dp-rch-sugg${active === idx ? " on" : ""}`}
+      onClick={() => go({ kind: "text", value })}
+      onMouseEnter={() => setActive(idx)}
+    >
+      <Highlight text={value} query={debounced.trim()} normalize={normalize} />
+    </button>
+  );
 
   const noteChip = (n: SearchNote, idx: number) => {
     return (
@@ -763,19 +783,50 @@ export default function SearchOverlay({ open, onClose }: SearchOverlayProps) {
     );
   } else if (results?.empty) {
     body = (
-      <p className="dp-rch-info">
-        Aucun résultat pour «&nbsp;{debounced.trim()}&nbsp;».
-        <br />
-        Essayez une note (oud, vanille, ambre) ou une maison.
-      </p>
+      <>
+        <p className="dp-rch-info">
+          Aucun résultat pour «&nbsp;{debounced.trim()}&nbsp;».
+          <br />
+          {results.suggestions.length
+            ? "Vouliez-vous dire :"
+            : "Essayez une note (oud, vanille, ambre) ou une maison."}
+        </p>
+        {results.suggestions.length > 0 && (
+          <div className="dp-rch-chips dp-rch-suggs">
+            {results.suggestions.map((v, k) => (
+              <React.Fragment key={v}>{suggestionChip(v, k)}</React.Fragment>
+            ))}
+          </div>
+        )}
+      </>
     );
   } else if (results) {
-    const productsFrom = 0;
-    const brandsFrom = results.products.length;
+    const productsFrom = results.suggestions.length;
+    const brandsFrom = productsFrom + results.products.length;
     const notesFrom = brandsFrom + results.brands.length;
 
     body = (
       <>
+        {results.suggestions.length > 0 && (
+          <section className="dp-rch-block">
+            <h3>Suggestions</h3>
+            <div className="dp-rch-chips dp-rch-suggs">
+              {results.suggestions.map((v, k) => (
+                <React.Fragment key={v}>{suggestionChip(v, k)}</React.Fragment>
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* La saisie exacte ne donnait rien : le dire, sinon le client croit
+            avoir bien tapé et ne comprend pas le flacon qu'on lui montre. */}
+        {results.corrected && (
+          <p className="dp-rch-corrected">
+            Rien ne correspond exactement à «&nbsp;{debounced.trim()}&nbsp;». Voici ce qui s&apos;en
+            rapproche&nbsp;:
+          </p>
+        )}
+
         {single ? (
           <section className="dp-rch-block">
             <h3>Votre parfum</h3>
@@ -1087,6 +1138,24 @@ const CSS = `
 }
 .dp-rch-chip:hover, .dp-rch-chip.on { border-color: var(--gold-300); background: var(--surface-cream); color: var(--ink-900); }
 .dp-rch-chip i { font-style: normal; font-size: var(--t-xs); color: var(--ink-400); }
+
+/* ── Pastilles de suggestion ──
+   Fond plein et sans compteur : ce sont des requêtes, pas des notes du
+   catalogue. La différence de traitement évite qu'on les confonde avec les
+   pastilles de note, qui filtrent, elles, sur une matière. */
+.dp-rch-suggs { padding-bottom: 2px; }
+.dp-rch-sugg {
+  background: var(--surface-cream); border-color: transparent;
+  color: var(--ink-800);
+}
+.dp-rch-sugg:hover, .dp-rch-sugg.on { border-color: var(--gold-300); background: var(--surface-white); }
+
+/* Avertissement de correction : discret, il informe sans se faire passer pour
+   un résultat. */
+.dp-rch-corrected {
+  margin: 14px 0 0; color: var(--ink-500);
+  font-size: var(--t-sm); line-height: var(--lh-relaxed);
+}
 
 /* ── Fiche ── */
 .dp-rch-sheet {

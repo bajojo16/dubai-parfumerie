@@ -74,6 +74,9 @@ const NAV_LINKS = [
   // « Commande à la demande » la ferait déborder sur les écrans 1024-1280.
   { label: "Sur commande", href: "/commande-a-la-demande" },
   { label: "Échantillons", href: "/preview/selecteur-echantillons" },
+  // Le Journal : contenu éditorial (portraits de flacons, guides). Placé
+  // avant la zone « affaires » pour ne pas séparer Enchères et Bons Plans.
+  { label: "Blog", href: "/blog" },
   // Ouvre directement l'offre phare, le 3 pour 2 — pas le listing des promos,
   // où il fallait encore cliquer une pastille pour y arriver. Le listing reste
   // accessible depuis l'offre (« Retour ») et depuis le pied de page.
@@ -781,7 +784,13 @@ export function Header() {
     setWishCount(readWishlistCount());
     const onChange = () => setWishCount(readWishlistCount());
     window.addEventListener("storage", onChange);
-    return () => window.removeEventListener("storage", onChange);
+    // `storage` ne part que vers les AUTRES onglets : sans cet écouteur, le
+    // cœur de la fiche remplissait la liste et le compteur ici ne bougeait pas.
+    window.addEventListener("dp-wishlist-change", onChange);
+    return () => {
+      window.removeEventListener("storage", onChange);
+      window.removeEventListener("dp-wishlist-change", onChange);
+    };
   }, []);
 
   function handleWishClick() {

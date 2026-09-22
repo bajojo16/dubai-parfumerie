@@ -26,7 +26,13 @@ export type OlfactiveMatch = {
    */
   referenceId: string;
   targetName: string; // nom texte de la marque cible (usage nominatif)
-  targetPriceHint?: string; // indicatif, optionnel — ex. « ≈ 320 € »
+  targetPriceHint?: string; // indicatif, optionnel — ex. « ≈ 320 »
+  /**
+   * Contenance (ml) du format de l'original auquel `targetPriceHint` et
+   * `reference-prices.ts` se rapportent. Sert au prix au ml et à l'économie
+   * affichés sur la fiche ; absent = pas de comparaison au ml.
+   */
+  targetVolumeMl?: number; // ex. 50 »
   productHandle: string; // handle/SKU du produit oriental dans le catalogue
   family: string; // famille olfactive (traduisible à terme)
   description: string; // 1 phrase profil olfactif (traduisible à terme)
@@ -96,6 +102,7 @@ export const OLFACTIVE_TWINS: OlfactiveMatch[] = [
     referenceId: "kilian-angels-share",
     targetName: "Kilian · Angels' Share",
     targetPriceHint: "≈ 290 €",
+    targetVolumeMl: 50, // Angels' Share est vendu en 50 ml
     productHandle: "lattafa-khamrah",
     family: "Gourmand · Boisé · Épicé",
     description: "Cognac chaleureux, cannelle et tonka — un gourmand boisé enveloppant.",

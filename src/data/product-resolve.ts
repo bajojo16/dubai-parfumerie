@@ -14,6 +14,7 @@
 
 import { PERFUMERS, PRODUCTS, type Product } from "@/data/product-details";
 import { FAMILIES, SEARCH_PRODUCTS, familyOf, type SearchProduct } from "@/data/search-catalog";
+import { PRODUCT_PACKSHOTS } from "@/data/product-packshots";
 
 /** Tous les slugs servis par `/produit/[slug]`, fiches rédigées comprises. */
 export function allProductSlugs(): string[] {
@@ -75,9 +76,19 @@ export function resolveProduct(slug: string): Product | null {
   // déduction. Absent = champ absent, la fiche n'affiche alors aucune ligne.
   const perfumer = PERFUMERS[slug];
 
+  // Packshot fond clair : la fiche qui le déclare gagne, sinon la table
+  // générée (`product-packshots.ts`), sinon rien — la page retombe sur `image`.
+  const packshot = PRODUCT_PACKSHOTS[slug];
+
   const detailed = PRODUCTS[slug];
   // La fiche rédigée peut porter son nez en propre ; sinon la table complète.
-  if (detailed) return perfumer && !detailed.perfumer ? { ...detailed, perfumer } : detailed;
+  if (detailed) {
+    return {
+      ...detailed,
+      ...(perfumer && !detailed.perfumer ? { perfumer } : {}),
+      ...(!detailed.packshot && packshot ? { packshot } : {}),
+    };
+  }
 
   const p = SEARCH_PRODUCTS.find((x) => x.slug === slug);
   if (!p) return null;
@@ -111,9 +122,93 @@ export function resolveProduct(slug: string): Product | null {
       "Authenticité garantie",
     ],
     image: p.image,
+    ...(packshot ? { packshot } : {}),
     // Spread conditionnel : sans attribution vérifiée, la clé n'existe pas —
     // `perfumer: undefined` suffirait à l'affichage mais laisserait croire que
     // l'information a été cherchée et vaut « non communiqué ».
     ...(perfumer ? { perfumer } : {}),
   };
+}
+
+/**
+ * Libellé de famille olfactive d'une fiche, pour le fil d'Ariane et les
+ * comparatifs : la déclaration explicite (`family`, premier descripteur),
+ * sinon celle que le catalogue déduit des notes. Chaîne vide si rien.
+ */
+export function familyLabelOf(slug: string, p: Product): string {
+  if (p.family) return p.family.split(/[\s·,/]+/)[0];
+  const sp = SEARCH_PRODUCTS.find((x) => x.slug === slug);
+  const key = sp ? familyOf(sp) : "";
+  return key && FAMILIES[key] ? FAMILIES[key].label : "";
+}
+
+// ─── Produits liés ───────────────────────────────────────────────────────────
+
+/** Notes d'une fiche, normalisées pour la comparaison (minuscules, sans accents). */
+function noteKeys(p: Product): Set<string> {
+  return new Set(
+    [...p.topNotes, ...p.heartNotes, ...p.baseNotes].map((n) =>
+      n
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .toLowerCase()
+        .trim(),
+    ),
+  );
+}
+
+/**
+ * Famille olfactive d'une fiche, avec la même règle que la vitrine : la
+ * déclaration explicite (`family`, premier descripteur) l'emporte ; sinon on
+ * repasse par le catalogue de recherche, qui la déduit des notes.
+ */
+function familyKeyOf(slug: string, p: Product): string {
+  if (p.family) return p.family.split(/[\s·,/]+/)[0].toLowerCase();
+  const sp = SEARCH_PRODUCTS.find((x) => x.slug === slug);
+  return sp ? familyOf(sp) : "";
+}
+
+/**
+ * Les fiches à proposer sous « Vous pourriez aussi aimer ».
+ *
+ * La rangée montrait les QUATRE PREMIERS slugs du catalogue, les mêmes sur
+ * toutes les fiches, sans lien olfactif avec le produit ouvert. On classe
+ * désormais par proximité : même famille dominante d'abord, puis nombre de
+ * notes en commun, puis même maison — un client qui aime un gourmand à la
+ * datte veut voir d'autres gourmands, pas le premier oud de la liste. Les
+ * fiches sans visuel sont écartées : une vignette vide ne recommande rien.
+ * Le score est déterministe, la rangée ne change pas d'un rendu à l'autre.
+ */
+export function relatedProducts(slug: string, limit = 4): { slug: string; product: Product }[] {
+  const ref = resolveProduct(slug);
+  if (!ref) return [];
+  const refFamily = familyKeyOf(slug, ref);
+  const refNotes = noteKeys(ref);
+
+  const scored: { slug: string; product: Product; score: number }[] = [];
+  for (const other of allProductSlugs()) {
+    if (other === slug) continue;
+    const p = resolveProduct(other);
+    if (!p || !p.image) continue;
+
+    let score = 0;
+    if (refFamily && familyKeyOf(other, p) === refFamily) score += 6;
+    let shared = 0;
+    for (const n of noteKeys(p)) if (refNotes.has(n)) shared += 1;
+    score += Math.min(shared, 5) * 2;
+    if (p.brand === ref.brand) score += 1;
+
+    if (score > 0) scored.push({ slug: other, product: p, score });
+  }
+
+  return scored
+    .sort(
+      (a, b) =>
+        b.score - a.score ||
+        b.product.rating - a.product.rating ||
+        b.product.reviews - a.product.reviews ||
+        a.product.name.localeCompare(b.product.name, "fr"),
+    )
+    .slice(0, limit)
+    .map(({ slug, product }) => ({ slug, product }));
 }

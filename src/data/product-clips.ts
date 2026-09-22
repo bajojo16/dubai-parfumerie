@@ -54,61 +54,26 @@ export const PRODUCT_CLIPS: Record<string, ProductClip[]> = {
   //   cadre 9:16 en `objectFit: "cover"` : on perdrait les colonnes de
   //   lumière et les dattes de côté, c'est-à-dire tout le plan.
   "lattafa-khamrah": [
+    // Retour aux trois films d'origine (décision du 22/09/2026) : chacun a son
+    // poster dédié (.webp), là où la série `hf-02/03/04` partageait le packshot
+    // clair `khamrah-poster.jpg` et rendait deux tuiles blanches à l'écran.
+    // Trois plans, trois choses différentes : le flacon en lévitation (le plan
+    // le plus « pub » de la banque), la coulée d'ambre en macro, et le flacon
+    // net pendant que le décor bouge.
     {
-      // Le seul plan de toute la banque Khamrah où quelqu'un porte le flacon —
-      // une main féminine ornée de henné se referme dessus avant la macro de
-      // l'étiquette. La case « UGC » demande littéralement ça ; `-05`, qui la
-      // tenait jusqu'ici, est un déballage filmé sans personne à l'écran.
-      videoUrl: "/assets/videos/khamrah-hf-14.mp4",
-      posterUrl: "/assets/videos/khamrah-hf-14-poster.jpg",
-      title: "Khamrah · Porté",
-    },
-    {
-      videoUrl: "/assets/videos/khamrah-hf-02.mp4",
-      posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
+      videoUrl: "/assets/videos/khamrah-levitation.mp4",
+      posterUrl: "/assets/videos/khamrah-levitation-poster.webp",
       title: "Khamrah · Le film",
     },
     {
-      videoUrl: "/assets/videos/khamrah-hf-03.mp4",
-      posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
+      videoUrl: "/assets/videos/khamrah-nectar.mp4",
+      posterUrl: "/assets/videos/khamrah-nectar-poster.webp",
       title: "Khamrah · La coulée",
     },
     {
-      videoUrl: "/assets/videos/khamrah-hf-04.mp4",
-      posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
+      videoUrl: "/assets/videos/khamrah-fiole-fixe.mp4",
+      posterUrl: "/assets/videos/khamrah-fiole-fixe-poster.webp",
       title: "Khamrah · Fiole fixe",
-    },
-    {
-      // L'atelier de cristallerie : la verrière, le bloc sous la meule, les
-      // cannelures qu'on taille, puis le flacon rempli. Le seul film qui dise
-      // d'où vient le verre — les quinze autres partent d'un flacon déjà fini.
-      // Hors case pour l'instant : il n'y en a que quatre, et il n'entre dans
-      // aucune des quatre sans mentir sur ce qu'il montre.
-      videoUrl: "/assets/videos/khamrah-hf-11.mp4",
-      posterUrl: "/assets/videos/khamrah-hf-11-poster.jpg",
-      title: "Khamrah · L'atelier",
-    },
-    {
-      // Les ingrédients qui explosent autour du flacon (dattes, cannelle,
-      // éclats de sucre). C'est de l'hypermotion aussi, mais par la dispersion
-      // là où `-03` procède par la coulée : le jour où la bande gagne une
-      // cinquième case, c'est ce plan-là qui a le moins de voisin.
-      videoUrl: "/assets/videos/khamrah-hf-13.mp4",
-      posterUrl: "/assets/videos/khamrah-hf-13-poster.jpg",
-      title: "Khamrah · Les épices",
-    },
-    {
-      // Rétrogradé par `-14` sur la case UGC, gardé en banque : il reste le
-      // seul plan qui découvre le vaporisateur sous le capuchon, ce qui est une
-      // information produit et pas une image d'ambiance.
-      videoUrl: "/assets/videos/khamrah-hf-05.mp4",
-      posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
-      title: "Khamrah · Le geste",
-    },
-    {
-      videoUrl: "/assets/videos/khamrah-hf-01.mp4",
-      posterUrl: "/assets/products/khamrah/khamrah-poster.jpg",
-      title: "Khamrah · Datte",
     },
   ],
 
