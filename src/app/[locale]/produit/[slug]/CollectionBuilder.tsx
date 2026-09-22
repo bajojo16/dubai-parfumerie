@@ -21,7 +21,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import { addItem } from "@/lib/cart";
 import { formatPrice, parseVolumeMl, variantCartId } from "@/lib/product-variants";
-import { relatedProducts, resolveProduct } from "@/data/product-resolve";
+import { lineSiblings, relatedProducts, resolveProduct } from "@/data/product-resolve";
 import { DEMO as OILS, type OilProduct } from "@/data/oil-products";
 import { FREE_SHIPPING_THRESHOLD_EUR } from "@/data/carriers";
 import { FALLBACK_IMAGE, GOLD_GRADIENT, MiniToast } from "./AddToCart";
@@ -118,7 +118,6 @@ export default function CollectionBuilder({ slug, productName, brand, price, ima
     // L'écrin est illustré par la vue « coffret » de la galerie quand elle
     // existe ; sinon le packshot — jamais une image générique.
     const boxImage = product?.gallery?.find((g) => /coffret/i.test(g)) ?? image;
-    const family = product?.family?.toLocaleLowerCase("fr") ?? "parfum";
 
     const list: CollectionItem[] = [
       {
@@ -162,14 +161,17 @@ export default function CollectionBuilder({ slug, productName, brand, price, ima
       brand,
     });
 
-    const related = relatedProducts(slug, 1)[0];
+    // La déclinaison de la ligne d'abord (Khamrah → Khamrah Qahwa) : c'est le
+    // parfum que le client compare déjà ; un « autre gourmand » au hasard
+    // n'avait pas ce lien. Repli sur la proximité olfactive.
+    const related = lineSiblings(slug, 1)[0] ?? relatedProducts(slug, 1)[0];
     if (related) {
       const samplePrice = related.product.sample?.price ?? SAMPLE_PRICE_EUR;
       const sampleMl = related.product.sample?.volumeMl ?? SAMPLE_VOLUME_ML;
       list.push({
         key: "sample",
         cartId: `${slug}-sample-${related.slug}`,
-        title: `Échantillon d'un autre ${family} · ${sampleMl} ml`,
+        title: `Échantillon ${related.product.name} · ${sampleMl} ml`,
         subtitle: `${related.product.name} (${related.product.brand}) · remboursé sur l'achat du flacon`,
         short: `Échantillon ${related.product.name}`,
         price: samplePrice,

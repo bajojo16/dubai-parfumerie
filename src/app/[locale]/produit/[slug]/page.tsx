@@ -565,6 +565,11 @@ export default async function ProductPage({ params }: PageProps) {
           />
         </div>
 
+        {/* Pyramide et fiche technique côte à côte : la constellation laissait
+            deux tiers de largeur vides à droite, la fiche technique une colonne
+            vide à sa gauche. Ensemble elles remplissent la rangée et se
+            répondent — les notes en images, les mêmes en tableau. */}
+        <div className="dp-notes-specs" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 1fr)", gap: "3rem", alignItems: "start" }}>
         <section id="notes" aria-labelledby="pyramid-heading" style={{ scrollMarginTop: 130 }}>
           <h2
             id="pyramid-heading"
@@ -588,9 +593,9 @@ export default async function ProductPage({ params }: PageProps) {
           />
         </section>
 
-        {/* Description (repliée) et fiche technique côte à côte : même rôle —
-            répondre — même hauteur, une seule rangée. */}
-        <div className="dp-desc-specs" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1fr) minmax(0, 1fr)", gap: "3rem", alignItems: "start" }}>
+          <ProductSpecs product={product} slug={slug} content={content} />
+        </div>
+
         {/* Description */}
         <section aria-labelledby="desc-heading">
           <h2
@@ -694,9 +699,6 @@ export default async function ProductPage({ params }: PageProps) {
             </div>
           )}
         </section>
-
-          <ProductSpecs product={product} slug={slug} content={content} />
-        </div>
 
         {/* « Est-ce pour moi ? » ferme la zone Comprendre : c'est l'aide à la
             décision, juste avant qu'on compare. */}
@@ -891,7 +893,7 @@ export default async function ProductPage({ params }: PageProps) {
 
       <style>{`
         @media (max-width: 900px) {
-          .dp-desc-specs { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
+          .dp-notes-specs { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
         }
         .dp-desc-more > summary::-webkit-details-marker { display: none; }
         .dp-desc-more[open] > summary { display: none; }

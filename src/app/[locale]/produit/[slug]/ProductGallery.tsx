@@ -71,10 +71,13 @@ export default function ProductGallery({
           className="dp-gallery-thumbs"
           aria-label={`Visuels de ${productName}`}
           style={{
-            display: "grid",
-            // `auto-fill` plutôt qu'un nombre fixe de colonnes : la bande encaisse
-            // 4 comme 6 visuels sans qu'on ait à câbler le compte en dur.
-            gridTemplateColumns: "repeat(auto-fill, minmax(72px, 1fr))",
+            // Une SEULE rangée, partout : en grille, neuf visuels faisaient
+            // deux ou trois lignes et repoussaient le reste. Ici la bande
+            // défile horizontalement, desktop comme mobile.
+            display: "flex",
+            overflowX: "auto",
+            scrollSnapType: "x mandatory",
+            scrollbarWidth: "none",
             gap: "0.625rem",
           }}
         >
@@ -119,16 +122,9 @@ export default function ProductGallery({
       {/* Hover / focus : impossibles en style inline, d'où ce <style> local. */}
       <style>{`
         .dp-gallery-thumb:hover { opacity: 1 !important; border-color: var(--gold-300) !important; }
-        /* Mobile : une seule rangée qui défile — neuf vignettes en grille
-           faisaient trois rangées et repoussaient le prix hors écran. */
-        @media (max-width: 640px) {
-          .dp-gallery-thumbs {
-            display: flex !important; overflow-x: auto; gap: 0.5rem !important;
-            scroll-snap-type: x mandatory; scrollbar-width: none; -webkit-overflow-scrolling: touch;
-          }
-          .dp-gallery-thumbs::-webkit-scrollbar { display: none; }
-          .dp-gallery-thumbs > * { flex: 0 0 64px; scroll-snap-align: start; }
-        }
+        .dp-gallery-thumbs::-webkit-scrollbar { display: none; }
+        .dp-gallery-thumbs > * { flex: 0 0 72px; scroll-snap-align: start; }
+        @media (max-width: 640px) { .dp-gallery-thumbs > * { flex: 0 0 64px; } }
         .dp-gallery-thumb:focus-visible { outline: 2px solid var(--gold-500); outline-offset: 2px; }
         @media (prefers-reduced-motion: reduce) {
           .dp-gallery-thumb { transition: none !important; }

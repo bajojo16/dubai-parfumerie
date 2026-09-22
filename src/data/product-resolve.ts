@@ -15,6 +15,7 @@
 import { PERFUMERS, PRODUCTS, type Product } from "@/data/product-details";
 import { FAMILIES, SEARCH_PRODUCTS, familyOf, type SearchProduct } from "@/data/search-catalog";
 import { PRODUCT_PACKSHOTS } from "@/data/product-packshots";
+import { PRODUCT_LINES } from "@/data/product-lines";
 
 /** Tous les slugs servis par `/produit/[slug]`, fiches rédigées comprises. */
 export function allProductSlugs(): string[] {
@@ -169,6 +170,22 @@ function familyKeyOf(slug: string, p: Product): string {
 }
 
 /**
+ * Les autres déclinaisons de la MÊME ligne : Khamrah → Khamrah Qahwa,
+ * Yara → Yara Moi / Asad / Asad Zanzibar. Table générée (`product-lines.ts`).
+ * C'est le lien le plus fort du catalogue : il passe avant la ressemblance
+ * olfactive calculée.
+ */
+export function lineSiblings(slug: string, limit = 4): { slug: string; product: Product }[] {
+  const out: { slug: string; product: Product }[] = [];
+  for (const other of PRODUCT_LINES[slug] ?? []) {
+    const p = resolveProduct(other);
+    if (p && p.image) out.push({ slug: other, product: p });
+    if (out.length >= limit) break;
+  }
+  return out;
+}
+
+/**
  * Les fiches à proposer sous « Vous pourriez aussi aimer ».
  *
  * La rangée montrait les QUATRE PREMIERS slugs du catalogue, les mêmes sur
@@ -200,6 +217,11 @@ export function relatedProducts(slug: string, limit = 4): { slug: string; produc
 
     if (score > 0) scored.push({ slug: other, product: p, score });
   }
+
+  // Les déclinaisons de la ligne passent devant : elles portent le même nom,
+  // c'est ce que le client cherche en premier.
+  const siblings = new Set(PRODUCT_LINES[slug] ?? []);
+  for (const r of scored) if (siblings.has(r.slug)) r.score += 100;
 
   return scored
     .sort(
