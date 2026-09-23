@@ -76,6 +76,10 @@ export function tileSpecs(input: BentoInput): TileSpec[] {
   // Une photo cliente vient soit d'un avis illustré (`review-media`), soit d'un
   // avis rédigé qui porte un cliché : les deux sources alimentent la même tuile.
   const hasPhotos = mediaCount > 0 || reviews.some((review) => Boolean(review.photo));
+  // La section d'avis complète n'existe que si des avis sont rédigés pour
+  // cette fiche : ailleurs, la tuile `rating` suffit.
+  const reviewsAvailable = input.reviews.length > 0;
+
   const hasForWhom =
     (content.forWhom?.length ?? 0) > 0 ||
     (content.when?.length ?? 0) > 0 ||
@@ -116,8 +120,11 @@ export function tileSpecs(input: BentoInput): TileSpec[] {
     },
     {
       id: "twin",
-      size: sz(4, 2),
-      alt: [sz(4, 1), sz(6, 1), sz(3, 2)],
+      // Une seule rangée : le comparatif a été resserré (cartes de 110 px,
+      // plus de rail ni de cartes « pour qui »). Sur deux rangées, il laissait
+      // un tiers de sa tuile vide.
+      size: sz(4, 1),
+      alt: [sz(6, 1), sz(3, 2), sz(4, 2)],
       weight: 80,
       available: twin !== undefined,
     },
@@ -137,6 +144,15 @@ export function tileSpecs(input: BentoInput): TileSpec[] {
       // agrégée porte sur des centaines de votes dont on n'affiche qu'une
       // poignée de textes.
       available: product.reviews > 0,
+    },
+    {
+      // Les avis eux-mêmes : résumé, filtres, cartes, formulaire. Pleine
+      // largeur — c'est le bloc le plus long de la fiche, et le seul que le
+      // client parcourt vraiment. `rating` n'en est que la vignette chiffrée.
+      id: "reviews",
+      size: sz(6, 1),
+      weight: 40,
+      available: reviewsAvailable,
     },
     {
       id: "photos",

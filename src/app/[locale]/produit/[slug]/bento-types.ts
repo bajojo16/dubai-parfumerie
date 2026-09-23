@@ -30,6 +30,7 @@ export type TileId =
   | "twin"
   | "forwhom"
   | "rating"
+  | "reviews"
   | "photos"
   | "line"
   | "questions"

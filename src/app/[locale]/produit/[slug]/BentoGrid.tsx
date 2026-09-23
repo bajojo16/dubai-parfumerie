@@ -51,7 +51,7 @@ export function BentoGrid({
         // Rangées à hauteur libre mais minimum commun : deux tuiles côte à côte
         // font la même hauteur, et une tuile sur deux rangées vaut exactement
         // deux rangées plus l'espace entre elles.
-        gridAutoRows: "minmax(272px, auto)",
+        gridAutoRows: "minmax(240px, auto)",
         gap: "1.25rem",
       }}
     >

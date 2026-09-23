@@ -90,7 +90,7 @@ export function PhotosTile({ slug, reviews, mediaReviews }: PhotosTileProps) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        padding: "20px 22px",
+        // Pas de padding ici : la carte et son padding sont dessines par `BentoGrid`.
         overflow: "hidden",
         fontFamily: "var(--font-sans)",
       }}

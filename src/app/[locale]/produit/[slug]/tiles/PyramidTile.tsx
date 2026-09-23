@@ -100,7 +100,9 @@ export function PyramidTile({ product, content }: PyramidTileProps) {
         height: "100%",
         display: "flex",
         flexDirection: "column",
-        padding: "22px 24px",
+        // Pas de padding ici : la carte et son padding sont dessinés par
+        // `BentoGrid`. Deux paddings empilés donneraient une marge double et
+        // des tuiles voisines dont les contenus ne s'alignent pas.
         overflow: "hidden",
         fontFamily: "var(--font-sans)",
       }}
@@ -201,7 +203,10 @@ export function PyramidTile({ product, content }: PyramidTileProps) {
                 padding: 0,
                 listStyle: "none",
                 display: "grid",
-                gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
+                // auto-fit : deux colonnes quand la tuile est large, une seule
+                // sur mobile où deux colonnes de 150 px coupaient les noms de
+                // notes au milieu.
+                gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))",
                 gridAutoRows: "1fr",
                 columnGap: 12,
                 rowGap: 4,

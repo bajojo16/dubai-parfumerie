@@ -214,7 +214,12 @@ export function ForWhom({ content }: ForWhomProps) {
       {/* Trois colonnes jusqu'à 760 px ; en dessous les cartes s'empilent,
           la rangée des saisons garde ses quatre cases. */}
       <style>{`
-        .dp-forwhom__grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.25rem; align-items: start; }
+        /* auto-fit plutôt que trois colonnes fixes : dans une tuile bento de
+           deux colonnes (~360 px), trois colonnes donnaient des bandes de
+           100 px où chaque mot tombait sur sa ligne. Ici les cartes se
+           remettent d'elles-mêmes en pile quand la place manque.
+           (Pas de backtick dans ce bloc : il casserait le template literal.) */
+        .dp-forwhom__grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.25rem; align-items: start; }
         @media (max-width: 760px) {
           .dp-forwhom__grid { grid-template-columns: 1fr; }
         }

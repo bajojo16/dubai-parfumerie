@@ -12,7 +12,6 @@ import { DEMO_STORIES } from "@/data/product-stories";
 import ProductReviews from "./ProductReviews";
 import { reviewMediaForProduct } from "@/data/review-media";
 import { allProductSlugs, familyLabelOf, relatedProducts, resolveProduct } from "@/data/product-resolve";
-import { ScentConstellation } from "./ScentConstellation";
 import { contentFor } from "@/data/product-content";
 import { ProductSummary } from "./ProductSummary";
 import { ProductSpecs } from "./ProductSpecs";
@@ -21,21 +20,23 @@ import StockSignal from "./StockSignal";
 import TrioUpsell from "./TrioUpsell";
 import ProductTwin from "./ProductTwin";
 import ProductQA from "./ProductQA";
-import { BrandCompare } from "./BrandCompare";
 import { ForWhom } from "./ForWhom";
 import CollectionBuilder from "./CollectionBuilder";
-import GiftBanner from "./GiftBanner";
-import DiscoveryPack from "./DiscoveryPack";
 import ProductSectionNav from "./ProductSectionNav";
+import { BentoGrid, type BentoTileContent } from "./BentoGrid";
+import { bentoLayout } from "./bento-layout";
+import type { TileId } from "./bento-types";
+import { PyramidTile } from "./tiles/PyramidTile";
+import { GaugesTile } from "./tiles/GaugesTile";
+import { RatingTile } from "./tiles/RatingTile";
+import { PhotosTile } from "./tiles/PhotosTile";
+import { LineTile } from "./tiles/LineTile";
+import { reviewsFor, reviewSummaryFor } from "@/data/product-reviews";
+import { lineSiblings } from "@/data/product-resolve";
+import { OLFACTIVE_TWINS } from "@/data/olfactive-twins";
 import BackToTop from "./BackToTop";
 import { notFound } from "next/navigation";
 
-/** Bloc « Composez votre pack découverte » sur la fiche — masqué le 22/09/2026. */
-const SHOW_DISCOVERY_PACK = false;
-/** Bandeau « Offrir … » (emballage cadeau) — masqué le 22/09/2026. */
-const SHOW_GIFT_BANNER = false;
-/** Tableau « {name} ou … ? » (comparatif intra-marque) — masqué le 22/09/2026. */
-const SHOW_BRAND_COMPARE = false;
 
 // ─── Static params ────────────────────────────────────────────────────────────
 
@@ -143,6 +144,26 @@ export default async function ProductPage({ params }: PageProps) {
   // Couche éditoriale de la fiche (tenue, saisons, FAQ, date de relecture) —
   // objet vide si le slug n'en a pas : chaque bloc décide seul de se dessiner.
   const content = contentFor(slug);
+
+  // ── Bento ────────────────────────────────────────────────────────────────
+  // Le moteur ne lit aucune source lui-même : la page lui passe des données
+  // déjà résolues, il en déduit quelles tuiles existent et comment elles
+  // pavent la grille. Une tuile dont la donnée manque n'est pas dans la liste.
+  const reviews = reviewsFor(slug);
+  const reviewSummary = reviewSummaryFor(slug);
+  const siblings = lineSiblings(slug, 4);
+  const twin = OLFACTIVE_TWINS.find((t) => t.productHandle === slug);
+  const tiles = bentoLayout({
+    slug,
+    product,
+    content,
+    reviews,
+    summary: reviewSummary,
+    mediaCount: mediaReviews.length,
+    twin,
+    siblings,
+    related,
+  });
 
 
   // La galerie montrait quatre visuels génériques /assets/prod-*.jpg identiques
@@ -533,15 +554,15 @@ export default async function ProductPage({ params }: PageProps) {
         </div>
       </section>
 
-      {/* ── Sous le hero : quatre zones nommées, fonds alternés, une barre
-          d'ancres collante pour s'y retrouver. Chaque zone a son conteneur ;
-          les zones « Comparer » et « Compléter » sont en bande crème pleine
-          largeur pour rythmer une page longue. ── */}
+      {/* ── Sous le hero : la grille bento ──────────────────────────────────
+          Plus une pile de sections, mais des tuiles de tailles différentes qui
+          pavent six colonnes. `bento-layout.ts` a déjà décidé lesquelles
+          existent et comment elles se placent ; ici on ne fait que dire ce
+          qu'il y a dedans. Une tuile inconnue du `switch` renvoie `null` et
+          disparaît proprement. */}
       <ProductSectionNav
         items={[
-          { id: "collection", label: "Collection" },
           { id: "notes", label: "Notes" },
-          { id: "pour-qui", label: "Pour qui" },
           { id: "comparer", label: "Comparer" },
           { id: "avis", label: "Avis" },
           { id: "questions", label: "Questions" },
@@ -549,354 +570,173 @@ export default async function ProductPage({ params }: PageProps) {
         ]}
       />
 
-      {/* ── Zone 1 · Comprendre ── */}
-      <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "3.5rem var(--gutter) 4rem", display: "flex", flexDirection: "column", gap: "4rem" }}>
-        {/* La collection en tête, juste sous le hero : l'intention d'achat est
-            là, à chaud — c'est le moment de proposer l'huile et le coffret. */}
-        <div id="collection" style={{ scrollMarginTop: 130 }}>
-          <CollectionBuilder
-            slug={slug}
-            productName={product.name}
-            brand={product.brand}
-            price={product.price}
-            oldPrice={product.oldPrice}
-            image={product.image ?? "/assets/prod-1.jpg"}
-            volume={product.volume}
-          />
-        </div>
-
-        {/* Pyramide et fiche technique côte à côte : la constellation laissait
-            deux tiers de largeur vides à droite, la fiche technique une colonne
-            vide à sa gauche. Ensemble elles remplissent la rangée et se
-            répondent — les notes en images, les mêmes en tableau. */}
-        <div className="dp-notes-specs" style={{ display: "grid", gridTemplateColumns: "minmax(0, 1.15fr) minmax(0, 1fr)", gap: "3rem", alignItems: "start" }}>
-        <section id="notes" aria-labelledby="pyramid-heading" style={{ scrollMarginTop: 130 }}>
-          <h2
-            id="pyramid-heading"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "var(--t-title)",
-              fontWeight: 600,
-              color: "var(--ink-900)",
-              marginBottom: "1.75rem",
-            }}
-          >
-            Pyramide olfactive
-          </h2>
-          <ScentConstellation
-            topNotes={product.topNotes}
-            heartNotes={product.heartNotes}
-            baseNotes={product.baseNotes}
-            productName={product.name}
-            brand={product.brand}
-            image={product.packshot ?? product.image}
-          />
-        </section>
-
-          <ProductSpecs product={product} slug={slug} content={content} />
-        </div>
-
-        {/* Description */}
-        <section aria-labelledby="desc-heading">
-          <h2
-            id="desc-heading"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "var(--t-title)",
-              fontWeight: 600,
-              color: "var(--ink-900)",
-              marginBottom: "1rem",
-            }}
-          >
-            Description
-          </h2>
-          {/* Un cran de moins que `--t-lead` : le paragraphe pesait autant que
-              les titres et aplatissait la hiérarchie. `--t-body` (15px) reste
-              confortable, l'interligne descend de 1.7 à 1.6 et la colonne est
-              bornée en `ch` — au-delà de ~70 signes, l'œil perd sa ligne. */}
-          {/* Repliée : « En 30 secondes », la pyramide et la fiche technique
-              disent déjà l'essentiel. On montre l'amorce, le reste s'ouvre à la
-              demande — sans JavaScript, via <details>. */}
-          <p
-            className="dp-product-desc"
-            style={{
-              fontFamily: "var(--font-sans)",
-              fontSize: "var(--t-body)",
-              lineHeight: "var(--lh-comfort)",
-              color: "var(--ink-700)",
-              maxWidth: "68ch",
-              margin: 0,
-            }}
-          >
-            {descLead}
-          </p>
-          {descRest && (
-            <details className="dp-desc-more" style={{ maxWidth: "68ch", marginTop: "0.5rem" }}>
-              <summary
-                style={{
-                  cursor: "pointer",
-                  listStyle: "none",
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--t-sm)",
-                  fontWeight: "var(--fw-medium)",
-                  color: "var(--gold-700)",
-                }}
-              >
-                Lire la description complète
-              </summary>
-              <p
-                className="dp-product-desc"
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--t-body)",
-                  lineHeight: "var(--lh-comfort)",
-                  color: "var(--ink-700)",
-                  margin: "0.75rem 0 0",
-                }}
-              >
-                {descRest}
-              </p>
-            </details>
-          )}
-          {/* Note « viralité + ressemblance ». Séparée de la description pour
-              qu'elle ne parte pas dans le JSON-LD ni dans la meta, et pour
-              porter sa mention légale : la fiche nomme parfois une maison
-              tierce, l'usage doit rester nominatif et non affilié. */}
-          {product.viralNote && (
-            <div
-              className="dp-viral-note"
-              style={{
-                maxWidth: "68ch",
-                marginBlockStart: "1.25rem",
-                paddingInlineStart: "0.875rem",
-                borderInlineStart: "2px solid var(--gold-500)",
-              }}
-            >
-              <p
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--t-body)",
-                  lineHeight: "var(--lh-comfort)",
-                  color: "var(--ink-700)",
-                  margin: 0,
-                }}
-              >
-                {product.viralNote}
-              </p>
-              <p
-                style={{
-                  fontFamily: "var(--font-sans)",
-                  fontSize: "var(--t-xs)",
-                  lineHeight: "var(--lh-normal)",
-                  letterSpacing: "var(--ls-normal)",
-                  color: "var(--ink-400)",
-                  margin: "0.5rem 0 0",
-                }}
-              >
-                Parfums inspirés, jamais des copies : aucune affiliation avec les
-                marques citées.
-              </p>
-            </div>
-          )}
-        </section>
-
-        {/* « Est-ce pour moi ? » ferme la zone Comprendre : c'est l'aide à la
-            décision, juste avant qu'on compare. */}
-        <div id="pour-qui" style={{ scrollMarginTop: 130 }}>
-          <ForWhom slug={slug} product={product} content={content} />
-        </div>
-      </div>
-
-      {/* ── Zone 2 · Comparer — bande crème ── */}
-      <div id="comparer" style={{ background: "var(--surface-cream)", borderTop: "1px solid var(--line-100)", borderBottom: "1px solid var(--line-100)", scrollMarginTop: 110 }}>
-        <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "3.5rem var(--gutter) 4rem", display: "flex", flexDirection: "column", gap: "3.5rem" }}>
-          <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: "var(--t-xs)", fontWeight: "var(--fw-semibold)", letterSpacing: "var(--ls-widest)", textTransform: "uppercase", color: "var(--gold-700)" }}>
-            Comparer avant de choisir
-          </p>
-          <ProductTwin slug={slug} product={product} content={content} />
-          {SHOW_BRAND_COMPARE && <BrandCompare slug={slug} product={product} />}
-        </div>
-      </div>
-
-      {/* ── Zone 3 · Avis & questions ── */}
-      <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "3.5rem var(--gutter) 4rem", display: "flex", flexDirection: "column", gap: "4rem" }}>
-        <div id="avis" style={{ scrollMarginTop: 130 }}>
-          <ProductReviews slug={slug} product={product} locale={locale} mediaReviews={mediaReviews} />
-        </div>
-
-        {/* Questions : la FAQ (schéma FAQPage) puis, sous le même titre, les
-            questions de clients avec la réponse de la boutique. */}
-        <div id="questions" style={{ scrollMarginTop: 130 }}>
-          <ProductFaq product={product} slug={slug} content={content} />
-          <ProductQA product={product} content={content} embedded />
-        </div>
-      </div>
-
-      {/* ── Zone 4 · Compléter — bande crème ── */}
-      <div id="completer" style={{ background: "var(--surface-cream)", borderTop: "1px solid var(--line-100)", scrollMarginTop: 110 }}>
-        <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "3.5rem var(--gutter) 5rem", display: "flex", flexDirection: "column", gap: "3.5rem" }}>
-          <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: "var(--t-xs)", fontWeight: "var(--fw-semibold)", letterSpacing: "var(--ls-widest)", textTransform: "uppercase", color: "var(--gold-700)" }}>
-            Compléter votre commande
-          </p>
-          {/* Pack découverte masqué pour le moment (décision du 22/09/2026) :
-              troisième proposition d'échantillons sur la même fiche après la
-              case « ajouter aussi l'échantillon » et la ligne de la collection.
-              Le composant reste prêt — repasser `SHOW_DISCOVERY_PACK` à true. */}
-          {SHOW_DISCOVERY_PACK && (
-            <DiscoveryPack
-              slug={slug}
-              productName={product.name}
-              image={product.image}
-              price={product.price}
-              refundable={product.sample?.refundable}
-              samplePrice={product.sample?.price}
-            />
-          )}
-
-        {/* Related products */}
-        <section aria-labelledby="related-heading">
-          <h2
-            id="related-heading"
-            style={{
-              fontFamily: "var(--font-display)",
-              fontSize: "var(--t-title)",
-              fontWeight: 600,
-              color: "var(--ink-900)",
-              marginBottom: "1.75rem",
-            }}
-          >
-            Vous pourriez aussi aimer
-          </h2>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(4, 1fr)",
-              gap: "1.25rem",
-            }}
-          >
-            {related.map(({ slug: relSlug, product: relProduct }) => {
-              const relDiscount = Math.round(
-                ((relProduct.oldPrice - relProduct.price) / relProduct.oldPrice) * 100
-              );
-              return (
-                <Link
-                  key={relSlug}
-                  href={`/produit/${relSlug}`}
-                  style={{ textDecoration: "none", color: "inherit" }}
-                >
-                  <article
-                    style={{
-                      background: "var(--surface-white)",
-                      borderRadius: "var(--r-lg)",
-                      overflow: "hidden",
-                      boxShadow: "var(--shadow-sm)",
-                      transition: "box-shadow var(--dur) var(--ease-out), transform var(--dur) var(--ease-out)",
-                    }}
-                  >
-                    <div
-                      style={{
-                        position: "relative",
-                        aspectRatio: "1 / 1",
-                        background: "var(--surface-white)",
-                        // La marge était portée par le conteneur, que `fill`
-                        // ignore : posé en `inset: 0`, le visuel remplissait la
-                        // boîte entière et venait toucher les bords. Elle passe
-                        // sur l'image, qui respire et se lit plus petite.
-                        padding: 0,
-                        overflow: "hidden",
-                      }}
-                    >
-                      <Image
-                        src={relProduct.image ?? "/assets/prod-3.jpg"}
-                        alt={`${relProduct.name} — ${relProduct.brand}`}
-                        fill
-                        style={{ objectFit: "contain", padding: "1.35rem" }}
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                      {relDiscount > 0 && (
-                        <span
-                          style={{
-                            position: "absolute",
-                            top: "0.5rem",
-                            left: "0.5rem",
-                            padding: "0.15rem 0.4rem",
-                            background: "var(--badge-promo-bg)",
-                            color: "var(--badge-dark-fg)",
-                            fontSize: "10px",
-                            fontWeight: "var(--fw-bold)",
-                            borderRadius: "var(--r-xs)",
-                          }}
-                        >
-                          -{relDiscount}%
-                        </span>
+      <div style={{ maxWidth: "var(--container)", margin: "0 auto", padding: "2.5rem var(--gutter) 5rem" }}>
+        <BentoGrid
+          tiles={tiles}
+          render={(id: TileId): BentoTileContent | null => {
+            switch (id) {
+              case "summary":
+                return {
+                  tone: "cream",
+                  children: <ProductSummary product={product} slug={slug} content={content} />,
+                };
+              case "gauges":
+                return { children: <GaugesTile content={content} product={product} /> };
+              case "pyramid":
+                return { anchor: "notes", children: <PyramidTile product={product} content={content} /> };
+              case "specs":
+                return { children: <ProductSpecs product={product} slug={slug} content={content} /> };
+              case "twin":
+                return {
+                  anchor: "comparer",
+                  children: <ProductTwin slug={slug} product={product} content={content} />,
+                };
+              case "forwhom":
+                return { children: <ForWhom slug={slug} product={product} content={content} /> };
+              case "rating":
+                return { children: <RatingTile product={product} summary={reviewSummary} /> };
+              case "reviews":
+                return {
+                  anchor: "avis",
+                  children: <ProductReviews slug={slug} product={product} locale={locale} mediaReviews={mediaReviews} />,
+                };
+              case "photos":
+                return { children: <PhotosTile slug={slug} reviews={reviews} mediaReviews={mediaReviews} /> };
+              case "line":
+                return { children: <LineTile slug={slug} product={product} /> };
+              case "description":
+                return {
+                  eyebrow: "Le parfum",
+                  title: "Description",
+                  children: (
+                    <div style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
+                      <p
+                        className="dp-product-desc"
+                        style={{
+                          margin: 0,
+                          fontFamily: "var(--font-sans)",
+                          fontSize: "var(--t-body)",
+                          lineHeight: "var(--lh-comfort)",
+                          color: "var(--ink-700)",
+                        }}
+                      >
+                        {descLead}
+                      </p>
+                      {descRest && (
+                        <details className="dp-desc-more">
+                          <summary
+                            style={{
+                              cursor: "pointer",
+                              listStyle: "none",
+                              fontFamily: "var(--font-sans)",
+                              fontSize: "var(--t-sm)",
+                              fontWeight: "var(--fw-medium)",
+                              color: "var(--gold-700)",
+                            }}
+                          >
+                            Lire la description complète
+                          </summary>
+                          <p
+                            className="dp-product-desc"
+                            style={{
+                              fontFamily: "var(--font-sans)",
+                              fontSize: "var(--t-body)",
+                              lineHeight: "var(--lh-comfort)",
+                              color: "var(--ink-700)",
+                              margin: "0.75rem 0 0",
+                            }}
+                          >
+                            {descRest}
+                          </p>
+                        </details>
+                      )}
+                      {product.viralNote && (
+                        <div style={{ paddingInlineStart: "0.875rem", borderInlineStart: "2px solid var(--gold-500)" }}>
+                          <p style={{ margin: 0, fontFamily: "var(--font-sans)", fontSize: "var(--t-sm)", lineHeight: "var(--lh-comfort)", color: "var(--ink-700)" }}>
+                            {product.viralNote}
+                          </p>
+                          <p style={{ margin: "0.4rem 0 0", fontFamily: "var(--font-sans)", fontSize: "var(--t-xs)", color: "var(--ink-400)" }}>
+                            Parfums inspirés, jamais des copies : aucune affiliation avec les marques citées.
+                          </p>
+                        </div>
                       )}
                     </div>
-                    <div style={{ padding: "0.625rem 0.75rem 0.875rem" }}>
-                      <p
-                        style={{
-                          margin: "0 0 0.15rem",
-                          fontSize: "10px",
-                          fontWeight: "var(--fw-semibold)",
-                          letterSpacing: "var(--ls-wider)",
-                          textTransform: "uppercase",
-                          color: "var(--gold-500)",
-                        }}
-                      >
-                        {relProduct.brand}
-                      </p>
-                      <p
-                        style={{
-                          margin: "0 0 0.4rem",
-                          fontFamily: "var(--font-display)",
-                          fontSize: "var(--t-body)",
-                          fontStyle: "italic",
-                          color: "var(--ink-900)",
-                          lineHeight: "var(--lh-snug)",
-                        }}
-                      >
-                        {relProduct.name}
-                      </p>
-                      <div style={{ display: "flex", gap: "0.5rem", alignItems: "baseline" }}>
-                        <span
-                          style={{
-                            fontWeight: "var(--fw-semibold)",
-                            color: "var(--price-sale)",
-                            fontSize: "var(--t-sm)",
-                          }}
-                        >
-                          {relProduct.price.toFixed(2).replace(".", ",")} €
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "var(--t-xs)",
-                            color: "var(--price-was)",
-                            textDecoration: "line-through",
-                          }}
-                        >
-                          {relProduct.oldPrice.toFixed(2).replace(".", ",")} €
-                        </span>
-                      </div>
+                  ),
+                };
+              case "questions":
+                return {
+                  anchor: "questions",
+                  children: (
+                    <div>
+                      <ProductFaq product={product} slug={slug} content={content} />
+                      <ProductQA product={product} content={content} embedded />
                     </div>
-                  </article>
-                </Link>
-              );
-            })}
-          </div>
-        </section>
-
-          {SHOW_GIFT_BANNER && (
-            <GiftBanner productName={product.name} image={product.image ?? "/assets/prod-1.jpg"} gallery={product.gallery} />
-          )}
-
-        </div>
+                  ),
+                };
+              case "collection":
+                return {
+                  anchor: "completer",
+                  tone: "cream",
+                  children: (
+                    <CollectionBuilder
+                      slug={slug}
+                      productName={product.name}
+                      brand={product.brand}
+                      price={product.price}
+                      oldPrice={product.oldPrice}
+                      image={product.image ?? "/assets/prod-1.jpg"}
+                      volume={product.volume}
+                    />
+                  ),
+                };
+              case "related":
+                return {
+                  eyebrow: "Dans le même esprit",
+                  title: "Vous pourriez aussi aimer",
+                  children: (
+                    <div className="dp-bento-related" style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "1.25rem" }}>
+                      {related.map(({ slug: relSlug, product: relProduct }) => (
+                        <Link key={relSlug} href={`/produit/${relSlug}`} style={{ textDecoration: "none", color: "inherit" }}>
+                          <article style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+                            <div style={{ position: "relative", aspectRatio: "1 / 1", background: "var(--surface-image)", borderRadius: "var(--r-md)", overflow: "hidden" }}>
+                              <Image
+                                src={relProduct.packshot ?? relProduct.image ?? "/assets/prod-3.jpg"}
+                                alt={`${relProduct.name} — ${relProduct.brand}`}
+                                fill
+                                style={{ objectFit: "contain", padding: "1rem" }}
+                                sizes="(max-width: 720px) 45vw, 220px"
+                              />
+                            </div>
+                            <div>
+                              <p style={{ margin: 0, fontSize: "10px", fontWeight: "var(--fw-semibold)", letterSpacing: "var(--ls-wider)", textTransform: "uppercase", color: "var(--gold-500)" }}>
+                                {relProduct.brand}
+                              </p>
+                              <p style={{ margin: "0.1rem 0 0.25rem", fontFamily: "var(--font-display)", fontSize: "var(--t-body)", fontStyle: "italic", color: "var(--ink-900)" }}>
+                                {relProduct.name}
+                              </p>
+                              <span style={{ fontWeight: "var(--fw-semibold)", color: "var(--price-sale)", fontSize: "var(--t-sm)" }}>
+                                {relProduct.price.toFixed(2).replace(".", ",")} €
+                              </span>
+                            </div>
+                          </article>
+                        </Link>
+                      ))}
+                    </div>
+                  ),
+                };
+              default:
+                return null;
+            }
+          }}
+        />
       </div>
 
       <style>{`
-        @media (max-width: 900px) {
-          .dp-notes-specs { grid-template-columns: 1fr !important; gap: 2.5rem !important; }
-        }
         .dp-desc-more > summary::-webkit-details-marker { display: none; }
         .dp-desc-more[open] > summary { display: none; }
+        @media (max-width: 720px) {
+          .dp-bento-related { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+        }
       `}</style>
 
       {/* Flèche « remonter » après un écran de défilement. */}
