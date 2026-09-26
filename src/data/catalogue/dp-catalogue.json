@@ -5711,5 +5711,176 @@
    "aucun site officiel Surrati exploitable trouvé : notes issues de la fiche Dubai Parfumerie (règle 2b), non recoupées auprès de la marque"
   ],
   "releve": "2026-09-05"
+ },
+ {
+  "id": "amber-s",
+  "url": "https://dubaiparfumerie.com/produits/amber-s/",
+  "nom": "Amber S",
+  "marque": "Osma Perfumes",
+  "marque_site": "Osma Perfumes",
+  "marque_ok": true,
+  "type": "Parfum",
+  "concentration": "Eau de parfum",
+  "genre": "Mixte",
+  "contenance": "75 ml",
+  "notes": {
+   "tete": [
+    "Cassis"
+   ],
+   "coeur": [
+    "Rose"
+   ],
+   "fond": [
+    "Ambre"
+   ]
+  },
+  "notes_source": "https://www.fragrantica.com/perfume/Osma-Perfumes/Amber-S-113172.html",
+  "prix_dp": null,
+  "prix_dp_barre": null,
+  "devise": "EUR",
+  "dispo": false,
+  "marche": {
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
+  },
+  "verdict_prix": null,
+  "anomalies": [
+   "absent du site Dubaï Parfumerie au 26/09/2026 — ajouté depuis la liste fournisseur",
+   "la liste fournisseur annonce 100 ml ; toutes les sources relevées (site officiel, Amsons, Parfumo, Fragrantica) donnent 75 ml — contenance à confirmer avant mise en vente",
+   "aucun prix Dubaï Parfumerie : référence non encore tarifée"
+  ],
+  "releve": "2026-09-26"
+ },
+ {
+  "id": "cotton-c",
+  "url": "https://dubaiparfumerie.com/produits/cotton-c/",
+  "nom": "Cotton C",
+  "marque": "Osma Perfumes",
+  "marque_site": "Osma Perfumes",
+  "marque_ok": true,
+  "type": "Parfum",
+  "concentration": "Eau de parfum",
+  "genre": "Mixte",
+  "contenance": "75 ml",
+  "notes": {
+   "tete": [
+    "Musc blanc"
+   ],
+   "coeur": [
+    "Notes poudrées"
+   ],
+   "fond": [
+    "Fleurs blanches"
+   ]
+  },
+  "notes_source": "https://luxuryfragrances.nl/products/osma-parfums",
+  "prix_dp": null,
+  "prix_dp_barre": null,
+  "devise": "EUR",
+  "dispo": false,
+  "marche": {
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
+  },
+  "verdict_prix": null,
+  "anomalies": [
+   "absent du site Dubaï Parfumerie au 26/09/2026 — ajouté depuis la liste fournisseur",
+   "notes relevées chez un revendeur (luxuryfragrances.nl) faute de fiche officielle pour le parfum : osmaperfumes.com ne référence qu'un désodorisant « Cotton C Air Freshener 200 ml » — à vérifier auprès du fournisseur",
+   "la liste fournisseur annonce 100 ml ; les sources donnent 75 ml",
+   "aucun prix Dubaï Parfumerie : référence non encore tarifée"
+  ],
+  "releve": "2026-09-26"
+ },
+ {
+  "id": "paudree-f",
+  "url": "https://dubaiparfumerie.com/produits/paudree-f/",
+  "nom": "Paudree F",
+  "marque": "Osma Perfumes",
+  "marque_site": "Osma Perfumes",
+  "marque_ok": true,
+  "type": "Parfum",
+  "concentration": "Eau de parfum",
+  "genre": "Mixte",
+  "contenance": "75 ml",
+  "notes": {
+   "tete": [
+    "Jasmin"
+   ],
+   "coeur": [
+    "Rose"
+   ],
+   "fond": [
+    "Musc"
+   ]
+  },
+  "notes_source": "https://www.fragrantica.com/perfume/Osma-Perfumes/Paudree-F-113171.html",
+  "prix_dp": null,
+  "prix_dp_barre": null,
+  "devise": "EUR",
+  "dispo": false,
+  "marche": {
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
+  },
+  "verdict_prix": null,
+  "anomalies": [
+   "absent du site Dubaï Parfumerie au 26/09/2026 — ajouté depuis la liste fournisseur",
+   "orthographe officielle « Paudree' F » (apostrophe) chez Fragrantica ; retenu « Paudree F »",
+   "la liste fournisseur annonce 100 ml ; les sources donnent 75 ml",
+   "aucun prix Dubaï Parfumerie : référence non encore tarifée"
+  ],
+  "releve": "2026-09-26"
+ },
+ {
+  "id": "woody-f",
+  "url": "https://dubaiparfumerie.com/produits/woody-f/",
+  "nom": "Woody F",
+  "marque": "Osma Perfumes",
+  "marque_site": "Osma Perfumes",
+  "marque_ok": true,
+  "type": "Parfum",
+  "concentration": "Eau de parfum",
+  "genre": "Mixte",
+  "contenance": "75 ml",
+  "notes": {
+   "tete": [
+    "Ananas"
+   ],
+   "coeur": [
+    "Cuir"
+   ],
+   "fond": [
+    "Ambre"
+   ]
+  },
+  "notes_source": "https://luxuryfragrances.nl/products/osma-parfums",
+  "prix_dp": null,
+  "prix_dp_barre": null,
+  "devise": "EUR",
+  "dispo": false,
+  "marche": {
+   "n": 0,
+   "min": null,
+   "max": null,
+   "median": null,
+   "sources": []
+  },
+  "verdict_prix": null,
+  "anomalies": [
+   "absent du site Dubaï Parfumerie au 26/09/2026 — ajouté depuis la liste fournisseur",
+   "notes relevées chez un revendeur faute de fiche officielle accessible",
+   "la liste fournisseur annonce 100 ml ; les sources donnent 75 ml",
+   "aucun prix Dubaï Parfumerie : référence non encore tarifée"
+  ],
+  "releve": "2026-09-26"
  }
 ]
