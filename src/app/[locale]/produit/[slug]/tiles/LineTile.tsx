@@ -19,6 +19,7 @@ import type { Product } from "@/data/product-details";
 import { lineSiblings } from "@/data/product-resolve";
 import { Link } from "@/i18n/navigation";
 import { euros, primaryFamily } from "../product-content-format";
+import { AddSiblingButton } from "./AddSiblingButton";
 
 interface LineTileProps {
   slug: string;
@@ -160,6 +161,7 @@ export function LineTile({ slug, product }: LineTileProps) {
                   {euros(sibling.price)}
                 </span>
               </Link>
+              <AddSiblingButton slug={otherSlug} product={sibling} compact />
             </li>
           ))}
         </ul>
@@ -237,26 +239,35 @@ export function LineTile({ slug, product }: LineTileProps) {
         </div>
       </div>
 
-      <Link
-        href={`/produit/${otherSlug}`}
-        style={{
-          flex: "0 0 auto",
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
-          height: 44,
-          borderRadius: "var(--r-sm)",
-          border: "1px solid var(--gold-500)",
-          color: "var(--gold-700)",
-          fontSize: "var(--t-sm)",
-          fontWeight: "var(--fw-medium)",
-          letterSpacing: "var(--ls-wide)",
-          textTransform: "uppercase",
-          textDecoration: "none",
-        }}
-      >
-        Découvrir {sibling.name}
-      </Link>
+      {/* Deux actions : l'ajout direct (doré, c'est l'achat) et la fiche
+          (contour). Le client qui connaît déjà la ligne n'a plus à ouvrir une
+          page pour ajouter un flacon qu'il a choisi. */}
+      <div style={{ flex: "0 0 auto", display: "flex", gap: 8 }}>
+        <AddSiblingButton slug={otherSlug} product={sibling} />
+        <Link
+          href={`/produit/${otherSlug}`}
+          aria-label={`Voir la fiche de ${sibling.name}`}
+          style={{
+            flex: "0 0 auto",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            height: 44,
+            padding: "0 1rem",
+            borderRadius: "var(--r-sm)",
+            border: "1px solid var(--gold-500)",
+            color: "var(--gold-700)",
+            fontSize: "var(--t-sm)",
+            fontWeight: "var(--fw-medium)",
+            letterSpacing: "var(--ls-wide)",
+            textTransform: "uppercase",
+            textDecoration: "none",
+            whiteSpace: "nowrap",
+          }}
+        >
+          La fiche
+        </Link>
+      </div>
     </div>
   );
 }
